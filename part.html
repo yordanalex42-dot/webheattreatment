@@ -5,64 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Part - Master Data</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-      body { font-family: "Inter", sans-serif; background: #f1f5f9; }
-      .sidebar-link { transition: all 0.2s; }
-      .sidebar-link:hover, .sidebar-link.active { background: #3b82f6; color: white; }
-      .fade-in { animation: fadeIn 0.3s ease-out; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #f1f5f9;
+      }
+      .sidebar-link {
+        transition: all 0.2s;
+      }
+      .sidebar-link:hover,
+      .sidebar-link.active {
+        background: #3b82f6;
+        color: white;
+      }
+      .fade-in {
+        animation: fadeIn 0.3s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
   <body class="text-slate-800">
     <div class="flex h-screen overflow-hidden">
       <aside class="w-56 bg-slate-900 text-white flex flex-col shadow-2xl z-20">
         <div class="p-5 border-b border-slate-700">
-          <h1 class="text-lg font-bold"><i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment</h1>
+          <h1 class="text-lg font-bold">
+            <i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment
+          </h1>
           <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
         </div>
         <nav class="flex-1 p-3 space-y-1">
-          <a href="index.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-chart-line w-5"></i> Dashboard</a>
+          <a
+            href="index.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-chart-line w-5"></i> Dashboard</a
+          >
           <div class="pt-2">
-            <p class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider">Master Data</p>
+            <p
+              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
+            >
+              Master Data
+            </p>
           </div>
-          <a href="customer.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-users w-5"></i> Customer</a>
-          <a href="part.html" class="sidebar-link active flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-cogs w-5"></i> Part</a>
-          <a href="incoming.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-box w-5"></i> Incoming</a>
-          <div class="pt-2"><p class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider">Produksi</p></div>
-          <a href="produksi-masuk.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"><i class="fas fa-play w-5"></i> Masuk Proses</a>
-          <a href="produksi-akhir.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a>
-          <a href="qc.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-clipboard-check w-5"></i> Quality Control</a>
-          <a href="delivery.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-shipping-fast w-5"></i> Delivery</a>
-          <a href="tracking.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-search-location w-5"></i> Tracking</a>
+          <a
+            href="customer.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-users w-5"></i> Customer</a
+          >
+          <a
+            href="part.html"
+            class="sidebar-link active flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-cogs w-5"></i> Part</a
+          >
+          <a
+            href="incoming.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-box w-5"></i> Incoming</a
+          >
+          <div class="pt-2">
+            <p
+              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
+            >
+              Produksi
+            </p>
+          </div>
+          <a
+            href="produksi-masuk.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
+            ><i class="fas fa-play w-5"></i> Masuk Proses</a
+          >
+          <a
+            href="produksi-akhir.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
+            ><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a
+          >
+          <a
+            href="qc.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-clipboard-check w-5"></i> Quality Control</a
+          >
+          <a
+            href="delivery.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-shipping-fast w-5"></i> Delivery</a
+          >
+          <a
+            href="tracking.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-search-location w-5"></i> Tracking</a
+          >
         </nav>
         <div class="p-3 border-t border-slate-700">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm" id="sidebarInitial">A</div>
+              <div
+                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
+                id="sidebarInitial"
+              >
+                A
+              </div>
               <div>
                 <p class="text-xs font-medium" id="sidebarName">Admin User</p>
-                <p class="text-[10px] text-slate-400" id="sidebarRole">Administrator</p>
+                <p class="text-[10px] text-slate-400" id="sidebarRole">
+                  Administrator
+                </p>
               </div>
             </div>
-            <button onclick="Auth.logout();window.location.href='login.html'" class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+            <button
+              onclick="
+                Auth.logout();
+                window.location.href = 'login.html';
+              "
+              class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition"
+              title="Logout"
+            >
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
           </div>
         </div>
       </aside>
       <main class="flex-1 overflow-y-auto">
-        <header class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center">
+        <header
+          class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center"
+        >
           <h2 class="text-xl font-bold text-slate-800">Master Data Part</h2>
-          <button onclick="openForm()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm"><i class="fas fa-plus mr-2"></i>Tambah Part</button>
+          <button
+            onclick="openForm()"
+            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm"
+          >
+            <i class="fas fa-plus mr-2"></i>Tambah Part
+          </button>
         </header>
         <div class="p-5 space-y-4">
           <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
             <div class="flex flex-col md:flex-row gap-3">
-              <input type="text" id="searchPart" placeholder="Search Part..." oninput="renderTable()" class="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
-              <select id="filterCust" onchange="renderTable()" class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+              <input
+                type="text"
+                id="searchPart"
+                placeholder="Search Part..."
+                oninput="renderTable()"
+                class="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+              <select
+                id="filterCust"
+                onchange="renderTable()"
+                class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              >
                 <option value="">Semua Customer</option>
               </select>
-              <select id="filterStatus" onchange="renderTable()" class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+              <select
+                id="filterStatus"
+                onchange="renderTable()"
+                class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              >
                 <option value="">Semua Status</option>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -70,65 +178,130 @@
             </div>
           </div>
           <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <table class="w-full text-left">
-              <thead class="bg-slate-50 text-slate-600 text-xs uppercase">
-                <tr>
-                  <th class="px-3 py-2 rounded-l-lg">Customer</th>
-                  <th class="px-3 py-2">Nomor Part</th>
-                  <th class="px-3 py-2">Nama Part</th>
-                  <th class="px-3 py-2">Berat</th>
-                  <th class="px-3 py-2">Satuan</th>
-                  <th class="px-3 py-2">Status</th>
-                  <th class="px-3 py-2 rounded-r-lg">Aksi</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-100 text-xs" id="partTable"></tbody>
-            </table>
+            <h3 class="text-base font-bold text-slate-800 mb-3">
+              Data Part
+            </h3>
+            <div id="partExplorer" class="space-y-1"></div>
+            <div id="partDetail" class="hidden mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200"></div>
           </div>
         </div>
-        <div id="formModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div class="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div
+          id="formModal"
+          class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        >
+          <div
+            class="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto"
+          >
             <h3 class="text-lg font-bold mb-4" id="formTitle">Tambah Part</h3>
             <form id="partForm" class="space-y-3">
               <input type="hidden" id="partId" />
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Customer</label>
-                <select id="partCustomer" required class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" onchange="loadParts()"></select>
+                <label class="block text-xs font-medium text-slate-600 mb-1"
+                  >Customer</label
+                >
+                <select
+                  id="partCustomer"
+                  required
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  onchange="loadParts()"
+                ></select>
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Nomor Part</label>
-                <input type="text" id="partNomor" required class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="HT-CUST001-001" />
-                <p class="text-[10px] text-red-500 mt-1 hidden" id="partNomorErr">Nomor Part sudah ada untuk customer ini!</p>
+                <label class="block text-xs font-medium text-slate-600 mb-1"
+                  >Nomor Part</label
+                >
+                <input
+                  type="text"
+                  id="partNomor"
+                  required
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="HT-CUST001-001"
+                />
+                <p
+                  class="text-[10px] text-red-500 mt-1 hidden"
+                  id="partNomorErr"
+                >
+                  Nomor Part sudah ada untuk customer ini!
+                </p>
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Nama Part</label>
-                <input type="text" id="partNama" required class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nama part" />
+                <label class="block text-xs font-medium text-slate-600 mb-1"
+                  >Nama Part</label
+                >
+                <input
+                  type="text"
+                  id="partNama"
+                  required
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Nama part"
+                />
               </div>
               <div class="flex gap-3">
                 <div class="flex-1">
-                  <label class="block text-xs font-medium text-slate-600 mb-1">Berat Part</label>
-                  <input type="number" id="partBerat" required min="0.01" step="0.01" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00" />
+                  <label class="block text-xs font-medium text-slate-600 mb-1"
+                    >Berat Part</label
+                  >
+                  <input
+                    type="number"
+                    id="partBerat"
+                    required
+                    min="0.01"
+                    step="0.01"
+                    class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="0.00"
+                  />
                 </div>
                 <div class="flex-1">
-                  <label class="block text-xs font-medium text-slate-600 mb-1">Satuan</label>
-                  <select id="partSatuan" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                  <label class="block text-xs font-medium text-slate-600 mb-1"
+                    >Satuan</label
+                  >
+                  <select
+                    id="partSatuan"
+                    class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  >
                     <option value="KG/PCS">KG/PCS</option>
                     <option value="KG">KG</option>
                     <option value="PCS">PCS</option>
                     <option value="GRAM">GRAM</option>
                   </select>
                 </div>
+                </div>
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Status</label>
-                <select id="partStatus" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                <label class="block text-xs font-medium text-slate-600 mb-1"
+                  >Target Hardness</label>
+                <input
+                  type="text"
+                  id="partTargetHardness"
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Contoh: 58-62 HRC"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1"
+                  >Status</label>
+                <select
+                  id="partStatus"
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
               </div>
               <div class="flex gap-2 pt-2">
-                <button type="submit" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded-lg text-sm font-medium transition"><i class="fas fa-save mr-2"></i>Simpan</button>
-                <button type="button" onclick="closeForm()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm transition">Batal</button>
+                <button
+                  type="submit"
+                  class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded-lg text-sm font-medium transition"
+                >
+                  <i class="fas fa-save mr-2"></i>Simpan
+                </button>
+                <button
+                  type="button"
+                  onclick="closeForm()"
+                  class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm transition"
+                >
+                  Batal
+                </button>
               </div>
             </form>
           </div>
@@ -142,20 +315,30 @@
       if (!Auth.isLoggedIn()) window.location.href = "login.html";
       const session = Auth.getSession();
       if (session) {
-        document.getElementById("sidebarInitial").textContent = Auth.getInitials(session.name);
+        document.getElementById("sidebarInitial").textContent =
+          Auth.getInitials(session.name);
         document.getElementById("sidebarName").textContent = session.name;
         document.getElementById("sidebarRole").textContent = session.role;
       }
       function loadCustomerDropdown() {
         const sel = document.getElementById("partCustomer");
-        sel.innerHTML = '<option value="">Pilih Customer</option>' + DB.get("customers").map((c) => `<option value="${c.id}">${c.kode_customer} - ${c.nama_customer}</option>`).join("");
+        sel.innerHTML =
+          '<option value="">Pilih Customer</option>' +
+          DB.get("customers")
+            .map(
+              (c) =>
+                `<option value="${c.id}">${c.kode_customer} - ${c.nama_customer}</option>`,
+            )
+            .join("");
       }
       function loadParts() {
         const cid = document.getElementById("partCustomer").value;
         const parts = cid ? DB.getPartsByCustomer(cid) : [];
         document.getElementById("partNomor").innerHTML = "";
         const d = DB.find("customers", "id", cid);
-        const prefix = d ? d.kode_customer.replace("CUST-", "").substring(0, 3).toUpperCase() : "";
+        const prefix = d
+          ? d.kode_customer.replace("CUST-", "").substring(0, 3).toUpperCase()
+          : "";
         const existings = parts.map((p) => p.nomor_part);
         let maxNum = 0;
         existings.forEach((np) => {
@@ -165,33 +348,88 @@
         const suggested = prefix + "-" + String(maxNum + 1).padStart(3, "0");
         document.getElementById("partNomor").value = suggested;
       }
-      function renderTable() {
-        const search = document.getElementById("searchPart").value.toLowerCase();
+      function renderExplorer() {
+        const search = document
+          .getElementById("searchPart")
+          .value.toLowerCase();
         const custFilter = document.getElementById("filterCust").value;
         const statusFilter = document.getElementById("filterStatus").value;
-        let data = DB.get("parts");
-        if (custFilter) data = data.filter((p) => p.customer_id == custFilter);
-        data = data.filter((p) => {
-          const matchSearch = !search || p.nomor_part.toLowerCase().includes(search) || p.nama_part.toLowerCase().includes(search);
-          const matchStatus = !statusFilter || p.status === statusFilter;
-          return matchSearch && matchStatus;
-        });
-        const html = data.map((p) => {
-          const c = DB.findCustomerById(p.customer_id);
-          return `<tr class="hover:bg-slate-50 transition">
-            <td class="px-3 py-2">${c ? c.nama_customer : "-"}</td>
-            <td class="px-3 py-2 font-mono">${p.nomor_part}</td>
-            <td class="px-3 py-2">${p.nama_part}</td>
-            <td class="px-3 py-2">${p.berat_part}</td>
-            <td class="px-3 py-2">${p.satuan_berat}</td>
-            <td class="px-3 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-medium ${p.status === "Active" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"}">${p.status}</span></td>
-            <td class="px-3 py-2">
-              <button onclick="editPart(${p.id})" class="text-blue-500 hover:text-blue-700 mr-2" title="Edit"><i class="fas fa-edit"></i></button>
-              <button onclick="deletePart(${p.id})" class="text-red-500 hover:text-red-700" title="Delete"><i class="fas fa-trash"></i></button>
-            </td>
-          </tr>`;
-        }).join("");
-        document.getElementById("partTable").innerHTML = html || '<tr><td colspan="7" class="text-center py-6 text-slate-400">Belum ada data</td></tr>';
+        let customers = DB.get("customers");
+        if (custFilter)
+          customers = customers.filter((c) => c.id == custFilter);
+        const html = customers
+          .map((c) => {
+            const parts = DB
+              .getPartsByCustomer(c.id)
+              .filter((p) => {
+                const matchSearch =
+                  !search ||
+                  p.nomor_part.toLowerCase().includes(search) ||
+                  p.nama_part.toLowerCase().includes(search);
+                const matchStatus =
+                  !statusFilter || p.status === statusFilter;
+                return matchSearch && matchStatus;
+              });
+            if (parts.length === 0) return "";
+            const partsHtml = parts
+              .map(
+                (p) =>
+                  `<div class="pl-6 py-1.5 cursor-pointer hover:bg-blue-50 rounded text-xs flex items-center gap-2" onclick="showPartDetail(${p.id})">
+                <i class="fas fa-cube text-slate-400 w-4"></i>
+                <span class="font-mono">${p.nomor_part}</span>
+                <span class="text-slate-600">${p.nama_part}</span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-medium ${p.status === "Active" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"}">${p.status}</span>
+              </div>`,
+              )
+              .join("");
+            return `<div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <div class="flex items-center gap-2 px-4 py-3 bg-slate-50 hover:bg-slate-100 cursor-pointer transition" onclick="toggleFolder(this)">
+              <i class="fas fa-folder-open text-blue-500"></i>
+              <span class="font-semibold text-sm text-slate-800">${c.nama_customer}</span>
+              <span class="text-[10px] text-slate-400 ml-auto">${parts.length} part(s)</span>
+              <i class="fas fa-chevron-down text-xs text-slate-400 ml-1 transition-transform" id="folder-arrow-${c.id}"></i>
+            </div>
+            <div class="folder-content" id="folder-${c.id}">${partsHtml}</div>
+          </div>`;
+          })
+          .join("");
+        document.getElementById("partExplorer").innerHTML =
+          html ||
+          '<p class="text-center py-6 text-slate-400 text-sm">Belum ada data part</p>';
+      }
+      function toggleFolder(el) {
+        const next = el.nextElementSibling;
+        const arrow = el.querySelector("i.fa-chevron-down");
+        if (next.classList.contains("hidden")) {
+          next.classList.remove("hidden");
+          if (arrow) arrow.style.transform = "rotate(180deg)";
+        } else {
+          next.classList.add("hidden");
+          if (arrow) arrow.style.transform = "rotate(0deg)";
+        }
+      }
+      function showPartDetail(id) {
+        const p = DB.find("parts", "id", id);
+        if (!p) return;
+        const c = DB.findCustomerById(p.customer_id);
+        const detail = document.getElementById("partDetail");
+        detail.classList.remove("hidden");
+        detail.innerHTML = `
+            <h4 class="text-sm font-bold text-slate-800 mb-3">Detail Part</h4>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+              <div><p class="text-slate-500">Customer</p><p class="font-semibold text-slate-800">${c ? c.nama_customer : "-"}</p></div>
+              <div><p class="text-slate-500">Nomor Part</p><p class="font-semibold font-mono text-slate-800">${p.nomor_part}</p></div>
+              <div><p class="text-slate-500">Nama Part</p><p class="font-semibold text-slate-800">${p.nama_part}</p></div>
+              <div><p class="text-slate-500">Berat Part</p><p class="font-semibold text-slate-800">${p.berat_part} ${p.satuan_berat}</p></div>
+              <div><p class="text-slate-500">Target Hardness</p><p class="font-semibold text-slate-800 font-mono">${p.target_hardness || "-"}</p></div>
+              <div><p class="text-slate-500">Status</p><p class="font-semibold"><span class="px-2 py-0.5 rounded-full text-[10px] font-medium ${p.status === "Active" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"}">${p.status}</span></p></div>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button onclick="editPart(${p.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded text-xs transition"><i class="fas fa-edit mr-1"></i>Edit</button>
+              <button onclick="deletePart(${p.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-xs transition"><i class="fas fa-trash mr-1"></i>Delete</button>
+            </div>
+          `;
+        detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
       function openForm() {
         document.getElementById("formTitle").textContent = "Tambah Part";
@@ -201,7 +439,9 @@
         loadCustomerDropdown();
         document.getElementById("formModal").classList.remove("hidden");
       }
-      function closeForm() { document.getElementById("formModal").classList.add("hidden"); }
+      function closeForm() {
+        document.getElementById("formModal").classList.add("hidden");
+      }
       function editPart(id) {
         const p = DB.find("parts", "id", id);
         if (!p) return;
@@ -215,6 +455,7 @@
         document.getElementById("partBerat").value = p.berat_part;
         document.getElementById("partSatuan").value = p.satuan_berat;
         document.getElementById("partStatus").value = p.status;
+        document.getElementById("partTargetHardness").value = p.target_hardness || "";
         document.getElementById("partNomorErr").classList.add("hidden");
         document.getElementById("formModal").classList.remove("hidden");
       }
@@ -226,20 +467,40 @@
         const existing = DB.findPartByNumber(nomor, cid);
         const editing = document.getElementById("partId").value;
         if (existing && existing.id != editing) {
-          document.getElementById("partNomorErr").textContent = "Nomor Part sudah ada untuk customer ini!";
+          document.getElementById("partNomorErr").textContent =
+            "Nomor Part sudah ada untuk customer ini!";
           document.getElementById("partNomorErr").classList.remove("hidden");
           return;
         }
         const data = {
-          customer_id: parseInt(cid), nomor_part: nomor, nama_part: document.getElementById("partNama").value.trim(),
-          berat_part: parseFloat(document.getElementById("partBerat").value), satuan_berat: document.getElementById("partSatuan").value,
+          customer_id: parseInt(cid),
+          nomor_part: nomor,
+          nama_part: document.getElementById("partNama").value.trim(),
+          berat_part: parseFloat(document.getElementById("partBerat").value),
+          satuan_berat: document.getElementById("partSatuan").value,
+          target_hardness: document.getElementById("partTargetHardness").value.trim(),
           status: document.getElementById("partStatus").value,
         };
-        if (editing) { DB.update("parts", editing, data); } else { DB.insert("parts", data); }
-        closeForm(); renderTable();
+        if (editing) {
+          DB.update("parts", editing, data);
+        } else {
+          DB.insert("parts", data);
+        }
+        closeForm();
+        renderExplorer();
       });
-      function deletePart(id) { if (confirm("Hapus part ini?")) { DB.delete("parts", id); renderTable(); } }
-      window.addEventListener("DOMContentLoaded", () => { DB.init(); loadCustomerDropdown(); renderTable(); });
+      function deletePart(id) {
+        if (confirm("Hapus part ini?")) {
+          DB.delete("parts", id);
+          renderExplorer();
+          document.getElementById("partDetail").classList.add("hidden");
+        }
+      }
+      window.addEventListener("DOMContentLoaded", () => {
+        DB.init();
+        loadCustomerDropdown();
+        renderExplorer();
+      });
     </script>
   </body>
 </html>

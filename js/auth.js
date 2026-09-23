@@ -9,7 +9,11 @@ const Auth = {
     if (user) {
       localStorage.setItem(
         this.sessionKey,
-        JSON.stringify({ username: user.username, name: user.name, role: user.role }),
+        JSON.stringify({
+          username: user.username,
+          name: user.name,
+          role: user.role,
+        }),
       );
       return true;
     }
@@ -46,7 +50,12 @@ const Auth = {
       localStorage.setItem(
         "ht_users",
         JSON.stringify([
-          { username: "admin", password: "admin123", name: "Admin User", role: "Administrator" },
+          {
+            username: "admin",
+            password: "admin123",
+            name: "Admin User",
+            role: "Administrator",
+          },
         ]),
       );
     }

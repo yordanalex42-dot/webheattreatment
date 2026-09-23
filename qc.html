@@ -6,94 +6,288 @@
     <title>Quality Control - Sistem Informasi Produksi Heat Treatment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-      body { font-family: "Inter", sans-serif; background: #f1f5f9; }
-      .sidebar-link { transition: all 0.2s; }
-      .sidebar-link:hover, .sidebar-link.active { background: #3b82f6; color: white; }
-      .fade-in { animation: fadeIn 0.3s ease-out; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #f1f5f9;
+      }
+      .sidebar-link {
+        transition: all 0.2s;
+      }
+      .sidebar-link:hover,
+      .sidebar-link.active {
+        background: #3b82f6;
+        color: white;
+      }
+      .fade-in {
+        animation: fadeIn 0.3s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
   <body class="text-slate-800">
     <div class="flex h-screen overflow-hidden">
       <aside class="w-56 bg-slate-900 text-white flex flex-col shadow-2xl z-20">
         <div class="p-5 border-b border-slate-700">
-          <h1 class="text-lg font-bold"><i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment</h1>
+          <h1 class="text-lg font-bold">
+            <i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment
+          </h1>
           <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
         </div>
         <nav class="flex-1 p-3 space-y-1">
-          <a href="index.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-chart-line w-5"></i> Dashboard</a>
-          <div class="pt-2"><p class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider">Master Data</p></div>
-          <a href="customer.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-users w-5"></i> Customer</a>
-          <a href="part.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-cogs w-5"></i> Part</a>
-          <a href="incoming.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-box w-5"></i> Incoming</a>
-          <div class="pt-2"><p class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider">Produksi</p></div>
-          <a href="produksi-masuk.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"><i class="fas fa-play w-5"></i> Masuk Proses</a>
-          <a href="produksi-akhir.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a>
-          <a href="qc.html" class="sidebar-link active flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-clipboard-check w-5"></i> Quality Control</a>
-          <a href="delivery.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-shipping-fast w-5"></i> Delivery</a>
-          <a href="tracking.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-search-location w-5"></i> Tracking</a>
+          <a
+            href="index.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-chart-line w-5"></i> Dashboard</a
+          >
+          <div class="pt-2">
+            <p
+              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
+            >
+              Master Data
+            </p>
+          </div>
+          <a
+            href="customer.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-users w-5"></i> Customer</a
+          >
+          <a
+            href="part.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-cogs w-5"></i> Part</a
+          >
+          <a
+            href="incoming.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-box w-5"></i> Incoming</a
+          >
+          <div class="pt-2">
+            <p
+              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
+            >
+              Produksi
+            </p>
+          </div>
+          <a
+            href="produksi-masuk.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
+            ><i class="fas fa-play w-5"></i> Masuk Proses</a
+          >
+          <a
+            href="produksi-akhir.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
+            ><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a
+          >
+          <a
+            href="qc.html"
+            class="sidebar-link active flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-clipboard-check w-5"></i> Quality Control</a
+          >
+          <a
+            href="delivery.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-shipping-fast w-5"></i> Delivery</a
+          >
+          <a
+            href="tracking.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-search-location w-5"></i> Tracking</a
+          >
         </nav>
         <div class="p-3 border-t border-slate-700">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm" id="sidebarInitial">A</div>
+              <div
+                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
+                id="sidebarInitial"
+              >
+                A
+              </div>
               <div>
                 <p class="text-xs font-medium" id="sidebarName">Admin User</p>
-                <p class="text-[10px] text-slate-400" id="sidebarRole">Administrator</p>
+                <p class="text-[10px] text-slate-400" id="sidebarRole">
+                  Administrator
+                </p>
               </div>
             </div>
-            <button onclick="Auth.logout();window.location.href='login.html'" class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+            <button
+              onclick="
+                Auth.logout();
+                window.location.href = 'login.html';
+              "
+              class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition"
+              title="Logout"
+            >
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
           </div>
         </div>
       </aside>
       <main class="flex-1 overflow-y-auto">
-        <header class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center">
-          <h2 class="text-xl font-bold text-slate-800">Modul Quality Control (QC)</h2>
+        <header
+          class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center"
+        >
+          <h2 class="text-xl font-bold text-slate-800">
+            Modul Quality Control (QC)
+          </h2>
         </header>
         <div class="p-5 space-y-4">
           <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">Scan QR Code Material</h3>
+            <h3 class="text-base font-bold text-slate-800 mb-3">
+              Scan QR Code Material
+            </h3>
             <div class="flex flex-col md:flex-row gap-4">
               <div class="flex-1">
-                <div id="qr-reader" class="rounded-lg overflow-hidden border max-w-sm"></div>
+                <div
+                  id="qr-reader"
+                  class="rounded-lg overflow-hidden border max-w-sm"
+                ></div>
               </div>
               <div class="flex-1 space-y-2">
-                <p class="text-xs text-slate-500">Atau masukkan ID Material secara manual:</p>
+                <p class="text-xs text-slate-500">
+                  Atau masukkan Kode Part secara manual:
+                </p>
                 <div class="flex gap-2">
-                  <input type="text" id="manualId" placeholder="ID Material (contoh: 1001)" class="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
-                  <button onclick="loadMaterialById()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm"><i class="fas fa-search mr-1"></i>Cari</button>
+                  <input
+                    type="text"
+                    id="manualId"
+                    placeholder="Kode Part (contoh: 20260004I)"
+                    class="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                  />
+                  <button
+                    onclick="loadMaterialById()"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm"
+                  >
+                    <i class="fas fa-search mr-1"></i>Cari
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-          <div id="qcForm" class="hidden bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">Input Hasil QC</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-slate-50 rounded-lg">
-              <div><p class="text-xs text-slate-500">No Part</p><p class="font-semibold text-slate-800" id="infoNoPart">-</p></div>
-              <div><p class="text-xs text-slate-500">Nama Part</p><p class="font-semibold text-slate-800" id="infoNamaPart">-</p></div>
-              <div><p class="text-xs text-slate-500">Jenis Treatment</p><p class="font-semibold text-slate-800" id="infoTreatment">-</p></div>
-              <div><p class="text-xs text-slate-500">Status Produksi</p><p class="font-semibold text-slate-800" id="infoProdStatus">-</p></div>
+          <div
+            id="qcForm"
+            class="hidden bg-white rounded-xl p-4 shadow-sm fade-in"
+          >
+            <h3 class="text-base font-bold text-slate-800 mb-3">
+              Data Part
+            </h3>
+            <div
+              class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 p-3 bg-slate-50 rounded-lg text-xs"
+            >
+              <div>
+                <p class="text-slate-500">Nomor Kode</p>
+                <p class="font-mono font-semibold text-slate-800" id="infoKode">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Customer</p>
+                <p class="font-semibold text-slate-800" id="infoCustomer">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Nomor Part</p>
+                <p class="font-semibold text-slate-800" id="infoNoPart">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Nama Part</p>
+                <p class="font-semibold text-slate-800" id="infoNamaPart">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Status Part</p>
+                <p class="font-semibold text-slate-800" id="infoStatusPart">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Lot Number</p>
+                <p class="font-semibold text-slate-800" id="infoLot">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Material Charge</p>
+                <p class="font-semibold text-slate-800" id="infoCharge">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Target Hardness</p>
+                <p class="font-semibold font-mono text-slate-800" id="infoTargetHardness">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Qty</p>
+                <p class="font-semibold text-slate-800" id="infoQty">-</p>
+              </div>
+            </div>
+            <h3 class="text-base font-bold text-slate-800 mb-3">
+              Input Hasil QC
+            </h3>
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-slate-50 rounded-lg"
+            >
+              <div>
+                <p class="text-xs text-slate-500">Nama Inspector</p>
+                <input
+                  type="text"
+                  id="qcInspector"
+                  required
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                  placeholder="Nama Inspector"
+                />
+              </div>
+              <div>
+                <p class="text-xs text-slate-500">Tanggal Inspector</p>
+                <input
+                  type="date"
+                  id="qcTanggalInspector"
+                  required
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                />
+              </div>
             </div>
             <form id="hasilForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input type="hidden" id="qcProductionId" />
               <input type="hidden" id="qcId" />
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Nilai Hardness</label>
-                <input type="text" id="qcHardness" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" placeholder="Contoh: 58-62 HRC" />
+                <label class="block text-xs font-medium text-slate-600 mb-1"
+                  >Nilai Hardness</label
+                >
+                <input
+                  type="text"
+                  id="qcHardness"
+                  required
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                  placeholder="Contoh: 58-62 HRC"
+                />
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1">Hasil QC</label>
-                <select id="qcHasil" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                <label class="block text-xs font-medium text-slate-600 mb-1"
+                  >Hasil QC</label
+                >
+                <select
+                  id="qcHasil"
+                  required
+                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                >
                   <option value="">Pilih Hasil</option>
                   <option value="OK">OK (Lulus)</option>
                   <option value="NG">NG (Tidak Lulus)</option>
                 </select>
               </div>
               <div class="flex items-end">
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition"><i class="fas fa-save mr-2"></i>Simpan Hasil QC</button>
+                <button
+                  type="submit"
+                  class="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition"
+                >
+                  <i class="fas fa-save mr-2"></i>Simpan Hasil QC
+                </button>
               </div>
             </form>
           </div>
@@ -103,7 +297,8 @@
               <table class="w-full text-left">
                 <thead class="bg-slate-50 text-slate-600 text-xs uppercase">
                   <tr>
-                    <th class="px-3 py-2 rounded-l-lg">No Part</th>
+                    <th class="px-3 py-2 rounded-l-lg">Nomor Kode</th>
+                    <th class="px-3 py-2">Customer</th>
                     <th class="px-3 py-2">Nama Part</th>
                     <th class="px-3 py-2">Treatment</th>
                     <th class="px-3 py-2">Hardness</th>
@@ -111,7 +306,10 @@
                     <th class="px-3 py-2 rounded-r-lg">Aksi</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 text-xs" id="qcTable"></tbody>
+                <tbody
+                  class="divide-y divide-slate-100 text-xs"
+                  id="qcTable"
+                ></tbody>
               </table>
             </div>
           </div>
@@ -122,11 +320,14 @@
     <script src="js/auth.js"></script>
     <script>
       Auth.initDefaultUser();
-      if (!Auth.isLoggedIn()) { window.location.href = "login.html"; }
+      if (!Auth.isLoggedIn()) {
+        window.location.href = "login.html";
+      }
       let html5QrCode = null;
       const session = Auth.getSession();
       if (session) {
-        document.getElementById("sidebarInitial").textContent = Auth.getInitials(session.name);
+        document.getElementById("sidebarInitial").textContent =
+          Auth.getInitials(session.name);
         document.getElementById("sidebarName").textContent = session.name;
         document.getElementById("sidebarRole").textContent = session.role;
       }
@@ -136,43 +337,126 @@
       }
       function startScanner() {
         if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 200, height: 200 } }, (decodedText) => {
-          const id = parseMaterialId(decodedText);
-          html5QrCode.stop().then(() => { html5QrCode.clear(); startScanner(); });
-          loadMaterialById(id);
-        }, () => {}).catch((err) => console.error(err));
+        html5QrCode
+          .start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 200, height: 200 } },
+            (decodedText) => {
+              const id = parseMaterialId(decodedText);
+              html5QrCode.stop().then(() => {
+                html5QrCode.clear();
+                startScanner();
+              });
+              loadMaterialById(id);
+            },
+            () => {},
+          )
+          .catch((err) => console.error(err));
       }
       function loadMaterialById(manualId) {
         const id = manualId || document.getElementById("manualId").value;
         const material = DB.findMaterial(id);
-        if (!material) { alert("Material tidak ditemukan!"); return; }
-        const production = DB.get("productions").find((p) => p.material_id == material.id);
-        if (!production) { alert("Material ini belum memiliki data produksi. Silakan update di modul Produksi terlebih dahulu."); return; }
+        if (!material) {
+          alert("Material tidak ditemukan!");
+          return;
+        }
+        const production = DB.get("productions").find(
+          (p) => p.material_id == material.id,
+        );
+        if (!production) {
+          alert(
+            "Material ini belum memiliki data produksi. Silakan update di modul Produksi terlebih dahulu.",
+          );
+          return;
+        }
         const part = DB.findPartById(material.part_id);
-        document.getElementById("infoNoPart").textContent = part ? part.nomor_part : "-";
-        document.getElementById("infoNamaPart").textContent = part ? part.nama_part : "-";
-        document.getElementById("infoTreatment").textContent = production.jenis_treatment || "-";
-        document.getElementById("infoProdStatus").textContent = production.status;
+        const customer = DB.findCustomerById(material.customer_id);
+        document.getElementById("infoKode").textContent =
+          material.kode || "-";
+        document.getElementById("infoCustomer").textContent =
+          customer ? customer.nama_customer : "-";
+        document.getElementById("infoNoPart").textContent = part
+          ? part.nomor_part
+          : "-";
+        document.getElementById("infoNamaPart").textContent = part
+          ? part.nama_part
+          : "-";
+        document.getElementById("infoStatusPart").textContent =
+          material.status_part || "-";
+        document.getElementById("infoLot").textContent =
+          material.lot_no || "-";
+        document.getElementById("infoCharge").textContent =
+          material.material_charge || "-";
+        document.getElementById("infoTargetHardness").textContent =
+          part ? part.target_hardness || "-" : "-";
+        document.getElementById("infoQty").textContent =
+          material.qty || 0;
+        document.getElementById("infoTreatment").textContent =
+          production.jenis_treatment || "-";
+        document.getElementById("infoProdStatus").textContent =
+          production.status;
         document.getElementById("qcProductionId").value = production.id;
-        const existing = DB.get("qcs").find((q) => q.production_id == production.id);
+        const existing = DB.get("qcs").find(
+          (q) => q.production_id == production.id,
+        );
         if (existing) {
           document.getElementById("qcId").value = existing.id;
           document.getElementById("qcHardness").value = existing.hardness;
           document.getElementById("qcHasil").value = existing.hasil;
+          document.getElementById("qcInspector").value = existing.inspector || "";
+          document.getElementById("qcTanggalInspector").value = existing.tanggal_inspector || "";
         } else {
           document.getElementById("qcId").value = "";
           document.getElementById("qcHardness").value = "";
           document.getElementById("qcHasil").value = "";
+          document.getElementById("qcInspector").value = "";
+          document.getElementById("qcTanggalInspector").value = "";
         }
         document.getElementById("qcForm").classList.remove("hidden");
-        document.getElementById("qcForm").scrollIntoView({ behavior: "smooth" });
+        document
+          .getElementById("qcForm")
+          .scrollIntoView({ behavior: "smooth" });
       }
       document.getElementById("hasilForm").addEventListener("submit", (e) => {
         e.preventDefault();
-        const productionId = parseInt(document.getElementById("qcProductionId").value);
+        const productionId = parseInt(
+          document.getElementById("qcProductionId").value,
+        );
         const qcId = document.getElementById("qcId").value;
-        const data = { production_id: productionId, hardness: document.getElementById("qcHardness").value, hasil: document.getElementById("qcHasil").value };
-        if (qcId) DB.update("qcs", qcId, data); else DB.insert("qcs", data);
+        const inspector = document.getElementById("qcInspector").value.trim();
+        const tanggalInspector = document.getElementById("qcTanggalInspector").value;
+        const hardness = document.getElementById("qcHardness").value.trim();
+        const hasil = document.getElementById("qcHasil").value;
+        const kode = document.getElementById("infoKode").textContent;
+        if (!kode || kode === "-") {
+          alert("Nomor Kode tidak ditemukan!");
+          return;
+        }
+        if (!inspector) {
+          alert("Nama Inspector wajib diisi!");
+          return;
+        }
+        if (!tanggalInspector) {
+          alert("Tanggal Inspector wajib diisi!");
+          return;
+        }
+        if (!hardness) {
+          alert("Nilai Hardness wajib diisi!");
+          return;
+        }
+        if (!hasil) {
+          alert("Hasil QC wajib dipilih!");
+          return;
+        }
+        const data = {
+          production_id: productionId,
+          hardness,
+          hasil,
+          inspector,
+          tanggal_inspector: tanggalInspector,
+        };
+        if (qcId) DB.update("qcs", qcId, data);
+        else DB.insert("qcs", data);
         alert("Hasil QC berhasil disimpan!");
         loadQCs();
       });
@@ -180,13 +464,19 @@
         const qcs = DB.get("qcs");
         const productions = DB.get("productions");
         const materials = DB.get("materials");
-        const html = qcs.map((q) => {
-          const prod = productions.find((p) => p.id == q.production_id) || {};
-          const m = materials.find((mat) => mat.id == prod.material_id) || {};
-          const part = DB.findPartById(m.part_id);
-          const hasilColor = q.hasil === "OK" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600";
-          return `<tr class="hover:bg-slate-50 transition">
-            <td class="px-3 py-2 font-medium">${part ? part.nomor_part : "-"}</td>
+        const html = qcs
+          .map((q) => {
+            const prod = productions.find((p) => p.id == q.production_id) || {};
+            const m = materials.find((mat) => mat.id == prod.material_id) || {};
+            const part = DB.findPartById(m.part_id);
+            const cust = DB.findCustomerById(m.customer_id);
+            const hasilColor =
+              q.hasil === "OK"
+                ? "bg-emerald-100 text-emerald-600"
+                : "bg-red-100 text-red-600";
+            return `<tr class="hover:bg-slate-50 transition">
+            <td class="px-3 py-2 font-mono">${m.kode || "-"}</td>
+            <td class="px-3 py-2">${cust ? cust.nama_customer : "-"}</td>
             <td class="px-3 py-2">${part ? part.nama_part : "-"}</td>
             <td class="px-3 py-2 text-slate-500">${prod.jenis_treatment || "-"}</td>
             <td class="px-3 py-2 font-mono">${q.hardness}</td>
@@ -196,11 +486,23 @@
               <button onclick="deleteQC(${q.id})" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
             </td>
           </tr>`;
-        }).join("");
-        document.getElementById("qcTable").innerHTML = html || '<tr><td colspan="6" class="text-center py-4 text-slate-400">Belum ada data QC</td></tr>';
+          })
+          .join("");
+        document.getElementById("qcTable").innerHTML =
+          html ||
+          '<tr><td colspan="7" class="text-center py-4 text-slate-400">Belum ada data QC</td></tr>';
       }
-      function deleteQC(id) { if (confirm("Hapus data QC ini?")) { DB.delete("qcs", id); loadQCs(); } }
-      window.addEventListener("DOMContentLoaded", () => { DB.init(); startScanner(); loadQCs(); });
+      function deleteQC(id) {
+        if (confirm("Hapus data QC ini?")) {
+          DB.delete("qcs", id);
+          loadQCs();
+        }
+      }
+      window.addEventListener("DOMContentLoaded", () => {
+        DB.init();
+        startScanner();
+        loadQCs();
+      });
     </script>
   </body>
 </html>

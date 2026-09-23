@@ -64,9 +64,27 @@ const DB = {
     return this.get("materials").filter((m) => m.customer_id == customerId);
   },
   migrate() {
+    const validPartFields = ["id","customer_id","nomor_part","nama_part","berat_part","satuan_berat","target_hardness","status","created_at","updated_at"];
+    const parts = this.get("parts");
+    let changed = false;
+    for (const p of parts) {
+      const keys = Object.keys(p);
+      for (const k of keys) { if (!validPartFields.includes(k)) { delete p[k]; changed = true; } }
+      if (!("target_hardness" in p)) { p.target_hardness = null; changed = true; }
+      if (!("status" in p)) { p.status = "Active"; changed = true; }
+    }
+    if (changed) localStorage.setItem("ht_parts", JSON.stringify(parts));
+    const validMaterialFields = ["id","kode","customer_id","part_id","nomor_surat_jalan","lot_no","material_charge","status_part","qty","berat_part_snapshot","berat_total_part","tanggal_masuk","keterangan","process_type","diinput_oleh","tracking_id","qr_code","status_proses","created_at","updated_at"];
+    const materials = this.get("materials");
+    changed = false;
+    for (const m of materials) {
+      const keys = Object.keys(m);
+      for (const k of keys) { if (!validMaterialFields.includes(k)) { delete m[k]; changed = true; } }
+    }
+    if (changed) localStorage.setItem("ht_materials", JSON.stringify(materials));
     const validFields = ["id","material_id","tracking_id","incoming_id","status","production_status","start_scan_at","start_scan_by","visual_check_result","visual_check_note","machine_start_at","machine_start_by","finish_scan_at","finish_scan_by","process_result","process_ng_note","machine_finish_at","machine_finish_by","tanggal_proses","jenis_treatment","created_at","updated_at"];
     const productions = this.get("productions");
-    let changed = false;
+    changed = false;
     for (const p of productions) {
       const keys = Object.keys(p);
       for (const k of keys) { if (!validFields.includes(k)) { delete p[k]; changed = true; } }
@@ -89,14 +107,14 @@ const DB = {
     ];
     localStorage.setItem("ht_customers", JSON.stringify(customers));
     const parts = [
-      { id: 1, customer_id: 1, nomor_part: "HT-CUST001-001", nama_part: "Crankshaft A", berat_part: 2.5, satuan_berat: "KG/PCS", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-      { id: 2, customer_id: 1, nomor_part: "HT-CUST001-002", nama_part: "Gear Housing A", berat_part: 3.2, satuan_berat: "KG/PCS", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-      { id: 3, customer_id: 2, nomor_part: "HT-CUST002-001", nama_part: "Gear Shaft B", berat_part: 1.8, satuan_berat: "KG/PCS", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-      { id: 4, customer_id: 2, nomor_part: "HT-CUST002-002", nama_part: "Piston Ring B", berat_part: 0.5, satuan_berat: "KG/PCS", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-      { id: 5, customer_id: 3, nomor_part: "HT-CUST003-001", nama_part: "Camshaft Pro", berat_part: 4.0, satuan_berat: "KG/PCS", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-      { id: 6, customer_id: 3, nomor_part: "HT-CUST003-002", nama_part: "Connecting Rod C", berat_part: 2.1, satuan_berat: "KG/PCS", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-      { id: 7, customer_id: 4, nomor_part: "HT-CUST004-001", nama_part: "Piston Rod X", berat_part: 3.5, satuan_berat: "KG/PCS", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
-      { id: 8, customer_id: 5, nomor_part: "HT-CUST005-001", nama_part: "Valve Stem Z", berat_part: 1.2, satuan_berat: "KG/PCS", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+      { id: 1, customer_id: 1, nomor_part: "HT-CUST001-001", nama_part: "Crankshaft A", berat_part: 2.5, satuan_berat: "KG/PCS", target_hardness: "58-62 HRC", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+      { id: 2, customer_id: 1, nomor_part: "HT-CUST001-002", nama_part: "Gear Housing A", berat_part: 3.2, satuan_berat: "KG/PCS", target_hardness: "60-64 HRC", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+      { id: 3, customer_id: 2, nomor_part: "HT-CUST002-001", nama_part: "Gear Shaft B", berat_part: 1.8, satuan_berat: "KG/PCS", target_hardness: "55-60 HRC", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+      { id: 4, customer_id: 2, nomor_part: "HT-CUST002-002", nama_part: "Piston Ring B", berat_part: 0.5, satuan_berat: "KG/PCS", target_hardness: "700-750 HV", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+      { id: 5, customer_id: 3, nomor_part: "HT-CUST003-001", nama_part: "Camshaft Pro", berat_part: 4.0, satuan_berat: "KG/PCS", target_hardness: "45-50 HRC", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+      { id: 6, customer_id: 3, nomor_part: "HT-CUST003-002", nama_part: "Connecting Rod C", berat_part: 2.1, satuan_berat: "KG/PCS", target_hardness: "50-55 HRC", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+      { id: 7, customer_id: 4, nomor_part: "HT-CUST004-001", nama_part: "Piston Rod X", berat_part: 3.5, satuan_berat: "KG/PCS", target_hardness: "58-62 HRC", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
+      { id: 8, customer_id: 5, nomor_part: "HT-CUST005-001", nama_part: "Valve Stem Z", berat_part: 1.2, satuan_berat: "KG/PCS", target_hardness: "40-45 HRC", status: "Active", created_at: "2024-01-01T00:00:00Z", updated_at: "2024-01-01T00:00:00Z" },
     ];
     localStorage.setItem("ht_parts", JSON.stringify(parts));
     const materials = [

@@ -6,162 +6,452 @@
     <title>Produksi - Sistem Informasi Produksi Heat Treatment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-      body { font-family: "Inter", sans-serif; background: #f1f5f9; }
-      .sidebar-link { transition: all 0.2s; }
-      .sidebar-link:hover, .sidebar-link.active { background: #3b82f6; color: white; }
-      .fade-in { animation: fadeIn 0.3s ease-out; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #f1f5f9;
+      }
+      .sidebar-link {
+        transition: all 0.2s;
+      }
+      .sidebar-link:hover,
+      .sidebar-link.active {
+        background: #3b82f6;
+        color: white;
+      }
+      .fade-in {
+        animation: fadeIn 0.3s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
   <body class="text-slate-800">
     <div class="flex h-screen overflow-hidden">
       <aside class="w-56 bg-slate-900 text-white flex flex-col shadow-2xl z-20">
         <div class="p-5 border-b border-slate-700">
-          <h1 class="text-lg font-bold"><i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment</h1>
+          <h1 class="text-lg font-bold">
+            <i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment
+          </h1>
           <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
         </div>
         <nav class="flex-1 p-3 space-y-1">
-          <a href="index.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-chart-line w-5"></i> Dashboard</a>
-          <div class="pt-2"><p class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider">Master Data</p></div>
-          <a href="customer.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-users w-5"></i> Customer</a>
-          <a href="part.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-cogs w-5"></i> Part</a>
-          <a href="incoming.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-box w-5"></i> Incoming</a>
-          <div class="pt-2"><p class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider">Produksi</p></div>
-          <a href="produksi-masuk.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"><i class="fas fa-play w-5"></i> Masuk Proses</a>
-          <a href="produksi-akhir.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a>
-          <a href="qc.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-clipboard-check w-5"></i> Quality Control</a>
-          <a href="delivery.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-shipping-fast w-5"></i> Delivery</a>
-          <a href="tracking.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-search-location w-5"></i> Tracking</a>
+          <a
+            href="index.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-chart-line w-5"></i> Dashboard</a
+          >
+          <div class="pt-2">
+            <p
+              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
+            >
+              Master Data
+            </p>
+          </div>
+          <a
+            href="customer.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-users w-5"></i> Customer</a
+          >
+          <a
+            href="part.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-cogs w-5"></i> Part</a
+          >
+          <a
+            href="incoming.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-box w-5"></i> Incoming</a
+          >
+          <div class="pt-2">
+            <p
+              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
+            >
+              Produksi
+            </p>
+          </div>
+          <a
+            href="produksi-masuk.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
+            ><i class="fas fa-play w-5"></i> Masuk Proses</a
+          >
+          <a
+            href="produksi-akhir.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
+            ><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a
+          >
+          <a
+            href="qc.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-clipboard-check w-5"></i> Quality Control</a
+          >
+          <a
+            href="delivery.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-shipping-fast w-5"></i> Delivery</a
+          >
+          <a
+            href="tracking.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-search-location w-5"></i> Tracking</a
+          >
         </nav>
         <div class="p-3 border-t border-slate-700">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm" id="sidebarInitial">A</div>
+              <div
+                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
+                id="sidebarInitial"
+              >
+                A
+              </div>
               <div>
                 <p class="text-xs font-medium" id="sidebarName">Admin User</p>
-                <p class="text-[10px] text-slate-400" id="sidebarRole">Administrator</p>
+                <p class="text-[10px] text-slate-400" id="sidebarRole">
+                  Administrator
+                </p>
               </div>
             </div>
-            <button onclick="Auth.logout();window.location.href='login.html'" class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+            <button
+              onclick="
+                Auth.logout();
+                window.location.href = 'login.html';
+              "
+              class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition"
+              title="Logout"
+            >
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
           </div>
         </div>
       </aside>
       <main class="flex-1 overflow-y-auto">
-        <header class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center">
+        <header
+          class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center"
+        >
           <h2 class="text-xl font-bold text-slate-800">Modul Produksi</h2>
         </header>
         <div class="p-5 space-y-4">
           <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">Scan QR / Input Tracking ID</h3>
+            <h3 class="text-base font-bold text-slate-800 mb-3">
+              Scan QR / Input Kode
+            </h3>
             <div class="flex flex-col md:flex-row gap-4">
               <div class="flex-1">
-                <div id="qr-reader" class="rounded-lg overflow-hidden border max-w-sm"></div>
+                <div
+                  id="qr-reader"
+                  class="rounded-lg overflow-hidden border max-w-sm"
+                ></div>
               </div>
               <div class="flex-1 space-y-2">
-                <p class="text-xs text-slate-500">Atau masukkan Tracking ID secara manual:</p>
+                <p class="text-xs text-slate-500">
+                  Atau masukkan Nomor Kode secara manual:
+                </p>
                 <div class="flex gap-2">
-                  <input type="text" id="manualId" placeholder="Tracking ID (contoh: HT-2026-00001)" class="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" />
-                  <button onclick="loadMaterialById()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm"><i class="fas fa-search mr-1"></i>Cari</button>
+                  <input
+                    type="text"
+                    id="manualId"
+                    placeholder="Nomor Kode (contoh: 20260004I)"
+                    class="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                  />
+                  <button
+                    onclick="loadMaterialById()"
+                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm"
+                  >
+                    <i class="fas fa-search mr-1"></i>Cari
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
-          <div id="mulaiSection" class="hidden bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3" style="color:#d97706;">MULAI PART DI PROSES</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 p-3 bg-slate-50 rounded-lg text-xs">
-              <div><p class="text-slate-500">Customer</p><p class="font-semibold text-slate-800" id="prodCust">-</p></div>
-              <div><p class="text-slate-500">Nomor Part</p><p class="font-semibold text-slate-800" id="prodNoPart">-</p></div>
-              <div><p class="text-slate-500">Nama Part</p><p class="font-semibold text-slate-800" id="prodNamaPart">-</p></div>
-              <div><p class="text-slate-500">Tracking ID</p><p class="font-mono font-semibold text-slate-800" id="prodTrackingId">-</p></div>
-              <div><p class="text-slate-500">Berat Part</p><p class="font-semibold text-slate-800" id="prodBerat">-</p></div>
-              <div><p class="text-slate-500">Nomor SJ</p><p class="font-mono" id="prodSJ">-</p></div>
-              <div><p class="text-slate-500">Lot No</p><p class="font-mono" id="prodLot">-</p></div>
-              <div><p class="text-slate-500">Material Charge</p><p class="font-mono" id="prodCharge">-</p></div>
-              <div><p class="text-slate-500">Status Part</p><p class="font-semibold" id="prodStatusPart">-</p></div>
-              <div><p class="text-slate-500">Qty</p><p class="font-semibold" id="prodQty">-</p></div>
-              <div><p class="text-slate-500">Berat Total</p><p class="font-semibold" id="prodBeratTotal">-</p></div>
-              <div><p class="text-slate-500">Jenis Proses</p><p class="font-semibold" id="prodProcessType">-</p></div>
-              <div><p class="text-slate-500">Diinput Oleh</p><p class="font-semibold" id="prodDiinput">-</p></div>
-              <div><p class="text-slate-500">Tanggal Masuk</p><p class="font-semibold" id="prodTglMasuk">-</p></div>
+          <div
+            id="mulaiSection"
+            class="hidden bg-white rounded-xl p-4 shadow-sm fade-in"
+          >
+            <h3
+              class="text-base font-bold text-slate-800 mb-3"
+              style="color: #d97706"
+            >
+              MULAI PART DI PROSES
+            </h3>
+            <div
+              class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 p-3 bg-slate-50 rounded-lg text-xs"
+            >
+              <div>
+                <p class="text-slate-500">Customer</p>
+                <p class="font-semibold text-slate-800" id="prodCust">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Nomor Part</p>
+                <p class="font-semibold text-slate-800" id="prodNoPart">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Nama Part</p>
+                <p class="font-semibold text-slate-800" id="prodNamaPart">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Nomor Kode</p>
+                <p
+                  class="font-mono font-semibold text-slate-800"
+                  id="prodTrackingId"
+                >
+                  -
+                </p>
+              </div>
+              <div>
+                <p class="text-slate-500">Berat Part</p>
+                <p class="font-semibold text-slate-800" id="prodBerat">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Nomor SJ</p>
+                <p class="font-mono" id="prodSJ">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Lot No</p>
+                <p class="font-mono" id="prodLot">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Material Charge</p>
+                <p class="font-mono" id="prodCharge">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Status Part</p>
+                <p class="font-semibold" id="prodStatusPart">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Qty</p>
+                <p class="font-semibold" id="prodQty">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Berat Total</p>
+                <p class="font-semibold" id="prodBeratTotal">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Jenis Proses</p>
+                <p class="font-semibold" id="prodProcessType">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Diinput Oleh</p>
+                <p class="font-semibold" id="prodDiinput">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Tanggal Masuk</p>
+                <p class="font-semibold" id="prodTglMasuk">-</p>
+              </div>
             </div>
-            <div id="prodScanInfo" class="hidden text-xs text-slate-500 mb-3 p-2 bg-blue-50 rounded">
-              <p>Waktu Scan: <span id="prodScanTime">-</span> | Operator: <span id="prodScanOperator">-</span></p>
+            <div
+              id="prodScanInfo"
+              class="hidden text-xs text-slate-500 mb-3 p-2 bg-blue-50 rounded"
+            >
+              <p>
+                Waktu Scan: <span id="prodScanTime">-</span> | Operator:
+                <span id="prodScanOperator">-</span>
+              </p>
             </div>
             <div class="bg-white border-2 border-slate-200 rounded-xl p-4 mb-4">
-              <h4 class="font-bold text-sm mb-3">CHECK VISUAL SEBELUM PROSES</h4>
+              <h4 class="font-bold text-sm mb-3">
+                CHECK VISUAL SEBELUM PROSES
+              </h4>
               <div class="flex gap-4 mb-3">
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="visualCheck" id="visualOK" value="OK" class="w-4 h-4 text-emerald-500" />
-                  <span class="text-sm font-medium text-emerald-700">( ) OK</span>
+                  <input
+                    type="radio"
+                    name="visualCheck"
+                    id="visualOK"
+                    value="OK"
+                    class="w-4 h-4 text-emerald-500"
+                  />
+                  <span class="text-sm font-medium text-emerald-700"
+                    >( ) OK</span
+                  >
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="visualCheck" id="visualNG" value="NG" class="w-4 h-4 text-red-500" />
+                  <input
+                    type="radio"
+                    name="visualCheck"
+                    id="visualNG"
+                    value="NG"
+                    class="w-4 h-4 text-red-500"
+                  />
                   <span class="text-sm font-medium text-red-700">( ) NG</span>
                 </label>
               </div>
               <div id="visualNGNote" class="hidden">
-                <label class="block text-xs font-medium text-slate-600 mb-1">Keterangan NG <span class="text-red-500">(Wajib)</span></label>
-                <input type="text" id="prodVisualNote" maxlength="200" class="w-full md:w-1/2 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-red-500 outline-none" placeholder="Contoh: Part dent, Karat, Retak, Permukaan abnormal, Salah part, Kontaminasi, Part kurang, Lainnya" />
+                <label class="block text-xs font-medium text-slate-600 mb-1"
+                  >Keterangan NG
+                  <span class="text-red-500">(Wajib)</span></label
+                >
+                <input
+                  type="text"
+                  id="prodVisualNote"
+                  maxlength="200"
+                  class="w-full md:w-1/2 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-red-500 outline-none"
+                  placeholder="Contoh: Part dent, Karat, Retak, Permukaan abnormal, Salah part, Kontaminasi, Part kurang, Lainnya"
+                />
               </div>
             </div>
             <div class="flex justify-end">
-              <button onclick="confirmMasukMesin()" id="btnMasukMesin" class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition"><i class="fas fa-industry mr-2"></i>KONFIRMASI MASUK MESIN</button>
+              <button
+                onclick="confirmMasukMesin()"
+                id="btnMasukMesin"
+                class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition"
+              >
+                <i class="fas fa-industry mr-2"></i>KONFIRMASI MASUK MESIN
+              </button>
             </div>
           </div>
 
-          <div id="finishSection" class="hidden bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3" style="color:#1d4ed8;">FINISH / PART SELESAI PROSES</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 p-3 bg-slate-50 rounded-lg text-xs">
-              <div><p class="text-slate-500">Customer</p><p class="font-semibold text-slate-800" id="finCust">-</p></div>
-              <div><p class="text-slate-500">Nomor Part</p><p class="font-semibold text-slate-800" id="finNoPart">-</p></div>
-              <div><p class="text-slate-500">Nama Part</p><p class="font-semibold text-slate-800" id="finNamaPart">-</p></div>
-              <div><p class="text-slate-500">Tracking ID</p><p class="font-mono font-semibold text-slate-800" id="finTrackingId">-</p></div>
-              <div><p class="text-slate-500">Lot No</p><p class="font-mono" id="finLot">-</p></div>
-              <div><p class="text-slate-500">Material Charge</p><p class="font-mono" id="finCharge">-</p></div>
-              <div><p class="text-slate-500">Jenis Proses</p><p class="font-semibold" id="finProcessType">-</p></div>
-              <div><p class="text-slate-500">Qty</p><p class="font-semibold" id="finQty">-</p></div>
-              <div><p class="text-slate-500">Berat Total</p><p class="font-semibold" id="finBeratTotal">-</p></div>
-              <div><p class="text-slate-500">Waktu Scan Mulai</p><p class="font-mono" id="finScanMulai">-</p></div>
-              <div><p class="text-slate-500">Waktu Masuk Mesin</p><p class="font-mono" id="finMasukMesin">-</p></div>
-              <div><p class="text-slate-500">Operator</p><p class="font-semibold" id="finOperator">-</p></div>
+          <div
+            id="finishSection"
+            class="hidden bg-white rounded-xl p-4 shadow-sm fade-in"
+          >
+            <h3
+              class="text-base font-bold text-slate-800 mb-3"
+              style="color: #1d4ed8"
+            >
+              FINISH / PART SELESAI PROSES
+            </h3>
+            <div
+              class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 p-3 bg-slate-50 rounded-lg text-xs"
+            >
+              <div>
+                <p class="text-slate-500">Customer</p>
+                <p class="font-semibold text-slate-800" id="finCust">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Nomor Part</p>
+                <p class="font-semibold text-slate-800" id="finNoPart">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Nama Part</p>
+                <p class="font-semibold text-slate-800" id="finNamaPart">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Nomor Kode</p>
+                <p
+                  class="font-mono font-semibold text-slate-800"
+                  id="finTrackingId"
+                >
+                  -
+                </p>
+              </div>
+              <div>
+                <p class="text-slate-500">Lot No</p>
+                <p class="font-mono" id="finLot">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Material Charge</p>
+                <p class="font-mono" id="finCharge">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Jenis Proses</p>
+                <p class="font-semibold" id="finProcessType">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Qty</p>
+                <p class="font-semibold" id="finQty">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Berat Total</p>
+                <p class="font-semibold" id="finBeratTotal">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Waktu Scan Mulai</p>
+                <p class="font-mono" id="finScanMulai">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Waktu Masuk Mesin</p>
+                <p class="font-mono" id="finMasukMesin">-</p>
+              </div>
+              <div>
+                <p class="text-slate-500">Operator</p>
+                <p class="font-semibold" id="finOperator">-</p>
+              </div>
             </div>
-            <div id="prodFinishInfo" class="hidden text-xs text-slate-500 mb-3 p-2 bg-blue-50 rounded">
-              <p>Waktu Scan Keluar: <span id="prodFinishScanTime">-</span> | Operator Finish: <span id="prodFinishOperator">-</span></p>
+            <div
+              id="prodFinishInfo"
+              class="hidden text-xs text-slate-500 mb-3 p-2 bg-blue-50 rounded"
+            >
+              <p>
+                Waktu Scan Keluar: <span id="prodFinishScanTime">-</span> |
+                Operator Finish: <span id="prodFinishOperator">-</span>
+              </p>
             </div>
             <div class="bg-white border-2 border-slate-200 rounded-xl p-4 mb-4">
               <h4 class="font-bold text-sm mb-3">HASIL PROSES</h4>
               <div class="flex gap-4 mb-3">
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="prodResult" id="resultOK" value="OK" class="w-4 h-4 text-emerald-500" />
-                  <span class="text-sm font-medium text-emerald-700">( ) OK</span>
+                  <input
+                    type="radio"
+                    name="prodResult"
+                    id="resultOK"
+                    value="OK"
+                    class="w-4 h-4 text-emerald-500"
+                  />
+                  <span class="text-sm font-medium text-emerald-700"
+                    >( ) OK</span
+                  >
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="prodResult" id="resultNG" value="NG" class="w-4 h-4 text-red-500" />
+                  <input
+                    type="radio"
+                    name="prodResult"
+                    id="resultNG"
+                    value="NG"
+                    class="w-4 h-4 text-red-500"
+                  />
                   <span class="text-sm font-medium text-red-700">( ) NG</span>
                 </label>
               </div>
               <div id="resultNGNote" class="hidden">
-                <label class="block text-xs font-medium text-slate-600 mb-1">Keterangan Penyebab NG <span class="text-red-500">(Wajib)</span></label>
-                <input type="text" id="prodResultNote" maxlength="200" class="w-full md:w-1/2 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-red-500 outline-none" placeholder="Jelaskan penyebab NG" />
+                <label class="block text-xs font-medium text-slate-600 mb-1"
+                  >Keterangan Penyebab NG
+                  <span class="text-red-500">(Wajib)</span></label
+                >
+                <input
+                  type="text"
+                  id="prodResultNote"
+                  maxlength="200"
+                  class="w-full md:w-1/2 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-red-500 outline-none"
+                  placeholder="Jelaskan penyebab NG"
+                />
               </div>
             </div>
             <div class="flex justify-end">
-              <button onclick="confirmKeluarMesin()" id="btnKeluarMesin" class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition"><i class="fas fa-check mr-2"></i>KONFIRMASI PART KELUAR</button>
+              <button
+                onclick="confirmKeluarMesin()"
+                id="btnKeluarMesin"
+                class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition"
+              >
+                <i class="fas fa-check mr-2"></i>KONFIRMASI PART KELUAR
+              </button>
             </div>
           </div>
 
           <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">Riwayat Produksi</h3>
+            <h3 class="text-base font-bold text-slate-800 mb-3">
+              Riwayat Produksi
+            </h3>
             <div class="overflow-x-auto">
               <table class="w-full text-left">
                 <thead class="bg-slate-50 text-slate-600 text-xs uppercase">
                   <tr>
                     <th class="px-3 py-2 rounded-l-lg">No</th>
-                    <th class="px-3 py-2">Tracking ID</th>
+                    <th class="px-3 py-2">Nomor Kode</th>
                     <th class="px-3 py-2">Customer</th>
                     <th class="px-3 py-2">Nomor Part</th>
                     <th class="px-3 py-2">Nama Part</th>
@@ -176,7 +466,10 @@
                     <th class="px-3 py-2 rounded-r-lg">Status</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 text-xs" id="productionTable"></tbody>
+                <tbody
+                  class="divide-y divide-slate-100 text-xs"
+                  id="productionTable"
+                ></tbody>
               </table>
             </div>
           </div>
@@ -187,13 +480,16 @@
     <script src="js/auth.js"></script>
     <script>
       Auth.initDefaultUser();
-      if (!Auth.isLoggedIn()) { window.location.href = "login.html"; }
+      if (!Auth.isLoggedIn()) {
+        window.location.href = "login.html";
+      }
       let html5QrCode = null;
       let currentMaterial = null;
       let currentProduction = null;
       const session = Auth.getSession();
       if (session) {
-        document.getElementById("sidebarInitial").textContent = Auth.getInitials(session.name);
+        document.getElementById("sidebarInitial").textContent =
+          Auth.getInitials(session.name);
         document.getElementById("sidebarName").textContent = session.name;
         document.getElementById("sidebarRole").textContent = session.role;
       }
@@ -203,115 +499,277 @@
       }
       function startScanner() {
         if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 200, height: 200 } }, (decodedText) => {
-          const id = parseMaterialId(decodedText);
-          html5QrCode.stop().then(() => { html5QrCode.clear(); startScanner(); });
-          loadMaterialById(id);
-        }, () => {}).catch((err) => console.error(err));
+        html5QrCode
+          .start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 200, height: 200 } },
+            (decodedText) => {
+              const id = parseMaterialId(decodedText);
+              html5QrCode.stop().then(() => {
+                html5QrCode.clear();
+                startScanner();
+              });
+              loadMaterialById(id);
+            },
+            () => {},
+          )
+          .catch((err) => console.error(err));
       }
       function loadMaterialById(manualId) {
         const id = manualId || document.getElementById("manualId").value;
         if (!id) return;
         const material = DB.findMaterial(id);
-        if (!material) { alert("Material tidak ditemukan! ID: " + id); return; }
+        if (!material) {
+          alert("Material tidak ditemukan! ID: " + id);
+          return;
+        }
         currentMaterial = material;
-        const prod = DB.get("productions").find((p) => p.material_id == material.id);
+        const prod = DB.get("productions").find(
+          (p) => p.material_id == material.id,
+        );
         currentProduction = prod || null;
         const part = DB.findPartById(material.part_id);
         const cust = DB.findCustomerById(material.customer_id);
-        document.getElementById("prodCust").textContent = cust ? cust.nama_customer : "-";
-        document.getElementById("prodNoPart").textContent = part ? part.nomor_part : "-";
-        document.getElementById("prodNamaPart").textContent = part ? part.nama_part : "-";
-        document.getElementById("prodTrackingId").textContent = material.tracking_id || "-";
-        document.getElementById("prodBerat").textContent = part ? part.berat_part + " " + (part.satuan_berat || "KG/PCS") : "-";
-        document.getElementById("prodSJ").textContent = material.nomor_surat_jalan || "-";
+        document.getElementById("prodCust").textContent = cust
+          ? cust.nama_customer
+          : "-";
+        document.getElementById("prodNoPart").textContent = part
+          ? part.nomor_part
+          : "-";
+        document.getElementById("prodNamaPart").textContent = part
+          ? part.nama_part
+          : "-";
+          document.getElementById("prodTrackingId").textContent =
+            material.kode || "-";
+        document.getElementById("prodBerat").textContent = part
+          ? part.berat_part + " " + (part.satuan_berat || "KG/PCS")
+          : "-";
+        document.getElementById("prodSJ").textContent =
+          material.nomor_surat_jalan || "-";
         document.getElementById("prodLot").textContent = material.lot_no || "-";
-        document.getElementById("prodCharge").textContent = material.material_charge || "-";
-        document.getElementById("prodStatusPart").textContent = material.status_part || "-";
+        document.getElementById("prodCharge").textContent =
+          material.material_charge || "-";
+        document.getElementById("prodStatusPart").textContent =
+          material.status_part || "-";
         document.getElementById("prodQty").textContent = material.qty || "-";
-        document.getElementById("prodBeratTotal").textContent = material.berat_total_part ? material.berat_total_part.toLocaleString("id-ID") + " KG" : "-";
-        document.getElementById("prodProcessType").textContent = material.process_type || "-";
-        document.getElementById("prodDiinput").textContent = material.diinput_oleh || "-";
-        document.getElementById("prodTglMasuk").textContent = material.tanggal_masuk || "-";
+        document.getElementById("prodBeratTotal").textContent =
+          material.berat_total_part
+            ? material.berat_total_part.toLocaleString("id-ID") + " KG"
+            : "-";
+        document.getElementById("prodProcessType").textContent =
+          material.process_type || "-";
+        document.getElementById("prodDiinput").textContent =
+          material.diinput_oleh || "-";
+        document.getElementById("prodTglMasuk").textContent =
+          material.tanggal_masuk || "-";
         const startScanDiv = document.getElementById("prodScanInfo");
         if (prod && prod.start_scan_at) {
           startScanDiv.classList.remove("hidden");
-          document.getElementById("prodScanTime").textContent = prod.start_scan_at;
-          document.getElementById("prodScanOperator").textContent = prod.start_scan_by || session ? (session ? session.name : "-") : "-";
-        } else { startScanDiv.classList.add("hidden"); }
-        if (currentProduction && (currentProduction.status === "Process" || currentProduction.status === "Finish")) {
+          document.getElementById("prodScanTime").textContent =
+            prod.start_scan_at;
+          document.getElementById("prodScanOperator").textContent =
+            prod.start_scan_by || session
+              ? session
+                ? session.name
+                : "-"
+              : "-";
+        } else {
+          startScanDiv.classList.add("hidden");
+        }
+        if (
+          currentProduction &&
+          (currentProduction.status === "Process" ||
+            currentProduction.status === "Finish")
+        ) {
           document.getElementById("btnMasukMesin").disabled = true;
           document.getElementById("btnMasukMesin").classList.add("opacity-50");
-        } else { document.getElementById("btnMasukMesin").disabled = false; document.getElementById("btnMasukMesin").classList.remove("opacity-50"); }
+        } else {
+          document.getElementById("btnMasukMesin").disabled = false;
+          document
+            .getElementById("btnMasukMesin")
+            .classList.remove("opacity-50");
+        }
         document.getElementById("mulaiSection").classList.remove("hidden");
-        document.getElementById("mulaiSection").scrollIntoView({ behavior: "smooth" });
-        if (currentProduction && (currentProduction.production_status === "PROCESS" || currentProduction.production_status === "FINISH" || currentProduction.production_status === "FINISH_NG")) {
+        document
+          .getElementById("mulaiSection")
+          .scrollIntoView({ behavior: "smooth" });
+        if (
+          currentProduction &&
+          (currentProduction.production_status === "PROCESS" ||
+            currentProduction.production_status === "FINISH" ||
+            currentProduction.production_status === "FINISH_NG")
+        ) {
           document.getElementById("finishSection").classList.remove("hidden");
-          document.getElementById("finCust").textContent = cust ? cust.nama_customer : "-";
-          document.getElementById("finNoPart").textContent = part ? part.nomor_part : "-";
-          document.getElementById("finNamaPart").textContent = part ? part.nama_part : "-";
-          document.getElementById("finTrackingId").textContent = material.tracking_id || "-";
-          document.getElementById("finLot").textContent = material.lot_no || "-";
-          document.getElementById("finCharge").textContent = material.material_charge || "-";
-          document.getElementById("finProcessType").textContent = material.process_type || "-";
+          document.getElementById("finCust").textContent = cust
+            ? cust.nama_customer
+            : "-";
+          document.getElementById("finNoPart").textContent = part
+            ? part.nomor_part
+            : "-";
+          document.getElementById("finNamaPart").textContent = part
+            ? part.nama_part
+            : "-";
+          document.getElementById("finTrackingId").textContent =
+            material.kode || "-";
+          document.getElementById("finLot").textContent =
+            material.lot_no || "-";
+          document.getElementById("finCharge").textContent =
+            material.material_charge || "-";
+          document.getElementById("finProcessType").textContent =
+            material.process_type || "-";
           document.getElementById("finQty").textContent = material.qty || "-";
-          document.getElementById("finBeratTotal").textContent = material.berat_total_part ? material.berat_total_part.toLocaleString("id-ID") + " KG" : "-";
-          document.getElementById("finScanMulai").textContent = prod ? prod.start_scan_at || "-" : "-";
-          document.getElementById("finMasukMesin").textContent = prod ? prod.machine_start_at || "-" : "-";
-          document.getElementById("finOperator").textContent = prod ? (prod.start_scan_by || prod.machine_start_by || "-") : "-";
-          document.getElementById("prodFinishScanTime").textContent = prod ? (prod.finish_scan_at || "-") : "-";
-          document.getElementById("prodFinishOperator").textContent = prod ? (prod.finish_scan_by || "-") : "-";
+          document.getElementById("finBeratTotal").textContent =
+            material.berat_total_part
+              ? material.berat_total_part.toLocaleString("id-ID") + " KG"
+              : "-";
+          document.getElementById("finScanMulai").textContent = prod
+            ? prod.start_scan_at || "-"
+            : "-";
+          document.getElementById("finMasukMesin").textContent = prod
+            ? prod.machine_start_at || "-"
+            : "-";
+          document.getElementById("finOperator").textContent = prod
+            ? prod.start_scan_by || prod.machine_start_by || "-"
+            : "-";
+          document.getElementById("prodFinishScanTime").textContent = prod
+            ? prod.finish_scan_at || "-"
+            : "-";
+          document.getElementById("prodFinishOperator").textContent = prod
+            ? prod.finish_scan_by || "-"
+            : "-";
           const rOK = document.getElementById("resultOK");
           const rNG = document.getElementById("resultNG");
-          rOK.checked = false; rNG.checked = false;
+          rOK.checked = false;
+          rNG.checked = false;
           document.getElementById("resultNGNote").classList.add("hidden");
           if (currentProduction.production_status !== "WAITING") {
-            if (currentProduction.process_result === "OK") { rOK.checked = true; } else { rNG.checked = true; document.getElementById("resultNGNote").classList.remove("hidden"); document.getElementById("prodResultNote").value = currentProduction.process_ng_note || ""; }
+            if (currentProduction.process_result === "OK") {
+              rOK.checked = true;
+            } else {
+              rNG.checked = true;
+              document
+                .getElementById("resultNGNote")
+                .classList.remove("hidden");
+              document.getElementById("prodResultNote").value =
+                currentProduction.process_ng_note || "";
+            }
             document.getElementById("btnKeluarMesin").disabled = true;
-            document.getElementById("btnKeluarMesin").classList.add("opacity-50");
-          } else { document.getElementById("btnKeluarMesin").disabled = false; document.getElementById("btnKeluarMesin").classList.remove("opacity-50"); }
-        } else { document.getElementById("finishSection").classList.add("hidden"); }
+            document
+              .getElementById("btnKeluarMesin")
+              .classList.add("opacity-50");
+          } else {
+            document.getElementById("btnKeluarMesin").disabled = false;
+            document
+              .getElementById("btnKeluarMesin")
+              .classList.remove("opacity-50");
+          }
+        } else {
+          document.getElementById("finishSection").classList.add("hidden");
+        }
         loadProductions();
       }
       function confirmMasukMesin() {
-        if (!currentMaterial) { alert("Pilih material terlebih dahulu!"); return; }
+        if (!currentMaterial) {
+          alert("Pilih material terlebih dahulu!");
+          return;
+        }
         const visualOK = document.getElementById("visualOK").checked;
         const visualNG = document.getElementById("visualNG").checked;
-        if (!visualOK && !visualNG) { alert("Pilih Visual Check OK atau NG!"); return; }
-        if (visualNG && !document.getElementById("prodVisualNote").value.trim()) { alert("Keterangan NG wajib diisi!"); return; }
-        const prod = DB.get("productions").find((p) => p.material_id == currentMaterial.id);
-        if (prod && (prod.status === "Process" || prod.status === "Finish")) { alert("Part sudah dalam proses!"); return; }
+        if (!visualOK && !visualNG) {
+          alert("Pilih Visual Check OK atau NG!");
+          return;
+        }
+        if (
+          visualNG &&
+          !document.getElementById("prodVisualNote").value.trim()
+        ) {
+          alert("Keterangan NG wajib diisi!");
+          return;
+        }
+        const prod = DB.get("productions").find(
+          (p) => p.material_id == currentMaterial.id,
+        );
+        if (prod && (prod.status === "Process" || prod.status === "Finish")) {
+          alert("Part sudah dalam proses!");
+          return;
+        }
         const now = new Date().toISOString();
-        const scanTime = new Date().toLocaleString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        const scanTime = new Date().toLocaleString("id-ID", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
         const data = {
-          material_id: currentMaterial.id, tracking_id: currentMaterial.tracking_id, incoming_id: currentMaterial.id,
-          status: "Process", production_status: "PROCESS",
-          start_scan_at: now, start_scan_by: session ? session.name : "Operator",
-          visual_check_result: visualOK ? "OK" : "NG", visual_check_note: document.getElementById("prodVisualNote").value.trim(),
-          machine_start_at: scanTime, machine_start_by: session ? session.name : "Operator",
-          tanggal_proses: new Date().toISOString().split("T")[0], jenis_treatment: currentMaterial.process_type || "",
+          material_id: currentMaterial.id,
+          tracking_id: currentMaterial.tracking_id || "",
+          incoming_id: currentMaterial.id,
+          status: "Process",
+          production_status: "PROCESS",
+          start_scan_at: now,
+          start_scan_by: session ? session.name : "Operator",
+          visual_check_result: visualOK ? "OK" : "NG",
+          visual_check_note: document
+            .getElementById("prodVisualNote")
+            .value.trim(),
+          machine_start_at: scanTime,
+          machine_start_by: session ? session.name : "Operator",
+          tanggal_proses: new Date().toISOString().split("T")[0],
+          jenis_treatment: currentMaterial.process_type || "",
         };
-        if (prod) { DB.update("productions", prod.id, data); } else { DB.insert("productions", data); }
+        if (prod) {
+          DB.update("productions", prod.id, data);
+        } else {
+          DB.insert("productions", data);
+        }
         currentMaterial.status_proses = "Process";
-        DB.update("materials", currentMaterial.id, { status_proses: "Process" });
+        DB.update("materials", currentMaterial.id, {
+          status_proses: "Process",
+        });
         alert("Part masuk mesin! Status: PROCESS");
-        loadMaterialById(currentMaterial.tracking_id || currentMaterial.id);
+        loadMaterialById(currentMaterial.kode || currentMaterial.id);
       }
       function confirmKeluarMesin() {
-        if (!currentMaterial || !currentProduction) { alert("Pilih material terlebih dahulu!"); return; }
+        if (!currentMaterial || !currentProduction) {
+          alert("Pilih material terlebih dahulu!");
+          return;
+        }
         const rOK = document.getElementById("resultOK").checked;
         const rNG = document.getElementById("resultNG").checked;
-        if (!rOK && !rNG) { alert("Pilih Hasil Proses OK atau NG!"); return; }
-        if (rNG && !document.getElementById("prodResultNote").value.trim()) { alert("Keterangan Penyebab NG wajib diisi!"); return; }
-        if (currentProduction.production_status === "FINISH" || currentProduction.production_status === "FINISH_NG") { alert("Part sudah selesai!"); return; }
-        const scanTime = new Date().toLocaleString("id-ID", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        if (!rOK && !rNG) {
+          alert("Pilih Hasil Proses OK atau NG!");
+          return;
+        }
+        if (rNG && !document.getElementById("prodResultNote").value.trim()) {
+          alert("Keterangan Penyebab NG wajib diisi!");
+          return;
+        }
+        if (
+          currentProduction.production_status === "FINISH" ||
+          currentProduction.production_status === "FINISH_NG"
+        ) {
+          alert("Part sudah selesai!");
+          return;
+        }
+        const scanTime = new Date().toLocaleString("id-ID", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
         const data = {
           status: "Finish",
           production_status: rOK ? "FINISH" : "FINISH_NG",
           finish_scan_at: new Date().toISOString(),
           finish_scan_by: session ? session.name : "Operator",
           process_result: rOK ? "OK" : "NG",
-          process_ng_note: document.getElementById("prodResultNote").value.trim(),
+          process_ng_note: document
+            .getElementById("prodResultNote")
+            .value.trim(),
           machine_finish_at: scanTime,
           machine_finish_by: session ? session.name : "Operator",
         };
@@ -319,23 +777,29 @@
         currentMaterial.status_proses = "Finish";
         DB.update("materials", currentMaterial.id, { status_proses: "Finish" });
         alert("Part keluar mesin! Status: " + data.production_status);
-        loadMaterialById(currentMaterial.tracking_id || currentMaterial.id);
+        loadMaterialById(currentMaterial.kode || currentMaterial.id);
       }
       function loadProductions() {
         const productions = DB.get("productions");
         const materials = DB.get("materials");
-        const html = productions.slice().reverse().map((p, idx) => {
-          const m = materials.find((mat) => mat.id == p.material_id) || {};
-          const part = DB.findPartById(m.part_id);
-          const cust = DB.findCustomerById(m.customer_id);
-          let sc = "bg-slate-100 text-slate-600";
-          if (p.production_status === "PROCESS") sc = "bg-amber-100 text-amber-600";
-          else if (p.production_status === "FINISH") sc = "bg-emerald-100 text-emerald-600";
-          else if (p.production_status === "FINISH_NG") sc = "bg-red-100 text-red-600";
-          else sc = "bg-slate-100 text-slate-600";
-          return `<tr class="hover:bg-slate-50 transition">
+        const html = productions
+          .slice()
+          .reverse()
+          .map((p, idx) => {
+            const m = materials.find((mat) => mat.id == p.material_id) || {};
+            const part = DB.findPartById(m.part_id);
+            const cust = DB.findCustomerById(m.customer_id);
+            let sc = "bg-slate-100 text-slate-600";
+            if (p.production_status === "PROCESS")
+              sc = "bg-amber-100 text-amber-600";
+            else if (p.production_status === "FINISH")
+              sc = "bg-emerald-100 text-emerald-600";
+            else if (p.production_status === "FINISH_NG")
+              sc = "bg-red-100 text-red-600";
+            else sc = "bg-slate-100 text-slate-600";
+            return `<tr class="hover:bg-slate-50 transition">
             <td class="px-3 py-2">${idx + 1}</td>
-            <td class="px-3 py-2 font-mono">${m.tracking_id || "-"}</td>
+            <td class="px-3 py-2 font-mono">${m.kode || "-"}</td>
             <td class="px-3 py-2">${cust ? cust.nama_customer : "-"}</td>
             <td class="px-3 py-2">${part ? part.nomor_part : "-"}</td>
             <td class="px-3 py-2">${part ? part.nama_part : "-"}</td>
@@ -349,10 +813,17 @@
             <td class="px-3 py-2">${p.start_scan_by || p.machine_start_by || "-"}</td>
             <td class="px-3 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-medium ${sc}">${p.production_status || "-"}</span></td>
           </tr>`;
-        }).join("");
-        document.getElementById("productionTable").innerHTML = html || '<tr><td colspan="14" class="text-center py-4 text-slate-400">Belum ada data produksi</td></tr>';
+          })
+          .join("");
+        document.getElementById("productionTable").innerHTML =
+          html ||
+          '<tr><td colspan="14" class="text-center py-4 text-slate-400">Belum ada data produksi</td></tr>';
       }
-      window.addEventListener("DOMContentLoaded", () => { DB.init(); startScanner(); loadProductions(); });
+      window.addEventListener("DOMContentLoaded", () => {
+        DB.init();
+        startScanner();
+        loadProductions();
+      });
     </script>
   </body>
 </html>

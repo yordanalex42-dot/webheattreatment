@@ -8,124 +8,368 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-      body { font-family: "Inter", sans-serif; background: #f1f5f9; }
-      .sidebar-link { transition: all 0.2s; }
-      .sidebar-link:hover, .sidebar-link.active { background: #3b82f6; color: white; }
-      .fade-in { animation: fadeIn 0.3s ease-out; }
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #f1f5f9;
+      }
+      .sidebar-link {
+        transition: all 0.2s;
+      }
+      .sidebar-link:hover,
+      .sidebar-link.active {
+        background: #3b82f6;
+        color: white;
+      }
+      .fade-in {
+        animation: fadeIn 0.3s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
   <body class="text-slate-800">
     <div class="flex h-screen overflow-hidden">
       <aside class="w-56 bg-slate-900 text-white flex flex-col shadow-2xl z-20">
         <div class="p-5 border-b border-slate-700">
-          <h1 class="text-lg font-bold"><i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment</h1>
+          <h1 class="text-lg font-bold">
+            <i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment
+          </h1>
           <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
         </div>
         <nav class="flex-1 p-3 space-y-1">
-          <a href="index.html" class="sidebar-link active flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-chart-line w-5"></i> Dashboard</a>
-          <div class="pt-2"><p class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider">Master Data</p></div>
-          <a href="customer.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-users w-5"></i> Customer</a>
-          <a href="part.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-cogs w-5"></i> Part</a>
-          <a href="incoming.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-box w-5"></i> Incoming</a>
-          <div class="pt-2"><p class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider">Produksi</p></div>
-          <a href="produksi-masuk.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"><i class="fas fa-play w-5"></i> Masuk Proses</a>
-          <a href="produksi-akhir.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a>
-          <a href="qc.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-clipboard-check w-5"></i> Quality Control</a>
-          <a href="delivery.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-shipping-fast w-5"></i> Delivery</a>
-          <a href="tracking.html" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"><i class="fas fa-search-location w-5"></i> Tracking</a>
+          <a
+            href="index.html"
+            class="sidebar-link active flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-chart-line w-5"></i> Dashboard</a
+          >
+          <div class="pt-2">
+            <p
+              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
+            >
+              Master Data
+            </p>
+          </div>
+          <a
+            href="customer.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-users w-5"></i> Customer</a
+          >
+          <a
+            href="part.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-cogs w-5"></i> Part</a
+          >
+          <a
+            href="incoming.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-box w-5"></i> Incoming</a
+          >
+          <div class="pt-2">
+            <p
+              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
+            >
+              Produksi
+            </p>
+          </div>
+          <a
+            href="produksi-masuk.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
+            ><i class="fas fa-play w-5"></i> Masuk Proses</a
+          >
+          <a
+            href="produksi-akhir.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
+            ><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a
+          >
+          <a
+            href="qc.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-clipboard-check w-5"></i> Quality Control</a
+          >
+          <a
+            href="delivery.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-shipping-fast w-5"></i> Delivery</a
+          >
+          <a
+            href="tracking.html"
+            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
+            ><i class="fas fa-search-location w-5"></i> Tracking</a
+          >
         </nav>
         <div class="p-3 border-t border-slate-700">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm" id="sidebarInitial">A</div>
+              <div
+                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
+                id="sidebarInitial"
+              >
+                A
+              </div>
               <div>
                 <p class="text-xs font-medium" id="sidebarName">Admin User</p>
-                <p class="text-[10px] text-slate-400" id="sidebarRole">Administrator</p>
+                <p class="text-[10px] text-slate-400" id="sidebarRole">
+                  Administrator
+                </p>
               </div>
             </div>
-            <button onclick="Auth.logout();window.location.href='login.html'" class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+            <button
+              onclick="
+                Auth.logout();
+                window.location.href = 'login.html';
+              "
+              class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition"
+              title="Logout"
+            >
+              <i class="fas fa-sign-out-alt"></i>
+            </button>
           </div>
         </div>
       </aside>
       <main class="flex-1 overflow-y-auto">
-        <header class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center">
+        <header
+          class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center"
+        >
           <h2 class="text-xl font-bold text-slate-800">Dashboard Monitoring</h2>
           <div class="flex gap-3">
-            <button onclick="openScanModal()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition text-sm"><i class="fas fa-qrcode"></i> Scan QR</button>
-            <button onclick="refreshStats()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition text-sm"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <button
+              onclick="openScanModal()"
+              class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition text-sm"
+            >
+              <i class="fas fa-qrcode"></i> Scan QR
+            </button>
+            <button
+              onclick="refreshStats()"
+              class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition text-sm"
+            >
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
           </div>
         </header>
         <div class="p-5 space-y-4">
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 fade-in">
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-blue-500"><p class="text-[10px] text-slate-500 font-medium">Total Customer</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-customer">0</h3></div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-emerald-500"><p class="text-[10px] text-slate-500 font-medium">Total Part</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-part">0</h3></div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-purple-500"><p class="text-[10px] text-slate-500 font-medium">Total Incoming</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-incoming">0</h3></div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-slate-400"><p class="text-[10px] text-slate-500 font-medium">Waiting</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-waiting">0</h3></div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-amber-500"><p class="text-[10px] text-slate-500 font-medium">HT Process</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-htprocess">0</h3></div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-cyan-500"><p class="text-[10px] text-slate-500 font-medium">HT Finish</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-htfinish">0</h3></div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-emerald-600"><p class="text-[10px] text-slate-500 font-medium">QC OK</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-qcok">0</h3></div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-red-500"><p class="text-[10px] text-slate-500 font-medium">QC NG</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-qcng">0</h3></div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-orange-500"><p class="text-[10px] text-slate-500 font-medium">Ready Delivery</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-ready">0</h3></div>
-            <div class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-pink-500"><p class="text-[10px] text-slate-500 font-medium">Delivered</p><h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-delivered">0</h3></div>
+          <div
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 fade-in"
+          >
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-blue-500"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">
+                Total Customer
+              </p>
+              <h3
+                class="text-xl font-bold text-slate-800 mt-1"
+                id="stat-customer"
+              >
+                0
+              </h3>
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-emerald-500"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">Total Part</p>
+              <h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-part">
+                0
+              </h3>
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-purple-500"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">
+                Total Incoming
+              </p>
+              <h3
+                class="text-xl font-bold text-slate-800 mt-1"
+                id="stat-incoming"
+              >
+                0
+              </h3>
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-slate-400"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">Waiting</p>
+              <h3
+                class="text-xl font-bold text-slate-800 mt-1"
+                id="stat-waiting"
+              >
+                0
+              </h3>
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-amber-500"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">HT Process</p>
+              <h3
+                class="text-xl font-bold text-slate-800 mt-1"
+                id="stat-htprocess"
+              >
+                0
+              </h3>
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-cyan-500"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">HT Finish</p>
+              <h3
+                class="text-xl font-bold text-slate-800 mt-1"
+                id="stat-htfinish"
+              >
+                0
+              </h3>
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-emerald-600"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">QC OK</p>
+              <h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-qcok">
+                0
+              </h3>
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-red-500"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">QC NG</p>
+              <h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-qcng">
+                0
+              </h3>
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-orange-500"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">
+                Ready Delivery
+              </p>
+              <h3 class="text-xl font-bold text-slate-800 mt-1" id="stat-ready">
+                0
+              </h3>
+            </div>
+            <div
+              class="bg-white rounded-xl p-3 shadow-sm border-l-4 border-pink-500"
+            >
+              <p class="text-[10px] text-slate-500 font-medium">Delivered</p>
+              <h3
+                class="text-xl font-bold text-slate-800 mt-1"
+                id="stat-delivered"
+              >
+                0
+              </h3>
+            </div>
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div class="lg:col-span-2 bg-white rounded-xl p-4 shadow-sm fade-in">
-              <h3 class="text-base font-bold text-slate-800 mb-3">Grafik Produksi Harian</h3>
+            <div
+              class="lg:col-span-2 bg-white rounded-xl p-4 shadow-sm fade-in"
+            >
+              <h3 class="text-base font-bold text-slate-800 mb-3">
+                Grafik Produksi Harian
+              </h3>
               <canvas id="productionChart" height="80"></canvas>
             </div>
             <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-              <h3 class="text-base font-bold text-slate-800 mb-3">Tracking Terbaru</h3>
-              <div class="space-y-2 max-h-60 overflow-y-auto" id="recent-tracking"></div>
+              <h3 class="text-base font-bold text-slate-800 mb-3">
+                Tracking Terbaru
+              </h3>
+              <div
+                class="space-y-2 max-h-60 overflow-y-auto"
+                id="recent-tracking"
+              ></div>
             </div>
           </div>
           <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">Recent Material</h3>
+            <h3 class="text-base font-bold text-slate-800 mb-3">
+              Recent Material
+            </h3>
             <div class="overflow-x-auto">
               <table class="w-full text-left">
                 <thead class="bg-slate-50 text-slate-600 text-xs uppercase">
-                  <tr><th class="px-3 py-2 rounded-l-lg">Customer</th><th class="px-3 py-2">Part</th><th class="px-3 py-2">Lot No</th><th class="px-3 py-2">Material Charge</th><th class="px-3 py-2">Qty</th><th class="px-3 py-2 rounded-r-lg">Status</th></tr>
+                  <tr>
+                    <th class="px-3 py-2 rounded-l-lg">Customer</th>
+                    <th class="px-3 py-2">Part</th>
+                    <th class="px-3 py-2">Lot No</th>
+                    <th class="px-3 py-2">Material Charge</th>
+                    <th class="px-3 py-2">Qty</th>
+                    <th class="px-3 py-2 rounded-r-lg">Status</th>
+                  </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 text-xs" id="recentMaterialTable"></tbody>
+                <tbody
+                  class="divide-y divide-slate-100 text-xs"
+                  id="recentMaterialTable"
+                ></tbody>
               </table>
             </div>
           </div>
           <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">Tabel Tracking Status Real-Time</h3>
+            <h3 class="text-base font-bold text-slate-800 mb-3">
+              Tabel Tracking Status Real-Time
+            </h3>
             <div class="overflow-x-auto">
               <table class="w-full text-left">
                 <thead class="bg-slate-50 text-slate-600 text-xs uppercase">
-                  <tr><th class="px-3 py-2 rounded-l-lg">No Part</th><th class="px-3 py-2">Nama Part</th><th class="px-3 py-2">Customer</th><th class="px-3 py-2">Status</th><th class="px-3 py-2">Treatment</th><th class="px-3 py-2">Hardness</th><th class="px-3 py-2 rounded-r-lg">Tanggal</th></tr>
+                  <tr>
+                    <th class="px-3 py-2 rounded-l-lg">No Part</th>
+                    <th class="px-3 py-2">Nama Part</th>
+                    <th class="px-3 py-2">Customer</th>
+                    <th class="px-3 py-2">Status</th>
+                    <th class="px-3 py-2">Treatment</th>
+                    <th class="px-3 py-2">Hardness</th>
+                    <th class="px-3 py-2 rounded-r-lg">Tanggal</th>
+                  </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 text-xs" id="tracking-table"></tbody>
+                <tbody
+                  class="divide-y divide-slate-100 text-xs"
+                  id="tracking-table"
+                ></tbody>
               </table>
             </div>
           </div>
         </div>
       </main>
     </div>
-    <div id="scanModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-sm">
+    <div
+      id="scanModal"
+      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-sm"
+    >
       <div class="bg-white rounded-xl p-4 w-full max-w-md shadow-2xl">
         <div class="flex justify-between items-center mb-3">
           <h3 class="text-base font-bold">Scan QR Code</h3>
-          <button onclick="closeScanModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-lg"></i></button>
+          <button
+            onclick="closeScanModal()"
+            class="text-slate-400 hover:text-slate-600"
+          >
+            <i class="fas fa-times text-lg"></i>
+          </button>
         </div>
         <div id="qr-reader" class="rounded-lg overflow-hidden"></div>
-        <p class="text-xs text-slate-500 text-center mt-2">Arahkan kamera ke QR Code material</p>
+        <p class="text-xs text-slate-500 text-center mt-2">
+          Arahkan kamera ke QR Code material
+        </p>
       </div>
     </div>
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
     <script>
       Auth.initDefaultUser();
-      if (!Auth.isLoggedIn()) { window.location.href = "login.html"; }
+      if (!Auth.isLoggedIn()) {
+        window.location.href = "login.html";
+      }
       let html5QrCode = null;
       const session = Auth.getSession();
       if (session) {
-        document.getElementById("sidebarInitial").textContent = Auth.getInitials(session.name);
+        document.getElementById("sidebarInitial").textContent =
+          Auth.getInitials(session.name);
         document.getElementById("sidebarName").textContent = session.name;
         document.getElementById("sidebarRole").textContent = session.role;
       }
@@ -143,26 +387,42 @@
         document.getElementById("stat-customer").textContent = customers.length;
         document.getElementById("stat-part").textContent = parts.length;
         document.getElementById("stat-incoming").textContent = materials.length;
-        document.getElementById("stat-waiting").textContent = materials.filter((m) => m.status_proses === "Waiting").length;
-        document.getElementById("stat-htprocess").textContent = productions.filter((p) => p.status === "Process").length;
-        document.getElementById("stat-htfinish").textContent = productions.filter((p) => p.status === "Finish").length;
-        document.getElementById("stat-qcok").textContent = qcs.filter((q) => q.hasil === "OK").length;
-        document.getElementById("stat-qcng").textContent = qcs.filter((q) => q.hasil === "NG").length;
-        document.getElementById("stat-ready").textContent = materials.filter((m) => {
-          const prod = productions.find((p) => p.material_id === m.id);
-          return prod && prod.status === "Finish" && !deliveries.find((d) => d.production_id === prod.id);
-        }).length;
-        document.getElementById("stat-delivered").textContent = deliveries.length;
+        document.getElementById("stat-waiting").textContent = materials.filter(
+          (m) => m.status_proses === "Waiting",
+        ).length;
+        document.getElementById("stat-htprocess").textContent =
+          productions.filter((p) => p.status === "Process").length;
+        document.getElementById("stat-htfinish").textContent =
+          productions.filter((p) => p.status === "Finish").length;
+        document.getElementById("stat-qcok").textContent = qcs.filter(
+          (q) => q.hasil === "OK",
+        ).length;
+        document.getElementById("stat-qcng").textContent = qcs.filter(
+          (q) => q.hasil === "NG",
+        ).length;
+        document.getElementById("stat-ready").textContent = materials.filter(
+          (m) => {
+            const prod = productions.find((p) => p.material_id === m.id);
+            return (
+              prod &&
+              prod.status === "Finish" &&
+              !deliveries.find((d) => d.production_id === prod.id)
+            );
+          },
+        ).length;
+        document.getElementById("stat-delivered").textContent =
+          deliveries.length;
         renderRecentMaterial();
         renderRecentTracking();
         renderTrackingTable();
       }
       function renderRecentMaterial() {
         const materials = DB.get("materials").slice().reverse().slice(0, 10);
-        const html = materials.map((m) => {
-          const c = DB.findCustomerById(m.customer_id);
-          const p = DB.findPartById(m.part_id);
-          return `<tr class="hover:bg-slate-50 transition">
+        const html = materials
+          .map((m) => {
+            const c = DB.findCustomerById(m.customer_id);
+            const p = DB.findPartById(m.part_id);
+            return `<tr class="hover:bg-slate-50 transition">
             <td class="px-3 py-2">${c ? c.nama_customer : "-"}</td>
             <td class="px-3 py-2">${p ? p.nomor_part : "-"}</td>
             <td class="px-3 py-2">${m.lot_no || "-"}</td>
@@ -170,55 +430,88 @@
             <td class="px-3 py-2">${m.qty || 0}</td>
             <td class="px-3 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-medium ${getProsesColor(m.status_proses)}">${m.status_proses || "-"}</span></td>
           </tr>`;
-        }).join("");
-        document.getElementById("recentMaterialTable").innerHTML = html || '<tr><td colspan="6" class="text-center py-4 text-slate-400">Belum ada data</td></tr>';
+          })
+          .join("");
+        document.getElementById("recentMaterialTable").innerHTML =
+          html ||
+          '<tr><td colspan="6" class="text-center py-4 text-slate-400">Belum ada data</td></tr>';
       }
       function renderRecentTracking() {
         const materials = DB.get("materials").slice().reverse().slice(0, 6);
         const productions = DB.get("productions");
         const qcs = DB.get("qcs");
         const deliveries = DB.get("deliveries");
-        const html = materials.map((m) => {
-          const prod = productions.find((p) => p.material_id === m.id);
-          let status = "Waiting";
-          let color = "bg-slate-100 text-slate-600";
-          if (prod) {
-            status = prod.status;
-            if (status === "Process") color = "bg-amber-100 text-amber-600";
-            else if (status === "Finish") {
-              const qc = qcs.find((q) => q.production_id === prod.id);
-              if (qc) { status = qc.hasil === "OK" ? "QC OK" : "QC NG"; color = qc.hasil === "OK" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"; }
-              else color = "bg-blue-100 text-blue-600";
+        const html = materials
+          .map((m) => {
+            const prod = productions.find((p) => p.material_id === m.id);
+            let status = "Waiting";
+            let color = "bg-slate-100 text-slate-600";
+            if (prod) {
+              status = prod.status;
+              if (status === "Process") color = "bg-amber-100 text-amber-600";
+              else if (status === "Finish") {
+                const qc = qcs.find((q) => q.production_id === prod.id);
+                if (qc) {
+                  status = qc.hasil === "OK" ? "QC OK" : "QC NG";
+                  color =
+                    qc.hasil === "OK"
+                      ? "bg-emerald-100 text-emerald-600"
+                      : "bg-red-100 text-red-600";
+                } else color = "bg-blue-100 text-blue-600";
+              }
+              const del = deliveries.find((d) => d.production_id === prod.id);
+              if (del) {
+                status = "Delivered";
+                color = "bg-pink-100 text-pink-600";
+              }
             }
-            const del = deliveries.find((d) => d.production_id === prod.id);
-            if (del) { status = "Delivered"; color = "bg-pink-100 text-pink-600"; }
-          }
-          const c = DB.findCustomerById(m.customer_id);
-          const p = DB.findPartById(m.part_id);
-          return `<div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer" onclick="location.href='tracking.html?id=${m.tracking_id}'">
+            const c = DB.findCustomerById(m.customer_id);
+            const p = DB.findPartById(m.part_id);
+            return `<div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg hover:bg-slate-100 transition cursor-pointer" onclick="location.href='tracking.html?id=${m.kode}'">
             <div><p class="font-semibold text-xs">${p ? p.nomor_part : "-"}</p><p class="text-[10px] text-slate-500">${c ? c.nama_customer : "-"}</p></div>
             <span class="px-2 py-0.5 rounded-full text-[10px] font-medium ${color}">${status}</span>
           </div>`;
-        }).join("");
-        document.getElementById("recent-tracking").innerHTML = html || '<p class="text-center text-slate-400 py-3 text-xs">Belum ada data</p>';
+          })
+          .join("");
+        document.getElementById("recent-tracking").innerHTML =
+          html ||
+          '<p class="text-center text-slate-400 py-3 text-xs">Belum ada data</p>';
       }
       function renderTrackingTable() {
         const materials = DB.get("materials");
         const productions = DB.get("productions");
         const qcs = DB.get("qcs");
         const deliveries = DB.get("deliveries");
-        const html = materials.map((m) => {
-          const prod = productions.find((p) => p.material_id === m.id);
-          const qc = prod ? qcs.find((q) => q.production_id === prod.id) : null;
-          const del = prod ? deliveries.find((d) => d.production_id === prod.id) : null;
-          let status = "Waiting";
-          let badge = "bg-slate-100 text-slate-600";
-          if (prod) { status = prod.status; if (status === "Process") badge = "bg-amber-100 text-amber-600"; else if (status === "Finish") badge = "bg-blue-100 text-blue-600"; }
-          if (qc) { status = qc.hasil === "OK" ? "QC OK" : "QC NG"; badge = qc.hasil === "OK" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"; }
-          if (del) { status = "Delivered"; badge = "bg-pink-100 text-pink-600"; }
-          const c = DB.findCustomerById(m.customer_id);
-          const p = DB.findPartById(m.part_id);
-          return `<tr class="hover:bg-slate-50 transition cursor-pointer" onclick="location.href='tracking.html?id=${m.tracking_id}'">
+        const html = materials
+          .map((m) => {
+            const prod = productions.find((p) => p.material_id === m.id);
+            const qc = prod
+              ? qcs.find((q) => q.production_id === prod.id)
+              : null;
+            const del = prod
+              ? deliveries.find((d) => d.production_id === prod.id)
+              : null;
+            let status = "Waiting";
+            let badge = "bg-slate-100 text-slate-600";
+            if (prod) {
+              status = prod.status;
+              if (status === "Process") badge = "bg-amber-100 text-amber-600";
+              else if (status === "Finish") badge = "bg-blue-100 text-blue-600";
+            }
+            if (qc) {
+              status = qc.hasil === "OK" ? "QC OK" : "QC NG";
+              badge =
+                qc.hasil === "OK"
+                  ? "bg-emerald-100 text-emerald-600"
+                  : "bg-red-100 text-red-600";
+            }
+            if (del) {
+              status = "Delivered";
+              badge = "bg-pink-100 text-pink-600";
+            }
+            const c = DB.findCustomerById(m.customer_id);
+            const p = DB.findPartById(m.part_id);
+            return `<tr class="hover:bg-slate-50 transition cursor-pointer" onclick="location.href='tracking.html?id=${m.kode}'">
             <td class="px-3 py-2 font-medium">${p ? p.nomor_part : "-"}</td>
             <td class="px-3 py-2">${p ? p.nama_part : "-"}</td>
             <td class="px-3 py-2 text-slate-500">${c ? c.nama_customer : "-"}</td>
@@ -227,8 +520,11 @@
             <td class="px-3 py-2 text-slate-500">${qc ? qc.hardness : "-"}</td>
             <td class="px-3 py-2 text-slate-500">${m.tanggal_masuk}</td>
           </tr>`;
-        }).join("");
-        document.getElementById("tracking-table").innerHTML = html || '<tr><td colspan="7" class="text-center py-4 text-slate-400">Belum ada data material</td></tr>';
+          })
+          .join("");
+        document.getElementById("tracking-table").innerHTML =
+          html ||
+          '<tr><td colspan="7" class="text-center py-4 text-slate-400">Belum ada data material</td></tr>';
       }
       function getProsesColor(s) {
         if (s === "Process") return "bg-amber-100 text-amber-600";
@@ -239,28 +535,64 @@
         new Chart(document.getElementById("productionChart").getContext("2d"), {
           type: "line",
           data: {
-            labels: ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"],
-            datasets: [{ label: "Jumlah Part Diproses", data: [5,8,12,7,15,9,11], borderColor: "#3b82f6", backgroundColor: "rgba(59,130,246,0.1)", tension: 0.4, fill: true, pointRadius: 3, pointBackgroundColor: "#3b82f6" }],
+            labels: [
+              "Senin",
+              "Selasa",
+              "Rabu",
+              "Kamis",
+              "Jumat",
+              "Sabtu",
+              "Minggu",
+            ],
+            datasets: [
+              {
+                label: "Jumlah Part Diproses",
+                data: [5, 8, 12, 7, 15, 9, 11],
+                borderColor: "#3b82f6",
+                backgroundColor: "rgba(59,130,246,0.1)",
+                tension: 0.4,
+                fill: true,
+                pointRadius: 3,
+                pointBackgroundColor: "#3b82f6",
+              },
+            ],
           },
-          options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: "#f1f5f9" } }, x: { grid: { display: false } } } },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: "#f1f5f9" } },
+              x: { grid: { display: false } },
+            },
+          },
         });
       }
       function openScanModal() {
         document.getElementById("scanModal").classList.remove("hidden");
         document.getElementById("scanModal").classList.add("flex");
         if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 200, height: 200 } }, (decodedText) => {
-          html5QrCode.stop(); closeScanModal();
-          const targetId = parseMaterialId(decodedText);
-          window.location.href = `tracking.html?id=${targetId}`;
-        }, () => {});
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 200, height: 200 } },
+          (decodedText) => {
+            html5QrCode.stop();
+            closeScanModal();
+            const targetId = parseMaterialId(decodedText);
+            window.location.href = `tracking.html?id=${targetId}`;
+          },
+          () => {},
+        );
       }
       function closeScanModal() {
         if (html5QrCode) html5QrCode.stop();
         document.getElementById("scanModal").classList.add("hidden");
         document.getElementById("scanModal").classList.remove("flex");
       }
-      window.addEventListener("DOMContentLoaded", () => { DB.init(); refreshStats(); initChart(); });
+      window.addEventListener("DOMContentLoaded", () => {
+        DB.init();
+        refreshStats();
+        initChart();
+      });
     </script>
   </body>
 </html>
