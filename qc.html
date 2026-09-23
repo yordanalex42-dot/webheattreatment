@@ -167,6 +167,7 @@
                     type="text"
                     id="manualId"
                     placeholder="Kode Part (contoh: 20260004I)"
+                    onkeydown="if(event.key==='Enter') loadMaterialById()"
                     class="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
                   />
                   <button
@@ -357,7 +358,7 @@
         const id = manualId || document.getElementById("manualId").value;
         const material = DB.findMaterial(id);
         if (!material) {
-          alert("Material tidak ditemukan!");
+          alert("Material tidak ditemukan! Kode: " + id);
           return;
         }
         const production = DB.get("productions").find(
@@ -391,10 +392,6 @@
           part ? part.target_hardness || "-" : "-";
         document.getElementById("infoQty").textContent =
           material.qty || 0;
-        document.getElementById("infoTreatment").textContent =
-          production.jenis_treatment || "-";
-        document.getElementById("infoProdStatus").textContent =
-          production.status;
         document.getElementById("qcProductionId").value = production.id;
         const existing = DB.get("qcs").find(
           (q) => q.production_id == production.id,
@@ -413,9 +410,7 @@
           document.getElementById("qcTanggalInspector").value = "";
         }
         document.getElementById("qcForm").classList.remove("hidden");
-        document
-          .getElementById("qcForm")
-          .scrollIntoView({ behavior: "smooth" });
+        document.getElementById("qcForm").scrollIntoView({ behavior: "smooth" });
       }
       document.getElementById("hasilForm").addEventListener("submit", (e) => {
         e.preventDefault();
@@ -479,7 +474,7 @@
             <td class="px-3 py-2">${cust ? cust.nama_customer : "-"}</td>
             <td class="px-3 py-2">${part ? part.nama_part : "-"}</td>
             <td class="px-3 py-2 text-slate-500">${prod.jenis_treatment || "-"}</td>
-            <td class="px-3 py-2 font-mono">${q.hardness}</td>
+            <td class="px-3 py-2 font-mono">${part ? part.target_hardness || "-" : "-"}</td>
             <td class="px-3 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-medium ${hasilColor}">${q.hasil}</span></td>
             <td class="px-3 py-2">
               <button onclick="loadMaterialById(${m.id || 0})" class="text-blue-500 hover:text-blue-700 mr-2"><i class="fas fa-edit"></i></button>
@@ -500,7 +495,7 @@
       }
       window.addEventListener("DOMContentLoaded", () => {
         DB.init();
-        startScanner();
+        try { startScanner(); } catch (e) { console.warn("[QC] Scanner init failed:", e); }
         loadQCs();
       });
     </script>
