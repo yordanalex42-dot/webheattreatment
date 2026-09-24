@@ -9,328 +9,273 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-      body {
-        font-family: "Inter", sans-serif;
-        background: #f1f5f9;
-      }
-      .sidebar-link {
-        transition: all 0.2s;
-      }
-      .sidebar-link:hover,
-      .sidebar-link.active {
-        background: #3b82f6;
-        color: white;
-      }
-      .fade-in {
-        animation: fadeIn 0.3s ease-out;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(6px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body class="text-slate-800">
-    <div class="flex h-screen overflow-hidden">
-      <aside class="w-56 bg-slate-900 text-white flex flex-col shadow-2xl z-20">
-        <div class="p-5 border-b border-slate-700">
-          <h1 class="text-lg font-bold">
-            <i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment
-          </h1>
-          <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+    <div class="ht-app-shell">
+      <aside class="ht-sidebar" id="sidebar">
+        <div class="ht-sidebar-header">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <i class="fas fa-fire text-2xl"></i>
+                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+            </div>
+            <button
+              id="sidebarToggle"
+              data-sidebar-toggle
+              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
+              title="Toggle Menu"
+              aria-label="Toggle menu"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
         </div>
-        <nav class="flex-1 p-3 space-y-1">
-          <a
-            href="index.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-chart-line w-5"></i> Dashboard</a
+        <nav class="ht-sidebar-nav">
+          <a href="index.html" class="ht-nav-link"
+            ><i class="fas fa-chart-line"></i> Dashboard</a
           >
           <div class="pt-2">
-            <p
-              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
-            >
-              Master Data
-            </p>
+            <p class="ht-nav-section-title">Master Data</p>
           </div>
-          <a
-            href="customer.html"
-            class="sidebar-link active flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-users w-5"></i> Customer</a
+          <a href="customer.html" class="ht-nav-link active"
+            ><i class="fas fa-users"></i> Customer</a
           >
-          <a
-            href="part.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-cogs w-5"></i> Part</a
+          <a href="part.html" class="ht-nav-link"
+            ><i class="fas fa-cogs"></i> Part</a
           >
-          <a
-            href="incoming.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-box w-5"></i> Incoming</a
+          <a href="incoming.html" class="ht-nav-link"
+            ><i class="fas fa-box"></i> Incoming</a
           >
           <div class="pt-2">
-            <p
-              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
-            >
-              Produksi
-            </p>
+            <p class="ht-nav-section-title">Produksi</p>
           </div>
-          <a
-            href="produksi-masuk.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
-            ><i class="fas fa-play w-5"></i> Masuk Proses</a
+          <a href="produksi-masuk.html" class="ht-nav-link sub"
+            ><i class="fas fa-play"></i> Masuk Proses</a
           >
-          <a
-            href="produksi-akhir.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
-            ><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a
+          <a href="produksi-akhir.html" class="ht-nav-link sub"
+            ><i class="fas fa-flag-checkered"></i> Akhir Proses</a
           >
-          <a
-            href="qc.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-clipboard-check w-5"></i> Quality Control</a
+          <a href="qc.html" class="ht-nav-link"
+            ><i class="fas fa-clipboard-check"></i> Quality Control</a
           >
-          <a
-            href="delivery.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-shipping-fast w-5"></i> Delivery</a
+          <a href="delivery.html" class="ht-nav-link"
+            ><i class="fas fa-shipping-fast"></i> Delivery</a
           >
-          <a
-            href="tracking.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-search-location w-5"></i> Tracking</a
+          <a href="tracking.html" class="ht-nav-link"
+            ><i class="fas fa-search-location"></i> Tracking</a
           >
         </nav>
-        <div class="p-3 border-t border-slate-700">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+        <div class="ht-sidebar-footer">
+          <div class="ht-user-panel">
+            <div class="ht-user-info">
               <div
                 class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
                 id="sidebarInitial"
               >
                 A
               </div>
-              <div>
-                <p class="text-xs font-medium" id="sidebarName">Admin User</p>
-                <p class="text-[10px] text-slate-400" id="sidebarRole">
-                  Administrator
-                </p>
+              <div class="ht-user-details">
+                <p class="ht-user-name" id="sidebarName">Admin User</p>
+                <p class="ht-user-role" id="sidebarRole">Administrator</p>
               </div>
             </div>
             <button
-              onclick="
-                Auth.logout();
-                window.location.href = 'login.html';
-              "
-              class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition"
+              onclick="Auth.logout(); window.location.href='login.html';"
+              class="ht-sidebar-logout"
               title="Logout"
+              aria-label="Logout"
             >
               <i class="fas fa-sign-out-alt"></i>
             </button>
           </div>
         </div>
       </aside>
-      <main class="flex-1 overflow-y-auto">
-        <header
-          class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center"
-        >
-          <h2 class="text-xl font-bold text-slate-800">Master Data Customer</h2>
-          <button
-            onclick="openForm()"
-            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm"
-          >
-            <i class="fas fa-plus mr-2"></i>Tambah Customer
-          </button>
+      <main class="ht-main full-width">
+        <header class="ht-header">
+          <div class="ht-header-left">
+            <h1 class="text-xl font-bold text-slate-800">Master Data Customer</h1>
+            <p class="text-xs text-slate-500">Kelola data customer heat treatment.</p>
+          </div>
+          <div class="ht-header-actions">
+            <button
+              onclick="openForm()"
+              class="ht-btn ht-btn-primary ht-btn-sm"
+              aria-label="Tambah customer"
+            >
+              <i class="fas fa-plus"></i> Tambah Customer
+            </button>
+          </div>
         </header>
-        <div class="p-5 space-y-4">
-          <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <div class="flex flex-col md:flex-row gap-3">
-              <input
-                type="text"
-                id="searchCustomer"
-                placeholder="Search Customer..."
-                oninput="renderTable()"
-                class="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-              <select
-                id="filterStatus"
-                onchange="renderTable()"
-                class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              >
-                <option value="">Semua Status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <table class="w-full text-left">
-              <thead class="bg-slate-50 text-slate-600 text-xs uppercase">
-                <tr>
-                  <th class="px-3 py-2 rounded-l-lg">Kode</th>
-                  <th class="px-3 py-2">Nama Customer</th>
-                  <th class="px-3 py-2">Alamat</th>
-                  <th class="px-3 py-2">PIC</th>
-                  <th class="px-3 py-2">Phone</th>
-                  <th class="px-3 py-2">Email</th>
-                  <th class="px-3 py-2">Status</th>
-                  <th class="px-3 py-2 rounded-r-lg">Aksi</th>
-                </tr>
-              </thead>
-              <tbody
-                class="divide-y divide-slate-100 text-xs"
-                id="customerTable"
-              ></tbody>
-            </table>
-          </div>
-        </div>
-        <div
-          id="formModal"
-          class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-        >
-          <div
-            class="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto"
-          >
-            <h3 class="text-lg font-bold mb-4" id="formTitle">
-              Tambah Customer
-            </h3>
-            <form id="customerForm" class="space-y-3">
-              <input type="hidden" id="custId" />
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Kode Customer</label
-                >
+        <div class="ht-content">
+          <div class="ht-content-max">
+            <div class="ht-card fade-in">
+              <form class="ht-search-bar">
                 <input
                   type="text"
-                  id="custKode"
-                  required
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="CUST-001"
+                  id="searchCustomer"
+                  placeholder="Search Customer..."
+                  oninput="renderTable()"
+                  class="ht-form-input"
                 />
-                <p
-                  class="text-[10px] text-red-500 mt-1 hidden"
-                  id="custKodeErr"
-                >
-                  Kode Customer sudah ada!
-                </p>
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Nama Customer</label
-                >
-                <input
-                  type="text"
-                  id="custNama"
-                  required
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="Nama customer"
-                />
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Alamat</label
-                >
-                <textarea
-                  id="custAlamat"
-                  rows="2"
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="Alamat"
-                ></textarea>
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >PIC</label
-                >
-                <input
-                  type="text"
-                  id="custPic"
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="Contact Person"
-                />
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Nomor Telepon</label
-                >
-                <input
-                  type="text"
-                  id="custPhone"
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="021-xxxxxxx"
-                />
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Email</label
-                >
-                <input
-                  type="email"
-                  id="custEmail"
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="email@company.com"
-                />
-                <p
-                  class="text-[10px] text-red-500 mt-1 hidden"
-                  id="custEmailErr"
-                >
-                  Format email tidak valid
-                </p>
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Status</label
-                >
                 <select
-                  id="custStatus"
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                  id="filterStatus"
+                  onchange="renderTable()"
+                  class="ht-form-select w-48"
                 >
+                  <option value="">Semua Status</option>
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
+              </form>
+            </div>
+            <div class="ht-card fade-in">
+              <div class="ht-table-wrapper">
+                <table class="ht-table">
+                  <thead>
+                    <tr>
+                      <th>Kode</th>
+                      <th>Nama Customer</th>
+                      <th>Alamat</th>
+                      <th>PIC</th>
+                      <th>Phone</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="divide-y divide-slate-100"
+                    id="customerTable"
+                  ></tbody>
+                </table>
               </div>
-              <div class="flex gap-2 pt-2">
-                <button
-                  type="submit"
-                  class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded-lg text-sm font-medium transition"
-                >
-                  <i class="fas fa-save mr-2"></i>Simpan
-                </button>
-                <button
-                  type="button"
-                  onclick="closeForm()"
-                  class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm transition"
-                >
-                  Batal
-                </button>
-              </div>
-            </form>
+            </div>
           </div>
         </div>
       </main>
     </div>
+
+    <!-- Form Modal -->
+    <div id="formModal" class="ht-modal-overlay">
+      <div class="ht-modal">
+        <div class="ht-modal-header">
+          <h3 class="ht-modal-title" id="formTitle">Tambah Customer</h3>
+          <button onclick="closeForm()" class="ht-modal-close" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="ht-modal-body">
+          <form id="customerForm" class="ht-form">
+            <input type="hidden" id="custId" />
+            <div class="ht-form-group">
+              <label class="ht-form-label">Kode Customer</label>
+              <input
+                type="text"
+                id="custKode"
+                required
+                class="ht-form-input"
+                placeholder="CUST-001"
+              />
+              <p
+                class="text-[10px] text-danger-text mt-1 hidden"
+                id="custKodeErr"
+              >
+                Kode Customer sudah ada!
+              </p>
+            </div>
+            <div class="ht-form-group">
+              <label class="ht-form-label">Nama Customer</label>
+              <input
+                type="text"
+                id="custNama"
+                required
+                class="ht-form-input"
+                placeholder="Nama customer"
+              />
+            </div>
+            <div class="ht-form-group">
+              <label class="ht-form-label">Alamat</label>
+              <textarea
+                id="custAlamat"
+                rows="2"
+                class="ht-form-input ht-form-textarea"
+                placeholder="Alamat"
+              ></textarea>
+            </div>
+            <div class="ht-form-group">
+              <label class="ht-form-label">PIC</label>
+              <input
+                type="text"
+                id="custPic"
+                class="ht-form-input"
+                placeholder="Contact Person"
+              />
+            </div>
+            <div class="ht-form-group">
+              <label class="ht-form-label">Nomor Telepon</label>
+              <input
+                type="text"
+                id="custPhone"
+                class="ht-form-input"
+                placeholder="021-xxxxxxx"
+              />
+            </div>
+            <div class="ht-form-group">
+              <label class="ht-form-label">Email</label>
+              <input
+                type="email"
+                id="custEmail"
+                class="ht-form-input"
+                placeholder="email@company.com"
+              />
+              <p
+                class="text-[10px] text-danger-text mt-1 hidden"
+                id="custEmailErr"
+              >
+                Format email tidak valid
+              </p>
+            </div>
+            <div class="ht-form-group">
+              <label class="ht-form-label">Status</label>
+              <select id="custStatus" class="ht-form-select">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="ht-modal-footer">
+          <button
+            type="button"
+            onclick="closeForm()"
+            class="ht-btn ht-btn-secondary"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            form="customerForm"
+            class="ht-btn ht-btn-success"
+          >
+            <i class="fas fa-save mr-2"></i>Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
     <script>
-      Auth.initDefaultUser();
-      if (!Auth.isLoggedIn()) window.location.href = "login.html";
-      const session = Auth.getSession();
-      if (session) {
-        document.getElementById("sidebarInitial").textContent =
-          Auth.getInitials(session.name);
-        document.getElementById("sidebarName").textContent = session.name;
-        document.getElementById("sidebarRole").textContent = session.role;
+      if (!HTUI.requireAuth()) {
+        throw new Error("redirecting");
       }
       function renderTable() {
-        const search = document
-          .getElementById("searchCustomer")
-          .value.toLowerCase();
+        const search = document.getElementById("searchCustomer").value.toLowerCase();
         const status = document.getElementById("filterStatus").value;
         const data = DB.get("customers").filter((c) => {
           const matchSearch =
@@ -350,17 +295,19 @@
             <td class="px-3 py-2">${c.pic}</td>
             <td class="px-3 py-2 text-slate-500">${c.phone}</td>
             <td class="px-3 py-2 text-slate-500">${c.email}</td>
-            <td class="px-3 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-medium ${c.status === "Active" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"}">${c.status}</span></td>
+            <td class="px-3 py-2"><span class="ht-badge ${c.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${c.status}</span></td>
             <td class="px-3 py-2">
-              <button onclick="editCustomer(${c.id})" class="text-blue-500 hover:text-blue-700 mr-2" title="Edit"><i class="fas fa-edit"></i></button>
-              <button onclick="deleteCustomer(${c.id})" class="text-red-500 hover:text-red-700" title="Delete"><i class="fas fa-trash"></i></button>
+              <div class="ht-action-group">
+                <button onclick="editCustomer(${c.id})" class="ht-action-btn edit" title="Edit" aria-label="Edit"><i class="fas fa-edit"></i></button>
+                <button onclick="deleteCustomer(${c.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
+              </div>
             </td>
           </tr>`,
           )
           .join("");
         document.getElementById("customerTable").innerHTML =
           html ||
-          '<tr><td colspan="8" class="text-center py-6 text-slate-400">Belum ada data</td></tr>';
+          '<tr><td colspan="8" class="ht-table-empty"><i class="fas fa-inbox"></i><p>Tidak ada data ditemukan.</p></td></tr>';
       }
       function openForm() {
         document.getElementById("formTitle").textContent = "Tambah Customer";
@@ -368,10 +315,10 @@
         document.getElementById("custId").value = "";
         document.getElementById("custKodeErr").classList.add("hidden");
         document.getElementById("custEmailErr").classList.add("hidden");
-        document.getElementById("formModal").classList.remove("hidden");
+        HTUI.openModal("formModal");
       }
       function closeForm() {
-        document.getElementById("formModal").classList.add("hidden");
+        HTUI.closeModal("formModal");
       }
       function editCustomer(id) {
         const c = DB.find("customers", "id", id);
@@ -387,51 +334,48 @@
         document.getElementById("custStatus").value = c.status;
         document.getElementById("custKodeErr").classList.add("hidden");
         document.getElementById("custEmailErr").classList.add("hidden");
-        document.getElementById("formModal").classList.remove("hidden");
+        HTUI.openModal("formModal");
       }
       function validateEmail(email) {
         if (!email) return true;
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
       }
-      document
-        .getElementById("customerForm")
-        .addEventListener("submit", (e) => {
-          e.preventDefault();
-          const kode = document.getElementById("custKode").value.trim();
-          const email = document.getElementById("custEmail").value.trim();
-          if (!validateEmail(email)) {
-            document.getElementById("custEmailErr").textContent =
-              "Format email tidak valid";
-            document.getElementById("custEmailErr").classList.remove("hidden");
-            return;
-          }
-          document.getElementById("custEmailErr").classList.add("hidden");
-          const existing = DB.find("customers", "kode_customer", kode);
-          const editing = document.getElementById("custId").value;
-          if (existing && existing.id != editing) {
-            document.getElementById("custKodeErr").textContent =
-              "Kode Customer sudah ada!";
-            document.getElementById("custKodeErr").classList.remove("hidden");
-            return;
-          }
-          document.getElementById("custKodeErr").classList.add("hidden");
-          const data = {
-            kode_customer: kode,
-            nama_customer: document.getElementById("custNama").value.trim(),
-            alamat: document.getElementById("custAlamat").value.trim(),
-            pic: document.getElementById("custPic").value.trim(),
-            phone: document.getElementById("custPhone").value.trim(),
-            email: email,
-            status: document.getElementById("custStatus").value,
-          };
-          if (editing) {
-            DB.update("customers", editing, data);
-          } else {
-            DB.insert("customers", data);
-          }
-          closeForm();
-          renderTable();
-        });
+      document.getElementById("customerForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const kode = document.getElementById("custKode").value.trim();
+        const email = document.getElementById("custEmail").value.trim();
+        if (!validateEmail(email)) {
+          document.getElementById("custEmailErr").textContent = "Format email tidak valid";
+          document.getElementById("custEmailErr").classList.remove("hidden");
+          return;
+        }
+        document.getElementById("custEmailErr").classList.add("hidden");
+        const existing = DB.find("customers", "kode_customer", kode);
+        const editing = document.getElementById("custId").value;
+        if (existing && existing.id != editing) {
+          document.getElementById("custKodeErr").textContent = "Kode Customer sudah ada!";
+          document.getElementById("custKodeErr").classList.remove("hidden");
+          return;
+        }
+        document.getElementById("custKodeErr").classList.add("hidden");
+        const data = {
+          kode_customer: kode,
+          nama_customer: document.getElementById("custNama").value.trim(),
+          alamat: document.getElementById("custAlamat").value.trim(),
+          pic: document.getElementById("custPic").value.trim(),
+          phone: document.getElementById("custPhone").value.trim(),
+          email: email,
+          status: document.getElementById("custStatus").value,
+        };
+        if (editing) {
+          DB.update("customers", editing, data);
+        } else {
+          DB.insert("customers", data);
+        }
+        closeForm();
+        HTUI.toast("Data customer berhasil disimpan.", "success");
+        renderTable();
+      });
       function deleteCustomer(id) {
         if (confirm("Hapus customer ini?")) {
           DB.delete("customers", id);

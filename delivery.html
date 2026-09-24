@@ -10,373 +10,331 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-      body {
-        font-family: "Inter", sans-serif;
-        background: #f1f5f9;
-      }
-      .sidebar-link {
-        transition: all 0.2s;
-      }
-      .sidebar-link:hover,
-      .sidebar-link.active {
-        background: #3b82f6;
-        color: white;
-      }
-      .fade-in {
-        animation: fadeIn 0.3s ease-out;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(6px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body class="text-slate-800">
-    <div class="flex h-screen overflow-hidden">
-      <aside class="w-56 bg-slate-900 text-white flex flex-col shadow-2xl z-20">
-        <div class="p-5 border-b border-slate-700">
-          <h1 class="text-lg font-bold">
-            <i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment
-          </h1>
-          <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+    <div class="ht-app-shell">
+      <aside class="ht-sidebar" id="sidebar">
+        <div class="ht-sidebar-header">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <i class="fas fa-fire text-2xl"></i>
+                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+            </div>
+            <button
+              id="sidebarToggle"
+              data-sidebar-toggle
+              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
+              title="Toggle Menu"
+              aria-label="Toggle menu"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
         </div>
-        <nav class="flex-1 p-3 space-y-1">
-          <a
-            href="index.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-chart-line w-5"></i> Dashboard</a
+        <nav class="ht-sidebar-nav">
+          <a href="index.html" class="ht-nav-link"
+            ><i class="fas fa-chart-line"></i> Dashboard</a
           >
           <div class="pt-2">
-            <p
-              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
-            >
-              Master Data
-            </p>
+            <p class="ht-nav-section-title">Master Data</p>
           </div>
-          <a
-            href="customer.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-users w-5"></i> Customer</a
+          <a href="customer.html" class="ht-nav-link"
+            ><i class="fas fa-users"></i> Customer</a
           >
-          <a
-            href="part.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-cogs w-5"></i> Part</a
+          <a href="part.html" class="ht-nav-link"
+            ><i class="fas fa-cogs"></i> Part</a
           >
-          <a
-            href="incoming.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-box w-5"></i> Incoming</a
+          <a href="incoming.html" class="ht-nav-link"
+            ><i class="fas fa-box"></i> Incoming</a
           >
           <div class="pt-2">
-            <p
-              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
-            >
-              Produksi
-            </p>
+            <p class="ht-nav-section-title">Produksi</p>
           </div>
-          <a
-            href="produksi-masuk.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
-            ><i class="fas fa-play w-5"></i> Masuk Proses</a
+          <a href="produksi-masuk.html" class="ht-nav-link sub"
+            ><i class="fas fa-play"></i> Masuk Proses</a
           >
-          <a
-            href="produksi-akhir.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
-            ><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a
+          <a href="produksi-akhir.html" class="ht-nav-link sub"
+            ><i class="fas fa-flag-checkered"></i> Akhir Proses</a
           >
-          <a
-            href="qc.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-clipboard-check w-5"></i> Quality Control</a
+          <a href="qc.html" class="ht-nav-link"
+            ><i class="fas fa-clipboard-check"></i> Quality Control</a
           >
-          <a
-            href="delivery.html"
-            class="sidebar-link active flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-shipping-fast w-5"></i> Delivery</a
+          <a href="delivery.html" class="ht-nav-link active"
+            ><i class="fas fa-shipping-fast"></i> Delivery</a
           >
-          <a
-            href="tracking.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-search-location w-5"></i> Tracking</a
+          <a href="tracking.html" class="ht-nav-link"
+            ><i class="fas fa-search-location"></i> Tracking</a
           >
         </nav>
-        <div class="p-3 border-t border-slate-700">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+        <div class="ht-sidebar-footer">
+          <div class="ht-user-panel">
+            <div class="ht-user-info">
               <div
                 class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
                 id="sidebarInitial"
               >
                 A
               </div>
-              <div>
-                <p class="text-xs font-medium" id="sidebarName">Admin User</p>
-                <p class="text-[10px] text-slate-400" id="sidebarRole">
-                  Administrator
-                </p>
+              <div class="ht-user-details">
+                <p class="ht-user-name" id="sidebarName">Admin User</p>
+                <p class="ht-user-role" id="sidebarRole">Administrator</p>
               </div>
             </div>
             <button
-              onclick="
-                Auth.logout();
-                window.location.href = 'login.html';
-              "
-              class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition"
+              onclick="Auth.logout(); window.location.href='login.html';"
+              class="ht-sidebar-logout"
               title="Logout"
+              aria-label="Logout"
             >
               <i class="fas fa-sign-out-alt"></i>
             </button>
           </div>
         </div>
       </aside>
-      <main class="flex-1 overflow-y-auto">
-        <header
-          class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center"
-        >
-          <h2 class="text-xl font-bold text-slate-800">Modul Delivery</h2>
+      <main class="ht-main full-width">
+        <header class="ht-header">
+          <div class="ht-header-left">
+            <h1 class="text-xl font-bold text-slate-800">Modul Delivery</h1>
+            <p class="text-xs text-slate-500">Pencatatan pengiriman part yang selesai.</p>
+          </div>
         </header>
-        <div class="p-5 space-y-4">
-          <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">
-              Scan QR Code Material
-            </h3>
-            <div class="flex flex-col md:flex-row gap-4">
-              <div class="flex-1">
-                <div
-                  id="qr-reader"
-                  class="rounded-lg overflow-hidden border max-w-sm"
-                ></div>
+        <div class="ht-content">
+          <div class="ht-content-max">
+            <!-- Scan -->
+            <div class="ht-card fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Scan QR Code Material</h3>
               </div>
-              <div class="flex-1 space-y-2">
-                <p class="text-xs text-slate-500">
-                  Atau masukkan ID Material secara manual:
-                </p>
-                <div class="flex gap-2">
-                  <input
-                    type="text"
-                    id="manualId"
-                    placeholder="ID Material (contoh: 1001)"
-                    class="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                  />
-                  <button
-                    onclick="loadMaterialById()"
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm"
-                  >
-                    <i class="fas fa-search mr-1"></i>Cari
-                  </button>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex-1">
+                  <div id="qr-reader" class="ht-qr-frame"></div>
+                  <p class="text-xs text-slate-500 text-center mt-3">
+                    Arahkan kamera ke QR Code material
+                  </p>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-xs text-slate-500">
+                    Atau masukkan Kode Material secara manual:
+                  </p>
+                  <div class="flex gap-2">
+                    <input
+                      type="text"
+                      id="manualId"
+                      placeholder="ID Material (contoh: 1001)"
+                      class="ht-form-input flex-1"
+                      oninput="clearManualError()"
+                    />
+                    <button
+                      onclick="loadMaterialById()"
+                      class="ht-btn ht-btn-primary ht-btn-sm"
+                      aria-label="Cari material"
+                    >
+                      <i class="fas fa-search mr-1"></i>Cari
+                    </button>
+                  </div>
+                  <p id="manualError" class="hidden text-[11px] text-danger-text"></p>
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            id="deliveryForm"
-            class="hidden bg-white rounded-xl p-4 shadow-sm fade-in"
-          >
-            <h3 class="text-base font-bold text-slate-800 mb-3">
-              Input Data Pengiriman
-            </h3>
-            <div
-              class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3 p-3 bg-slate-50 rounded-lg"
-            >
-              <div>
-                <p class="text-xs text-slate-500">No Part</p>
-                <p class="font-semibold text-slate-800" id="infoNoPart">-</p>
+
+            <!-- Delivery form -->
+            <div id="deliveryForm" class="hidden ht-step-card success fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Input Data Pengiriman</h3>
               </div>
-              <div>
-                <p class="text-xs text-slate-500">Nama Part</p>
-                <p class="font-semibold text-slate-800" id="infoNamaPart">-</p>
+              <div class="ht-info-grid mb-4">
+                <div class="ht-info-item">
+                  <span class="ht-info-label">No Part</span>
+                  <span class="ht-info-value" id="infoNoPart">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Nama Part</span>
+                  <span class="ht-info-value" id="infoNamaPart">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Customer</span>
+                  <span class="ht-info-value" id="infoCustomer">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Hasil QC</span>
+                  <span class="ht-info-value" id="infoQc">-</span>
+                </div>
               </div>
-              <div>
-                <p class="text-xs text-slate-500">Customer</p>
-                <p class="font-semibold text-slate-800" id="infoCustomer">-</p>
-              </div>
-              <div>
-                <p class="text-xs text-slate-500">Hasil QC</p>
-                <p class="font-semibold" id="infoQc">-</p>
-              </div>
+
+              <form id="deliverForm" class="ht-form">
+                <input type="hidden" id="delProductionId" />
+                <input type="hidden" id="delId" />
+                <div class="ht-form-row">
+                  <div class="ht-form-group">
+                    <label class="ht-form-label">Tanggal Kirim</label>
+                    <input
+                      type="date"
+                      id="delTanggal"
+                      required
+                      class="ht-form-input"
+                    />
+                  </div>
+                  <div class="ht-form-group">
+                    <label class="ht-form-label">Qty Kirim</label>
+                    <input
+                      type="number"
+                      id="delQty"
+                      required
+                      min="1"
+                      class="ht-form-input"
+                      placeholder="Jumlah dikirim"
+                    />
+                  </div>
+                </div>
+                <div class="ht-form-group">
+                  <label class="ht-form-label">Catatan</label>
+                  <textarea
+                    id="delCatatan"
+                    rows="2"
+                    class="ht-form-input ht-form-textarea"
+                    placeholder="Opsional"
+                  ></textarea>
+                </div>
+                <div class="ht-form-actions">
+                  <button
+                    type="submit"
+                    class="ht-btn ht-btn-success"
+                    aria-label="Update status delivered"
+                  >
+                    <i class="fas fa-paper-plane mr-2"></i>Update Status Delivered
+                  </button>
+                </div>
+              </form>
             </div>
-            <form
-              id="deliverForm"
-              class="grid grid-cols-1 md:grid-cols-3 gap-4"
-            >
-              <input type="hidden" id="delProductionId" />
-              <input type="hidden" id="delId" />
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Tanggal Kirim</label
-                >
-                <input
-                  type="date"
-                  id="delTanggal"
-                  required
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                />
+
+            <!-- History -->
+            <div class="ht-card fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Riwayat Pengiriman</h3>
               </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Qty Kirim</label
-                >
-                <input
-                  type="number"
-                  id="delQty"
-                  required
-                  min="1"
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                  placeholder="Jumlah dikirim"
-                />
+              <div class="ht-table-wrapper">
+                <table class="ht-table">
+                  <thead>
+                    <tr>
+                      <th>No Part</th>
+                      <th>Nama Part</th>
+                      <th>Customer</th>
+                      <th>Qty Kirim</th>
+                      <th>Tanggal Kirim</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="divide-y divide-slate-100 text-xs"
+                    id="deliveryTable"
+                  ></tbody>
+                </table>
               </div>
-              <div class="flex items-end">
-                <button
-                  type="submit"
-                  class="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition"
-                >
-                  <i class="fas fa-paper-plane mr-2"></i>Update Status Delivered
-                </button>
-              </div>
-            </form>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">
-              Riwayat Pengiriman
-            </h3>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left">
-                <thead class="bg-slate-50 text-slate-600 text-xs uppercase">
-                  <tr>
-                    <th class="px-3 py-2 rounded-l-lg">No Part</th>
-                    <th class="px-3 py-2">Nama Part</th>
-                    <th class="px-3 py-2">Customer</th>
-                    <th class="px-3 py-2">Qty Kirim</th>
-                    <th class="px-3 py-2">Tanggal Kirim</th>
-                    <th class="px-3 py-2 rounded-r-lg">Status</th>
-                  </tr>
-                </thead>
-                <tbody
-                  class="divide-y divide-slate-100 text-xs"
-                  id="deliveryTable"
-                ></tbody>
-              </table>
             </div>
           </div>
         </div>
       </main>
     </div>
+
+    <!-- Scan Modal -->
+    <div id="scanModal" class="ht-modal-overlay">
+      <div class="ht-modal">
+        <div class="ht-modal-header">
+          <h3 class="ht-modal-title">Scan QR Code</h3>
+          <button onclick="closeScanModal()" class="ht-modal-close" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="ht-modal-body">
+          <div class="ht-qr-scanner-wrapper">
+            <div id="qr-reader-modal" class="ht-qr-frame"></div>
+            <p class="text-xs text-slate-500 text-center mt-3">
+              Arahkan kamera ke QR Code
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
     <script>
-      Auth.initDefaultUser();
-      if (!Auth.isLoggedIn()) {
-        window.location.href = "login.html";
+      if (!HTUI.requireAuth()) {
+        throw new Error("redirecting");
       }
       let html5QrCode = null;
       const session = Auth.getSession();
-      if (session) {
-        document.getElementById("sidebarInitial").textContent =
-          Auth.getInitials(session.name);
-        document.getElementById("sidebarName").textContent = session.name;
-        document.getElementById("sidebarRole").textContent = session.role;
-      }
-      function parseMaterialId(text) {
-        if (text.includes("id=")) return text.split("id=")[1].split("&")[0];
-        return text.split("/").pop();
-      }
       function startScanner() {
-        if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode
-          .start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 200, height: 200 } },
-            (decodedText) => {
-              const id = parseMaterialId(decodedText);
-              html5QrCode.stop().then(() => {
-                html5QrCode.clear();
-                startScanner();
-              });
-              loadMaterialById(id);
-            },
-            () => {},
-          )
-          .catch((err) => console.error(err));
+        if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
+        if (!html5QrCode) return;
+        HTUI.startScanner(html5QrCode, (decodedText) => {
+          const id = HTUI.parseScanId(decodedText);
+          loadMaterialById(id);
+        });
       }
       function loadMaterialById(manualId) {
         const id = manualId || document.getElementById("manualId").value;
+        if (!id) return;
         const material = DB.findMaterial(id);
         if (!material) {
-          alert("Material tidak ditemukan!");
+          HTUI.toast("Material tidak ditemukan!", "error");
           return;
         }
-        const production = DB.get("productions").find(
-          (p) => p.material_id == material.id,
-        );
+        const production = DB.get("productions").find((p) => p.material_id == material.id);
         if (!production) {
-          alert("Material ini belum memiliki data produksi.");
+          HTUI.toast("Material ini belum memiliki data produksi.", "error");
           return;
         }
         const qc = DB.get("qcs").find((q) => q.production_id == production.id);
         if (!qc || qc.hasil !== "OK") {
-          alert(
-            "Material ini belum lulus QC atau hasil QC NG. Tidak dapat dikirim.",
-          );
+          HTUI.toast("Material ini belum lulus QC atau hasil QC NG. Tidak dapat dikirim.", "error");
           return;
         }
         const part = DB.findPartById(material.part_id);
         const cust = DB.findCustomerById(material.customer_id);
-        document.getElementById("infoNoPart").textContent = part
-          ? part.nomor_part
-          : "-";
-        document.getElementById("infoNamaPart").textContent = part
-          ? part.nama_part
-          : "-";
-        document.getElementById("infoCustomer").textContent = cust
-          ? cust.nama_customer
-          : "-";
-        document.getElementById("infoQc").textContent = qc.hasil;
-        document.getElementById("infoQc").className =
-          "font-semibold " +
-          (qc.hasil === "OK" ? "text-emerald-600" : "text-red-600");
+        document.getElementById("infoNoPart").textContent = part ? part.nomor_part : "-";
+        document.getElementById("infoNamaPart").textContent = part ? part.nama_part : "-";
+        document.getElementById("infoCustomer").textContent = cust ? cust.nama_customer : "-";
+        document.getElementById("infoQc").innerHTML = '<span class="ht-badge ht-badge-ok">' + (qc.hasil || "-") + "</span>";
         document.getElementById("delProductionId").value = production.id;
-        const existing = DB.get("deliveries").find(
-          (d) => d.production_id == production.id,
-        );
+        const existing = DB.get("deliveries").find((d) => d.production_id == production.id);
         if (existing) {
           document.getElementById("delId").value = existing.id;
           document.getElementById("delTanggal").value = existing.tanggal_kirim;
           document.getElementById("delQty").value = existing.qty_kirim;
+          document.getElementById("delCatatan").value = existing.catatan || "";
         } else {
           document.getElementById("delId").value = "";
-          document.getElementById("delTanggal").value = new Date()
-            .toISOString()
-            .split("T")[0];
+          document.getElementById("delTanggal").value = new Date().toISOString().split("T")[0];
           document.getElementById("delQty").value = material.qty;
+          document.getElementById("delCatatan").value = "";
         }
         document.getElementById("deliveryForm").classList.remove("hidden");
-        document
-          .getElementById("deliveryForm")
-          .scrollIntoView({ behavior: "smooth" });
+        document.getElementById("deliveryForm").scrollIntoView({ behavior: "smooth" });
+      }
+      function clearManualError() {
+        const err = document.getElementById("manualError");
+        if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
       }
       document.getElementById("deliverForm").addEventListener("submit", (e) => {
         e.preventDefault();
-        const productionId = parseInt(
-          document.getElementById("delProductionId").value,
-        );
+        const productionId = parseInt(document.getElementById("delProductionId").value);
         const delId = document.getElementById("delId").value;
         const data = {
           production_id: productionId,
+          material_id: "",
           tanggal_kirim: document.getElementById("delTanggal").value,
           qty_kirim: parseInt(document.getElementById("delQty").value),
+          catatan: document.getElementById("delCatatan").value.trim(),
         };
         if (delId) DB.update("deliveries", delId, data);
         else DB.insert("deliveries", data);
-        alert("Status delivery berhasil diupdate menjadi Delivered!");
+        HTUI.toast("Status delivery berhasil diupdate menjadi Delivered!", "success");
         loadDeliveries();
       });
       function loadDeliveries() {
@@ -395,16 +353,32 @@
             <td class="px-3 py-2 text-slate-500">${customer ? customer.nama_customer : "-"}</td>
             <td class="px-3 py-2">${d.qty_kirim}</td>
             <td class="px-3 py-2 text-slate-500">${d.tanggal_kirim}</td>
-            <td class="px-3 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-pink-100 text-pink-600">Delivered</span></td>
+            <td class="px-3 py-2"><span class="ht-badge ht-badge-delivered">Delivered</span></td>
           </tr>`;
           })
           .join("");
         document.getElementById("deliveryTable").innerHTML =
           html ||
-          '<tr><td colspan="6" class="text-center py-4 text-slate-400">Belum ada data pengiriman</td></tr>';
+          '<tr><td colspan="6" class="ht-table-empty"><i class="fas fa-inbox"></i><p>Belum ada data pengiriman</p></td></tr>';
+      }
+      function openScanModal() {
+        HTUI.openModal("scanModal");
+        if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader-modal");
+        if (html5QrCode) {
+          HTUI.startScanner(html5QrCode, (decodedText) => {
+            const id = HTUI.parseScanId(decodedText);
+            loadMaterialById(id);
+          });
+        }
+      }
+      function closeScanModal() {
+        HTUI.stopScanner(html5QrCode);
+        html5QrCode = null;
+        HTUI.closeModal("scanModal");
       }
       window.addEventListener("DOMContentLoaded", () => {
         DB.init();
+        DB.migrate();
         startScanner();
         loadDeliveries();
       });

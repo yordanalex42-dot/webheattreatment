@@ -10,449 +10,430 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-      body {
-        font-family: "Inter", sans-serif;
-        background: #f1f5f9;
-      }
-      .sidebar-link {
-        transition: all 0.2s;
-      }
-      .sidebar-link:hover,
-      .sidebar-link.active {
-        background: #3b82f6;
-        color: white;
-      }
-      .fade-in {
-        animation: fadeIn 0.3s ease-out;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(6px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body class="text-slate-800">
-    <div class="flex h-screen overflow-hidden">
-      <aside class="w-56 bg-slate-900 text-white flex flex-col shadow-2xl z-20">
-        <div class="p-5 border-b border-slate-700">
-          <h1 class="text-lg font-bold">
-            <i class="fas fa-fire text-orange-500 mr-2"></i>Heat Treatment
-          </h1>
-          <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+    <div class="ht-app-shell">
+      <aside class="ht-sidebar" id="sidebar">
+        <div class="ht-sidebar-header">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <i class="fas fa-fire text-2xl"></i>
+                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+            </div>
+            <button
+              id="sidebarToggle"
+              data-sidebar-toggle
+              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
+              title="Toggle Menu"
+              aria-label="Toggle menu"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
         </div>
-        <nav class="flex-1 p-3 space-y-1">
-          <a
-            href="index.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-chart-line w-5"></i> Dashboard</a
+        <nav class="ht-sidebar-nav">
+          <a href="index.html" class="ht-nav-link"
+            ><i class="fas fa-chart-line"></i> Dashboard</a
           >
           <div class="pt-2">
-            <p
-              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
-            >
-              Master Data
-            </p>
+            <p class="ht-nav-section-title">Master Data</p>
           </div>
-          <a
-            href="customer.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-users w-5"></i> Customer</a
+          <a href="customer.html" class="ht-nav-link"
+            ><i class="fas fa-users"></i> Customer</a
           >
-          <a
-            href="part.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-cogs w-5"></i> Part</a
+          <a href="part.html" class="ht-nav-link"
+            ><i class="fas fa-cogs"></i> Part</a
           >
-          <a
-            href="incoming.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-box w-5"></i> Incoming</a
+          <a href="incoming.html" class="ht-nav-link"
+            ><i class="fas fa-box"></i> Incoming</a
           >
           <div class="pt-2">
-            <p
-              class="text-[10px] uppercase text-slate-500 font-semibold px-3 mb-1 tracking-wider"
-            >
-              Produksi
-            </p>
+            <p class="ht-nav-section-title">Produksi</p>
           </div>
-          <a
-            href="produksi-masuk.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
-            ><i class="fas fa-play w-5"></i> Masuk Proses</a
+          <a href="produksi-masuk.html" class="ht-nav-link sub"
+            ><i class="fas fa-play"></i> Masuk Proses</a
           >
-          <a
-            href="produksi-akhir.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg pl-7"
-            ><i class="fas fa-flag-checkered w-5"></i> Akhir Proses</a
+          <a href="produksi-akhir.html" class="ht-nav-link sub"
+            ><i class="fas fa-flag-checkered"></i> Akhir Proses</a
           >
-          <a
-            href="qc.html"
-            class="sidebar-link active flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-clipboard-check w-5"></i> Quality Control</a
+          <a href="qc.html" class="ht-nav-link active"
+            ><i class="fas fa-clipboard-check"></i> Quality Control</a
           >
-          <a
-            href="delivery.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-shipping-fast w-5"></i> Delivery</a
+          <a href="delivery.html" class="ht-nav-link"
+            ><i class="fas fa-shipping-fast"></i> Delivery</a
           >
-          <a
-            href="tracking.html"
-            class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg"
-            ><i class="fas fa-search-location w-5"></i> Tracking</a
+          <a href="tracking.html" class="ht-nav-link"
+            ><i class="fas fa-search-location"></i> Tracking</a
           >
         </nav>
-        <div class="p-3 border-t border-slate-700">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+        <div class="ht-sidebar-footer">
+          <div class="ht-user-panel">
+            <div class="ht-user-info">
               <div
                 class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
                 id="sidebarInitial"
               >
                 A
               </div>
-              <div>
-                <p class="text-xs font-medium" id="sidebarName">Admin User</p>
-                <p class="text-[10px] text-slate-400" id="sidebarRole">
-                  Administrator
-                </p>
+              <div class="ht-user-details">
+                <p class="ht-user-name" id="sidebarName">Admin User</p>
+                <p class="ht-user-role" id="sidebarRole">Administrator</p>
               </div>
             </div>
             <button
-              onclick="
-                Auth.logout();
-                window.location.href = 'login.html';
-              "
-              class="text-slate-400 hover:text-white text-xs px-2 py-1 rounded hover:bg-slate-700 transition"
+              onclick="Auth.logout(); window.location.href='login.html';"
+              class="ht-sidebar-logout"
               title="Logout"
+              aria-label="Logout"
             >
               <i class="fas fa-sign-out-alt"></i>
             </button>
           </div>
         </div>
       </aside>
-      <main class="flex-1 overflow-y-auto">
-        <header
-          class="bg-white shadow-sm border-b px-5 py-2.5 flex justify-between items-center"
-        >
-          <h2 class="text-xl font-bold text-slate-800">
-            Modul Quality Control (QC)
-          </h2>
+      <main class="ht-main full-width">
+        <header class="ht-header">
+          <div class="ht-header-left">
+            <h1 class="text-xl font-bold text-slate-800">Modul Quality Control (QC)</h1>
+            <p class="text-xs text-slate-500">Input hasil pemeriksaan keras material.</p>
+          </div>
         </header>
-        <div class="p-5 space-y-4">
-          <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">
-              Scan QR Code Material
-            </h3>
-            <div class="flex flex-col md:flex-row gap-4">
-              <div class="flex-1">
-                <div
-                  id="qr-reader"
-                  class="rounded-lg overflow-hidden border max-w-sm"
-                ></div>
+        <div class="ht-content">
+          <div class="ht-content-max">
+            <!-- Scan -->
+            <div class="ht-card fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Scan QR Code Material</h3>
               </div>
-              <div class="flex-1 space-y-2">
-                <p class="text-xs text-slate-500">
-                  Atau masukkan Kode Part secara manual:
-                </p>
-                <div class="flex gap-2">
-                  <input
-                    type="text"
-                    id="manualId"
-                    placeholder="Kode Part (contoh: 20260004I)"
-                    onkeydown="if(event.key==='Enter') loadMaterialById()"
-                    class="flex-1 px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                  />
-                  <button
-                    onclick="loadMaterialById()"
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition text-sm"
-                  >
-                    <i class="fas fa-search mr-1"></i>Cari
-                  </button>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex-1">
+                  <div id="qr-reader" class="ht-qr-frame"></div>
+                  <p class="text-xs text-slate-500 text-center mt-3">
+                    Arahkan kamera ke QR Code material
+                  </p>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-xs text-slate-500">
+                    Atau masukkan Kode Part secara manual:
+                  </p>
+                  <div class="flex gap-2">
+                    <input
+                      type="text"
+                      id="manualId"
+                      placeholder="Kode Part (contoh: 20260004I)"
+                      class="ht-form-input flex-1"
+                      oninput="clearManualError()"
+                      onkeydown="if(event.key==='Enter') loadMaterialById()"
+                    />
+                    <button
+                      onclick="loadMaterialById()"
+                      class="ht-btn ht-btn-primary ht-btn-sm"
+                      aria-label="Cari material"
+                    >
+                      <i class="fas fa-search mr-1"></i>Cari
+                    </button>
+                  </div>
+                  <p id="manualError" class="hidden text-[11px] text-danger-text"></p>
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            id="qcForm"
-            class="hidden bg-white rounded-xl p-4 shadow-sm fade-in"
-          >
-            <h3 class="text-base font-bold text-slate-800 mb-3">
-              Data Part
-            </h3>
-            <div
-              class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 p-3 bg-slate-50 rounded-lg text-xs"
-            >
-              <div>
-                <p class="text-slate-500">Nomor Kode</p>
-                <p class="font-mono font-semibold text-slate-800" id="infoKode">-</p>
+
+            <!-- Form -->
+            <div id="qcForm" class="hidden ht-step-card success fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Data Part</h3>
               </div>
-              <div>
-                <p class="text-slate-500">Customer</p>
-                <p class="font-semibold text-slate-800" id="infoCustomer">-</p>
+              <div class="ht-info-grid mb-4">
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Nomor Kode</span>
+                  <span class="ht-info-value mono" id="infoKode">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Customer</span>
+                  <span class="ht-info-value" id="infoCustomer">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Nomor Part</span>
+                  <span class="ht-info-value" id="infoNoPart">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Nama Part</span>
+                  <span class="ht-info-value" id="infoNamaPart">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Status Part</span>
+                  <span class="ht-info-value" id="infoStatusPart">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Lot Number</span>
+                  <span class="ht-info-value mono" id="infoLot">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Material Charge</span>
+                  <span class="ht-info-value mono" id="infoCharge">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Target Hardness</span>
+                  <span class="ht-info-value mono hardness" id="infoTargetHardness">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Qty</span>
+                  <span class="ht-info-value" id="infoQty">-</span>
+                </div>
               </div>
-              <div>
-                <p class="text-slate-500">Nomor Part</p>
-                <p class="font-semibold text-slate-800" id="infoNoPart">-</p>
+
+              <h3 class="text-base font-bold text-slate-800 mb-3">
+                Input Hasil QC
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 ht-form-group">
+                <div class="ht-form-group">
+                  <label class="ht-form-label">Nama Inspector</label>
+                  <input
+                    type="text"
+                    id="qcInspector"
+                    required
+                    class="ht-form-input"
+                    placeholder="Nama Inspector"
+                  />
+                </div>
+                <div class="ht-form-group">
+                  <label class="ht-form-label">Tanggal Inspector</label>
+                  <input
+                    type="date"
+                    id="qcTanggalInspector"
+                    required
+                    class="ht-form-input"
+                  />
+                </div>
               </div>
-              <div>
-                <p class="text-slate-500">Nama Part</p>
-                <p class="font-semibold text-slate-800" id="infoNamaPart">-</p>
-              </div>
-              <div>
-                <p class="text-slate-500">Status Part</p>
-                <p class="font-semibold text-slate-800" id="infoStatusPart">-</p>
-              </div>
-              <div>
-                <p class="text-slate-500">Lot Number</p>
-                <p class="font-semibold text-slate-800" id="infoLot">-</p>
-              </div>
-              <div>
-                <p class="text-slate-500">Material Charge</p>
-                <p class="font-semibold text-slate-800" id="infoCharge">-</p>
-              </div>
-              <div>
-                <p class="text-slate-500">Target Hardness</p>
-                <p class="font-semibold font-mono text-slate-800" id="infoTargetHardness">-</p>
-              </div>
-              <div>
-                <p class="text-slate-500">Qty</p>
-                <p class="font-semibold text-slate-800" id="infoQty">-</p>
-              </div>
+
+              <form id="hasilForm" class="ht-form">
+                <input type="hidden" id="qcProductionId" />
+                <input type="hidden" id="qcId" />
+                <div class="ht-form-row">
+                  <div class="ht-form-group">
+                    <label class="ht-form-label">Nilai Hardness</label>
+                    <input
+                      type="text"
+                      id="qcHardness"
+                      required
+                      class="ht-form-input"
+                      placeholder="Contoh: 58-62 HRC"
+                    />
+                  </div>
+                  <div class="ht-form-group">
+                    <label class="ht-form-label">Satuan</label>
+                    <select id="qcSatuan" class="ht-form-select">
+                      <option value="HRC">HRC</option>
+                      <option value="HV">HV</option>
+                      <option value="HB">HB</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="ht-form-group">
+                  <label class="ht-form-label">Hasil QC</label>
+                  <select id="qcHasil" required class="ht-form-select">
+                    <option value="">Pilih Hasil</option>
+                    <option value="OK">OK (Lulus)</option>
+                    <option value="NG">NG (Tidak Lulus)</option>
+                  </select>
+                </div>
+                <div class="ht-form-group">
+                  <label class="ht-form-label">Catatan</label>
+                  <textarea
+                    id="qcCatatan"
+                    rows="2"
+                    class="ht-form-input ht-form-textarea"
+                    placeholder="Opsional"
+                  ></textarea>
+                </div>
+                <div class="ht-form-actions">
+                  <button
+                    type="submit"
+                    class="ht-btn ht-btn-success"
+                    aria-label="Simpan hasil QC"
+                  >
+                    <i class="fas fa-save mr-2"></i>Simpan Hasil QC
+                  </button>
+                </div>
+              </form>
             </div>
-            <h3 class="text-base font-bold text-slate-800 mb-3">
-              Input Hasil QC
-            </h3>
-            <div
-              class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 p-3 bg-slate-50 rounded-lg"
-            >
-              <div>
-                <p class="text-xs text-slate-500">Nama Inspector</p>
-                <input
-                  type="text"
-                  id="qcInspector"
-                  required
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                  placeholder="Nama Inspector"
-                />
+
+            <!-- History table -->
+            <div class="ht-card fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Riwayat QC</h3>
               </div>
-              <div>
-                <p class="text-xs text-slate-500">Tanggal Inspector</p>
-                <input
-                  type="date"
-                  id="qcTanggalInspector"
-                  required
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                />
+              <div class="ht-table-wrapper">
+                <table class="ht-table">
+                  <thead>
+                    <tr>
+                      <th>Nomor Kode</th>
+                      <th>Customer</th>
+                      <th>Nama Part</th>
+                      <th>Treatment</th>
+                      <th>Hardness</th>
+                      <th>Hasil</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="divide-y divide-slate-100 text-xs"
+                    id="qcTable"
+                  ></tbody>
+                </table>
               </div>
-            </div>
-            <form id="hasilForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input type="hidden" id="qcProductionId" />
-              <input type="hidden" id="qcId" />
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Nilai Hardness</label
-                >
-                <input
-                  type="text"
-                  id="qcHardness"
-                  required
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                  placeholder="Contoh: 58-62 HRC"
-                />
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-600 mb-1"
-                  >Hasil QC</label
-                >
-                <select
-                  id="qcHasil"
-                  required
-                  class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm"
-                >
-                  <option value="">Pilih Hasil</option>
-                  <option value="OK">OK (Lulus)</option>
-                  <option value="NG">NG (Tidak Lulus)</option>
-                </select>
-              </div>
-              <div class="flex items-end">
-                <button
-                  type="submit"
-                  class="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-medium text-sm transition"
-                >
-                  <i class="fas fa-save mr-2"></i>Simpan Hasil QC
-                </button>
-              </div>
-            </form>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm fade-in">
-            <h3 class="text-base font-bold text-slate-800 mb-3">Riwayat QC</h3>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left">
-                <thead class="bg-slate-50 text-slate-600 text-xs uppercase">
-                  <tr>
-                    <th class="px-3 py-2 rounded-l-lg">Nomor Kode</th>
-                    <th class="px-3 py-2">Customer</th>
-                    <th class="px-3 py-2">Nama Part</th>
-                    <th class="px-3 py-2">Treatment</th>
-                    <th class="px-3 py-2">Hardness</th>
-                    <th class="px-3 py-2">Hasil</th>
-                    <th class="px-3 py-2 rounded-r-lg">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody
-                  class="divide-y divide-slate-100 text-xs"
-                  id="qcTable"
-                ></tbody>
-              </table>
             </div>
           </div>
         </div>
       </main>
     </div>
+
+    <!-- Scan Modal -->
+    <div id="scanModal" class="ht-modal-overlay">
+      <div class="ht-modal">
+        <div class="ht-modal-header">
+          <h3 class="ht-modal-title">Scan QR Code</h3>
+          <button onclick="closeScanModal()" class="ht-modal-close" aria-label="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="ht-modal-body">
+          <div class="ht-qr-scanner-wrapper">
+            <div id="qr-reader-modal" class="ht-qr-frame"></div>
+            <p class="text-xs text-slate-500 text-center mt-3">
+              Arahkan kamera ke QR Code
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
     <script>
-      Auth.initDefaultUser();
-      if (!Auth.isLoggedIn()) {
-        window.location.href = "login.html";
+      if (!HTUI.requireAuth()) {
+        throw new Error("redirecting");
       }
       let html5QrCode = null;
       const session = Auth.getSession();
-      if (session) {
-        document.getElementById("sidebarInitial").textContent =
-          Auth.getInitials(session.name);
-        document.getElementById("sidebarName").textContent = session.name;
-        document.getElementById("sidebarRole").textContent = session.role;
-      }
-      function parseMaterialId(text) {
-        if (text.includes("id=")) return text.split("id=")[1].split("&")[0];
-        return text.split("/").pop();
-      }
+      let currentMaterial = null;
+      let currentProduction = null;
       function startScanner() {
-        if (!html5QrCode) html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode
-          .start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 200, height: 200 } },
-            (decodedText) => {
-              const id = parseMaterialId(decodedText);
-              html5QrCode.stop().then(() => {
-                html5QrCode.clear();
-                startScanner();
-              });
-              loadMaterialById(id);
-            },
-            () => {},
-          )
-          .catch((err) => console.error(err));
+        if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
+        if (!html5QrCode) return;
+        HTUI.startScanner(html5QrCode, (decodedText) => {
+          const id = HTUI.parseScanId(decodedText);
+          loadMaterialById(id);
+        });
       }
       function loadMaterialById(manualId) {
         const id = manualId || document.getElementById("manualId").value;
-        const material = DB.findMaterial(id);
+        if (!id) return;
+        const material = DB.findByKode(id) || DB.findMaterial(id);
         if (!material) {
-          alert("Material tidak ditemukan! Kode: " + id);
+          HTUI.toast("Material tidak ditemukan! Kode: " + id, "error");
           return;
         }
+        currentMaterial = material;
         const production = DB.get("productions").find(
           (p) => p.material_id == material.id,
         );
+        currentProduction = production || null;
         if (!production) {
-          alert(
+          HTUI.toast(
             "Material ini belum memiliki data produksi. Silakan update di modul Produksi terlebih dahulu.",
+            "error",
           );
           return;
         }
         const part = DB.findPartById(material.part_id);
         const customer = DB.findCustomerById(material.customer_id);
-        document.getElementById("infoKode").textContent =
-          material.kode || "-";
-        document.getElementById("infoCustomer").textContent =
-          customer ? customer.nama_customer : "-";
-        document.getElementById("infoNoPart").textContent = part
-          ? part.nomor_part
-          : "-";
-        document.getElementById("infoNamaPart").textContent = part
-          ? part.nama_part
-          : "-";
-        document.getElementById("infoStatusPart").textContent =
-          material.status_part || "-";
-        document.getElementById("infoLot").textContent =
-          material.lot_no || "-";
-        document.getElementById("infoCharge").textContent =
-          material.material_charge || "-";
+        document.getElementById("infoKode").textContent = material.kode || "-";
+        document.getElementById("infoCustomer").textContent = customer ? customer.nama_customer : "-";
+        document.getElementById("infoNoPart").textContent = part ? part.nomor_part : "-";
+        document.getElementById("infoNamaPart").textContent = part ? part.nama_part : "-";
+        document.getElementById("infoStatusPart").textContent = material.status_part || "-";
+        document.getElementById("infoLot").textContent = material.lot_no || "-";
+        document.getElementById("infoCharge").textContent = material.material_charge || "-";
         document.getElementById("infoTargetHardness").textContent =
           part ? part.target_hardness || "-" : "-";
-        document.getElementById("infoQty").textContent =
-          material.qty || 0;
+        document.getElementById("infoQty").textContent = material.qty || 0;
         document.getElementById("qcProductionId").value = production.id;
-        const existing = DB.get("qcs").find(
-          (q) => q.production_id == production.id,
-        );
+        const existing = DB.get("qcs").find((q) => q.production_id == production.id);
         if (existing) {
           document.getElementById("qcId").value = existing.id;
           document.getElementById("qcHardness").value = existing.hardness;
+          document.getElementById("qcSatuan").value = existing.satuan_hardness || "HRC";
           document.getElementById("qcHasil").value = existing.hasil;
           document.getElementById("qcInspector").value = existing.inspector || "";
           document.getElementById("qcTanggalInspector").value = existing.tanggal_inspector || "";
+          document.getElementById("qcCatatan").value = existing.catatan || "";
         } else {
           document.getElementById("qcId").value = "";
           document.getElementById("qcHardness").value = "";
+          document.getElementById("qcSatuan").value = "HRC";
           document.getElementById("qcHasil").value = "";
           document.getElementById("qcInspector").value = "";
           document.getElementById("qcTanggalInspector").value = "";
+          document.getElementById("qcCatatan").value = "";
         }
         document.getElementById("qcForm").classList.remove("hidden");
         document.getElementById("qcForm").scrollIntoView({ behavior: "smooth" });
       }
+      function clearManualError() {
+        const err = document.getElementById("manualError");
+        if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
+      }
       document.getElementById("hasilForm").addEventListener("submit", (e) => {
         e.preventDefault();
-        const productionId = parseInt(
-          document.getElementById("qcProductionId").value,
-        );
+        const productionId = parseInt(document.getElementById("qcProductionId").value);
         const qcId = document.getElementById("qcId").value;
         const inspector = document.getElementById("qcInspector").value.trim();
         const tanggalInspector = document.getElementById("qcTanggalInspector").value;
         const hardness = document.getElementById("qcHardness").value.trim();
+        const satuan = document.getElementById("qcSatuan").value;
         const hasil = document.getElementById("qcHasil").value;
+        const catatan = document.getElementById("qcCatatan").value.trim();
         const kode = document.getElementById("infoKode").textContent;
         if (!kode || kode === "-") {
-          alert("Nomor Kode tidak ditemukan!");
+          HTUI.toast("Nomor Kode tidak ditemukan!", "error");
           return;
         }
         if (!inspector) {
-          alert("Nama Inspector wajib diisi!");
+          HTUI.toast("Nama Inspector wajib diisi!", "error");
           return;
         }
         if (!tanggalInspector) {
-          alert("Tanggal Inspector wajib diisi!");
+          HTUI.toast("Tanggal Inspector wajib diisi!", "error");
           return;
         }
         if (!hardness) {
-          alert("Nilai Hardness wajib diisi!");
+          HTUI.toast("Nilai Hardness wajib diisi!", "error");
           return;
         }
         if (!hasil) {
-          alert("Hasil QC wajib dipilih!");
+          HTUI.toast("Hasil QC wajib dipilih!", "error");
           return;
         }
         const data = {
           production_id: productionId,
+          material_id: currentMaterial ? currentMaterial.id : "",
           hardness,
+          satuan_hardness: satuan,
           hasil,
           inspector,
           tanggal_inspector: tanggalInspector,
+          catatan,
         };
         if (qcId) DB.update("qcs", qcId, data);
         else DB.insert("qcs", data);
-        alert("Hasil QC berhasil disimpan!");
+        HTUI.toast("Hasil QC berhasil disimpan!", "success");
         loadQCs();
       });
       function loadQCs() {
@@ -467,25 +448,29 @@
             const cust = DB.findCustomerById(m.customer_id);
             const hasilColor =
               q.hasil === "OK"
-                ? "bg-emerald-100 text-emerald-600"
-                : "bg-red-100 text-red-600";
+                ? "ht-badge-ok"
+                : q.hasil === "NG"
+                  ? "ht-badge-ng"
+                  : "ht-badge-waiting";
             return `<tr class="hover:bg-slate-50 transition">
             <td class="px-3 py-2 font-mono">${m.kode || "-"}</td>
             <td class="px-3 py-2">${cust ? cust.nama_customer : "-"}</td>
-            <td class="px-3 py-2">${part ? part.nama_part : "-"}</td>
+            <td class="px-3 py-2">${part ? part.nomor_part : "-"}</td>
             <td class="px-3 py-2 text-slate-500">${prod.jenis_treatment || "-"}</td>
-            <td class="px-3 py-2 font-mono">${part ? part.target_hardness || "-" : "-"}</td>
-            <td class="px-3 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-medium ${hasilColor}">${q.hasil}</span></td>
+            <td class="px-3 py-2 font-mono">${q.hardness || "-"} ${q.satuan_hardness || ""}</td>
+            <td class="px-3 py-2"><span class="ht-badge ${hasilColor}">${q.hasil || "-"}</span></td>
             <td class="px-3 py-2">
-              <button onclick="loadMaterialById(${m.id || 0})" class="text-blue-500 hover:text-blue-700 mr-2"><i class="fas fa-edit"></i></button>
-              <button onclick="deleteQC(${q.id})" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+              <div class="ht-action-group">
+                <button onclick="loadMaterialById('${m.kode || m.id}')" class="ht-action-btn edit" title="Edit" aria-label="Edit"><i class="fas fa-edit"></i></button>
+                <button onclick="deleteQC(${q.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
+              </div>
             </td>
           </tr>`;
           })
           .join("");
         document.getElementById("qcTable").innerHTML =
           html ||
-          '<tr><td colspan="7" class="text-center py-4 text-slate-400">Belum ada data QC</td></tr>';
+          '<tr><td colspan="7" class="ht-table-empty"><i class="fas fa-inbox"></i><p>Belum ada data QC</p></td></tr>';
       }
       function deleteQC(id) {
         if (confirm("Hapus data QC ini?")) {
@@ -493,8 +478,24 @@
           loadQCs();
         }
       }
+      function openScanModal() {
+        HTUI.openModal("scanModal");
+        if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader-modal");
+        if (html5QrCode) {
+          HTUI.startScanner(html5QrCode, (decodedText) => {
+            const id = HTUI.parseScanId(decodedText);
+            loadMaterialById(id);
+          });
+        }
+      }
+      function closeScanModal() {
+        HTUI.stopScanner(html5QrCode);
+        html5QrCode = null;
+        HTUI.closeModal("scanModal");
+      }
       window.addEventListener("DOMContentLoaded", () => {
         DB.init();
+        DB.migrate();
         try { startScanner(); } catch (e) { console.warn("[QC] Scanner init failed:", e); }
         loadQCs();
       });
