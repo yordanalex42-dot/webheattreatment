@@ -38,12 +38,12 @@ const HTDashboard = {
 
   _cacheElements() {
     this._el = {
-      kpiTotalIncoming: document.getElementById("kpiTotalIncoming"),
-      kpiTotalBerat: document.getElementById("kpiTotalBerat"),
-      kpiSedangProduksi: document.getElementById("kpiSedangProduksi"),
-      kpiMenungguQC: document.getElementById("kpiMenungguQC"),
-      kpiSudahDelivery: document.getElementById("kpiSudahDelivery"),
+      kpiTotalInput: document.getElementById("kpiTotalInput"),
+      kpiTotalOutput: document.getElementById("kpiTotalOutput"),
+      kpiTotalBeratInput: document.getElementById("kpiTotalBeratInput"),
+      kpiTotalBeratOutput: document.getElementById("kpiTotalBeratOutput"),
       kpiPartNG: document.getElementById("kpiPartNG"),
+      kpiPersentaseCapaian: document.getElementById("kpiPersentaseCapaian"),
       dailyChartCtx: document.getElementById("dailyChart"),
       monthlyChartCtx: document.getElementById("monthlyChart"),
       dailyChartEmpty: document.getElementById("dailyChartEmpty"),
@@ -253,6 +253,88 @@ const HTDashboard = {
     return kg.toLocaleString("id-ID");
   },
 
+  /* Chart presentation only — colors and font are read from the existing
+     design tokens so no new palette is introduced. */
+  _chartTheme() {
+    const css = getComputedStyle(document.documentElement);
+    const token = (name, fallback) => (css.getPropertyValue(name) || fallback).trim();
+    const toRgba = (hex, alpha) => {
+      const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      if (!m) return hex;
+      return `rgba(${parseInt(m[1], 16)}, ${parseInt(m[2], 16)}, ${parseInt(m[3], 16)}, ${alpha})`;
+    };
+
+    return {
+      primary: token("--primary", "#2563EB"),
+      success: token("--success", "#10B981"),
+      border: token("--border", "#E2E8F0"),
+      textMuted: token("--text-tertiary", "#94A3B8"),
+      textStrong: token("--text-primary", "#0F172A"),
+      surface: token("--surface", "#FFFFFF"),
+      font: getComputedStyle(document.body).fontFamily,
+      toRgba,
+    };
+  },
+
+  /* Shared axis / grid / tooltip styling so both charts look identical. */
+  _chartOptions(theme, { tickLimit, tooltipTitle }) {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      animation: { duration: 250 },
+      layout: { padding: { top: 4, right: 4, bottom: 0, left: 0 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: theme.textStrong,
+          titleColor: theme.surface,
+          bodyColor: theme.surface,
+          titleFont: { family: theme.font, size: 12, weight: "600" },
+          bodyFont: { family: theme.font, size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false,
+          callbacks: {
+            title: (items) => (items.length ? tooltipTitle(items[0]) : ""),
+            label: (item) => "Berat: " + this._formatWeight(item.parsed.y) + " KG",
+          },
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          border: { display: false },
+          grid: { color: theme.border, drawTicks: false },
+          title: {
+            display: true,
+            text: "KG",
+            color: theme.textMuted,
+            font: { family: theme.font, size: 11, weight: "600" },
+          },
+          ticks: {
+            color: theme.textMuted,
+            padding: 8,
+            font: { family: theme.font, size: 11 },
+            callback: (value) => this._formatWeight(value),
+          },
+        },
+        x: {
+          border: { color: theme.border },
+          grid: { display: false },
+          ticks: {
+            color: theme.textMuted,
+            padding: 6,
+            maxRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: tickLimit,
+            font: { family: theme.font, size: 11 },
+          },
+        },
+      },
+    };
+  },
+
   computePartStatus(material) {
     const { prod, qc, del } = this._getRelations(material);
 
@@ -304,34 +386,248 @@ const HTDashboard = {
     return qty * berat;
   },
 
-  renderKPIs() {
-    const { materials } = this._data;
+  _isCurrentMonth(dateStr) {
+    if (!dateStr) return false;
+    const d = this._parseDate(dateStr);
+    if (!d) return false;
+    const now = new Date();
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  },
 
-    let totalIncoming = materials.length;
-    let totalBerat = 0;
-    let sedangProduksi = 0;
-    let menungguQC = 0;
-    let sudahDelivery = 0;
+  renderKPIs() {
+    const { materials, productions, qcs, deliveries } = this._data;
+
+    let totalInput = 0;
+    let totalBeratInput = 0;
+    let totalOutput = 0;
+    let totalBeratOutput = 0;
     let partNG = 0;
 
+    const prodMap = this._data.prodMap;
+    const prodById = {};
+    this._data.productions.forEach(p => {
+      prodById[p.id] = p;
+    });
+    const qcMap = this._data.qcMap;
+    const delMap = this._data.delMap;
+
+    // Total Input & Total Berat Input from materials (tanggal_masuk)
     materials.forEach(m => {
-      const weight = this._getMaterialWeight(m);
-      totalBerat += weight;
-
-      const status = this.computePartStatus(m);
-
-      if (status === "PROSES PRODUKSI") sedangProduksi++;
-      if (status === "QC" || status === "READY DELIVERY") menungguQC++;
-      if (status === "DELIVERY") sudahDelivery++;
-      if (status === "PRODUKSI - NG" || status === "QC - NG") partNG++;
+      if (this._isCurrentMonth(m.tanggal_masuk)) {
+        totalInput += 1; // COUNT of materials (Part count)
+        totalBeratInput += parseFloat(m.berat_total_part) || 0;
+      }
     });
 
-    if (this._el.kpiTotalIncoming) this._el.kpiTotalIncoming.textContent = totalIncoming + " Part";
-    if (this._el.kpiTotalBerat) this._el.kpiTotalBerat.textContent = this._formatWeight(totalBerat) + " KG";
-    if (this._el.kpiSedangProduksi) this._el.kpiSedangProduksi.textContent = sedangProduksi + " Part";
-    if (this._el.kpiMenungguQC) this._el.kpiMenungguQC.textContent = menungguQC + " Part";
-    if (this._el.kpiSudahDelivery) this._el.kpiSudahDelivery.textContent = sudahDelivery + " Part";
-    if (this._el.kpiPartNG) this._el.kpiPartNG.textContent = partNG + " Part";
+    // Total Output & Total Berat Output from deliveries (tanggal_kirim)
+    deliveries.forEach(d => {
+      if (this._isCurrentMonth(d.tanggal_kirim)) {
+        const prod = prodById[d.production_id];
+        if (prod) {
+          const material = materials.find(m => m.id == prod.material_id);
+          if (material) {
+            totalOutput += 1; // COUNT of deliveries (Part count)
+            const beratPerPart = parseFloat(material.berat_part_snapshot) || 0;
+            totalBeratOutput += (parseFloat(d.qty_kirim) || 0) * beratPerPart;
+          }
+        }
+      }
+    });
+
+    // Part NG from qcs (tanggal_inspector)
+    qcs.forEach(q => {
+      if (q.hasil === "NG" && this._isCurrentMonth(q.tanggal_inspector)) {
+        partNG++;
+      }
+    });
+
+    // Target & Persentase Capaian
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const targetKey = `${year}-${String(month).padStart(2, '0')}`;
+    let target = 0;
+    try {
+      const targets = DB.get("targets");
+      const targetRecord = targets.find(t => t.year === year && t.month === month);
+      if (targetRecord) target = parseFloat(targetRecord.target_berat_output) || 0;
+    } catch (e) {
+      // ignore
+    }
+
+    const persentase = target > 0 ? Math.round((totalBeratOutput / target) * 100) : null;
+
+    if (this._el.kpiTotalInput) this._el.kpiTotalInput.textContent = totalInput;
+    if (this._el.kpiTotalOutput) this._el.kpiTotalOutput.textContent = totalOutput;
+    if (this._el.kpiTotalBeratInput) this._el.kpiTotalBeratInput.textContent = this._formatWeight(totalBeratInput);
+    if (this._el.kpiTotalBeratOutput) this._el.kpiTotalBeratOutput.textContent = this._formatWeight(totalBeratOutput);
+    if (this._el.kpiPartNG) this._el.kpiPartNG.textContent = partNG;
+
+    // Render donut chart
+    this._renderDonutChart(target, totalBeratOutput, persentase);
+
+    // Render target info card
+    this._renderTargetCard(target, totalBeratOutput, persentase);
+  },
+
+  _renderDonutChart(target, output, persentase) {
+    const canvas = document.getElementById("donutChart");
+    const centerValue = document.getElementById("donutValue");
+    const detailEl = document.getElementById("donutDetail");
+    if (!canvas || !centerValue || !detailEl) return;
+
+    const ctx = canvas.getContext("2d");
+
+    // Destroy existing chart if any
+    if (this._donutChart) {
+      this._donutChart.destroy();
+    }
+
+    if (target === 0) {
+      centerValue.textContent = "—";
+      detailEl.textContent = "Target bulan ini belum ditentukan";
+      // Draw empty donut (gray)
+      this._donutChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          datasets: [{
+            data: [1],
+            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue("--border") || "#E2E8F0"],
+            borderWidth: 0,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "70%",
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        }
+      });
+      return;
+    }
+
+    const actualPersentase = Math.round((output / target) * 100);
+    const displayPersentase = Math.min(actualPersentase, 100);
+    const sisa = Math.max(target - output, 0);
+
+    centerValue.textContent = actualPersentase;
+    detailEl.textContent = `Output ${this._formatWeight(output)} Kg dari Target ${this._formatWeight(target)} Kg`;
+
+    const css = getComputedStyle(document.documentElement);
+    const primaryColor = css.getPropertyValue("--primary") || "#2563EB";
+    const successColor = css.getPropertyValue("--success") || "#10B981";
+    const borderColor = css.getPropertyValue("--border") || "#E2E8F0";
+
+    const isOverTarget = output >= target;
+
+    this._donutChart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        datasets: [{
+          data: [displayPersentase, 100 - displayPersentase],
+          backgroundColor: [isOverTarget ? successColor : primaryColor, borderColor],
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "70%",
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false },
+        },
+        animation: {
+          animateRotate: true,
+          animateScale: true,
+          duration: 800,
+          easing: "easeOutQuart",
+        },
+      }
+    });
+  },
+
+  _renderTargetCard(target, output, persentase) {
+    const targetDisplay = document.getElementById("targetDisplay");
+    const targetMonthLabel = document.getElementById("targetMonthLabel");
+    const targetEditBtn = document.getElementById("targetEditBtn");
+    if (!targetDisplay || !targetMonthLabel || !targetEditBtn) return;
+
+    const now = new Date();
+    const monthName = this.MONTH_NAMES_ID[now.getMonth()];
+    const year = now.getFullYear();
+
+    targetMonthLabel.textContent = `${monthName} ${year}`;
+
+    if (target === 0) {
+      targetDisplay.innerHTML = `
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 w-full">
+          <span class="ht-kpi-value font-bold text-slate-400">Belum Diatur</span>
+        </div>
+      `;
+    } else {
+      targetDisplay.innerHTML = `
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 w-full">
+          <span class="ht-kpi-value font-bold text-primary">${this._formatWeight(target)}</span>
+          <span class="text-xs text-slate-400">Kg</span>
+        </div>
+      `;
+    }
+
+    // Attach click handler to edit button
+    targetEditBtn.onclick = () => this.openTargetModal();
+  },
+
+  openTargetModal() {
+    const modal = document.getElementById("targetEditModal");
+    const input = document.getElementById("targetEditInput");
+    if (!modal || !input) return;
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const targets = DB.get("targets");
+    const targetRecord = targets.find(t => t.year === year && t.month === month);
+    input.value = targetRecord ? targetRecord.target_berat_output : "";
+    HTUI.openModal("targetEditModal");
+    setTimeout(() => input.focus(), 100);
+  },
+
+  closeTargetModal() {
+    const modal = document.getElementById("targetEditModal");
+    if (modal) HTUI.closeModal("targetEditModal");
+  },
+
+  saveTargetFromModal() {
+    const input = document.getElementById("targetEditInput");
+    if (!input || !input.value) return;
+    const value = parseFloat(input.value);
+    if (isNaN(value) || value <= 0) {
+      HTUI.toast("Target harus berupa angka positif.", "error");
+      return;
+    }
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const targets = DB.get("targets");
+    const existingIdx = targets.findIndex(t => t.year === year && t.month === month);
+    const record = {
+      year,
+      month,
+      target_berat_output: value,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    if (existingIdx >= 0) {
+      DB.update("targets", targets[existingIdx].id, record);
+    } else {
+      DB.insert("targets", record);
+    }
+    HTUI.toast("Target berhasil disimpan.", "success");
+    this.closeTargetModal();
+    // Only re-render KPIs and target card, not full dashboard reload
+    this._cacheData();
+    this.renderKPIs();
   },
 
   _getProductionChartData() {
@@ -399,28 +695,29 @@ const HTDashboard = {
       this._chartDaily.destroy();
     }
 
+    const theme = this._chartTheme();
+    /* Show fewer date labels on long periods so they never collide. */
+    const tickLimit = dates.length <= 7 ? dates.length : dates.length <= 14 ? 7 : 10;
+    const fullLabels = dates.map(d => d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }));
+
     this._chartDaily = new Chart(ctx, {
       type: "bar",
       data: {
         labels: labels,
         datasets: [{
-          label: "Total Berat (KG)",
+          label: "Total Berat Produksi (KG)",
           data: data,
-          backgroundColor: "rgba(59, 130, 246, 0.6)",
-          borderColor: "rgba(59, 130, 246, 1)",
-          borderWidth: 1,
-          borderRadius: 4,
+          backgroundColor: theme.toRgba(theme.primary, 0.75),
+          hoverBackgroundColor: theme.primary,
+          borderRadius: 6,
+          borderSkipped: false,
+          maxBarThickness: 34,
         }]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true, grid: { color: "#f1f5f9" }, title: { display: true, text: "Total Berat (KG)" } },
-          x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 14 } },
-        },
-      },
+      options: this._chartOptions(theme, {
+        tickLimit: tickLimit,
+        tooltipTitle: (item) => fullLabels[item.dataIndex] || labels[item.dataIndex],
+      }),
     });
   },
 
@@ -471,7 +768,6 @@ const HTDashboard = {
       }
     });
 
-    const labels = this.MONTH_NAMES_ID;
     const data = [];
     for (let m = 1; m <= 12; m++) {
       const key = `${monthlyYear}-${String(m).padStart(2, '0')}`;
@@ -486,28 +782,28 @@ const HTDashboard = {
       this._chartMonthly.destroy();
     }
 
+    const theme = this._chartTheme();
+
     this._chartMonthly = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: labels,
+        /* Short month names keep the 12 ticks readable; the full name is
+           used in the tooltip. Months without production stay 0. */
+        labels: this.MONTH_SHORT_ID.slice(),
         datasets: [{
-          label: "Total Berat (KG)",
+          label: "Total Berat Produksi (KG)",
           data: data,
-          backgroundColor: "rgba(16, 185, 129, 0.6)",
-          borderColor: "rgba(16, 185, 129, 1)",
-          borderWidth: 1,
-          borderRadius: 4,
+          backgroundColor: theme.toRgba(theme.success, 0.75),
+          hoverBackgroundColor: theme.success,
+          borderRadius: 6,
+          borderSkipped: false,
+          maxBarThickness: 34,
         }]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true, grid: { color: "#f1f5f9" }, title: { display: true, text: "Total Berat (KG)" } },
-          x: { grid: { display: false } },
-        },
-      },
+      options: this._chartOptions(theme, {
+        tickLimit: 12,
+        tooltipTitle: (item) => this.MONTH_NAMES_ID[item.dataIndex] + " " + monthlyYear,
+      }),
     });
   },
 
@@ -612,44 +908,54 @@ const HTDashboard = {
       const relations = this._getRelations(m);
       const { material, prod, qc, del, customer, part } = relations;
 
-      const statusPart = this.computePartStatus(m);
-      const badgeClass = this.getStatusBadgeClass(statusPart);
+const statusPart = material.status_part || "-";
+      const badgeClass = this.getStatusBadgeClass(this.computePartStatus(m));
 
-      const statusProduksi = prod ? (prod.production_status || prod.status || "-") : "-";
       const statusQC = qc ? (qc.hasil || "-") : "-";
-      const statusDelivery = del ? "Delivered" : "-";
-      const statusTerakhir = statusPart;
-      const badgeClassTerakhir = badgeClass;
+      const inspectorName = qc ? (qc.inspector || "-") : "-";
+      const deliveryDate = del ? (del.tanggal_kirim || "-") : "-";
+
+      // Title helper for the columns that are allowed to ellipsize, so the
+      // full value stays readable without widening the column.
+      const title = (v) => ` title="${String(v ?? "-").replace(/"/g, "&quot;")}"`;
+      const customerName = customer ? customer.nama_customer : "-";
+      const nomorPart = part ? part.nomor_part : "-";
+      const namaPart = part ? part.nama_part : "-";
+      const suratJalan = material.nomor_surat_jalan || "-";
+      const lotNo = material.lot_no || "-";
+      const charge = material.material_charge || "-";
+      const proses = material.process_type || "-";
+      const diinputOleh = material.diinput_oleh || "-";
+      const nomorKode = material.kode || "-";
 
       return `<tr class="hover:bg-slate-50 transition">
         <td class="px-3 py-2">${start + idx + 1}</td>
-        <td class="px-3 py-2 font-mono">${material.kode || "-"}</td>
-        <td class="px-3 py-2">${customer ? customer.nama_customer : "-"}</td>
-        <td class="px-3 py-2 font-mono">${part ? part.nomor_part : "-"}</td>
-        <td class="px-3 py-2">${part ? part.nama_part : "-"}</td>
-        <td class="px-3 py-2 font-mono">${material.nomor_surat_jalan || "-"}</td>
-        <td class="px-3 py-2">${material.lot_no || "-"}</td>
-        <td class="px-3 py-2">${material.material_charge || "-"}</td>
+        <td class="px-3 py-2 font-mono"${title(nomorKode)}>${nomorKode}</td>
+        <td class="px-3 py-2"${title(customerName)}>${customerName}</td>
+        <td class="px-3 py-2 font-mono"${title(nomorPart)}>${nomorPart}</td>
+        <td class="px-3 py-2"${title(namaPart)}>${namaPart}</td>
         <td class="px-3 py-2"><span class="ht-badge ${badgeClass}">${statusPart}</span></td>
+        <td class="px-3 py-2 font-mono"${title(suratJalan)}>${suratJalan}</td>
+        <td class="px-3 py-2"${title(lotNo)}>${lotNo}</td>
+        <td class="px-3 py-2"${title(charge)}>${charge}</td>
         <td class="px-3 py-2">${material.qty || 0}</td>
         <td class="px-3 py-2">${this._formatWeight(this._getMaterialWeight(material))} KG</td>
-        <td class="px-3 py-2">${material.process_type || "-"}</td>
-        <td class="px-3 py-2">${material.diinput_oleh || "-"}</td>
+        <td class="px-3 py-2"${title(proses)}>${proses}</td>
+        <td class="px-3 py-2"${title(diinputOleh)}>${diinputOleh}</td>
         <td class="px-3 py-2">${material.tanggal_masuk || "-"}</td>
-        <td class="px-3 py-2"><span class="ht-badge ${statusProduksi === "PROCESS" || statusProduksi === "PROCESSES" ? "ht-badge-process" : (statusProduksi === "FINISH" ? "ht-badge-finish" : (statusProduksi === "FINISH_NG" ? "ht-badge-ng" : "ht-badge-waiting"))}">${statusProduksi}</span></td>
         <td class="px-3 py-2"><span class="ht-badge ${statusQC === "OK" ? "ht-badge-ok" : (statusQC === "NG" ? "ht-badge-ng" : "ht-badge-waiting")}">${statusQC}</span></td>
-        <td class="px-3 py-2"><span class="ht-badge ${del ? "ht-badge-delivered" : "ht-badge-waiting"}">${statusDelivery}</span></td>
-        <td class="px-3 py-2"><span class="ht-badge ${badgeClassTerakhir}">${statusTerakhir}</span></td>
+        <td class="px-3 py-2">${inspectorName}</td>
+        <td class="px-3 py-2">${deliveryDate}</td>
         <td class="px-3 py-2">
           <div class="ht-action-group">
-            <button onclick="window.location.href='tracking.html?id=${encodeURIComponent(material.kode || material.id)}'" class="ht-action-btn view" title="Tracking" aria-label="Tracking"><i class="fas fa-eye"></i></button>
+             <button onclick="window.location.href='tracking.html?id=${encodeURIComponent(material.id)}'" class="ht-action-btn view" title="Tracking" aria-label="Tracking"><img src="assets/icons/eye.svg" alt="Tracking" class="icon"></button>
           </div>
         </td>
       </tr>`;
     }).join("");
 
     if (this._el.tableBody) {
-      this._el.tableBody.innerHTML = html || '<tr><td colspan="19" class="ht-table-empty"><i class="fas fa-inbox"></i><p>Tidak ada data ditemukan.</p></td></tr>';
+      this._el.tableBody.innerHTML =            html || '<tr><td colspan="19" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Kosong" class="icon"><p>Data monitoring tidak ditemukan.</p><small>Coba ubah kata kunci atau filter yang dipilih.</small></td></tr>';
     }
   },
 
@@ -664,14 +970,26 @@ const HTDashboard = {
     this._el.customerFilter.value = this.state.customerFilter;
   },
 
+  /* Cell value helper for the export. Keeps the same "-" convention the
+     monitoring table uses and makes sure a missing field can never be
+     written as "undefined" or "[object Object]". */
+  _exportCell(value) {
+    if (value === null || value === undefined || value === "") return "-";
+    if (typeof value === "object") return "-";
+    return value;
+  },
+
   exportExcel() {
     const filtered = this._getFilteredMaterials();
 
     if (filtered.length === 0) {
-      HTUI.toast("Tidak ada data untuk diekspor.", "warning");
+      HTUI.toast("Data tidak tersedia untuk diekspor.", "warning");
       return;
     }
 
+    // Same source as renderTable(), so the file always matches the rows the
+    // table shows for the active filters. The full filtered set is exported,
+    // never only the current page.
     const exportData = filtered.map((m, idx) => {
       const relations = this._getRelations(m);
       const { material, prod, qc, del, customer, part } = relations;
@@ -682,25 +1000,29 @@ const HTDashboard = {
       const statusDelivery = del ? "Delivered" : "-";
       const statusTerakhir = statusPart;
 
+      const cell = (v) => this._exportCell(v);
+
       return {
         "No": idx + 1,
-        "Nomor Kode": material.kode || "-",
-        "Customer": customer ? customer.nama_customer : "-",
-        "Nomor Part": part ? part.nomor_part : "-",
-        "Nama Part": part ? part.nama_part : "-",
-        "Nomor Surat Jalan": material.nomor_surat_jalan || "-",
-        "Lot No": material.lot_no || "-",
-        "Material Charge": material.material_charge || "-",
-        "Status Part": statusPart,
-        "Qty": material.qty || 0,
-        "Berat Total (KG)": this._getMaterialWeight(material),
-        "Jenis Proses": material.process_type || "-",
-        "Diinput Oleh": material.diinput_oleh || "-",
-        "Tanggal Incoming": material.tanggal_masuk || "-",
-        "Status Produksi": statusProduksi,
-        "Status QC": statusQC,
-        "Status Delivery": statusDelivery,
-        "Status Terakhir": statusTerakhir,
+        "Nomor Kode": cell(material.kode),
+        "Customer": cell(customer ? customer.nama_customer : null),
+        "Nomor Part": cell(part ? part.nomor_part : null),
+        "Nama Part": cell(part ? part.nama_part : null),
+        "No Surat Jalan": cell(material.nomor_surat_jalan),
+        "Lot No": cell(material.lot_no),
+        "Material Charge": cell(material.material_charge),
+        "Status Part": cell(statusPart),
+        "Qty": Number(material.qty) || 0,
+        "Berat Total (KG)": Number(this._getMaterialWeight(material)) || 0,
+        "Jenis Proses": cell(material.process_type),
+        "Diinput Oleh": cell(material.diinput_oleh),
+        "Tanggal Incoming": cell(material.tanggal_masuk),
+        "Status Produksi": cell(statusProduksi),
+        "Status QC": cell(statusQC),
+        "Status Delivery": cell(statusDelivery),
+        "Status Terakhir": cell(statusTerakhir),
+        // Aksi is a UI column: exported as a plain marker, never as HTML
+        "Aksi": "-",
       };
     });
 
@@ -719,25 +1041,36 @@ const HTDashboard = {
       filterInfo.push(`Tanggal: ${this.state.dateStart || "Awal"} - ${this.state.dateEnd || "Akhir"}`);
     }
     if (filterInfo.length > 0) {
-      const infoWs = XLSX.utils.json_to_sheet([{ "Filter Aktif": filterInfo.join(" | ") }]);
+      const infoWs = XLSX.utils.json_to_sheet([
+        { "Filter Aktif": filterInfo.join(" | "), "Jumlah Data": exportData.length },
+      ]);
       XLSX.utils.book_append_sheet(wb, infoWs, "Filter Info");
     }
 
     const filename = `Rekap_Produksi_${new Date().toISOString().split("T")[0]}.xlsx`;
-    XLSX.writeFile(wb, filename);
-    HTUI.toast("File Excel berhasil didownload.", "success");
+
+    if (this._el.exportBtn) this._el.exportBtn.disabled = true;
+    try {
+      XLSX.writeFile(wb, filename);
+      HTUI.toast(`File Excel berhasil didownload (${exportData.length} data).`, "success");
+    } catch (e) {
+      console.error("[Dashboard] Export error:", e);
+      HTUI.toast("Export gagal. Silakan coba lagi.", "error");
+    } finally {
+      if (this._el.exportBtn) this._el.exportBtn.disabled = false;
+    }
   },
 
   refresh() {
     if (this._el.refreshBtn) {
       this._el.refreshBtn.disabled = true;
-      this._el.refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Memuat...';
+      this._el.refreshBtn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Loading" class="icon mr-1 icon-spin"> Memuat...';
     }
     setTimeout(() => {
       this.loadDashboard();
       if (this._el.refreshBtn) {
         this._el.refreshBtn.disabled = false;
-        this._el.refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-1"></i> Refresh';
+        this._el.refreshBtn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Refresh" class="icon mr-1"> Refresh';
       }
       HTUI.toast("Dashboard diperbarui.", "success");
     }, 200);
@@ -765,7 +1098,10 @@ const HTDashboard = {
     }
   },
 };
-
+ 
+// Expose methods for inline handlers
+window.HTDashboard = HTDashboard;
+ 
 // Global init on DOM ready
 window.addEventListener("DOMContentLoaded", () => {
   if (!HTUI.requireAuth()) return;

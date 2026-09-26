@@ -107,14 +107,14 @@ const HTUI = {
     }
     const el = document.createElement("div");
     el.className = "ht-toast " + (type || "success");
+    const iconMap = {
+      success: "check-circle",
+      error: "error",
+      warning: "warning"
+    };
+    const iconName = iconMap[type] || "info";
     el.innerHTML =
-      '<i class="fas fa-' +
-      (type === "success"
-        ? "check-circle"
-        : type === "error"
-          ? "times-circle"
-          : "exclamation-circle") +
-      ' mr-2"></i>' +
+      '<img src="assets/icons/' + iconName + '.svg" alt="" class="icon icon-sm mr-2">' +
       message;
     container.appendChild(el);
     setTimeout(() => el.classList.add("show"), 10);
@@ -192,6 +192,12 @@ const HTUI = {
 
 /* ---- Global bootstrap ---- */
 (function () {
+  /* Opened straight from disk (no web server): external SVGs used as CSS
+     masks are blocked by CORS, which hides masked icons. This class lets
+     css/icons.css fall back to a scoped filter. Inert over http(s). */
+  if (location.protocol === "file:") {
+    document.documentElement.classList.add("ht-file-protocol");
+  }
   if (!document.getElementById("sidebarOverlay")) {
     const overlay = document.createElement("div");
     overlay.id = "sidebarOverlay";

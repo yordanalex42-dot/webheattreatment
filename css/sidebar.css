@@ -1,0 +1,332 @@
+/* ============================================================
+   SIDEBAR — Navigation, user panel, responsive drawer
+   Modern enterprise dashboard sidebar.
+   ============================================================ */
+
+.ht-sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: var(--sidebar);
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  z-index: 20;
+  transition: transform var(--transition-md), width var(--transition-md);
+  overflow: hidden;
+}
+
+.ht-sidebar.collapsed {
+  transform: translateX(-240px);
+}
+
+/* ============================================================
+   LOGO AREA
+   ============================================================ */
+
+.ht-sidebar-header {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.ht-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ht-sidebar-brand .icon {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  flex-shrink: 0;
+  color: #ffffff;
+}
+
+.ht-sidebar-header .icon.icon-xl {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  flex-shrink: 0;
+  color: #ffffff;
+}
+
+/* Sidebar hamburger toggle (mobile) */
+.ht-sidebar-header [data-sidebar-toggle] .icon {
+  width: 16px;
+  height: 16px;
+  color: #ffffff;
+}
+
+.ht-sidebar-header [data-sidebar-toggle]:hover .icon {
+  color: #ffffff;
+}
+
+.ht-sidebar-brand .brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.ht-sidebar-brand .brand-name {
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+
+.ht-sidebar-brand .brand-subtitle {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+.ht-sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 12px 12px;
+}
+
+/* Section group wrapper */
+.nav-section {
+  margin-bottom: 4px;
+}
+
+.nav-section-title,
+.ht-nav-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  padding: 12px 16px 6px;
+  margin-top: 8px;
+}
+
+/* Nav link — fixed height so every menu row has the same spacing */
+.ht-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 14px;
+  margin: 2px 6px;
+  border-radius: var(--radius-md);
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  transition: background-color var(--transition-sm), color var(--transition-sm);
+  position: relative;
+  opacity: 1;
+}
+
+/* Icon sizing — icons.css recolors the masked SVG with currentColor,
+   here we only guarantee size and alignment inside the row. */
+.ht-nav-link .icon {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  flex-shrink: 0;
+  color: #ffffff;
+}
+
+/* Hover — lighter background + white icon/text */
+.ht-nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.ht-nav-link:hover .icon {
+  color: #ffffff;
+}
+
+/* Active state — solid blue background, white text + icon */
+.ht-nav-link.active {
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+.ht-nav-link.active .icon {
+  color: #ffffff;
+}
+
+/* Indent sub-items */
+.ht-nav-link.sub {
+  padding-left: 32px;
+}
+
+/* ============================================================
+   USER PANEL (footer)
+   ============================================================ */
+
+.ht-sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--sidebar-border);
+  background: rgba(0, 0, 0, 0.10);
+}
+
+.ht-user-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ht-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ht-user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.ht-user-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ht-user-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ht-user-role {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.ht-sidebar-logout {
+  color: #64748b;
+  font-size: 12px;
+  padding: 7px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ht-sidebar-logout .icon {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  color: #ffffff;
+}
+
+.ht-sidebar-logout:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================================
+   RESPONSIVE — Sidebar behavior
+   ============================================================ */
+
+@media (max-width: 1180px) {
+  .ht-sidebar {
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    transition: transform var(--transition-md);
+  }
+
+  .ht-sidebar.collapsed {
+    transform: translateX(-240px);
+  }
+
+  .ht-main.full-width {
+    margin-left: 0;
+  }
+
+  /* Tablet (769px - 1180px): the sidebar is out of flow, so reserve
+     its 240px for the main content while it is open. Without this the
+     fixed sidebar sits on top of the page content. When the user
+     collapses the sidebar (existing toggle + .collapsed), the space is
+     released again. Purely spacing — sidebar behaviour is unchanged. */
+  @media (min-width: 769px) {
+    .ht-sidebar:not(.collapsed) ~ .ht-main {
+      margin-left: 240px;
+    }
+  }
+}
+
+/* Desktop: the sidebar is in flow. If it was collapsed on a smaller
+   screen, the stored .collapsed state would leave an empty 240px
+   column next to the content, so release the space entirely. */
+@media (min-width: 1181px) {
+  .ht-sidebar.collapsed {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .ht-sidebar {
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    transform: translateX(-240px);
+    transition: transform var(--transition-md);
+  }
+
+  .ht-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .ht-sidebar.collapsed {
+    transform: translateX(-240px);
+  }
+
+  /* The existing toggle sets .open and .collapsed together, so .open
+     must win here — otherwise the drawer stays off-screen on the
+     first tap. Positioning only: no JS / toggle logic is changed. */
+  .ht-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .ht-main {
+    margin-left: 0;
+  }
+
+  .ht-user-name {
+    display: none;
+  }
+
+  .ht-user-avatar {
+    margin: 0 auto;
+  }
+}

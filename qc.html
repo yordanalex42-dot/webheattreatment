@@ -6,11 +6,14 @@
     <title>Quality Control - Sistem Informasi Produksi Heat Treatment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
   </head>
   <body class="text-slate-800">
     <div class="ht-app-shell">
@@ -19,7 +22,7 @@
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <i class="fas fa-fire text-2xl"></i>
+                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
                 <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
               </div>
               <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
@@ -31,43 +34,43 @@
               title="Toggle Menu"
               aria-label="Toggle menu"
             >
-              <i class="fas fa-times"></i>
+              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
             </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
           <a href="index.html" class="ht-nav-link"
-            ><i class="fas fa-chart-line"></i> Dashboard</a
+            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Master Data</p>
           </div>
           <a href="customer.html" class="ht-nav-link"
-            ><i class="fas fa-users"></i> Customer</a
+            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
           >
           <a href="part.html" class="ht-nav-link"
-            ><i class="fas fa-cogs"></i> Part</a
+            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
           >
           <a href="incoming.html" class="ht-nav-link"
-            ><i class="fas fa-box"></i> Incoming</a
+            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
           <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><i class="fas fa-play"></i> Masuk Proses</a
+            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
           >
           <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><i class="fas fa-flag-checkered"></i> Akhir Proses</a
+            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
           >
           <a href="qc.html" class="ht-nav-link active"
-            ><i class="fas fa-clipboard-check"></i> Quality Control</a
+            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
           >
           <a href="delivery.html" class="ht-nav-link"
-            ><i class="fas fa-shipping-fast"></i> Delivery</a
+            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
           >
           <a href="tracking.html" class="ht-nav-link"
-            ><i class="fas fa-search-location"></i> Tracking</a
+            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
           >
         </nav>
         <div class="ht-sidebar-footer">
@@ -90,7 +93,7 @@
               title="Logout"
               aria-label="Logout"
             >
-              <i class="fas fa-sign-out-alt"></i>
+              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
             </button>
           </div>
         </div>
@@ -123,7 +126,7 @@
                   <div class="flex gap-2">
                     <input
                       type="text"
-                      id="manualId"
+                      id="manualId" aria-label="Nomor kode material"
                       placeholder="Kode Part (contoh: 20260004I)"
                       class="ht-form-input flex-1"
                       oninput="clearManualError()"
@@ -134,7 +137,7 @@
                       class="ht-btn ht-btn-primary ht-btn-sm"
                       aria-label="Cari material"
                     >
-                      <i class="fas fa-search mr-1"></i>Cari
+                      <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
                     </button>
                   </div>
                   <p id="manualError" class="hidden text-[11px] text-danger-text"></p>
@@ -191,7 +194,7 @@
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 ht-form-group">
                 <div class="ht-form-group">
-                  <label class="ht-form-label">Nama Inspector</label>
+                  <label class="ht-form-label" for="qcInspector">Nama Inspector</label>
                   <input
                     type="text"
                     id="qcInspector"
@@ -201,7 +204,7 @@
                   />
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label">Tanggal Inspector</label>
+                  <label class="ht-form-label" for="qcTanggalInspector">Tanggal Inspector</label>
                   <input
                     type="date"
                     id="qcTanggalInspector"
@@ -216,7 +219,7 @@
                 <input type="hidden" id="qcId" />
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Nilai Hardness</label>
+                    <label class="ht-form-label" for="qcHardness">Nilai Hardness</label>
                     <input
                       type="text"
                       id="qcHardness"
@@ -226,7 +229,7 @@
                     />
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Satuan</label>
+                    <label class="ht-form-label" for="qcSatuan">Satuan</label>
                     <select id="qcSatuan" class="ht-form-select">
                       <option value="HRC">HRC</option>
                       <option value="HV">HV</option>
@@ -235,7 +238,7 @@
                   </div>
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label">Hasil QC</label>
+                  <label class="ht-form-label" for="qcHasil">Hasil QC</label>
                   <select id="qcHasil" required class="ht-form-select">
                     <option value="">Pilih Hasil</option>
                     <option value="OK">OK (Lulus)</option>
@@ -243,7 +246,7 @@
                   </select>
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label">Catatan</label>
+                  <label class="ht-form-label" for="qcCatatan">Catatan</label>
                   <textarea
                     id="qcCatatan"
                     rows="2"
@@ -257,7 +260,7 @@
                     class="ht-btn ht-btn-success"
                     aria-label="Simpan hasil QC"
                   >
-                    <i class="fas fa-save mr-2"></i>Simpan Hasil QC
+                    <img src="assets/icons/save.svg" alt="Simpan" class="icon mr-2">Simpan Hasil QC
                   </button>
                 </div>
               </form>
@@ -299,7 +302,7 @@
         <div class="ht-modal-header">
           <h3 class="ht-modal-title">Scan QR Code</h3>
           <button onclick="closeScanModal()" class="ht-modal-close" aria-label="Close">
-            <i class="fas fa-times"></i>
+            <img src="assets/icons/close.svg" alt="Close" class="icon">
           </button>
         </div>
         <div class="ht-modal-body">
@@ -454,15 +457,15 @@
                   : "ht-badge-waiting";
             return `<tr class="hover:bg-slate-50 transition">
             <td class="px-3 py-2 font-mono">${m.kode || "-"}</td>
-            <td class="px-3 py-2">${cust ? cust.nama_customer : "-"}</td>
+            <td class="px-3 py-2">${(cust && cust.nama_customer) || "-"}</td>
             <td class="px-3 py-2">${part ? part.nomor_part : "-"}</td>
             <td class="px-3 py-2 text-slate-500">${prod.jenis_treatment || "-"}</td>
             <td class="px-3 py-2 font-mono">${q.hardness || "-"} ${q.satuan_hardness || ""}</td>
             <td class="px-3 py-2"><span class="ht-badge ${hasilColor}">${q.hasil || "-"}</span></td>
             <td class="px-3 py-2">
               <div class="ht-action-group">
-                <button onclick="loadMaterialById('${m.kode || m.id}')" class="ht-action-btn edit" title="Edit" aria-label="Edit"><i class="fas fa-edit"></i></button>
-                <button onclick="deleteQC(${q.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
+                <button onclick="loadMaterialById('${m.kode || m.id}')" class="ht-action-btn edit" title="Edit" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>
+                <button onclick="deleteQC(${q.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><img src="assets/icons/delete.svg" alt="Delete" class="icon"></button>
               </div>
             </td>
           </tr>`;
@@ -470,7 +473,7 @@
           .join("");
         document.getElementById("qcTable").innerHTML =
           html ||
-          '<tr><td colspan="7" class="ht-table-empty"><i class="fas fa-inbox"></i><p>Belum ada data QC</p></td></tr>';
+          '<tr><td colspan="7" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data QC</p></td></tr>';
       }
       function deleteQC(id) {
         if (confirm("Hapus data QC ini?")) {

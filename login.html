@@ -4,26 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - Sistem Informasi Produksi Heat Treatment</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
+    <link rel="stylesheet" href="css/login.css" />
   </head>
-  <body class="flex items-center justify-center min-h-screen">
+  <body class="ht-login-page">
     <div class="ht-login-card">
-      <div class="text-center mb-8">
+      <div class="ht-login-head">
         <div class="ht-login-logo">
-          <i class="fas fa-fire"></i>
+          <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-2xl">
         </div>
-        <h1 class="text-xl font-bold text-slate-800">Heat Treatment</h1>
-        <p class="text-xs text-slate-500 mt-1">
-          Sistem Informasi Produksi
-        </p>
+        <h1>Heat Treatment</h1>
+        <p>Sistem Informasi Produksi</p>
       </div>
-      <form id="loginForm" class="space-y-4">
+      <form id="loginForm" class="ht-login-form">
         <div class="ht-form-group">
-          <label class="ht-form-label">Username</label>
+          <label class="ht-form-label" for="username">Username</label>
           <input
             id="username"
             type="text"
@@ -34,7 +36,7 @@
           />
         </div>
         <div class="ht-form-group">
-          <label class="ht-form-label">Password</label>
+          <label class="ht-form-label" for="password">Password</label>
           <input
             id="password"
             type="password"
@@ -43,20 +45,16 @@
             placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
           />
         </div>
-        <div
-          id="loginError"
-          class="hidden text-sm text-danger-text bg-danger-bg px-3 py-2 rounded-lg"
-        ></div>
-        <button
-          type="submit"
-          class="ht-btn ht-btn-primary w-full"
-        >
-          <i class="fas fa-sign-in-alt mr-2"></i>Masuk
-        </button>
+        <div id="loginError" class="ht-login-error hidden"></div>
+        <div class="ht-login-actions">
+          <button type="submit" class="ht-btn ht-btn-primary">
+            <img src="assets/icons/arrow-right.svg" alt="Masuk" class="icon">Masuk
+          </button>
+        </div>
       </form>
-      <p class="text-xs text-slate-400 text-center mt-4">
-        Default: <span class="font-mono font-medium">admin</span> /
-        <span class="font-mono font-medium">admin123</span>
+      <p class="ht-login-hint">
+        Default: <span class="font-mono">admin</span> /
+        <span class="font-mono">admin123</span>
       </p>
     </div>
     <script src="js/db.js"></script>

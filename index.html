@@ -9,12 +9,14 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
   </head>
   <body class="text-slate-800">
     <div class="ht-app-shell">
@@ -23,10 +25,12 @@
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <i class="fas fa-fire text-2xl"></i>
+                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
                 <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="text-xs text-slate-400 mt-1">
+                Sistem Informasi Produksi
+              </p>
             </div>
             <button
               id="sidebarToggle"
@@ -35,43 +39,43 @@
               title="Toggle Menu"
               aria-label="Toggle menu"
             >
-              <i class="fas fa-times"></i>
+              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
             </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
           <a href="index.html" class="ht-nav-link active"
-            ><i class="fas fa-chart-line"></i> Dashboard</a
+            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Master Data</p>
           </div>
           <a href="customer.html" class="ht-nav-link"
-            ><i class="fas fa-users"></i> Customer</a
+            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
           >
           <a href="part.html" class="ht-nav-link"
-            ><i class="fas fa-cogs"></i> Part</a
+            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
           >
           <a href="incoming.html" class="ht-nav-link"
-            ><i class="fas fa-box"></i> Incoming</a
+            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
           <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><i class="fas fa-play"></i> Masuk Proses</a
+            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
           >
           <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><i class="fas fa-flag-checkered"></i> Akhir Proses</a
+            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
           >
           <a href="qc.html" class="ht-nav-link"
-            ><i class="fas fa-clipboard-check"></i> Quality Control</a
+            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
           >
           <a href="delivery.html" class="ht-nav-link"
-            ><i class="fas fa-shipping-fast"></i> Delivery</a
+            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
           >
           <a href="tracking.html" class="ht-nav-link"
-            ><i class="fas fa-search-location"></i> Tracking</a
+            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
           >
         </nav>
         <div class="ht-sidebar-footer">
@@ -89,12 +93,15 @@
               </div>
             </div>
             <button
-              onclick="Auth.logout(); window.location.href='login.html';"
+              onclick="
+                Auth.logout();
+                window.location.href = 'login.html';
+              "
               class="ht-sidebar-logout"
               title="Logout"
               aria-label="Logout"
             >
-              <i class="fas fa-sign-out-alt"></i>
+              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
             </button>
           </div>
         </div>
@@ -103,7 +110,9 @@
         <header class="ht-header">
           <div class="ht-header-left">
             <h1 class="text-xl font-bold text-slate-800">Dashboard</h1>
-            <p class="text-xs text-slate-500">Monitoring Produksi Heat Treatment</p>
+            <p class="text-xs text-slate-500">
+              Monitoring Produksi Heat Treatment
+            </p>
           </div>
           <div class="ht-header-right">
             <span class="ht-header-date" id="currentDate"></span>
@@ -113,14 +122,14 @@
                 class="ht-btn ht-btn-secondary ht-btn-sm"
                 aria-label="Refresh dashboard"
               >
-                <i class="fas fa-sync-alt mr-1"></i> Refresh
+                <img src="assets/icons/refresh.svg" alt="Refresh" class="icon mr-1"> Refresh
               </button>
               <button
                 id="exportBtn"
                 class="ht-btn ht-btn-success ht-btn-sm"
                 aria-label="Export data to Excel"
               >
-                <i class="fas fa-file-excel mr-1"></i> Export Excel
+                <img src="assets/icons/download.svg" alt="Export Excel" class="icon mr-1"> Export Excel
               </button>
             </div>
           </div>
@@ -129,58 +138,129 @@
           <div class="ht-content-max">
             <!-- Loading State -->
             <div id="loadingState" class="hidden text-center py-12">
-              <div class="w-12 h-12 border-3 border-slate-200 border-t-primary rounded-full animate-spin mx-auto"></div>
-              <p class="mt-3 text-sm text-slate-500">Memuat data dashboard...</p>
+              <div
+                class="w-12 h-12 border-3 border-slate-200 border-t-primary rounded-full animate-spin mx-auto"
+              ></div>
+              <p class="mt-3 text-sm text-slate-500">
+                Memuat data dashboard...
+              </p>
             </div>
 
             <!-- Error State -->
             <div id="errorState" class="hidden text-center py-12">
-              <i class="fas fa-exclamation-circle text-4xl text-red-400"></i>
-              <p class="mt-3 text-sm text-slate-500" id="errorMessage">Gagal memuat data dashboard. Silakan coba refresh.</p>
+              <img src="assets/icons/error.svg" alt="Error" class="icon icon-3xl icon-danger">
+              <p class="mt-3 text-sm text-slate-500" id="errorMessage">
+                Gagal memuat data dashboard. Silakan coba refresh.
+              </p>
             </div>
 
-            <!-- KPI Cards -->
-            <div class="ht-kpi-grid" id="kpiGrid">
-              <div class="ht-kpi-card primary fade-in">
-                <i class="fas fa-box ht-kpi-icon"></i>
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">Total Incoming</p>
-                  <h3 class="ht-kpi-value" id="kpiTotalIncoming">0 Part</h3>
+            <!-- KPI Layout: 2 Columns -->
+            <div class="ht-kpi-layout" id="kpiLayout">
+              <!-- Left Column: 5 KPIs + Target -->
+              <div class="ht-kpi-left">
+                <!-- Top Row: 5 KPI Cards -->
+                <div class="ht-kpi-grid" id="kpiGrid">
+                  <div class="ht-kpi-card primary fade-in">
+                    <img src="assets/icons/incoming.svg" alt="Total Input" class="icon icon-md ht-kpi-icon">
+                    <div class="ht-kpi-container">
+                      <p class="ht-kpi-label">Total Input</p>
+                      <h3 class="ht-kpi-value" id="kpiTotalInput">0</h3>
+                      <span class="ht-kpi-unit">Part</span>
+                    </div>
+                  </div>
+                  <div class="ht-kpi-card success fade-in">
+                    <img src="assets/icons/delivery.svg" alt="Total Output" class="icon icon-md ht-kpi-icon">
+                    <div class="ht-kpi-container">
+                      <p class="ht-kpi-label">Total Output</p>
+                      <h3 class="ht-kpi-value" id="kpiTotalOutput">0</h3>
+                      <span class="ht-kpi-unit">Part</span>
+                    </div>
+                  </div>
+                  <div class="ht-kpi-card info fade-in">
+                    <img src="assets/icons/weight.svg" alt="Total Berat Input" class="icon icon-md ht-kpi-icon">
+                    <div class="ht-kpi-container">
+                      <p class="ht-kpi-label">Total Berat Input</p>
+                      <h3 class="ht-kpi-value" id="kpiTotalBeratInput">0</h3>
+                      <span class="ht-kpi-unit">KG</span>
+                    </div>
+                  </div>
+                  <div class="ht-kpi-card warning fade-in">
+                    <img src="assets/icons/weight.svg" alt="Total Berat Output" class="icon icon-md ht-kpi-icon">
+                    <div class="ht-kpi-container">
+                      <p class="ht-kpi-label">Total Berat Output</p>
+                      <h3 class="ht-kpi-value" id="kpiTotalBeratOutput">0</h3>
+                      <span class="ht-kpi-unit">KG</span>
+                    </div>
+                  </div>
+                  <div class="ht-kpi-card danger fade-in">
+                    <img src="assets/icons/warning.svg" alt="Part NG" class="icon icon-md ht-kpi-icon">
+                    <div class="ht-kpi-container">
+                      <p class="ht-kpi-label">Part NG</p>
+                      <h3 class="ht-kpi-value" id="kpiPartNG">0</h3>
+                      <span class="ht-kpi-unit">Part</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Target Berat Output Bulan Ini (Compact) -->
+                <div class="ht-card fade-in" id="targetCard">
+                  <div class="ht-card-header ht-card-header-with-actions">
+                    <h3 class="ht-card-title">Target Berat Output Bulan Ini</h3>
+                    <div class="flex items-center gap-2">
+                      <span id="targetMonthLabel" class="text-xs text-slate-500 hidden md:block"></span>
+                      <button id="targetEditBtn" class="ht-btn ht-btn-ghost ht-btn-sm p-2" aria-label="Edit target" title="Edit Target">
+                        <img src="assets/icons/edit.svg" alt="Edit" class="icon icon-sm">
+                      </button>
+                    </div>
+                  </div>
+                  <div class="ht-card-body py-4">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4" id="targetDisplay">
+                      <!-- Target value rendered by JS -->
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="ht-kpi-card info fade-in" style="animation-delay: 0.05s">
-                <i class="fas fa-weight ht-kpi-icon"></i>
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">Total Berat Incoming</p>
-                  <h3 class="ht-kpi-value" id="kpiTotalBerat">0 KG</h3>
+
+              <!-- Right Column: Persentase Capaian Target (Donut Chart) -->
+              <div class="ht-kpi-right">
+                <div class="ht-kpi-card-primary-large fade-in" id="persentaseCard">
+                  <div class="ht-kpi-primary-content">
+                    <p class="ht-kpi-primary-label">Persentase Capaian Target</p>
+                    <div class="ht-donut-wrapper" id="donutWrapper">
+                      <canvas id="donutChart" width="200" height="200"></canvas>
+                      <div class="ht-donut-center" id="donutCenter">
+                        <span class="ht-donut-value" id="donutValue">—</span>
+                        <span class="ht-donut-unit">%</span>
+                      </div>
+                    </div>
+                    <p class="ht-donut-detail" id="donutDetail">—</p>
+                  </div>
                 </div>
               </div>
-              <div class="ht-kpi-card warning fade-in" style="animation-delay: 0.1s">
-                <i class="fas fa-cog ht-kpi-icon"></i>
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">Sedang Produksi</p>
-                  <h3 class="ht-kpi-value" id="kpiSedangProduksi">0 Part</h3>
+            </div>
+
+            <!-- Edit Target Modal -->
+            <div id="targetEditModal" class="ht-modal-overlay hidden">
+              <div class="ht-modal">
+                <div class="ht-modal-header">
+                  <h3 class="ht-modal-title">Ubah Target Berat Output</h3>
+                  <button onclick="HTDashboard.closeTargetModal()" class="ht-modal-close" aria-label="Close">
+                    <img src="assets/icons/close.svg" alt="Close" class="icon">
+                  </button>
                 </div>
-              </div>
-              <div class="ht-kpi-card info fade-in" style="animation-delay: 0.15s">
-                <i class="fas fa-clipboard-check ht-kpi-icon"></i>
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">Menunggu / Sedang QC</p>
-                  <h3 class="ht-kpi-value" id="kpiMenungguQC">0 Part</h3>
-                </div>
-              </div>
-              <div class="ht-kpi-card success fade-in" style="animation-delay: 0.2s">
-                <i class="fas fa-truck-loading ht-kpi-icon"></i>
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">Sudah Delivery</p>
-                  <h3 class="ht-kpi-value" id="kpiSudahDelivery">0 Part</h3>
-                </div>
-              </div>
-              <div class="ht-kpi-card danger fade-in" style="animation-delay: 0.25s">
-                <i class="fas fa-exclamation-triangle ht-kpi-icon"></i>
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">Part NG</p>
-                  <h3 class="ht-kpi-value" id="kpiPartNG">0 Part</h3>
+                <div class="ht-modal-body">
+                  <div class="space-y-4">
+                    <div>
+                      <label class="ht-form-label">Target Berat Output (Kg)</label>
+                      <input type="number" id="targetEditInput" class="ht-form-input" placeholder="Contoh: 10000" min="0" step="1" />
+                    </div>
+                    <div class="flex justify-end gap-2 pt-2">
+                      <button onclick="HTDashboard.closeTargetModal()" class="ht-btn ht-btn-secondary ht-btn-sm">Batal</button>
+                      <button onclick="HTDashboard.saveTargetFromModal()" class="ht-btn ht-btn-primary ht-btn-sm">
+                        <img src="assets/icons/save.svg" alt="Simpan" class="icon mr-1">Simpan
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -190,7 +270,10 @@
               <!-- Daily Production Chart -->
               <div class="ht-card fade-in">
                 <div class="ht-card-header-with-actions">
-                  <h3 class="ht-card-title">Produksi Harian Berdasarkan Total Berat</h3>
+                  <div>
+                    <h3 class="ht-card-title">Produksi Harian</h3>
+                    <p class="ht-card-subtitle">Total Berat Produksi (KG)</p>
+                  </div>
                   <div class="flex items-end gap-2 flex-wrap">
                     <select
                       id="dailyPeriod"
@@ -219,11 +302,8 @@
                 </div>
                 <div class="ht-chart-container">
                   <canvas id="dailyChart" height="280"></canvas>
-                  <div
-                    id="dailyChartEmpty"
-                    class="ht-chart-empty hidden"
-                  >
-                    <p>Tidak ada data produksi untuk periode ini.</p>
+                  <div id="dailyChartEmpty" class="ht-chart-empty hidden">
+                    <p>Belum ada data produksi pada periode ini.</p>
                   </div>
                 </div>
               </div>
@@ -231,7 +311,10 @@
               <!-- Monthly Production Chart -->
               <div class="ht-card fade-in">
                 <div class="ht-card-header-with-actions">
-                  <h3 class="ht-card-title">Produksi Bulanan Berdasarkan Berat</h3>
+                  <div>
+                    <h3 class="ht-card-title">Produksi Bulanan</h3>
+                    <p class="ht-card-subtitle">Total Berat Produksi (KG)</p>
+                  </div>
                   <select
                     id="monthlyYear"
                     class="ht-form-select ht-form-select-sm w-auto"
@@ -240,11 +323,8 @@
                 </div>
                 <div class="ht-chart-container">
                   <canvas id="monthlyChart" height="280"></canvas>
-                  <div
-                    id="monthlyChartEmpty"
-                    class="ht-chart-empty hidden"
-                  >
-                    <p>Tidak ada data produksi untuk tahun ini.</p>
+                  <div id="monthlyChartEmpty" class="ht-chart-empty hidden">
+                    <p>Belum ada data produksi pada tahun ini.</p>
                   </div>
                 </div>
               </div>
@@ -252,7 +332,11 @@
 
             <!-- Filter & Search -->
             <div class="ht-card fade-in mb-6">
-              <div class="ht-filter-bar" role="search" aria-label="Filter dan pencarian tabel">
+              <div
+                class="ht-filter-bar"
+                role="search"
+                aria-label="Filter dan pencarian tabel"
+              >
                 <div class="flex-1 min-w-48">
                   <input
                     type="text"
@@ -300,7 +384,7 @@
             </div>
 
             <!-- Monitoring Table -->
-            <div class="ht-card fade-in">
+            <div class="ht-card ht-monitor-card fade-in">
               <div class="ht-card-header-with-actions">
                 <h3 class="ht-card-title">Monitoring Seluruh Data Incoming</h3>
                 <div class="flex items-center gap-2">
@@ -317,7 +401,7 @@
                   </select>
                 </div>
               </div>
-              <div class="ht-table-wrapper">
+              <div class="ht-table-wrapper ht-monitor-table">
                 <table class="ht-table">
                   <thead>
                     <tr>
@@ -326,19 +410,18 @@
                       <th>Customer</th>
                       <th>Nomor Part</th>
                       <th>Nama Part</th>
+                      <th>Status Part</th>
                       <th>No Surat Jalan</th>
                       <th>Lot No</th>
                       <th>Material Charge</th>
-                      <th>Status Part</th>
                       <th>Qty</th>
                       <th>Berat Total</th>
                       <th>Jenis Proses</th>
                       <th>Diinput Oleh</th>
                       <th>Tanggal Incoming</th>
-                      <th>Status Produksi</th>
                       <th>Status QC</th>
-                      <th>Status Delivery</th>
-                      <th>Status Terakhir</th>
+                      <th>Inspector</th>
+                      <th>Tanggal Delivery</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -355,7 +438,8 @@
                 aria-label="Pagination"
               >
                 <div class="ht-pagination-info">
-                  Menampilkan <span id="pageInfo">0-0</span> dari <span id="totalItems">0</span> data
+                  Menampilkan <span id="pageInfo">0-0</span> dari
+                  <span id="totalItems">0</span> data
                 </div>
                 <div class="ht-pagination-controls flex items-center gap-2">
                   <button
@@ -364,16 +448,20 @@
                     aria-label="Halaman sebelumnya"
                     disabled
                   >
-                    <i class="fas fa-chevron-left mr-1"></i> Sebelumnya
+                    <img src="assets/icons/chevron-left.svg" alt="Sebelumnya" class="icon mr-1"> Sebelumnya
                   </button>
-                  <div id="pageNumbers" class="flex gap-1" aria-label="Nomor halaman"></div>
+                  <div
+                    id="pageNumbers"
+                    class="flex gap-1"
+                    aria-label="Nomor halaman"
+                  ></div>
                   <button
                     id="nextPage"
                     class="ht-btn ht-btn-ghost ht-btn-sm"
                     aria-label="Halaman selanjutnya"
                     disabled
                   >
-                    Selanjutnya <i class="fas fa-chevron-right ml-1"></i>
+                    Selanjutnya <img src="assets/icons/chevron-right.svg" alt="Selanjutnya" class="icon ml-1">
                   </button>
                 </div>
               </div>
@@ -388,8 +476,12 @@
       <div class="ht-modal ht-modal-fullscreen">
         <div class="ht-modal-header">
           <h3 class="ht-modal-title">Scan QR Code Material</h3>
-          <button onclick="closeScanModal()" class="ht-modal-close" aria-label="Close">
-            <i class="fas fa-times"></i>
+          <button
+            onclick="closeScanModal()"
+            class="ht-modal-close"
+            aria-label="Close"
+          >
+            <img src="assets/icons/close.svg" alt="Close" class="icon">
           </button>
         </div>
         <div class="ht-modal-body">
@@ -422,7 +514,8 @@
         if (html5QrCode) {
           HTUI.startScanner(html5QrCode, (decodedText) => {
             const targetId = parseMaterialId(decodedText);
-            window.location.href = "tracking.html?id=" + encodeURIComponent(targetId);
+            window.location.href =
+              "tracking.html?id=" + encodeURIComponent(targetId);
           });
         }
       }

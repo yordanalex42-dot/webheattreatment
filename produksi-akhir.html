@@ -6,11 +6,14 @@
     <title>Produksi Akhir - Sistem Informasi Produksi Heat Treatment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
   </head>
   <body class="text-slate-800">
     <div class="ht-app-shell">
@@ -19,7 +22,7 @@
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <i class="fas fa-fire text-2xl"></i>
+                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
                 <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
               </div>
               <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
@@ -31,43 +34,43 @@
               title="Toggle Menu"
               aria-label="Toggle menu"
             >
-              <i class="fas fa-times"></i>
+              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
             </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
           <a href="index.html" class="ht-nav-link"
-            ><i class="fas fa-chart-line"></i> Dashboard</a
+            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Master Data</p>
           </div>
           <a href="customer.html" class="ht-nav-link"
-            ><i class="fas fa-users"></i> Customer</a
+            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
           >
           <a href="part.html" class="ht-nav-link"
-            ><i class="fas fa-cogs"></i> Part</a
+            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
           >
           <a href="incoming.html" class="ht-nav-link"
-            ><i class="fas fa-box"></i> Incoming</a
+            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
-          <a href="produksi-masuk.html" class="ht-nav-link active sub"
-            ><i class="fas fa-play"></i> Masuk Proses</a
+          <a href="produksi-masuk.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
           >
           <a href="produksi-akhir.html" class="ht-nav-link sub active"
-            ><i class="fas fa-flag-checkered"></i> Akhir Proses</a
+            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
           >
           <a href="qc.html" class="ht-nav-link"
-            ><i class="fas fa-clipboard-check"></i> Quality Control</a
+            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
           >
           <a href="delivery.html" class="ht-nav-link"
-            ><i class="fas fa-shipping-fast"></i> Delivery</a
+            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
           >
           <a href="tracking.html" class="ht-nav-link"
-            ><i class="fas fa-search-location"></i> Tracking</a
+            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
           >
         </nav>
         <div class="ht-sidebar-footer">
@@ -90,7 +93,7 @@
               title="Logout"
               aria-label="Logout"
             >
-              <i class="fas fa-sign-out-alt"></i>
+              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
             </button>
           </div>
         </div>
@@ -106,20 +109,20 @@
           <div class="ht-content-max">
             <!-- Stepper -->
             <div class="ht-stepper mb-6" role="status" aria-label="Progress step">
-              <div class="ht-step completed">
-                <div class="step-icon"><i class="fas fa-qrcode"></i></div>
+              <div class="ht-step">
+                <div class="step-icon"><img src="assets/icons/qr.svg" alt="Scan Kode" class="icon"></div>
                 <span class="step-label">Scan Kode</span>
               </div>
-              <div class="ht-step active">
-                <div class="step-icon"><i class="fas fa-boxes-stacked"></i></div>
+              <div class="ht-step">
+                <div class="step-icon"><img src="assets/icons/file.svg" alt="Data Part" class="icon"></div>
                 <span class="step-label">Data Part</span>
               </div>
               <div class="ht-step">
-                <div class="step-icon"><i class="fas fa-gavel"></i></div>
+                <div class="step-icon"><img src="assets/icons/gavel.svg" alt="Hasil Proses" class="icon"></div>
                 <span class="step-label">Hasil Proses</span>
               </div>
               <div class="ht-step">
-                <div class="step-icon"><i class="fas fa-right-from-bracket"></i></div>
+                <div class="step-icon"><img src="assets/icons/logout.svg" alt="Keluar Mesin" class="icon"></div>
                 <span class="step-label">Keluar Mesin</span>
               </div>
             </div>
@@ -143,7 +146,7 @@
                   <div class="flex gap-2">
                     <input
                       type="text"
-                      id="manualId"
+                      id="manualId" aria-label="Nomor kode material"
                       placeholder="Kode (contoh: 20240001A)"
                       class="ht-form-input flex-1"
                       oninput="clearManualError()"
@@ -154,7 +157,7 @@
                       class="ht-btn ht-btn-primary ht-btn-sm"
                       aria-label="Cari material"
                     >
-                      <i class="fas fa-search mr-1"></i>Cari
+                      <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
                     </button>
                   </div>
                   <p id="manualError" class="hidden text-[11px] text-danger-text"></p>
@@ -291,7 +294,7 @@
                   class="ht-btn ht-btn-success ht-btn-lg"
                   aria-label="Konfirmasi part keluar"
                 >
-                  <i class="fas fa-check mr-2"></i>KONFIRMASI PART KELUAR
+                  <img src="assets/icons/check.svg" alt="Keluar" class="icon mr-2">KONFIRMASI PART KELUAR
                 </button>
               </div>
             </div>
@@ -416,6 +419,36 @@
         updateNGNoteVisibility();
         document.getElementById("finishSection").classList.remove("hidden");
         document.getElementById("finishSection").scrollIntoView({ behavior: "smooth" });
+        updateStepper();
+      }
+      function updateStepper() {
+        const steps = document.querySelectorAll('.ht-stepper .ht-step');
+        if (steps.length < 4) return;
+        if (!currentProduction) {
+          steps.forEach(step => step.classList.remove('active', 'completed'));
+          return;
+        }
+        const status = currentProduction.production_status;
+        const hasProcessResult = currentProduction.process_result;
+        const hasStartScan = currentProduction.start_scan_at;
+        const formVisible = !document.getElementById('finishSection').classList.contains('hidden');
+        
+        // Step 1: Scan Kode
+        steps[0].classList.remove('active');
+        steps[0].classList.toggle('completed', !!hasStartScan);
+        
+        // Step 2: Data Part
+        steps[1].classList.remove('completed');
+        steps[1].classList.toggle('active', formVisible && !['FINISH', 'FINISH_NG'].includes(status));
+        steps[1].classList.toggle('completed', !formVisible && !!hasStartScan);
+        
+        // Step 3: Hasil Proses
+        steps[2].classList.remove('active');
+        steps[2].classList.toggle('completed', !!hasProcessResult);
+        
+        // Step 4: Keluar Mesin
+        steps[3].classList.remove('active');
+        steps[3].classList.toggle('completed', ['FINISH', 'FINISH_NG'].includes(status));
       }
       function confirmKeluarMesin() {
         if (!currentMaterial || !currentProduction) {
@@ -446,7 +479,7 @@
         const btn = document.getElementById("btnKeluarMesin");
         btn.disabled = true;
         btn.classList.add("opacity-50");
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memproses...';
+        btn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Memproses...';
         try {
           const scanTime = new Date().toLocaleString("id-ID", {
             day: "2-digit", month: "2-digit", year: "numeric",
@@ -467,16 +500,16 @@
           DB.update("materials", currentMaterial.id, {
             status_proses: "Finish",
           });
-          btn.innerHTML = '<i class="fas fa-check mr-2"></i>Berhasil';
+          btn.innerHTML = '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
           setTimeout(function () {
-            btn.innerHTML = '<i class="fas fa-check mr-2"></i>KONFIRMASI PART KELUAR';
+btn.innerHTML = '<img src="assets/icons/check.svg" alt="Keluar" class="icon mr-2">KONFIRMASI PART KELUAR';
             btn.classList.remove("opacity-50");
             btn.disabled = false;
             HTUI.toast("Part berhasil dikonfirmasi keluar mesin. Status: " + data.production_status, "success");
             loadMaterialById(currentMaterial.kode || currentMaterial.id);
           }, 1500);
         } catch (e) {
-          btn.innerHTML = '<i class="fas fa-check mr-2"></i>KONFIRMASI PART KELUAR';
+          btn.innerHTML = '<img src="assets/icons/check.svg" alt="Keluar" class="icon mr-2">KONFIRMASI PART KELUAR';
           btn.classList.remove("opacity-50");
           btn.disabled = false;
           HTUI.toast("Terjadi kesalahan: " + e.message, "error");

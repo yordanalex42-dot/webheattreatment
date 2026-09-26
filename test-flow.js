@@ -120,7 +120,7 @@ console.log("\n=== GROUP B: PRODUKSI AKHIR MAIN FLOW (Tests 7-16) ===");
 setupFresh();
 
 // Test 7: Find material by Kode for processing
-const mat = DB.findByKode("20240002A");
+const mat = DB.findByKode("20260006I");
 assert(
   mat !== null,
   "T7: Material found for produksi-akhir",
@@ -193,7 +193,7 @@ assert(
 
 // Test 11: NG without note should be rejected
 setupFresh();
-const mat2 = DB.findByKode("20240002A");
+const mat2 = DB.findByKode("20260006I");
 const prod2 = DB.get("productions").find((p) => p.material_id == mat2.id);
 const rNG2 = true,
   ngNote2 = "";
@@ -206,7 +206,7 @@ assert(
 
 // Test 12: NG with note should succeed
 setupFresh();
-const mat3 = DB.findByKode("20240002A");
+const mat3 = DB.findByKode("20260006I");
 const prod3 = DB.get("productions").find((p) => p.material_id == mat3.id);
 const rNG3 = true,
   ngNote3 = "Part overheating";
@@ -235,7 +235,7 @@ assert(
 
 // Test 13: Already finished - should reject
 setupFresh();
-const mat4 = DB.findByKode("20240001A");
+const mat4 = DB.findByKode("20260001I");
 const prod4 = DB.get("productions").find((p) => p.material_id == mat4.id);
 const isFinished =
   prod4.production_status === "FINISH" ||
@@ -248,7 +248,7 @@ assert(
 
 // Test 14: Waiting production - should reject (not in PROCESS)
 setupFresh();
-const mat5 = DB.findByKode("20240004A");
+const mat5 = DB.findByKode("20260007I");
 const prod5 = DB.get("productions").find((p) => p.material_id == mat5.id);
 const isWaiting = prod5.production_status === "WAITING";
 assert(
@@ -259,7 +259,7 @@ assert(
 
 // Test 15: Double click prevention - button should be disabled after first click
 setupFresh();
-const mat6 = DB.findByKode("20240002A");
+const mat6 = DB.findByKode("20260006I");
 const prod6 = DB.get("productions").find((p) => p.material_id == mat6.id);
 let btnClickCount = 0;
 const originalUpdate = DB.update.bind(DB);
@@ -289,7 +289,7 @@ assert(
 // Test 16: Production record UPDATED not duplicated
 setupFresh();
 const allProdsBefore = DB.get("productions").length;
-const mat7 = DB.findByKode("20240002A");
+const mat7 = DB.findByKode("20260006I");
 const prod7 = DB.get("productions").find((p) => p.material_id == mat7.id);
 const prodId = prod7.id;
 DB.update("productions", prodId, {

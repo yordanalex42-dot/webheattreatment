@@ -1,0 +1,217 @@
+/* ============================================================
+   GLOBAL — Heat Treatment Information System
+   Design tokens, base reset, typography, animation keyframes.
+   Modern industrial dashboard design system.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+:root {
+  /* ===== SIDEBAR / BRAND ===== */
+  --sidebar: #0b172a;
+  --sidebar-elevated: #11203a;
+  --sidebar-border: #1e2c4a;
+
+  /* ===== BRAND / PRIMARY ===== */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-dark: #1d4ed8;
+  --primary-soft: #dbeafe;
+
+  /* ===== TYPOGRAPHY SCALE ===== */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Courier New", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semi: 600;
+  --font-weight-bold: 700;
+
+  /* ===== ACCENT COLORS ===== */
+  --accent-blue: #2563eb;
+  --accent-green: #10b981;
+  --accent-green-soft: #dcfce7;
+  --accent-green-text: #065f46;
+  --accent-orange: #f59e0b;
+  --accent-orange-soft: #fef3c7;
+  --accent-orange-text: #92400e;
+  --accent-red: #ef4444;
+  --accent-red-soft: #fee2e2;
+  --accent-red-text: #991b1b;
+
+  /* ===== BACKGROUND & SURFACE ===== */
+  --background: #f5f7fa;
+  --surface: #ffffff;
+  --surface-hover: #f1f3f6;
+  --surface-muted: #eef1f5;
+  --surface-elevated: #ffffff;
+
+  /* ===== TEXT ===== */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
+  --text-inverse: #ffffff;
+  --text-disabled: #cbd5e1;
+
+  /* ===== BORDERS ===== */
+  --border: #e5e7eb;
+  --border-dark: #cbd5e1;
+
+  /* ===== STATUS (kept for backward compat) ===== */
+  --success: #10b981;
+  --success-bg: #dcfce7;
+  --success-text: #065f46;
+  --warning: #f59e0b;
+  --warning-bg: #fef3c7;
+  --warning-text: #92400e;
+  --danger: #ef4444;
+  --danger-bg: #fee2e2;
+  --danger-text: #991b1b;
+  --info: #3b82f6;
+  --info-bg: #dbeafe;
+  --info-text: #1d4ed8;
+
+  /* ===== BADGE PALETTE ===== */
+  --badge-incoming-bg: #dbeafe;
+  --badge-incoming-text: #1d4ed8;
+  --badge-process-bg: #fef3c7;
+  --badge-process-text: #92400e;
+  --badge-qc-bg: #dbeafe;
+  --badge-qc-text: #1d4ed8;
+  --badge-delivery-bg: #dcfce7;
+  --badge-delivery-text: #065f46;
+  --badge-ng-bg: #fee2e2;
+  --badge-ng-text: #991b1b;
+  --badge-waiting-bg: #f1f3f6;
+  --badge-waiting-text: #475569;
+
+  /* ===== SPACING SCALE (4px grid) ===== */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 36px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ===== SPACING ALIASES ===== */
+  --space-xs: var(--space-1);
+  --space-sm: var(--space-2);
+  --space-md: var(--space-3);
+  --space-lg: var(--space-4);
+  --space-xl: var(--space-5);
+  --space-2xl: var(--space-6);
+
+  /* ===== BORDER RADIUS ===== */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-pill: 999px;
+
+  /* ===== SHADOWS (soft, not dark) ===== */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.08);
+  --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.10);
+  --shadow-modal: 0 24px 60px rgba(15, 23, 42, 0.18);
+
+  /* ===== FOCUS RING ===== */
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.25);
+
+  /* ===== TRANSITIONS ===== */
+  --transition-fast: 120ms ease;
+  --transition-sm: 150ms ease;
+  --transition-md: 200ms ease;
+  --transition-lg: 250ms ease;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg {
+  font-size: inherit;
+}
+
+/* ============================================================
+   ANIMATION UTILITIES
+   ============================================================ */
+
+.fade-in {
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton shimmer */
+.ht-skeleton {
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200%; }
+  100% { background-position: -200%; }
+}
+
+/* Spinner */
+.icon-spin,
+.ht-loading-overlay .spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

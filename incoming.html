@@ -7,11 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
   </head>
   <body class="text-slate-800">
     <div class="ht-app-shell">
@@ -20,10 +23,12 @@
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <i class="fas fa-fire text-2xl"></i>
+                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
                 <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="text-xs text-slate-400 mt-1">
+                Sistem Informasi Produksi
+              </p>
             </div>
             <button
               id="sidebarToggle"
@@ -32,43 +37,43 @@
               title="Toggle Menu"
               aria-label="Toggle menu"
             >
-              <i class="fas fa-times"></i>
+              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
             </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
           <a href="index.html" class="ht-nav-link"
-            ><i class="fas fa-chart-line"></i> Dashboard</a
+            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Master Data</p>
           </div>
           <a href="customer.html" class="ht-nav-link"
-            ><i class="fas fa-users"></i> Customer</a
+            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
           >
           <a href="part.html" class="ht-nav-link"
-            ><i class="fas fa-cogs"></i> Part</a
+            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
           >
           <a href="incoming.html" class="ht-nav-link active"
-            ><i class="fas fa-box"></i> Incoming</a
+            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
           <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><i class="fas fa-play"></i> Masuk Proses</a
+            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
           >
           <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><i class="fas fa-flag-checkered"></i> Akhir Proses</a
+            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
           >
           <a href="qc.html" class="ht-nav-link"
-            ><i class="fas fa-clipboard-check"></i> Quality Control</a
+            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
           >
           <a href="delivery.html" class="ht-nav-link"
-            ><i class="fas fa-shipping-fast"></i> Delivery</a
+            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
           >
           <a href="tracking.html" class="ht-nav-link"
-            ><i class="fas fa-search-location"></i> Tracking</a
+            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
           >
         </nav>
         <div class="ht-sidebar-footer">
@@ -86,12 +91,15 @@
               </div>
             </div>
             <button
-              onclick="Auth.logout(); window.location.href='login.html';"
+              onclick="
+                Auth.logout();
+                window.location.href = 'login.html';
+              "
               class="ht-sidebar-logout"
               title="Logout"
               aria-label="Logout"
             >
-              <i class="fas fa-sign-out-alt"></i>
+              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
             </button>
           </div>
         </div>
@@ -104,11 +112,12 @@
           </div>
           <div class="ht-header-actions">
             <button
+              id="refreshBtn"
               onclick="refreshData()"
               class="ht-btn ht-btn-secondary ht-btn-sm"
               aria-label="Refresh"
             >
-              <i class="fas fa-sync-alt"></i> Refresh
+              <img src="assets/icons/refresh.svg" alt="Refresh" class="icon mr-1" id="refreshIcon"> <span id="refreshText">Refresh</span>
             </button>
           </div>
         </header>
@@ -122,7 +131,7 @@
                 <input type="hidden" id="incId" />
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Customer</label>
+                    <label class="ht-form-label" for="incCustomer">Customer</label>
                     <select
                       id="incCustomer"
                       required
@@ -131,7 +140,7 @@
                     ></select>
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Nomor Part</label>
+                    <label class="ht-form-label" for="incPart">Nomor Part</label>
                     <select
                       id="incPart"
                       required
@@ -142,7 +151,7 @@
                 </div>
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Nama Part</label>
+                    <label class="ht-form-label" for="incNamaPart">Nama Part</label>
                     <input
                       type="text"
                       id="incNamaPart"
@@ -151,7 +160,7 @@
                     />
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Berat Part</label>
+                    <label class="ht-form-label" for="incBeratPart">Berat Part</label>
                     <input
                       type="text"
                       id="incBeratPart"
@@ -162,8 +171,9 @@
                 </div>
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label"
-                      >Nomor Surat Jalan <span class="text-red-500">(Manual)</span></label
+                    <label class="ht-form-label" for="incSJ"
+                      >Nomor Surat Jalan
+                      <span class="text-red-500">(Manual)</span></label
                     >
                     <input
                       type="text"
@@ -175,7 +185,7 @@
                     />
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label"
+                    <label class="ht-form-label" for="incLot"
                       >Lot No <span class="text-red-500">(Manual)</span></label
                     >
                     <input
@@ -190,7 +200,7 @@
                 </div>
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label"
+                    <label class="ht-form-label" for="incCharge"
                       >Material Charge
                       <span class="text-red-500">(Manual)</span></label
                     >
@@ -204,12 +214,8 @@
                     />
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Status Part</label>
-                    <select
-                      id="incStatusPart"
-                      required
-                      class="ht-form-select"
-                    >
+                    <label class="ht-form-label" for="incStatusPart">Status Part</label>
+                    <select id="incStatusPart" required class="ht-form-select">
                       <option value="">Pilih Status</option>
                       <option value="Masspro">Masspro</option>
                       <option value="Trial">Trial</option>
@@ -223,7 +229,7 @@
                 </div>
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Jenis Proses</label>
+                    <label class="ht-form-label" for="incProcessType">Jenis Proses</label>
                     <select
                       id="incProcessType"
                       required
@@ -241,7 +247,10 @@
                     </select>
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Qty Part <span class="text-red-500">(Manual)</span></label>
+                    <label class="ht-form-label" for="incQty"
+                      >Qty Part
+                      <span class="text-red-500">(Manual)</span></label
+                    >
                     <input
                       type="number"
                       id="incQty"
@@ -254,7 +263,7 @@
                   </div>
                 </div>
                 <div id="processNoteGroup" class="hidden ht-form-group">
-                  <label class="ht-form-label"
+                  <label class="ht-form-label" for="incProcessNote"
                     >Keterangan Jenis Proses
                     <span class="text-red-500">(Manual)</span></label
                   >
@@ -268,7 +277,7 @@
                 </div>
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label">Berat Total Part</label>
+                    <label class="ht-form-label" for="incBeratTotal">Berat Total Part</label>
                     <input
                       type="text"
                       id="incBeratTotal"
@@ -277,8 +286,9 @@
                     />
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label"
-                      >Diinput Oleh <span class="text-red-500">(Manual)</span></label
+                    <label class="ht-form-label" for="incDiinputOleh"
+                      >Diinput Oleh
+                      <span class="text-red-500">(Manual)</span></label
                     >
                     <input
                       type="text"
@@ -291,7 +301,7 @@
                   </div>
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label">Tanggal Incoming</label>
+                  <label class="ht-form-label" for="incTanggal">Tanggal Incoming</label>
                   <input
                     type="date"
                     id="incTanggal"
@@ -300,7 +310,7 @@
                   />
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label">Keterangan</label>
+                  <label class="ht-form-label" for="incKeterangan">Keterangan</label>
                   <textarea
                     id="incKeterangan"
                     rows="2"
@@ -327,7 +337,7 @@
                         class="ht-btn ht-btn-success ht-btn-sm"
                         aria-label="Simpan incoming"
                       >
-                        <i class="fas fa-save mr-2"></i>Simpan Incoming
+                        <img src="assets/icons/save.svg" alt="Simpan" class="icon mr-2">Simpan Incoming
                       </button>
                       <button
                         type="button"
@@ -346,7 +356,7 @@
               <div class="ht-search-bar">
                 <input
                   type="text"
-                  id="searchIncoming"
+                  id="searchIncoming" aria-label="Search Incoming"
                   placeholder="Search Incoming..."
                   oninput="renderTable()"
                   class="ht-form-input"
@@ -373,7 +383,6 @@
                       <th>Jenis Proses</th>
                       <th>Diinput Oleh</th>
                       <th>Tanggal Incoming</th>
-                      <th>Status Proses</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -394,8 +403,12 @@
       <div class="ht-modal">
         <div class="ht-modal-header">
           <h3 class="ht-modal-title">Data Incoming Berhasil Disimpan</h3>
-          <button onclick="closeSaveResult()" class="ht-modal-close" aria-label="Close">
-            <i class="fas fa-times"></i>
+          <button
+            onclick="closeSaveResult()"
+            class="ht-modal-close"
+            aria-label="Close"
+          >
+            <img src="assets/icons/close.svg" alt="Close" class="icon">
           </button>
         </div>
         <div class="ht-modal-body">
@@ -410,13 +423,13 @@
             onclick="downloadSaveQR()"
             class="ht-btn ht-btn-secondary ht-btn-sm"
           >
-            <i class="fas fa-download mr-1"></i>Download QR
+            <img src="assets/icons/download.svg" alt="Download QR" class="icon mr-1">Download QR
           </button>
           <button
             onclick="printSaveQR()"
             class="ht-btn ht-btn-secondary ht-btn-sm"
           >
-            <i class="fas fa-print mr-1"></i>Print
+            <img src="assets/icons/print.svg" alt="Print" class="icon mr-1">Print
           </button>
           <button
             onclick="closeSaveResult()"
@@ -434,7 +447,7 @@
         <div class="ht-modal-header">
           <h3 class="ht-modal-title">QR Code</h3>
           <button onclick="closeQR()" class="ht-modal-close" aria-label="Close">
-            <i class="fas fa-times"></i>
+            <img src="assets/icons/close.svg" alt="Close" class="icon">
           </button>
         </div>
         <div class="ht-modal-body">
@@ -448,40 +461,14 @@
             onclick="downloadQR()"
             class="ht-btn ht-btn-secondary ht-btn-sm"
           >
-            <i class="fas fa-download mr-1"></i>Download
+            <img src="assets/icons/download.svg" alt="Download" class="icon mr-1">Download
           </button>
-          <button
-            onclick="printQR()"
-            class="ht-btn ht-btn-secondary ht-btn-sm"
-          >
-            <i class="fas fa-print mr-1"></i>Print
+          <button onclick="printQR()" class="ht-btn ht-btn-secondary ht-btn-sm">
+            <img src="assets/icons/print.svg" alt="Print" class="icon mr-1">Print
           </button>
-          <button
-            onclick="closeQR()"
-            class="ht-btn ht-btn-secondary ht-btn-sm"
-          >
+          <button onclick="closeQR()" class="ht-btn ht-btn-secondary ht-btn-sm">
             Tutup
           </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Scan Modal -->
-    <div id="scanModal" class="ht-modal-overlay">
-      <div class="ht-modal">
-        <div class="ht-modal-header">
-          <h3 class="ht-modal-title">Scan QR Code</h3>
-          <button onclick="closeScanModal()" class="ht-modal-close" aria-label="Close">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="ht-modal-body">
-          <div class="ht-qr-scanner-wrapper">
-            <div id="qr-reader" class="ht-qr-frame"></div>
-            <p class="text-xs text-slate-500 text-center mt-3">
-              Arahkan kamera ke QR Code
-            </p>
-          </div>
         </div>
       </div>
     </div>
@@ -499,7 +486,18 @@
         const date = new Date(tanggalMasuk);
         const year = date.getFullYear();
         const monthLetters = [
-          "A","B","C","D","E","F","G","H","I","J","K","L",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
         ];
         const monthLetter = monthLetters[date.getMonth()];
         const sameYear = DB.get("materials").filter(
@@ -509,22 +507,24 @@
         return year + seq + monthLetter;
       }
       function refreshData() {
-        const btn = document.querySelector('button[onclick="refreshData()"]');
-        if (btn) {
-          btn.disabled = true;
-          btn.classList.add("ht-btn-loading");
-        }
+        const btn = document.getElementById("refreshBtn");
+        const icon = document.getElementById("refreshIcon");
+        const text = document.getElementById("refreshText");
+        if (!btn || !icon || !text) return;
+        btn.disabled = true;
+        icon.classList.add("icon-spin");
+        text.textContent = "Memuat...";
         setTimeout(() => {
           try {
             renderTable();
           } catch (e) {
             HTUI.toast("Gagal memuat data: " + e.message, "error");
           }
-          if (btn) {
-            btn.disabled = false;
-            btn.classList.remove("ht-btn-loading");
-          }
-        }, 300);
+          btn.disabled = false;
+          icon.classList.remove("icon-spin");
+          text.textContent = "Refresh";
+          HTUI.toast("Dashboard diperbaharui", "success");
+        }, 200);
       }
       function loadCustomerDropdown() {
         const sel = document.getElementById("incCustomer");
@@ -601,57 +601,75 @@
       function resetForm() {
         openForm();
       }
-      document.getElementById("incomingForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const cid = parseInt(document.getElementById("incCustomer").value);
-        const pid = parseInt(document.getElementById("incPart").value);
-        if (!cid || !pid) {
-          HTUI.toast("Customer dan Part harus dipilih.", "error");
-          return;
-        }
-        const qty = parseInt(document.getElementById("incQty").value);
-        const tanggal = document.getElementById("incTanggal").value;
-        const kode = generateKode(tanggal);
-        const processType = document.getElementById("incProcessType").value;
-        const processNote = document.getElementById("incProcessNote").value.trim();
-        const processTypeFinal = processType === "Lainnya" ? processNote || "Lainnya" : processType;
-        const data = {
-          kode,
-          customer_id: cid,
-          part_id: pid,
-          nomor_surat_jalan: document.getElementById("incSJ").value.trim(),
-          lot_no: document.getElementById("incLot").value.trim(),
-          material_charge: document.getElementById("incCharge").value.trim(),
-          status_part: document.getElementById("incStatusPart").value,
-          qty,
-          berat_part_snapshot: parseFloat(document.getElementById("incBeratPart").value) || 0,
-          berat_total_part: qty * (parseFloat(document.getElementById("incBeratPart").value) || 0),
-          tanggal_masuk: tanggal,
-          keterangan: document.getElementById("incKeterangan").value.trim(),
-          process_type: processTypeFinal,
-          diinput_oleh: document.getElementById("incDiinputOleh").value.trim(),
-          tracking_id: "",
-          qr_code: kode,
-          status_proses: "Waiting",
-        };
-        if (document.getElementById("incId").value) {
-          DB.update("materials", document.getElementById("incId").value, data);
-        } else {
-          DB.insert("materials", data);
-        }
-        showSaveResult(kode);
-      });
+      document
+        .getElementById("incomingForm")
+        .addEventListener("submit", (e) => {
+          e.preventDefault();
+          const cid = parseInt(document.getElementById("incCustomer").value);
+          const pid = parseInt(document.getElementById("incPart").value);
+          if (!cid || !pid) {
+            HTUI.toast("Customer dan Part harus dipilih.", "error");
+            return;
+          }
+          const qty = parseInt(document.getElementById("incQty").value);
+          const tanggal = document.getElementById("incTanggal").value;
+          const kode = generateKode(tanggal);
+          const processType = document.getElementById("incProcessType").value;
+          const processNote = document
+            .getElementById("incProcessNote")
+            .value.trim();
+          const processTypeFinal =
+            processType === "Lainnya" ? processNote || "Lainnya" : processType;
+          const data = {
+            kode,
+            customer_id: cid,
+            part_id: pid,
+            nomor_surat_jalan: document.getElementById("incSJ").value.trim(),
+            lot_no: document.getElementById("incLot").value.trim(),
+            material_charge: document.getElementById("incCharge").value.trim(),
+            status_part: document.getElementById("incStatusPart").value,
+            qty,
+            berat_part_snapshot:
+              parseFloat(document.getElementById("incBeratPart").value) || 0,
+            berat_total_part:
+              qty *
+              (parseFloat(document.getElementById("incBeratPart").value) || 0),
+            tanggal_masuk: tanggal,
+            keterangan: document.getElementById("incKeterangan").value.trim(),
+            process_type: processTypeFinal,
+            diinput_oleh: document
+              .getElementById("incDiinputOleh")
+              .value.trim(),
+            tracking_id: "",
+            qr_code: kode,
+            status_proses: "Waiting",
+          };
+          if (document.getElementById("incId").value) {
+            DB.update(
+              "materials",
+              document.getElementById("incId").value,
+              data,
+            );
+          } else {
+            DB.insert("materials", data);
+          }
+          showSaveResult(kode);
+        });
       function renderTable() {
-        const search = document.getElementById("searchIncoming").value.toLowerCase();
+        const search = document
+          .getElementById("searchIncoming")
+          .value.toLowerCase();
         let data = DB.get("materials");
         if (search) {
           data = data.filter((m) => {
             const c = DB.findCustomerById(m.customer_id);
             const p = DB.findPartById(m.part_id);
             return (
-              (m.nomor_surat_jalan && m.nomor_surat_jalan.toLowerCase().includes(search)) ||
+              (m.nomor_surat_jalan &&
+                m.nomor_surat_jalan.toLowerCase().includes(search)) ||
               (m.lot_no && m.lot_no.toLowerCase().includes(search)) ||
-              (m.material_charge && m.material_charge.toLowerCase().includes(search)) ||
+              (m.material_charge &&
+                m.material_charge.toLowerCase().includes(search)) ||
               (p && p.nomor_part.toLowerCase().includes(search)) ||
               (p && p.nama_part.toLowerCase().includes(search)) ||
               (c && c.nama_customer.toLowerCase().includes(search)) ||
@@ -668,7 +686,7 @@
             return `<tr class="hover:bg-slate-50 transition">
             <td class="px-3 py-2">${idx + 1}</td>
             <td class="px-3 py-2 font-mono">${m.kode || "-"}</td>
-            <td class="px-3 py-2">${c ? c.nama_customer : "-"}</td>
+            <td class="px-3 py-2">${(c && c.nama_customer) || "-"}</td>
             <td class="px-3 py-2">${p ? p.nomor_part : "-"}</td>
             <td class="px-3 py-2">${p ? p.nama_part : "-"}</td>
             <td class="px-3 py-2 font-mono">${m.nomor_surat_jalan || "-"}</td>
@@ -680,13 +698,12 @@
             <td class="px-3 py-2">${m.process_type || "-"}</td>
             <td class="px-3 py-2">${m.diinput_oleh || "-"}</td>
             <td class="px-3 py-2">${m.tanggal_masuk || "-"}</td>
-            <td class="px-3 py-2"><span class="ht-badge ${getProcessColor(m.status_proses)}">${m.status_proses || "-"}</span></td>
             <td class="px-3 py-2">
               <div class="ht-action-group">
-                <button onclick="editMaterial(${m.id})" class="ht-action-btn edit" title="Edit" aria-label="Edit"><i class="fas fa-edit"></i></button>
-                <button onclick="deleteMaterial(${m.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>
-                <button onclick="showQR('${m.kode}')" class="ht-action-btn view" title="QR" aria-label="QR"><i class="fas fa-qrcode"></i></button>
-                <button onclick="viewTracking('${m.kode}')" class="ht-action-btn view" title="Tracking" aria-label="Tracking"><i class="fas fa-eye"></i></button>
+                <button onclick="editMaterial(${m.id})" class="ht-action-btn edit" title="Edit" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>
+                <button onclick="deleteMaterial(${m.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><img src="assets/icons/delete.svg" alt="Delete" class="icon"></button>
+                <button onclick="showQR('${m.kode}')" class="ht-action-btn view" title="QR" aria-label="QR"><img src="assets/icons/qr.svg" alt="QR" class="icon"></button>
+                <button onclick="viewTracking('${m.kode}')" class="ht-action-btn view" title="Tracking" aria-label="Tracking"><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"></button>
               </div>
             </td>
           </tr>`;
@@ -694,7 +711,7 @@
           .join("");
         document.getElementById("incomingTable").innerHTML =
           html ||
-          '<tr><td colspan="16" class="ht-table-empty"><i class="fas fa-inbox"></i><p>Tidak ada data ditemukan.</p></td></tr>';
+          '<tr><td colspan="15" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Tidak ada data ditemukan.</p></td></tr>';
       }
       function getProcessColor(s) {
         if (s === "Process") return "ht-badge-process";
@@ -717,15 +734,20 @@
           document.getElementById("incLot").value = m.lot_no || "";
           document.getElementById("incCharge").value = m.material_charge || "";
           document.getElementById("incStatusPart").value = m.status_part || "";
-          document.getElementById("incProcessType").value = m.process_type || "";
-          document.getElementById("incDiinputOleh").value = m.diinput_oleh || "";
+          document.getElementById("incProcessType").value =
+            m.process_type || "";
+          document.getElementById("incDiinputOleh").value =
+            m.diinput_oleh || "";
           document.getElementById("incQty").value = m.qty || 1;
           calcBeratTotal();
           document.getElementById("incTanggal").value = m.tanggal_masuk || "";
           document.getElementById("incKeterangan").value = m.keterangan || "";
-          document.getElementById("incKodeDisplay").textContent = "Kode: " + (m.kode || "");
+          document.getElementById("incKodeDisplay").textContent =
+            "Kode: " + (m.kode || "");
           if (m.process_type === "Lainnya") {
-            document.getElementById("processNoteGroup").classList.remove("hidden");
+            document
+              .getElementById("processNoteGroup")
+              .classList.remove("hidden");
           }
         }, 50);
       }
@@ -791,28 +813,14 @@
         const canvas = document.querySelector("#saveQRDisplay canvas");
         if (canvas) {
           const link = document.createElement("a");
-          link.download = "QR-" + document.getElementById("saveKode").textContent + ".png";
+          link.download =
+            "QR-" + document.getElementById("saveKode").textContent + ".png";
           link.href = canvas.toDataURL("image/png");
           link.click();
         }
       }
       function printSaveQR() {
         window.print();
-      }
-      function openScanModal() {
-        HTUI.openModal("scanModal");
-        if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
-        if (html5QrCode) {
-          HTUI.startScanner(html5QrCode, (decodedText) => {
-            const kode = HTUI.parseScanId(decodedText);
-            showQR(kode);
-          });
-        }
-      }
-      function closeScanModal() {
-        HTUI.stopScanner(html5QrCode);
-        html5QrCode = null;
-        HTUI.closeModal("scanModal");
       }
       window.addEventListener("DOMContentLoaded", () => {
         DB.init();

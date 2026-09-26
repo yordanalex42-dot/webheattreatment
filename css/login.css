@@ -1,0 +1,285 @@
+/* ============================================================
+   LOGIN PAGE — Centering, card, form, responsive
+   Scoped to the login page only (body.ht-login-page).
+   Does not touch sidebar.css / icons.css / global.css.
+   Login uses project tokens: --primary #2563EB, --sidebar #0B172A.
+   ============================================================ */
+
+/* ============================================================
+   PAGE WRAPPER — true horizontal + vertical centering
+   Independent from sidebar/navbar: no fixed offsets, no
+   margin-left compensation, no dashboard shell.
+   ============================================================ */
+
+.ht-login-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--background);
+  background-image: radial-gradient(
+      1100px 520px at 50% -10%,
+      rgba(37, 99, 235, 0.07),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #f7f9fc 0%, var(--surface-muted) 100%);
+  overflow-x: hidden;
+}
+
+/* The mobile sidebar backdrop injected by ui.js must never
+   appear on the login page. */
+.ht-login-page .ht-overlay {
+  display: none;
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+
+.ht-login-card {
+  width: 100%;
+  max-width: 400px;
+  /* auto margin keeps the card centered while staying reachable
+     (scrollable) when the card is taller than the viewport */
+  margin: auto;
+  padding: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* Brand block */
+.ht-login-head {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.ht-login-head h1 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.ht-login-head p {
+  margin-top: 4px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+/* Logo tile — existing logo asset, proportions only */
+.ht-login-logo {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 14px;
+}
+
+.ht-login-logo .icon {
+  width: 40px;
+  height: 40px;
+}
+
+/* ============================================================
+   FORM
+   ============================================================ */
+
+.ht-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ht-login-form .ht-form-group {
+  gap: 6px;
+}
+
+.ht-login-form .ht-form-label {
+  font-size: var(--text-sm);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-secondary);
+}
+
+/* Consistent input height on every breakpoint */
+.ht-login-form .ht-form-input {
+  height: 44px;
+  padding: 0 12px;
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-md);
+}
+
+.ht-login-form .ht-form-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.ht-login-form .ht-form-input:focus {
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+/* Error message box (visibility toggled by .hidden in JS) */
+.ht-login-error {
+  padding: 10px 12px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border: 1px solid rgba(239, 68, 68, 0.28);
+  border-radius: var(--radius-md);
+}
+
+.ht-login-page .hidden {
+  display: none;
+}
+
+/* Submit button */
+.ht-login-actions {
+  margin-top: 4px;
+}
+
+.ht-login-actions .ht-btn {
+  width: 100%;
+  height: 44px;
+  font-size: 14px;
+  font-weight: var(--font-weight-semi);
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-inverse);
+  transition: background-color var(--transition-sm), border-color var(--transition-sm),
+    box-shadow var(--transition-sm);
+}
+
+.ht-login-actions .ht-btn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+.ht-login-actions .ht-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+.ht-login-actions .ht-btn:disabled {
+  background: var(--text-disabled);
+  border-color: var(--text-disabled);
+  color: var(--surface);
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* Submit icon — external SVG in <img> cannot use currentColor, so it
+   is painted as a mask in the button color (white) on the blue fill.
+   Scoped to the login page only. */
+.ht-login-actions .ht-btn .icon[src$="arrow-right.svg"] {
+  -webkit-mask-image: url("../assets/icons/arrow-right.svg");
+  mask-image: url("../assets/icons/arrow-right.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  background-color: currentColor;
+}
+
+/* Must stay after the mapping above (same specificity): when the app is
+   opened from disk the mask cannot load and would hide the icon. */
+.ht-file-protocol .ht-login-actions .ht-btn .icon {
+  -webkit-mask-image: none;
+  mask-image: none;
+  background-color: transparent;
+  filter: brightness(0) invert(1);
+}
+
+/* Default-credential hint */
+.ht-login-hint {
+  margin-top: 20px;
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.ht-login-hint .font-mono {
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* Tablet */
+@media (max-width: 900px) {
+  .ht-login-card {
+    max-width: 380px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .ht-login-page {
+    padding: 16px;
+  }
+
+  .ht-login-card {
+    max-width: 100%;
+    padding: 24px 20px;
+    border-radius: var(--radius-lg);
+  }
+
+  .ht-login-logo {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+
+  .ht-login-logo .icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ht-login-head {
+    margin-bottom: 20px;
+  }
+
+  .ht-login-head h1 {
+    font-size: var(--text-lg);
+  }
+
+  .ht-login-form {
+    gap: 14px;
+  }
+
+  .ht-login-form .ht-form-input,
+  .ht-login-actions .ht-btn {
+    height: 42px;
+  }
+}
+
+/* Very short screens (landscape phone) — card shrinks its own
+   padding and the page scrolls; centering still applies. */
+@media (max-height: 520px) {
+  .ht-login-page {
+    padding: 16px;
+  }
+
+  .ht-login-card {
+    padding: 20px;
+  }
+
+  .ht-login-head {
+    margin-bottom: 16px;
+  }
+}

@@ -128,9 +128,9 @@ assert(
   "status=" + prodAfter[0].status,
 );
 assert(
-  prodAfter[3].machine_finish_at === "",
-  "T14: migrate empty default for machine_finish_at",
-  "val=" + JSON.stringify(prodAfter[3].machine_finish_at),
+  prodAfter[5].machine_finish_at === "",
+  "T14: migrate empty default for machine_finish_at (PROCESS production)",
+  "val=" + JSON.stringify(prodAfter[5].machine_finish_at),
 );
 
 console.log("\n=== GROUP 3: FIND METHODS (Tests 15-22) ===");
@@ -141,7 +141,7 @@ assert(
   "T15: findMaterial finds by numeric id",
   "Found: " + (m1001 ? m1001.kode : "null"),
 );
-const mKode = DB.findMaterial("20240001A");
+const mKode = DB.findMaterial("20260001I");
 assert(
   mKode !== undefined && mKode !== null,
   "T16: findMaterial finds by kode",
@@ -153,7 +153,7 @@ assert(
   "T17: findMaterial finds by string id",
   "",
 );
-const t1 = DB.findByKode("20240001A");
+const t1 = DB.findByKode("20260001I");
 assert(
   t1 !== undefined && t1 !== null,
   "T18: findByKode finds valid Kode",
@@ -167,13 +167,13 @@ assert(
 );
 const c1 = DB.findCustomerById(1);
 assert(
-  c1 !== undefined && c1 !== null && c1.nama_customer === "Toyota Motor",
+  c1 !== undefined && c1 !== null && c1.nama_customer === "PT Toyota Motor Manufacturing Indonesia",
   "T20: findCustomerById finds customer",
   "Name: " + (c1 ? c1.nama_customer : "null"),
 );
 const p1 = DB.findPartById(1);
 assert(
-  p1 !== undefined && p1 !== null && p1.nomor_part === "HT-CUST001-001",
+  p1 !== undefined && p1 !== null && p1.nomor_part === "HT-2026-001",
   "T21: findPartById finds part",
   "Part: " + (p1 ? p1.nomor_part : "null"),
 );
@@ -212,7 +212,7 @@ Auth.logout();
 
 console.log("\n=== GROUP 5: PRODUKSI MASUK LOGIC (Tests 27-33) ===");
 setupFresh();
-const mat = DB.findByKode("20240001A");
+const mat = DB.findByKode("20260001I");
 assert(
   mat !== null,
   "T27: Material found by Kode for produksi-masuk",
@@ -220,13 +220,13 @@ assert(
 );
 const part = DB.findPartById(mat.part_id);
 assert(
-  part !== null && part.nomor_part === "HT-CUST001-001",
+  part !== null && part.nomor_part === "HT-2026-001",
   "T28: Part data correct for material",
   "Part: " + part.nomor_part,
 );
 const cust = DB.findCustomerById(mat.customer_id);
 assert(
-  cust !== null && cust.nama_customer === "Toyota Motor",
+  cust !== null && cust.nama_customer === "PT Toyota Motor Manufacturing Indonesia",
   "T29: Customer data correct",
   "Cust: " + cust.nama_customer,
 );
@@ -247,14 +247,14 @@ assert(
   "Status: " + prod1.production_status,
 );
 assert(
-  mat.status_proses === "Waiting",
+  mat.status_proses === "WAITING",
   "T33: Material status_proses is Waiting",
   "Status: " + mat.status_proses,
 );
 
 console.log("\n=== GROUP 6: PRODUKSI AKHIR LOGIC (Tests 34-39) ===");
 setupFresh();
-const mat2 = DB.findByKode("20240002A");
+const mat2 = DB.findByKode("20260006I");
 assert(
   mat2 !== null,
   "T34: Material found for produksi-akhir (in Process)",
@@ -272,16 +272,16 @@ assert(
   "Status: " + prod2.production_status,
 );
 assert(
-  prod2.start_scan_at === "",
-  "T37: start_scan_at empty for PROCESS",
+  prod2.start_scan_at !== "",
+  "T37: start_scan_at set for PROCESS",
   'Val: "' + prod2.start_scan_at + '"',
 );
 assert(
-  prod2.visual_check_result === "",
-  "T38: visual_check_result empty for PROCESS",
+  prod2.visual_check_result === "OK",
+  "T38: visual_check_result OK for PROCESS",
   'Val: "' + prod2.visual_check_result + '"',
 );
-const mat3 = DB.findByKode("20240004A");
+const mat3 = DB.findByKode("20260007I");
 const prod3 = DB.get("productions").find((p) => p.material_id == mat3.id);
 assert(
   prod3 !== undefined && prod3.status === "Waiting",
@@ -311,10 +311,10 @@ assert(
   "Count: " + waitingProds.length,
 );
 const allMats = DB.get("materials");
-const waitingMats = allMats.filter((m) => m.status_proses === "Waiting");
+const waitingMats = allMats.filter((m) => m.status_proses === "WAITING");
 assert(
   waitingMats.length >= 2,
-  "T43: At least 2 materials with Waiting status",
+  "T43: At least 2 materials with WAITING status",
   "Count: " + waitingMats.length,
 );
 const hasAllFields = allProds.every((p) => {

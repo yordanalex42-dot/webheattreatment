@@ -6,11 +6,14 @@
     <title>Tracking - Sistem Informasi Produksi Heat Treatment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
   </head>
   <body class="text-slate-800">
     <div class="ht-app-shell">
@@ -19,7 +22,7 @@
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <i class="fas fa-fire text-2xl"></i>
+                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
                 <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
               </div>
               <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
@@ -31,43 +34,43 @@
               title="Toggle Menu"
               aria-label="Toggle menu"
             >
-              <i class="fas fa-times"></i>
+              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
             </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
           <a href="index.html" class="ht-nav-link"
-            ><i class="fas fa-chart-line"></i> Dashboard</a
+            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Master Data</p>
           </div>
           <a href="customer.html" class="ht-nav-link"
-            ><i class="fas fa-users"></i> Customer</a
+            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
           >
           <a href="part.html" class="ht-nav-link"
-            ><i class="fas fa-cogs"></i> Part</a
+            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
           >
           <a href="incoming.html" class="ht-nav-link"
-            ><i class="fas fa-box"></i> Incoming</a
+            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
           <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><i class="fas fa-play"></i> Masuk Proses</a
+            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
           >
           <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><i class="fas fa-flag-checkered"></i> Akhir Proses</a
+            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
           >
           <a href="qc.html" class="ht-nav-link"
-            ><i class="fas fa-clipboard-check"></i> Quality Control</a
+            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
           >
           <a href="delivery.html" class="ht-nav-link"
-            ><i class="fas fa-shipping-fast"></i> Delivery</a
+            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
           >
           <a href="tracking.html" class="ht-nav-link active"
-            ><i class="fas fa-search-location"></i> Tracking</a
+            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
           >
         </nav>
         <div class="ht-sidebar-footer">
@@ -90,7 +93,7 @@
               title="Logout"
               aria-label="Logout"
             >
-              <i class="fas fa-sign-out-alt"></i>
+              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
             </button>
           </div>
         </div>
@@ -107,7 +110,7 @@
               class="ht-btn ht-btn-success ht-btn-sm"
               aria-label="Scan QR"
             >
-              <i class="fas fa-qrcode"></i> Scan QR
+              <img src="assets/icons/qr.svg" alt="Scan QR" class="icon mr-1"> Scan QR
             </button>
           </div>
         </header>
@@ -121,7 +124,7 @@
               <div class="flex gap-2">
                 <input
                   type="text"
-                  id="searchId"
+                  id="searchId" aria-label="Nomor kode material"
                   placeholder="Masukkan Nomor Kode"
                   class="ht-form-input flex-1"
                   oninput="clearSearchError()"
@@ -132,7 +135,7 @@
                   class="ht-btn ht-btn-primary ht-btn-sm"
                   aria-label="Tracking"
                 >
-                  <i class="fas fa-search mr-1"></i>Tracking
+                  <img src="assets/icons/search.svg" alt="Tracking" class="icon mr-1">Tracking
                 </button>
               </div>
               <p id="searchError" class="hidden text-[11px] text-danger-text mt-1"></p>
@@ -270,11 +273,11 @@
             <!-- Empty state -->
             <div id="noResult" class="hidden text-center py-12">
               <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i class="fas fa-search text-2xl text-slate-400"></i>
+                <img src="assets/icons/search.svg" alt="Search" class="icon icon-xl icon-muted">
               </div>
               <h3 class="text-base font-bold text-slate-600">Material tidak ditemukan</h3>
               <p class="text-xs text-slate-400 mt-1">
-                Silakan periksa kembali ID atau No Part yang dimasukkan
+                Silakan periksa kembali Nomor Kode yang dimasukkan
               </p>
             </div>
           </div>
@@ -288,7 +291,7 @@
         <div class="ht-modal-header">
           <h3 class="ht-modal-title">Scan QR Code</h3>
           <button onclick="closeScanModal()" class="ht-modal-close" aria-label="Close">
-            <i class="fas fa-times"></i>
+            <img src="assets/icons/close.svg" alt="Close" class="icon">
           </button>
         </div>
         <div class="ht-modal-body">

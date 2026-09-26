@@ -1,0 +1,701 @@
+/* ============================================================
+  ICON SYSTEM — Heat Treatment Information System
+  Local SVG icons with consistent sizing and styling.
+  All icons are stroke-based (fill="none", stroke="currentColor")
+  so they inherit color from CSS and remain visible on any background.
+  ============================================================ */
+
+:root {
+  --icon-xs: 14px;
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+  --icon-xl: 32px;
+  --icon-2xl: 40px;
+  --icon-3xl: 48px;
+}
+
+/* Base icon class - container for icon images and SVGs */
+.icon,
+.ht-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  color: inherit;
+  width: var(--icon-md);
+  height: var(--icon-md);
+}
+
+/* icon image/sizing - prevent 100% sizing that breaks layout */
+.icon img,
+.ht-icon img,
+.icon svg,
+.ht-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Size variants for the container */
+.icon-xs { width: var(--icon-xs); height: var(--icon-xs); }
+.icon-sm { width: var(--icon-sm); height: var(--icon-sm); }
+.icon-md { width: var(--icon-md); height: var(--icon-md); }
+.icon-lg { width: var(--icon-lg); height: var(--icon-lg); }
+.icon-xl { width: var(--icon-xl); height: var(--icon-xl); }
+.icon-2xl { width: var(--icon-2xl); height: var(--icon-2xl); }
+.icon-3xl { width: var(--icon-3xl); height: var(--icon-3xl); }
+
+/* ============================================================
+   COLOR INHERITANCE — MASK MAP (every context)
+   An SVG loaded through <img> is isolated from the document, so
+   stroke="currentColor" inside the file resolves to that file's own
+   color, never the parent's. Result: every icon outside a mask would
+   paint a fixed dark stroke and ignore the design tokens
+   (--primary / --success / --danger / --text-tertiary ...).
+   Fix (same technique the sidebar already uses): use the SVG as a CSS
+   mask and paint the silhouette with `currentColor`. A mask uses the
+   alpha channel only, so the icon's own color is irrelevant and the
+   icon then follows the token color of whatever contains it:
+     .ht-btn-success        -> white
+     .ht-action-btn.delete  -> --danger, and --primary on :hover
+     .ht-step.active .icon  -> white
+     .ht-table-empty .icon  -> --text-tertiary
+     sidebar .icon          -> the sidebar's own per-state colors
+   The rules below are attribute-selected, so no HTML or JS changes
+   are needed and the file names stay the single source of truth. */
+.icon {
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* ============================================================
+   SIDEBAR ICONS
+   Sidebar icons are external SVG files rendered with <img>.
+   An SVG loaded through <img> is isolated from the document, so
+   its stroke="currentColor" never resolves to the parent color
+   and paints BLACK on the dark navy sidebar.
+   Fix: use each SVG file as a CSS mask and paint the mask with
+   the current color. This gives exact per-state colors, leaves
+   every asset file untouched, and is scoped to .ht-sidebar only.
+   ============================================================ */
+
+/* Shared mask behaviour for every sidebar icon */
+.ht-sidebar .icon {
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* Paint the masked silhouette with the current color */
+.ht-sidebar .ht-nav-link .icon,
+.ht-sidebar .ht-sidebar-logout .icon,
+.ht-sidebar-header [data-sidebar-toggle] .icon,
+.ht-sidebar-header .icon.icon-xl,
+.ht-sidebar-brand .icon {
+  background-color: currentColor;
+  filter: brightness(0) invert(1);
+}
+
+/* ---- Icon assets used by the sidebar (mask map) ---- */
+.ht-sidebar .icon[src$="logo.svg"] {
+  -webkit-mask-image: url("../assets/logo/logo.svg");
+  mask-image: url("../assets/logo/logo.svg");
+}
+.ht-sidebar .icon[src$="dashboard.svg"] {
+  -webkit-mask-image: url("../assets/icons/dashboard.svg");
+  mask-image: url("../assets/icons/dashboard.svg");
+}
+.ht-sidebar .icon[src$="customer.svg"] {
+  -webkit-mask-image: url("../assets/icons/customer.svg");
+  mask-image: url("../assets/icons/customer.svg");
+}
+.ht-sidebar .icon[src$="part.svg"] {
+  -webkit-mask-image: url("../assets/icons/part.svg");
+  mask-image: url("../assets/icons/part.svg");
+}
+.ht-sidebar .icon[src$="incoming.svg"] {
+  -webkit-mask-image: url("../assets/icons/incoming.svg");
+  mask-image: url("../assets/icons/incoming.svg");
+}
+.ht-sidebar .icon[src$="production-start.svg"] {
+  -webkit-mask-image: url("../assets/icons/production-start.svg");
+  mask-image: url("../assets/icons/production-start.svg");
+}
+.ht-sidebar .icon[src$="production-finish.svg"] {
+  -webkit-mask-image: url("../assets/icons/production-finish.svg");
+  mask-image: url("../assets/icons/production-finish.svg");
+}
+.ht-sidebar .icon[src$="quality-control.svg"] {
+  -webkit-mask-image: url("../assets/icons/quality-control.svg");
+  mask-image: url("../assets/icons/quality-control.svg");
+}
+.ht-sidebar .icon[src$="delivery.svg"] {
+  -webkit-mask-image: url("../assets/icons/delivery.svg");
+  mask-image: url("../assets/icons/delivery.svg");
+}
+.ht-sidebar .icon[src$="tracking.svg"] {
+  -webkit-mask-image: url("../assets/icons/tracking.svg");
+  mask-image: url("../assets/icons/tracking.svg");
+}
+.ht-sidebar .icon[src$="close.svg"] {
+  -webkit-mask-image: url("../assets/icons/close.svg");
+  mask-image: url("../assets/icons/close.svg");
+}
+.ht-sidebar .icon[src$="logout.svg"] {
+  -webkit-mask-image: url("../assets/icons/logout.svg");
+  mask-image: url("../assets/icons/logout.svg");
+}
+
+/* ---- Per-state colors ----
+   MOVED TO sidebar.css (single source of truth for visual styling)
+   Kept only base mask behavior and mask-map in this file.
+   ============================================================ */
+
+/* ---- Legacy fallback (browsers without CSS mask support) ----
+   NOTE: in this project .icon IS the <img> element itself
+   (e.g. <img src="...svg" class="icon">), so the filter must be applied
+   to .icon — a ".icon img" selector never matches. */
+@supports not ((mask-image: url("../assets/icons/dashboard.svg")) or
+  (-webkit-mask-image: url("../assets/icons/dashboard.svg"))) {
+  .ht-sidebar .ht-nav-link .icon,
+  .ht-sidebar .ht-sidebar-logout .icon,
+  .ht-sidebar-header [data-sidebar-toggle] .icon,
+  .ht-sidebar-header .icon.icon-xl,
+  .ht-sidebar-brand .icon {
+    background-color: transparent;
+    filter: brightness(0) invert(1);
+  }
+}
+
+/* ---- file:// fallback ------------------------------------------------
+   When the app is opened directly from disk (no web server) the browser
+   treats every file as an opaque origin, so an external SVG used as a CSS
+   mask is blocked by CORS — and a mask that cannot load hides the element
+   completely, which would make every icon disappear.
+   js/ui.js adds .ht-file-protocol on <html> only for location.protocol
+   "file:", so this block is inert when the app is served over http(s),
+   where the mask above keeps the exact per-state colors.
+   Global reset first: drop the mask everywhere, so each icon falls back to
+   the neutral stroke baked into its own file (assets use color="#475569",
+   a --text-secondary tone) — visible everywhere, on any background. */
+.ht-file-protocol .icon {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  background-color: transparent !important;
+}
+
+/* On the dark sidebar and on a solid button the icon must stay light, so
+   those contexts invert the baked stroke to white. */
+.ht-file-protocol .ht-sidebar .ht-nav-link .icon,
+.ht-file-protocol .ht-sidebar .ht-sidebar-logout .icon,
+.ht-file-protocol .ht-sidebar-header [data-sidebar-toggle] .icon,
+.ht-file-protocol .ht-sidebar-header .icon.icon-xl,
+.ht-file-protocol .ht-sidebar-brand .icon,
+.ht-file-protocol .ht-login-actions .ht-btn .icon,
+.ht-file-protocol .ht-btn-primary .icon,
+.ht-file-protocol .ht-btn-success .icon,
+.ht-file-protocol .ht-btn-danger .icon,
+.ht-file-protocol .ht-step.active .step-icon .icon,
+.ht-file-protocol .ht-step.completed .step-icon .icon,
+.ht-file-protocol .ht-toast .icon {
+  filter: brightness(0) invert(1);
+}
+
+/* Inactive nav icon: softened to light gray (active / hover stay white) */
+.ht-file-protocol .ht-sidebar .ht-nav-link:not(.active):not(:hover) .icon {
+  opacity: 0.82;
+}
+
+/* ============================================================
+   ICON ASSET MAP (one rule per asset)
+   Keep in sync with assets/icons/*.svg and assets/logo/logo.svg.
+   ============================================================ */
+
+.icon[src$="add.svg"] {
+  -webkit-mask-image: url("../assets/icons/add.svg");
+  mask-image: url("../assets/icons/add.svg");
+  background-color: currentColor;
+}
+.icon[src$="arrow-right.svg"] {
+  -webkit-mask-image: url("../assets/icons/arrow-right.svg");
+  mask-image: url("../assets/icons/arrow-right.svg");
+  background-color: currentColor;
+}
+.icon[src$="check.svg"] {
+  -webkit-mask-image: url("../assets/icons/check.svg");
+  mask-image: url("../assets/icons/check.svg");
+  background-color: currentColor;
+}
+.icon[src$="check-circle.svg"] {
+  -webkit-mask-image: url("../assets/icons/check-circle.svg");
+  mask-image: url("../assets/icons/check-circle.svg");
+  background-color: currentColor;
+}
+.icon[src$="chevron-down.svg"] {
+  -webkit-mask-image: url("../assets/icons/chevron-down.svg");
+  mask-image: url("../assets/icons/chevron-down.svg");
+  background-color: currentColor;
+}
+.icon[src$="chevron-left.svg"] {
+  -webkit-mask-image: url("../assets/icons/chevron-left.svg");
+  mask-image: url("../assets/icons/chevron-left.svg");
+  background-color: currentColor;
+}
+.icon[src$="chevron-right.svg"] {
+  -webkit-mask-image: url("../assets/icons/chevron-right.svg");
+  mask-image: url("../assets/icons/chevron-right.svg");
+  background-color: currentColor;
+}
+.icon[src$="close.svg"] {
+  -webkit-mask-image: url("../assets/icons/close.svg");
+  mask-image: url("../assets/icons/close.svg");
+  background-color: currentColor;
+}
+.icon[src$="customer.svg"] {
+  -webkit-mask-image: url("../assets/icons/customer.svg");
+  mask-image: url("../assets/icons/customer.svg");
+  background-color: currentColor;
+}
+.icon[src$="dashboard.svg"] {
+  -webkit-mask-image: url("../assets/icons/dashboard.svg");
+  mask-image: url("../assets/icons/dashboard.svg");
+  background-color: currentColor;
+}
+.icon[src$="delete.svg"] {
+  -webkit-mask-image: url("../assets/icons/delete.svg");
+  mask-image: url("../assets/icons/delete.svg");
+  background-color: currentColor;
+}
+.icon[src$="delivery.svg"] {
+  -webkit-mask-image: url("../assets/icons/delivery.svg");
+  mask-image: url("../assets/icons/delivery.svg");
+  background-color: currentColor;
+}
+.icon[src$="download.svg"] {
+  -webkit-mask-image: url("../assets/icons/download.svg");
+  mask-image: url("../assets/icons/download.svg");
+  background-color: currentColor;
+}
+.icon[src$="edit.svg"] {
+  -webkit-mask-image: url("../assets/icons/edit.svg");
+  mask-image: url("../assets/icons/edit.svg");
+  background-color: currentColor;
+}
+.icon[src$="empty-state.svg"] {
+  -webkit-mask-image: url("../assets/icons/empty-state.svg");
+  mask-image: url("../assets/icons/empty-state.svg");
+  background-color: currentColor;
+}
+.icon[src$="error.svg"] {
+  -webkit-mask-image: url("../assets/icons/error.svg");
+  mask-image: url("../assets/icons/error.svg");
+  background-color: currentColor;
+}
+.icon[src$="eye.svg"] {
+  -webkit-mask-image: url("../assets/icons/eye.svg");
+  mask-image: url("../assets/icons/eye.svg");
+  background-color: currentColor;
+}
+.icon[src$="factory.svg"] {
+  -webkit-mask-image: url("../assets/icons/factory.svg");
+  mask-image: url("../assets/icons/factory.svg");
+  background-color: currentColor;
+}
+.icon[src$="file.svg"] {
+  -webkit-mask-image: url("../assets/icons/file.svg");
+  mask-image: url("../assets/icons/file.svg");
+  background-color: currentColor;
+}
+.icon[src$="filter.svg"] {
+  -webkit-mask-image: url("../assets/icons/filter.svg");
+  mask-image: url("../assets/icons/filter.svg");
+  background-color: currentColor;
+}
+.icon[src$="folder.svg"] {
+  -webkit-mask-image: url("../assets/icons/folder.svg");
+  mask-image: url("../assets/icons/folder.svg");
+  background-color: currentColor;
+}
+.icon[src$="folder-open.svg"] {
+  -webkit-mask-image: url("../assets/icons/folder-open.svg");
+  mask-image: url("../assets/icons/folder-open.svg");
+  background-color: currentColor;
+}
+.icon[src$="gavel.svg"] {
+  -webkit-mask-image: url("../assets/icons/gavel.svg");
+  mask-image: url("../assets/icons/gavel.svg");
+  background-color: currentColor;
+}
+.icon[src$="inbox.svg"] {
+  -webkit-mask-image: url("../assets/icons/inbox.svg");
+  mask-image: url("../assets/icons/inbox.svg");
+  background-color: currentColor;
+}
+.icon[src$="incoming.svg"] {
+  -webkit-mask-image: url("../assets/icons/incoming.svg");
+  mask-image: url("../assets/icons/incoming.svg");
+  background-color: currentColor;
+}
+.icon[src$="info.svg"] {
+  -webkit-mask-image: url("../assets/icons/info.svg");
+  mask-image: url("../assets/icons/info.svg");
+  background-color: currentColor;
+}
+.icon[src$="logout.svg"] {
+  -webkit-mask-image: url("../assets/icons/logout.svg");
+  mask-image: url("../assets/icons/logout.svg");
+  background-color: currentColor;
+}
+.icon[src$="menu.svg"] {
+  -webkit-mask-image: url("../assets/icons/menu.svg");
+  mask-image: url("../assets/icons/menu.svg");
+  background-color: currentColor;
+}
+.icon[src$="paper-plane.svg"] {
+  -webkit-mask-image: url("../assets/icons/paper-plane.svg");
+  mask-image: url("../assets/icons/paper-plane.svg");
+  background-color: currentColor;
+}
+.icon[src$="part.svg"] {
+  -webkit-mask-image: url("../assets/icons/part.svg");
+  mask-image: url("../assets/icons/part.svg");
+  background-color: currentColor;
+}
+.icon[src$="print.svg"] {
+  -webkit-mask-image: url("../assets/icons/print.svg");
+  mask-image: url("../assets/icons/print.svg");
+  background-color: currentColor;
+}
+.icon[src$="process.svg"] {
+  -webkit-mask-image: url("../assets/icons/process.svg");
+  mask-image: url("../assets/icons/process.svg");
+  background-color: currentColor;
+}
+.icon[src$="production.svg"] {
+  -webkit-mask-image: url("../assets/icons/production.svg");
+  mask-image: url("../assets/icons/production.svg");
+  background-color: currentColor;
+}
+.icon[src$="production-finish.svg"] {
+  -webkit-mask-image: url("../assets/icons/production-finish.svg");
+  mask-image: url("../assets/icons/production-finish.svg");
+  background-color: currentColor;
+}
+.icon[src$="production-start.svg"] {
+  -webkit-mask-image: url("../assets/icons/production-start.svg");
+  mask-image: url("../assets/icons/production-start.svg");
+  background-color: currentColor;
+}
+.icon[src$="qr.svg"] {
+  -webkit-mask-image: url("../assets/icons/qr.svg");
+  mask-image: url("../assets/icons/qr.svg");
+  background-color: currentColor;
+}
+.icon[src$="qr-scan.svg"] {
+  -webkit-mask-image: url("../assets/icons/qr-scan.svg");
+  mask-image: url("../assets/icons/qr-scan.svg");
+  background-color: currentColor;
+}
+.icon[src$="quality-control.svg"] {
+  -webkit-mask-image: url("../assets/icons/quality-control.svg");
+  mask-image: url("../assets/icons/quality-control.svg");
+  background-color: currentColor;
+}
+.icon[src$="refresh.svg"] {
+  -webkit-mask-image: url("../assets/icons/refresh.svg");
+  mask-image: url("../assets/icons/refresh.svg");
+  background-color: currentColor;
+}
+.icon[src$="save.svg"] {
+  -webkit-mask-image: url("../assets/icons/save.svg");
+  mask-image: url("../assets/icons/save.svg");
+  background-color: currentColor;
+}
+.icon[src$="search.svg"] {
+  -webkit-mask-image: url("../assets/icons/search.svg");
+  mask-image: url("../assets/icons/search.svg");
+  background-color: currentColor;
+}
+.icon[src$="tracking.svg"] {
+  -webkit-mask-image: url("../assets/icons/tracking.svg");
+  mask-image: url("../assets/icons/tracking.svg");
+  background-color: currentColor;
+}
+.icon[src$="user.svg"] {
+  -webkit-mask-image: url("../assets/icons/user.svg");
+  mask-image: url("../assets/icons/user.svg");
+  background-color: currentColor;
+}
+.icon[src$="warning.svg"] {
+  -webkit-mask-image: url("../assets/icons/warning.svg");
+  mask-image: url("../assets/icons/warning.svg");
+  background-color: currentColor;
+}
+.icon[src$="weight.svg"] {
+  -webkit-mask-image: url("../assets/icons/weight.svg");
+  mask-image: url("../assets/icons/weight.svg");
+  background-color: currentColor;
+}
+.icon[src$="logo.svg"] {
+  -webkit-mask-image: url("../assets/logo/logo.svg");
+  mask-image: url("../assets/logo/logo.svg");
+  background-color: currentColor;
+}
+
+/* ============================================================
+   LOGIN PAGE LOGO
+   Larger, dark on light background.
+   ============================================================ */
+.ht-login-logo .icon,
+.ht-login-logo img {
+  width: 40px;
+  height: 40px;
+  color: var(--text-primary);
+  filter: none;
+}
+
+/* ============================================================
+   BUTTON ICONS
+   Inherit button color automatically.
+   ============================================================ */
+.ht-btn .icon {
+  width: 16px;
+  height: 16px;
+  color: inherit;
+  filter: none;
+}
+.ht-btn-sm .icon { width: 14px; height: 14px; color: inherit; filter: none; }
+.ht-btn-lg .icon { width: 18px; height: 18px; color: inherit; filter: none; }
+
+/* Solid color buttons (white icons): fix native SVG rendering through mask */
+.ht-btn-primary .icon,
+.ht-btn-success .icon,
+.ht-btn-danger .icon {
+  filter: brightness(0) invert(1);
+}
+
+/* Icon on a solid (colored) button: the global mask map above already
+   recolors it with the button color, so `color: inherit` is enough. */
+
+/* ============================================================
+   TABLE ACTION BUTTON ICONS
+   The mask makes the icon follow the button's own color, including
+   the per-variant :hover colors declared in css/tables.css.
+   No filter needed here because action buttons have transparent
+   backgrounds (normal) or light colored backgrounds (hover) where
+   the mask paints with currentColor directly.
+   ============================================================ */
+.ht-action-btn .icon {
+  width: 14px;
+  height: 14px;
+  color: inherit;
+}
+
+/* ============================================================
+   KPI CARD ICONS - dashboard
+   ============================================================ */
+.ht-kpi-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--text-tertiary);
+  opacity: 0.5;
+}
+
+/* ============================================================
+   MODAL CLOSE ICONS
+   ============================================================ */
+.ht-modal-close .icon {
+  width: 16px;
+  height: 16px;
+}
+.ht-header-btn .icon { width: 14px; height: 14px; }
+
+/* ============================================================
+   STEP INDICATOR ICONS
+   ============================================================ */
+.ht-step .step-icon .icon { width: 14px; height: 14px; }
+.step-icon .icon { width: 16px; height: 16px; color: var(--primary); }
+
+/* ============================================================
+   TABLE EMPTY / NO DATA STATES
+   ============================================================ */
+.ht-table-empty .icon {
+  width: 28px;
+  height: 28px;
+}
+.ht-empty-state .icon { width: 32px; height: 32px; }
+.ht-error-state .icon { width: 48px; height: 48px; }
+
+/* ============================================================
+   FOLDER/TREE ICONS IN PART PAGE
+   Fixed size, not 100%.
+   ============================================================ */
+.ht-tree-node .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--accent-orange);
+}
+.customer-folder-icon,
+.folder-icon {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  max-width: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.folder-open-icon {
+  color: var(--info);
+}
+
+/* ============================================================
+   ICON COLOR STATES USING CURRENTCOLOR
+   ============================================================ */
+.icon-muted { opacity: 0.5; }
+.icon-primary { color: var(--primary); }
+.icon-success { color: var(--success); }
+.icon-warning { color: var(--warning); }
+.icon-danger { color: var(--danger); }
+.icon-info { color: var(--info); }
+.icon-white { color: var(--text-inverse); }
+.icon-dark { color: var(--text-primary); }
+
+/* ============================================================
+   COLOR HIERARCHY PER CONTEXT
+   The mask map makes every icon follow `color`, so each context only
+   has to name the token it wants. Neutral for supporting chrome,
+   the semantic color for state-bearing icons, inherit for anything
+   that already sits on a colored surface. */
+.ht-search-bar .icon {
+  color: var(--text-tertiary);
+}
+.ht-search-bar .ht-btn:hover .icon {
+  color: var(--text-secondary);
+}
+
+.ht-table-empty .icon,
+.ht-empty-state .icon {
+  color: var(--text-tertiary);
+}
+.ht-error-state .icon {
+  color: var(--danger);
+}
+
+/* Process step markers: primary while pending, white once reached. */
+.ht-step .step-icon .icon,
+.step-icon .icon {
+  color: var(--primary);
+}
+.ht-step.active .step-icon .icon,
+.ht-step.completed .step-icon .icon {
+  color: var(--text-inverse);
+  filter: brightness(0) invert(1);
+}
+
+/* The part explorer colour already comes from Tailwind's text-blue-500;
+   the mask is what makes that class finally visible. */
+.folder-open-icon {
+  color: var(--info);
+}
+
+/* Expand/collapse chevron: Tailwind's text-slate-400 is only 2.45:1 on the
+   explorer surface, so the affordance is promoted to text-secondary. */
+#partExplorer [id^="folder-arrow-"] {
+  color: var(--text-secondary);
+}
+
+/* Icons that only need to follow their control need no rule at all:
+   .ht-modal-close, .ht-sidebar-logout and .ht-action-btn already declare
+   `color` (and a :hover color) on the control itself, and the mask paints
+   the icon with exactly that value — so the hover state is inherited
+   rather than duplicated here. */
+
+/* ============================================================
+   HOVER / INTERACTION
+   A single short transition on color only: the mask repaint is the
+   only thing that changes, so nothing moves and nothing is clipped. */
+.ht-btn .icon,
+.ht-action-btn .icon,
+.ht-nav-link .icon,
+.ht-sidebar-logout .icon,
+.ht-modal-close .icon,
+.step-icon .icon {
+  transition: color 180ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-btn .icon,
+  .ht-action-btn .icon,
+  .ht-nav-link .icon,
+  .ht-sidebar-logout .icon,
+  .ht-modal-close .icon,
+  .step-icon .icon {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   SVG FILL/STROKE INHERITANCE
+   All project icons are stroke-based: fill="none", stroke="currentColor".
+   This ensures they always inherit the container color.
+   ============================================================ */
+.icon svg,
+.ht-icon svg {
+  fill: none;
+  stroke: currentColor;
+  width: 100%;
+  height: 100%;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-filled svg,
+.ht-icon-filled svg {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* ============================================================
+   SPINNER ANIMATION
+   ============================================================ */
+.icon-spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   RESPONSIVE ICON SIZES
+   ============================================================ */
+@media (max-width: 768px) {
+  .ht-sidebar .icon {
+    width: 20px;
+    height: 20px;
+  }
+  .ht-kpi-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .icon-2xl { width: 32px; height: 32px; }
+  .icon-3xl { width: 40px; height: 40px; }
+}
+
+@media (max-width: 480px) {
+  .icon-lg { width: 20px; height: 20px; }
+  .icon-xl { width: 24px; height: 24px; }
+}

@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Part - Master Data</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
   </head>
   <body class="text-slate-800">
     <div class="ht-app-shell">
@@ -18,7 +21,7 @@
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <i class="fas fa-fire text-2xl"></i>
+                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
                 <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
               </div>
               <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
@@ -30,43 +33,43 @@
               title="Toggle Menu"
               aria-label="Toggle menu"
             >
-              <i class="fas fa-times"></i>
+              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
             </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
           <a href="index.html" class="ht-nav-link"
-            ><i class="fas fa-chart-line"></i> Dashboard</a
+            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Master Data</p>
           </div>
           <a href="customer.html" class="ht-nav-link"
-            ><i class="fas fa-users"></i> Customer</a
+            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
           >
           <a href="part.html" class="ht-nav-link active"
-            ><i class="fas fa-cogs"></i> Part</a
+            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
           >
           <a href="incoming.html" class="ht-nav-link"
-            ><i class="fas fa-box"></i> Incoming</a
+            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
           >
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
           <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><i class="fas fa-play"></i> Masuk Proses</a
+            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
           >
           <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><i class="fas fa-flag-checkered"></i> Akhir Proses</a
+            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
           >
           <a href="qc.html" class="ht-nav-link"
-            ><i class="fas fa-clipboard-check"></i> Quality Control</a
+            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
           >
           <a href="delivery.html" class="ht-nav-link"
-            ><i class="fas fa-shipping-fast"></i> Delivery</a
+            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
           >
           <a href="tracking.html" class="ht-nav-link"
-            ><i class="fas fa-search-location"></i> Tracking</a
+            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
           >
         </nav>
         <div class="ht-sidebar-footer">
@@ -89,7 +92,7 @@
               title="Logout"
               aria-label="Logout"
             >
-              <i class="fas fa-sign-out-alt"></i>
+              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
             </button>
           </div>
         </div>
@@ -106,28 +109,28 @@
               class="ht-btn ht-btn-primary ht-btn-sm"
               aria-label="Tambah part"
             >
-              <i class="fas fa-plus"></i> Tambah Part
+              <img src="assets/icons/add.svg" alt="Tambah" class="icon mr-1"> Tambah Part
             </button>
           </div>
         </header>
         <div class="ht-content">
           <div class="ht-content-max">
             <div class="ht-card fade-in">
-              <form class="ht-search-bar">
+              <form class="ht-search-bar" onsubmit="return false">
                 <input
                   type="text"
-                  id="searchPart"
+                  id="searchPart" aria-label="Search Part"
                   placeholder="Search Part..."
                   oninput="renderExplorer()"
                   class="ht-form-input flex-1"
                 />
                 <select
-                  id="filterCust"
+                  id="filterCust" aria-label="Filter customer part"
                   onchange="renderExplorer()"
                   class="ht-form-select w-48"
                 ></select>
                 <select
-                  id="filterStatus"
+                  id="filterStatus" aria-label="Filter status part"
                   onchange="renderExplorer()"
                   class="ht-form-select w-40"
                 >
@@ -158,14 +161,14 @@
         <div class="ht-modal-header">
           <h3 class="ht-modal-title" id="formTitle">Tambah Part</h3>
           <button onclick="closeForm()" class="ht-modal-close" aria-label="Close">
-            <i class="fas fa-times"></i>
+            <img src="assets/icons/close.svg" alt="Close" class="icon">
           </button>
         </div>
         <div class="ht-modal-body">
           <form id="partForm" class="ht-form">
             <input type="hidden" id="partId" />
             <div class="ht-form-group">
-              <label class="ht-form-label">Customer</label>
+              <label class="ht-form-label" for="partCustomer">Customer</label>
               <select
                 id="partCustomer"
                 required
@@ -174,7 +177,7 @@
               ></select>
             </div>
             <div class="ht-form-group">
-              <label class="ht-form-label">Nomor Part</label>
+              <label class="ht-form-label" for="partNomor">Nomor Part</label>
               <input
                 type="text"
                 id="partNomor"
@@ -190,7 +193,7 @@
               </p>
             </div>
             <div class="ht-form-group">
-              <label class="ht-form-label">Nama Part</label>
+              <label class="ht-form-label" for="partNama">Nama Part</label>
               <input
                 type="text"
                 id="partNama"
@@ -201,7 +204,7 @@
             </div>
             <div class="ht-form-row">
               <div class="ht-form-group">
-                <label class="ht-form-label">Berat Part</label>
+                <label class="ht-form-label" for="partBerat">Berat Part</label>
                 <input
                   type="number"
                   id="partBerat"
@@ -213,7 +216,7 @@
                 />
               </div>
               <div class="ht-form-group">
-                <label class="ht-form-label">Satuan</label>
+                <label class="ht-form-label" for="partSatuan">Satuan</label>
                 <select id="partSatuan" class="ht-form-select">
                   <option value="KG/PCS">KG/PCS</option>
                   <option value="KG">KG</option>
@@ -223,7 +226,7 @@
               </div>
             </div>
             <div class="ht-form-group">
-              <label class="ht-form-label">Target Hardness</label>
+              <label class="ht-form-label" for="partTargetHardness">Target Hardness</label>
               <input
                 type="text"
                 id="partTargetHardness"
@@ -232,7 +235,7 @@
               />
             </div>
             <div class="ht-form-group">
-              <label class="ht-form-label">Status</label>
+              <label class="ht-form-label" for="partStatus">Status</label>
               <select id="partStatus" class="ht-form-select">
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -253,7 +256,7 @@
             form="partForm"
             class="ht-btn ht-btn-success"
           >
-            <i class="fas fa-save mr-2"></i>Simpan
+            <img src="assets/icons/save.svg" alt="Simpan" class="icon mr-2">Simpan
           </button>
         </div>
       </div>
@@ -314,7 +317,7 @@
               .map(
                 (p) =>
                   `<div class="ht-tree-node" onclick="showPartDetail(${p.id})">
-                <i class="fas fa-cube"></i>
+                <img src="assets/icons/file.svg" alt="Part" class="icon">
                 <span class="font-mono">${p.nomor_part}</span>
                 <span class="text-slate-600">${p.nama_part}</span>
                 <span class="ht-badge ${p.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${p.status}</span>
@@ -323,10 +326,10 @@
               .join("");
             return `<div class="ht-card fade-in">
             <div class="flex items-center gap-2 px-4 py-3 bg-slate-50 hover:bg-slate-100 cursor-pointer transition" onclick="toggleFolder(this)">
-              <i class="fas fa-folder-open text-blue-500"></i>
+              <img src="assets/icons/folder-open.svg" alt="Folder" class="icon text-blue-500">
               <span class="font-semibold text-sm text-slate-800">${c.nama_customer}</span>
               <span class="text-[10px] text-slate-400 ml-auto">${parts.length} part(s)</span>
-              <i class="fas fa-chevron-down text-xs text-slate-400 ml-1 transition-transform" id="folder-arrow-${c.id}"></i>
+              <img src="assets/icons/chevron-down.svg" alt="Expand" class="icon icon-xs text-slate-400 ml-1 transition-transform" id="folder-arrow-${c.id}">
             </div>
             <div class="folder-content hidden" id="folder-${c.id}">${partsHtml}</div>
           </div>`;
@@ -338,7 +341,7 @@
       }
       function toggleFolder(el) {
         const next = el.nextElementSibling;
-        const arrow = el.querySelector("i.fa-chevron-down");
+        const arrow = el.querySelector(".icon.transition-transform");
         if (next.classList.contains("hidden")) {
           next.classList.remove("hidden");
           if (arrow) arrow.style.transform = "rotate(180deg)";
@@ -357,8 +360,8 @@
             <div class="flex items-center justify-between mb-3">
               <h4 class="text-sm font-bold text-slate-800">Detail Part</h4>
               <div class="ht-action-group">
-                <button onclick="editPart(${p.id})" class="ht-action-btn edit" title="Edit"><i class="fas fa-edit"></i></button>
-                <button onclick="deletePart(${p.id})" class="ht-action-btn delete" title="Delete"><i class="fas fa-trash"></i></button>
+                <button onclick="editPart(${p.id})" class="ht-action-btn edit" title="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>
+                <button onclick="deletePart(${p.id})" class="ht-action-btn delete" title="Delete"><img src="assets/icons/delete.svg" alt="Delete" class="icon"></button>
               </div>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">

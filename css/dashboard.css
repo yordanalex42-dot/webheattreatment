@@ -2,13 +2,294 @@
    Dashboard Specific Styles
    ============================================================ */
 
-/* KPI Grid - responsive */
+/* ---- KPI Layout (2 Columns) ----
+   Left: 5 KPIs (1 row) + Target card
+   Right: Persentase Capaian Target (tall card)
+   Heights must match via CSS Grid. */
+.ht-kpi-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  margin-bottom: 24px;
+  align-items: stretch;
+}
+
+/* Left column: 5 KPIs grid + target card stacked */
+.ht-kpi-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+}
+
+/* 5 KPIs in one row */
 .ht-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 16px;
-  margin-bottom: 24px;
+  flex-shrink: 0;
 }
+
+/* KPI card base - TALLER for more spacious look */
+.ht-kpi-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 22px;
+  min-height: 140px;
+  overflow: hidden;
+}
+
+/* Target card in left column - COMPACT */
+.ht-kpi-left #targetCard {
+  flex-shrink: 0;
+  flex-grow: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ht-kpi-left #targetCard .ht-card-body {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 12px 16px;
+}
+
+/* Target display value - LARGER font for prominence */
+#targetDisplay .ht-kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--primary);
+}
+
+/* Right column: Persentase Capaian Target (Donut Chart) */
+.ht-kpi-right {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.ht-kpi-card-primary-large {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+.ht-kpi-primary-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+  text-align: center;
+  min-height: 0;
+}
+
+.ht-kpi-primary-label {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.ht-donut-wrapper {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+}
+
+.ht-donut-wrapper canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ht-donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.ht-donut-value {
+  display: block;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ht-donut-unit {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.ht-donut-detail {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* KPI icon tile for standard cards - positioned at bottom-right */
+.ht-kpi-card::before {
+  content: "";
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: var(--primary-soft);
+}
+
+.ht-kpi-card .ht-kpi-icon {
+  position: absolute;
+  right: 27px;
+  bottom: 27px;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  flex-shrink: 0;
+  opacity: 1;
+  color: var(--primary);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* Per-variant tile tint + icon color (classes already in the markup) */
+.ht-kpi-card.primary::before { background: var(--primary-soft); }
+.ht-kpi-card.info::before { background: var(--info-bg); }
+.ht-kpi-card.warning::before { background: var(--warning-bg); }
+.ht-kpi-card.success::before { background: var(--success-bg); }
+.ht-kpi-card.danger::before { background: var(--danger-bg); }
+
+.ht-kpi-card.primary .ht-kpi-icon { color: var(--primary-hover); }
+.ht-kpi-card.info .ht-kpi-icon { color: var(--info-text); }
+.ht-kpi-card.warning .ht-kpi-icon { color: var(--warning-text); }
+.ht-kpi-card.success .ht-kpi-icon { color: var(--success-text); }
+.ht-kpi-card.danger .ht-kpi-icon { color: var(--danger-text); }
+
+/* Icon assets used by the KPI cards (mask map) */
+.ht-kpi-card .ht-kpi-icon[src$="incoming.svg"] {
+  -webkit-mask-image: url("../assets/icons/incoming.svg");
+  mask-image: url("../assets/icons/incoming.svg");
+  background-color: currentColor;
+}
+.ht-kpi-card .ht-kpi-icon[src$="weight.svg"] {
+  -webkit-mask-image: url("../assets/icons/weight.svg");
+  mask-image: url("../assets/icons/weight.svg");
+  background-color: currentColor;
+}
+.ht-kpi-card .ht-kpi-icon[src$="process.svg"] {
+  -webkit-mask-image: url("../assets/icons/process.svg");
+  mask-image: url("../assets/icons/process.svg");
+  background-color: currentColor;
+}
+.ht-kpi-card .ht-kpi-icon[src$="quality-control.svg"] {
+  -webkit-mask-image: url("../assets/icons/quality-control.svg");
+  mask-image: url("../assets/icons/quality-control.svg");
+  background-color: currentColor;
+}
+.ht-kpi-card .ht-kpi-icon[src$="delivery.svg"] {
+  -webkit-mask-image: url("../assets/icons/delivery.svg");
+  mask-image: url("../assets/icons/delivery.svg");
+  background-color: currentColor;
+}
+.ht-kpi-card .ht-kpi-icon[src$="warning.svg"] {
+  -webkit-mask-image: url("../assets/icons/warning.svg");
+  mask-image: url("../assets/icons/warning.svg");
+  background-color: currentColor;
+}
+
+/* Opened straight from disk: the mask cannot load, so the icon falls back
+   to its natural dark stroke on the tinted tile (visible, no filter). */
+.ht-file-protocol .ht-kpi-card .ht-kpi-icon {
+  -webkit-mask-image: none;
+  mask-image: none;
+  background-color: transparent;
+  opacity: 0.75;
+}
+
+/* ---- KPI text ----
+   min-height on the label keeps the value rows aligned even when a
+   label wraps to two lines on narrow screens. */
+.ht-kpi-card .ht-kpi-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.ht-kpi-card .ht-kpi-label {
+  /* reserve exactly two lines (2 x 1.3) so every card puts its value on
+     the same baseline, whether the label wraps or not */
+  min-height: 2.6em;
+  margin-bottom: 6px;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+/* Main figure: the most prominent element on the card */
+.ht-kpi-card .ht-kpi-value {
+  font-size: 28px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Unit / context line — small and clearly secondary, but still readable
+   (--text-secondary keeps ~7.5:1 on the white card) */
+.ht-kpi-unit {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: var(--font-weight-semi);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Staggered KPI card entrance animation */
+.ht-kpi-grid .ht-kpi-card:nth-child(2) { animation-delay: 0.05s; }
+.ht-kpi-grid .ht-kpi-card:nth-child(3) { animation-delay: 0.1s; }
+.ht-kpi-grid .ht-kpi-card:nth-child(4) { animation-delay: 0.15s; }
+.ht-kpi-grid .ht-kpi-card:nth-child(5) { animation-delay: 0.2s; }
+.ht-kpi-grid .ht-kpi-card:nth-child(6) { animation-delay: 0.25s; }
 
 /* Chart canvas wrapper */
 .ht-chart-canvas-wrapper {
@@ -17,17 +298,29 @@
   width: 100%;
 }
 
-/* Empty chart state */
+/* Chart context line under the card title (unit of measure) */
+.ht-card-subtitle {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  color: var(--text-tertiary);
+}
+
+/* Empty chart state — covers the canvas so an empty period reads as an
+   explicit empty state instead of a broken-looking chart */
 .ht-chart-empty {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 16px;
+  text-align: center;
   background: var(--surface);
   border-radius: var(--radius-md);
   color: var(--text-tertiary);
   font-size: 13px;
+  line-height: 1.5;
 }
 
 /* Filter bar */
@@ -54,181 +347,6 @@
   font-size: 12px;
 }
 
-/* Pagination */
-.ht-pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.ht-pagination-info {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
-.ht-pagination-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.ht-pagination-controls button {
-  padding: 4px 10px;
-  font-size: 12px;
-}
-
-/* Table action buttons */
-.ht-action-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.ht-action-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 26px;
-  border-radius: 6px;
-  color: var(--text-secondary);
-  transition: all var(--transition-sm);
-  font-size: 12px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-.ht-action-btn:hover {
-  color: var(--primary);
-  background: var(--info-bg);
-}
-
-.ht-action-btn.view:hover { color: var(--info); }
-.ht-action-btn.edit:hover { color: var(--primary); }
-.ht-action-btn.delete:hover { color: var(--danger); }
-
-/* Loading overlay */
-.ht-loading-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.ht-loading-overlay .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Error state */
-.ht-error-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-tertiary);
-}
-
-.ht-error-state i {
-  font-size: 48px;
-  margin-bottom: 12px;
-  color: var(--danger);
-}
-
-.ht-error-state p {
-  font-size: 14px;
-}
-
-/* Card header with actions */
-.ht-card-header-with-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .ht-filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .ht-filter-bar .ht-form-input,
-  .ht-filter-bar .ht-form-select {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .ht-pagination {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .ht-pagination-controls {
-    justify-content: center;
-  }
-
-  .ht-chart-canvas-wrapper {
-    height: 240px;
-  }
-
-  .ht-kpi-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .ht-chart-canvas-wrapper {
-    height: 220px;
-  }
-}
-
-/* Badge size for table */
-.ht-table .ht-badge {
-  font-size: 10px;
-  padding: 2px 8px;
-}
-
-/* KPI card value */
-.ht-kpi-value {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.2;
-  word-break: break-word;
-}
-
-/* Form select/input small variants */
-.ht-form-select-sm,
-.ht-form-input-sm {
-  padding: 6px 10px;
-  font-size: 12px;
-}
-
-/* Chart container */
-.ht-chart-container {
-  position: relative;
-  height: 280px;
-}
-
 /* Pagination page numbers */
 #pageNumbers button {
   min-width: 32px;
@@ -251,4 +369,477 @@
 
 .ht-table-wrapper::-webkit-scrollbar-thumb:hover {
   background: var(--text-tertiary);
+}
+
+/* Card header with actions */
+.ht-card-header-with-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Responsive adjustments for new 2-column KPI layout */
+@media (max-width: 1199px) {
+  .ht-kpi-layout {
+    grid-template-columns: 1fr 300px;
+    gap: 16px;
+  }
+  .ht-kpi-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .ht-kpi-card {
+    padding: 16px 14px;
+    min-height: 104px;
+  }
+  .ht-kpi-card::before {
+    right: 14px;
+    bottom: 14px;
+    width: 30px;
+    height: 30px;
+  }
+  .ht-kpi-card .ht-kpi-icon {
+    right: 19px;
+    bottom: 19px;
+  }
+  .ht-kpi-card .ht-kpi-value {
+    font-size: 24px;
+  }
+  .ht-kpi-card-primary-large {
+    border-radius: var(--radius-lg);
+  }
+  .ht-kpi-primary-content {
+    padding: 28px 20px;
+  }
+  .ht-kpi-primary-icon {
+    width: 56px;
+    height: 56px;
+  }
+  .ht-kpi-primary-icon .icon {
+    width: 28px;
+    height: 28px;
+  }
+  .ht-kpi-primary-value {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .ht-kpi-layout {
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+  }
+  .ht-kpi-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .ht-kpi-card {
+    padding: 14px 12px;
+    min-height: 96px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ht-kpi-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .ht-kpi-left {
+    gap: 12px;
+  }
+  .ht-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .ht-kpi-card {
+    padding: 14px 12px;
+    min-height: 96px;
+  }
+  .ht-kpi-card::before {
+    right: 12px;
+    bottom: 12px;
+    width: 28px;
+    height: 28px;
+  }
+  .ht-kpi-card .ht-kpi-icon {
+    right: 17px;
+    bottom: 17px;
+    width: 18px;
+    height: 18px;
+  }
+  .ht-kpi-card .ht-kpi-value {
+    font-size: 22px;
+  }
+  .ht-kpi-card .ht-kpi-label {
+    font-size: 10px;
+  }
+  .ht-kpi-card-primary-large {
+    min-height: 200px;
+  }
+  .ht-kpi-primary-content {
+    padding: 24px 16px;
+  }
+  .ht-kpi-primary-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+  .ht-kpi-primary-icon .icon {
+    width: 24px;
+    height: 24px;
+  }
+  .ht-kpi-primary-value {
+    font-size: 40px;
+  }
+  .ht-kpi-primary-label {
+    font-size: 12px;
+  }
+  .ht-kpi-primary-sub {
+    font-size: 12px;
+  }
+  .ht-kpi-left #targetCard .ht-card-body {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ht-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .ht-kpi-card {
+    padding: 12px 10px;
+    min-height: 88px;
+  }
+  .ht-kpi-card .ht-kpi-value {
+    font-size: 20px;
+  }
+  .ht-kpi-card .ht-kpi-label {
+    font-size: 9px;
+  }
+  .ht-kpi-primary-value {
+    font-size: 36px;
+  }
+}
+
+/* Badge size for table */
+.ht-table .ht-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+}
+
+/* Form select/input small variants */
+.ht-form-select-sm,
+.ht-form-input-sm {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* Chart container — one height ladder shared by both charts so the daily
+   and monthly chart always render at the same visual size */
+.ht-chart-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  min-height: 200px;
+}
+
+@media (max-width: 1024px) {
+  .ht-chart-container {
+    height: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ht-chart-container {
+    height: 240px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ht-chart-container {
+    height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ht-chart-container {
+    height: 200px;
+  }
+}
+/* ============================================================
+   MONITORING TABLE (dashboard only)
+   The 19 columns are given explicit widths through table-layout:
+   fixed. That makes the horizontal scroll inside .ht-table-wrapper
+   deterministic instead of letting the browser squeeze text columns
+   and stretch label columns, and it keeps the badge columns wide
+   enough that no status text is ever cut.
+   ============================================================ */
+
+.ht-monitor-table {
+  /* the single horizontal scrolling area of the page */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ht-monitor-table .ht-table {
+  table-layout: fixed;
+  /* Explicit width = the sum of the 19 column widths below, so the columns
+     keep their declared size instead of being squeezed by shrink-to-fit.
+     min-width:100% stretches the same columns on very wide screens. */
+  width: 2080px;
+  min-width: 100%;
+}
+
+.ht-monitor-table .ht-table th,
+.ht-monitor-table .ht-table td {
+  padding: 12px 14px;
+  vertical-align: middle;
+}
+
+/* ---- Column widths ----
+   Roomier: Customer, Nama Part, Jenis Proses, Diinput Oleh, Nomor Part.
+   Compact: No, Qty, Aksi, and the status columns.
+   Two constraints set the lower bound of each width:
+   - the header label of the column, which is uppercase 10px and never
+     wrapped, so "TANGGAL INCOMING" needs 131px and "STATUS DELIVERY" 117px;
+   - the widest status badge ("PROSES PRODUKSI" = 113px), so columns 9 and
+     18 keep enough room for it to stay fully readable. */
+.ht-monitor-table .ht-table th:nth-child(1) { width: 46px; }
+.ht-monitor-table .ht-table th:nth-child(2) { width: 110px; }
+.ht-monitor-table .ht-table th:nth-child(3) { width: 160px; }
+.ht-monitor-table .ht-table th:nth-child(4) { width: 120px; }
+.ht-monitor-table .ht-table th:nth-child(5) { width: 160px; }
+.ht-monitor-table .ht-table th:nth-child(6) { width: 160px; }
+.ht-monitor-table .ht-table th:nth-child(7) { width: 120px; }
+.ht-monitor-table .ht-table th:nth-child(8) { width: 140px; }
+.ht-monitor-table .ht-table th:nth-child(9) { width: 140px; }
+.ht-monitor-table .ht-table th:nth-child(10) { width: 56px; }
+.ht-monitor-table .ht-table th:nth-child(11) { width: 100px; }
+.ht-monitor-table .ht-table th:nth-child(12) { width: 140px; }
+.ht-monitor-table .ht-table th:nth-child(13) { width: 120px; }
+.ht-monitor-table .ht-table th:nth-child(14) { width: 140px; }
+.ht-monitor-table .ht-table th:nth-child(15) { width: 130px; }
+.ht-monitor-table .ht-table th:nth-child(16) { width: 82px; }
+.ht-monitor-table .ht-table th:nth-child(17) { width: 120px; }
+.ht-monitor-table .ht-table th:nth-child(18) { width: 140px; }
+.ht-monitor-table .ht-table th:nth-child(19) { width: 56px; }
+
+/* ---- Alignment ----
+   Numbers, dates, statuses and the action column are centered or
+   right aligned; identifiers and descriptive text stay left. */
+.ht-monitor-table .ht-table th:nth-child(1),
+.ht-monitor-table .ht-table td:nth-child(1),
+.ht-monitor-table .ht-table th:nth-child(9),
+.ht-monitor-table .ht-table td:nth-child(9),
+.ht-monitor-table .ht-table th:nth-child(14),
+.ht-monitor-table .ht-table td:nth-child(14),
+.ht-monitor-table .ht-table th:nth-child(15),
+.ht-monitor-table .ht-table td:nth-child(15),
+.ht-monitor-table .ht-table th:nth-child(16),
+.ht-monitor-table .ht-table td:nth-child(16),
+.ht-monitor-table .ht-table th:nth-child(17),
+.ht-monitor-table .ht-table td:nth-child(17),
+.ht-monitor-table .ht-table th:nth-child(18),
+.ht-monitor-table .ht-table td:nth-child(18),
+.ht-monitor-table .ht-table th:nth-child(19),
+.ht-monitor-table .ht-table td:nth-child(19) {
+  text-align: center;
+}
+
+.ht-monitor-table .ht-table th:nth-child(10),
+.ht-monitor-table .ht-table td:nth-child(10),
+.ht-monitor-table .ht-table th:nth-child(11),
+.ht-monitor-table .ht-table td:nth-child(11) {
+  text-align: right;
+}
+
+.ht-monitor-table .ht-table th:nth-child(10),
+.ht-monitor-table .ht-table th:nth-child(11) {
+  text-align: right;
+}
+
+/* ---- Kode: primary identifier, tabular and never wrapped ---- */
+.ht-monitor-table .ht-table td:nth-child(2) {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---- Long text: single line + ellipsis ----
+   The full value stays available through the title attribute set by
+   the renderer, so nothing is removed from the data. */
+.ht-monitor-table .ht-table td:nth-child(3),
+.ht-monitor-table .ht-table td:nth-child(4),
+.ht-monitor-table .ht-table td:nth-child(5),
+.ht-monitor-table .ht-table td:nth-child(6),
+.ht-monitor-table .ht-table td:nth-child(7),
+.ht-monitor-table .ht-table td:nth-child(8),
+.ht-monitor-table .ht-table td:nth-child(12),
+.ht-monitor-table .ht-table td:nth-child(13) {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Status cells: badges never wrap or stretch the row ---- */
+.ht-monitor-table .ht-table td:nth-child(9),
+.ht-monitor-table .ht-table td:nth-child(15),
+.ht-monitor-table .ht-table td:nth-child(16),
+.ht-monitor-table .ht-table td:nth-child(17),
+.ht-monitor-table .ht-table td:nth-child(18) {
+  white-space: nowrap;
+}
+
+.ht-monitor-table .ht-badge {
+  padding: 2px 8px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+/* ---- Rows ----
+   The stripe and the hover rule have the same specificity, so the hover
+   state is declared last to win. The hover class the renderer puts on the
+   <tr> is never generated by the Tailwind CDN (it only scans the HTML),
+   so this is the rule that actually provides the hover state. */
+.ht-monitor-table .ht-table tbody tr {
+  transition: background-color var(--transition-sm);
+}
+
+.ht-monitor-table .ht-table tbody tr:nth-child(even) {
+  background: var(--surface);
+}
+
+.ht-monitor-table .ht-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+/* ---- Action column ---- */
+.ht-monitor-table .ht-table td:nth-child(19) {
+  white-space: nowrap;
+}
+
+.ht-monitor-table .ht-table td:nth-child(19) .ht-action-group {
+  gap: 6px;
+}
+
+/* ---- Empty state ---- */
+.ht-monitor-table .ht-table-empty {
+  padding: 40px 16px;
+}
+
+.ht-monitor-table .ht-table-empty p {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.ht-monitor-table .ht-table-empty small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+/* ---- Pagination of this card ----
+   The algorithm is untouched; only the narrow layout is allowed to wrap
+   so the controls never spill past the card padding at 320px. */
+.ht-monitor-card .ht-pagination-info,
+.ht-monitor-card .ht-pagination-controls {
+  min-width: 0;
+}
+
+@media (max-width: 480px) {
+  .ht-monitor-card .ht-pagination {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .ht-monitor-card .ht-pagination-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* ---- Narrow viewports ----
+   Same 19 columns and the same alignment, slightly smaller cells so the
+   wrapper needs less horizontal travel. Every width below sums to the
+   table width of the same breakpoint, the header labels are already
+   smaller at these font sizes, and the status columns stay wide enough
+   for the widest badge at the reduced badge padding. */
+@media (max-width: 768px) {
+  .ht-monitor-table .ht-table {
+    width: 1920px;
+  }
+
+  .ht-monitor-table .ht-table th,
+  .ht-monitor-table .ht-table td {
+    padding: 10px 12px;
+  }
+
+  .ht-monitor-table .ht-table th:nth-child(1) { width: 44px; }
+  .ht-monitor-table .ht-table th:nth-child(2) { width: 100px; }
+  .ht-monitor-table .ht-table th:nth-child(3) { width: 140px; }
+  .ht-monitor-table .ht-table th:nth-child(4) { width: 110px; }
+  .ht-monitor-table .ht-table th:nth-child(5) { width: 140px; }
+  .ht-monitor-table .ht-table th:nth-child(6) { width: 140px; }
+  .ht-monitor-table .ht-table th:nth-child(7) { width: 100px; }
+  .ht-monitor-table .ht-table th:nth-child(8) { width: 120px; }
+  .ht-monitor-table .ht-table th:nth-child(9) { width: 130px; }
+  .ht-monitor-table .ht-table th:nth-child(10) { width: 52px; }
+  .ht-monitor-table .ht-table th:nth-child(11) { width: 90px; }
+  .ht-monitor-table .ht-table th:nth-child(12) { width: 120px; }
+  .ht-monitor-table .ht-table th:nth-child(13) { width: 110px; }
+  .ht-monitor-table .ht-table th:nth-child(14) { width: 120px; }
+  .ht-monitor-table .ht-table th:nth-child(15) { width: 110px; }
+  .ht-monitor-table .ht-table th:nth-child(16) { width: 78px; }
+  .ht-monitor-table .ht-table th:nth-child(17) { width: 110px; }
+  .ht-monitor-table .ht-table th:nth-child(18) { width: 130px; }
+  .ht-monitor-table .ht-table th:nth-child(19) { width: 52px; }
+
+  .ht-monitor-table .ht-badge {
+    padding: 2px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ht-monitor-table .ht-table {
+    width: 1780px;
+  }
+
+  .ht-monitor-table .ht-table th,
+  .ht-monitor-table .ht-table td {
+    padding: 8px 10px;
+  }
+
+  .ht-monitor-table .ht-table th:nth-child(1) { width: 42px; }
+  .ht-monitor-table .ht-table th:nth-child(2) { width: 96px; }
+  .ht-monitor-table .ht-table th:nth-child(3) { width: 126px; }
+  .ht-monitor-table .ht-table th:nth-child(4) { width: 104px; }
+  .ht-monitor-table .ht-table th:nth-child(5) { width: 126px; }
+  .ht-monitor-table .ht-table th:nth-child(6) { width: 126px; }
+  .ht-monitor-table .ht-table th:nth-child(7) { width: 90px; }
+  .ht-monitor-table .ht-table th:nth-child(8) { width: 110px; }
+  .ht-monitor-table .ht-table th:nth-child(9) { width: 120px; }
+  .ht-monitor-table .ht-table th:nth-child(10) { width: 48px; }
+  .ht-monitor-table .ht-table th:nth-child(11) { width: 84px; }
+  .ht-monitor-table .ht-table th:nth-child(12) { width: 110px; }
+  .ht-monitor-table .ht-table th:nth-child(13) { width: 100px; }
+  .ht-monitor-table .ht-table th:nth-child(14) { width: 114px; }
+  .ht-monitor-table .ht-table th:nth-child(15) { width: 106px; }
+  .ht-monitor-table .ht-table th:nth-child(16) { width: 74px; }
+  .ht-monitor-table .ht-table th:nth-child(17) { width: 102px; }
+  .ht-monitor-table .ht-table th:nth-child(18) { width: 120px; }
+  .ht-monitor-table .ht-table th:nth-child(19) { width: 48px; }
+
+  .ht-monitor-table .ht-badge {
+    padding: 1px 5px;
+    letter-spacing: 0.01em;
+  }
 }
