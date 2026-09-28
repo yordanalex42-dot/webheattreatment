@@ -57,11 +57,14 @@
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
-          <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
+          <a href="heat-treatment.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Heat Treatment" class="icon"> Heat Treatment</a
           >
-          <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
+          <a href="shotblast.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
+          >
+          <a href="anti-rust.html" class="ht-nav-link sub"
+            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
           >
           <a href="qc.html" class="ht-nav-link"
             ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
@@ -170,6 +173,7 @@
 
               <form id="deliverForm" class="ht-form">
                 <input type="hidden" id="delProductionId" />
+                <input type="hidden" id="delMaterialId" />
                 <input type="hidden" id="delId" />
                 <div class="ht-form-row">
                   <div class="ht-form-group">
@@ -293,19 +297,22 @@
           HTUI.toast("Material ini belum memiliki data produksi.", "error");
           return;
         }
-        const qc = DB.get("qcs").find((q) => q.production_id == production.id);
-        if (!qc || qc.hasil !== "OK") {
-          HTUI.toast("Material ini belum lulus QC atau hasil QC NG. Tidak dapat dikirim.", "error");
+        const gate = DB.canDeliver(material);
+        if (!gate.allowed && gate.reason !== "Material sudah dikirim") {
+          HTUI.toast(gate.reason + ". Tidak dapat dikirim.", "error");
           return;
         }
+        const qcs = DB.get("qcs").filter((q) => String(q.material_id) === String(material.id));
+        const qc = qcs.length > 0 ? qcs.reduce((latest, q) => (!latest || (q.id || 0) > (latest.id || 0) ? q : latest), null) : null;
         const part = DB.findPartById(material.part_id);
         const cust = DB.findCustomerById(material.customer_id);
         document.getElementById("infoNoPart").textContent = part ? part.nomor_part : "-";
         document.getElementById("infoNamaPart").textContent = part ? part.nama_part : "-";
         document.getElementById("infoCustomer").textContent = cust ? cust.nama_customer : "-";
-        document.getElementById("infoQc").innerHTML = '<span class="ht-badge ht-badge-ok">' + (qc.hasil || "-") + "</span>";
+        document.getElementById("infoQc").innerHTML = '<span class="ht-badge ht-badge-ok">' + (qc ? qc.hasil : "-") + "</span>";
         document.getElementById("delProductionId").value = production.id;
-        const existing = DB.get("deliveries").find((d) => d.production_id == production.id);
+        document.getElementById("delMaterialId").value = material.id;
+        const existing = DB.get("deliveries").find((d) => String(d.material_id) === String(material.id));
         if (existing) {
           document.getElementById("delId").value = existing.id;
           document.getElementById("delTanggal").value = existing.tanggal_kirim;
@@ -330,7 +337,7 @@
         const delId = document.getElementById("delId").value;
         const data = {
           production_id: productionId,
-          material_id: "",
+          material_id: document.getElementById("delMaterialId").value,
           tanggal_kirim: document.getElementById("delTanggal").value,
           qty_kirim: parseInt(document.getElementById("delQty").value),
           catatan: document.getElementById("delCatatan").value.trim(),
@@ -346,8 +353,7 @@
         const materials = DB.get("materials");
         const html = deliveries
           .map((d) => {
-            const prod = productions.find((p) => p.id == d.production_id) || {};
-            const m = materials.find((mat) => mat.id == prod.material_id) || {};
+            const m = materials.find((mat) => String(mat.id) === String(d.material_id)) || {};
             const part = DB.findPartById(m.part_id);
             const customer = DB.findCustomerById(m.customer_id);
             return `<tr class="hover:bg-slate-50 transition">

@@ -344,7 +344,7 @@
         }
         currentMaterial = material;
         currentProduction =
-          DB.get("productions").find((p) => p.material_id == material.id) ||
+          DB.getProcessProduction(material, "HT") ||
           null;
         if (!currentProduction) {
           HTUI.toast(

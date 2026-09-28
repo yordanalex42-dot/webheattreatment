@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anti Rust - Sistem Informasi Produksi Heat Treatment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
+  </head>
+  <body class="text-slate-800">
+    <div class="ht-app-shell">
+      <aside class="ht-sidebar" id="sidebar">
+        <div class="ht-sidebar-header">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
+                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+            </div>
+            <button
+              id="sidebarToggle"
+              data-sidebar-toggle
+              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
+              title="Toggle Menu"
+              aria-label="Toggle menu"
+            >
+              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
+            </button>
+          </div>
+        </div>
+        <nav class="ht-sidebar-nav">
+          <a href="index.html" class="ht-nav-link"
+            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
+          >
+          <div class="pt-2">
+            <p class="ht-nav-section-title">Master Data</p>
+          </div>
+          <a href="customer.html" class="ht-nav-link"
+            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
+          >
+          <a href="part.html" class="ht-nav-link"
+            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
+          >
+          <a href="incoming.html" class="ht-nav-link"
+            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
+          >
+          <div class="pt-2">
+            <p class="ht-nav-section-title">Produksi</p>
+          </div>
+          <a href="heat-treatment.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Heat Treatment" class="icon"> Heat Treatment</a
+          >
+          <a href="shotblast.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
+          >
+          <a href="anti-rust.html" class="ht-nav-link sub active"
+            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
+          >
+          <a href="qc.html" class="ht-nav-link"
+            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
+          >
+          <a href="delivery.html" class="ht-nav-link"
+            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
+          >
+          <a href="tracking.html" class="ht-nav-link"
+            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
+          >
+        </nav>
+        <div class="ht-sidebar-footer">
+          <div class="ht-user-panel">
+            <div class="ht-user-info">
+              <div
+                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
+                id="sidebarInitial"
+              >
+                A
+              </div>
+              <div class="ht-user-details">
+                <p class="ht-user-name" id="sidebarName">Admin User</p>
+                <p class="ht-user-role" id="sidebarRole">Administrator</p>
+              </div>
+            </div>
+            <button
+              onclick="Auth.logout(); window.location.href='login.html';"
+              class="ht-sidebar-logout"
+              title="Logout"
+              aria-label="Logout"
+            >
+              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="ht-main full-width">
+        <header class="ht-header">
+          <div class="ht-header-left">
+            <h1 class="text-xl font-bold text-slate-800" id="pageTitle">Anti Rust</h1>
+            <p class="text-xs text-slate-500" id="pageSubtitle">Scan part untuk masuk dan menyelesaikan proses Anti Rust</p>
+          </div>
+          <div class="ht-header-right" id="currentDate"></div>
+        </header>
+        <div class="ht-content">
+          <div class="ht-content-max">
+            <!-- Stepper -->
+            <div class="ht-stepper mb-6" role="status" aria-label="Progress step">
+              <div class="ht-step">
+                <div class="step-icon"><img src="assets/icons/qr.svg" alt="Scan Kode" class="icon"></div>
+                <span class="step-label">Scan Kode</span>
+              </div>
+              <div class="ht-step">
+                <div class="step-icon"><img src="assets/icons/file.svg" alt="Data Part" class="icon"></div>
+                <span class="step-label">Data Part</span>
+              </div>
+              <div class="ht-step">
+                <div class="step-icon"><img src="assets/icons/process.svg" alt="Proses" class="icon"></div>
+                <span class="step-label">Proses</span>
+              </div>
+              <div class="ht-step">
+                <div class="step-icon"><img src="assets/icons/check.svg" alt="Selesai" class="icon"></div>
+                <span class="step-label">Selesai</span>
+              </div>
+            </div>
+
+            <!-- Scan / Input -->
+            <div class="ht-card fade-in mb-6">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Scan QR / Input Kode</h3>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex-1">
+                  <div id="qr-reader" class="ht-qr-frame"></div>
+                  <p class="text-xs text-slate-500 text-center mt-3">
+                    Arahkan kamera ke QR Code material
+                  </p>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-xs text-slate-500">
+                    Atau masukkan Kode secara manual:
+                  </p>
+                  <div class="flex gap-2">
+                    <input
+                      type="text"
+                      id="manualId"
+                      aria-label="Nomor kode material"
+                      placeholder="Kode (contoh: 20260001I)"
+                      class="ht-form-input flex-1"
+                      oninput="clearManualError()"
+                      onkeydown="if(event.key==='Enter') loadMaterialById()"
+                    />
+                    <button
+                      onclick="loadMaterialById()"
+                      class="ht-btn ht-btn-primary ht-btn-sm"
+                      aria-label="Cari material"
+                    >
+                      <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
+                    </button>
+                  </div>
+                  <p
+                    id="manualError"
+                    class="hidden text-[11px] text-danger-text"
+                  ></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Material & Status info -->
+            <div
+              id="materialSection"
+              class="hidden ht-card fade-in mb-6"
+            >
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Informasi Material</h3>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                <div class="ht-info-grid">
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Customer</span>
+                    <span class="ht-info-value" id="matCust">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Nomor Part</span>
+                    <span class="ht-info-value mono" id="matNoPart">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Nama Part</span>
+                    <span class="ht-info-value" id="matNamaPart">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Kode</span>
+                    <span class="ht-info-value mono" id="matKode">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Nomor SJ</span>
+                    <span class="ht-info-value mono" id="matSJ">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Lot No</span>
+                    <span class="ht-info-value mono" id="matLot">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Material Charge</span>
+                    <span class="ht-info-value mono" id="matCharge">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Qty</span>
+                    <span class="ht-info-value" id="matQty">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Berat Total</span>
+                    <span class="ht-info-value" id="matBeratTotal">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Status Part</span>
+                    <span class="ht-info-value" id="matStatusPart">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Jenis Proses</span>
+                    <span class="ht-info-value" id="matProcessType">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Jenis Treatment</span>
+                    <span class="ht-info-value" id="matTreatment">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Target Hardness</span>
+                    <span class="ht-info-value mono hardness" id="matTargetHardness">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Process status -->
+              <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
+                <h4 class="font-semibold text-sm mb-2">STATUS PROSES</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div class="flex items-center justify-between py-1">
+                    <span class="text-xs text-slate-600">Route</span>
+                    <span class="font-medium mono" id="routeInfo">-</span>
+                  </div>
+                  <div class="flex items-center justify-between py-1">
+                    <span class="text-xs text-slate-600">Status Heat Treatment</span>
+                    <span class="font-medium" id="htStatus">-</span>
+                  </div>
+                  <div class="flex items-center justify-between py-1">
+                    <span class="text-xs text-slate-600">Status QC</span>
+                    <span class="font-medium" id="qcStatus">-</span>
+                  </div>
+                  <div class="flex items-center justify-between py-1" id="shotblastStatusRow">
+                    <span class="text-xs text-slate-600">Status Shotblast</span>
+                    <span class="font-medium" id="shotblastStatus">-</span>
+                  </div>
+                  <div class="flex items-center justify-between py-1">
+                    <span class="text-xs text-slate-600">Status Anti Rust</span>
+                    <span class="font-medium" id="antiRustStatus">-</span>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-600 mt-2" id="gateReason"></p>
+              </div>
+
+              <!-- Next process -->
+              <div id="nextProcessCard" class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 hidden">
+                <h4 class="font-semibold text-sm mb-1">Proses Berikutnya</h4>
+                <p class="text-sm text-slate-700">Setelah Anti Rust selesai OK, lanjutkan ke: <span class="font-medium text-primary" id="nextProcessLabel">-</span></p>
+              </div>
+
+              <!-- Process history -->
+              <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
+                <h4 class="font-semibold text-sm mb-2">Riwayat Proses</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="historyGrid">
+                  <span class="text-xs text-slate-500">Memuat...</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Blocked notice -->
+            <div
+              id="blockedNotice"
+              class="hidden ht-card danger fade-in mb-6"
+            >
+              <div class="flex items-start gap-3">
+                <img src="assets/icons/error.svg" alt="Error" class="icon icon-md mt-0.5">
+                <div>
+                  <h3 class="font-bold text-danger-text mb-1">PROSES DIBLOKIR</h3>
+                  <p class="text-sm text-slate-700" id="blockedReason">
+                    Part tidak dapat memasuki proses ini.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Entry form (Scan 1) -->
+            <div
+              id="entrySection"
+              class="hidden ht-step-card warning fade-in mb-6"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-base font-bold text-slate-800">
+                  SIAP MASUK PROSES
+                </h3>
+                <span class="ht-step-indicator">
+                  <span class="dot"></span>
+                  <span>Belum diproses</span>
+                </span>
+              </div>
+
+              <div class="bg-white border-2 border-slate-200 rounded-xl p-4 mb-4">
+                <h4 class="font-bold text-sm mb-3">CHECK VISUAL SEBELUM PROSES</h4>
+                <div class="flex gap-4 mb-3">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="visualCheck"
+                      id="visualOK"
+                      value="OK"
+                      class="w-4 h-4 text-emerald-500"
+                      onchange="updateVisualNoteVisibility()"
+                    />
+                    <span class="text-sm font-medium text-emerald-700">( ) OK</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="visualCheck"
+                      id="visualNG"
+                      value="NG"
+                      class="w-4 h-4 text-red-500"
+                      onchange="updateVisualNoteVisibility()"
+                    />
+                    <span class="text-sm font-medium text-red-700">( ) NG</span>
+                  </label>
+                </div>
+                <div id="visualNGNote" class="hidden">
+                  <label class="block text-xs font-medium text-slate-600 mb-1">
+                    Keterangan NG
+                    <span class="text-red-500">(Wajib)</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="visualNote"
+                    maxlength="200"
+                    class="ht-form-input"
+                    placeholder="Contoh: Part kotor, Karat, Retak, Permukaan abnormal, Salah part, Kontaminasi, Lainnya"
+                  />
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <button
+                  id="btnEntry"
+                  onclick="confirmMasukProses()"
+                  class="ht-btn ht-btn-warning ht-btn-lg"
+                  aria-label="Konfirmasi masuk proses"
+                >
+                  <img src="assets/icons/factory.svg" alt="Masuk" class="icon mr-2">KONFIRMASI MASUK PROSES
+                </button>
+              </div>
+            </div>
+
+            <!-- Finish form (Scan 2) -->
+            <div
+              id="finishSection"
+              class="hidden ht-step-card success fade-in mb-6"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-base font-bold text-slate-800">
+                  PENYELAKSANAAN PROSES
+                </h3>
+                <span class="ht-step-indicator">
+                  <span class="dot bg-amber-500"></span>
+                  <span>Produksi Aktif</span>
+                </span>
+              </div>
+
+              <div class="bg-white border-2 border-slate-200 rounded-xl p-4 mb-4">
+                <h4 class="font-bold text-sm mb-3">HASIL PROSES</h4>
+                <div class="flex gap-4 mb-3">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="processResult"
+                      id="resultOK"
+                      value="OK"
+                      class="w-4 h-4 text-emerald-500"
+                      onchange="updateNGNoteVisibility()"
+                    />
+                    <span class="text-sm font-medium text-emerald-700">( ) OK</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="processResult"
+                      id="resultNG"
+                      value="NG"
+                      class="w-4 h-4 text-red-500"
+                      onchange="updateNGNoteVisibility()"
+                    />
+                    <span class="text-sm font-medium text-red-700">( ) NG</span>
+                  </label>
+                </div>
+                <div id="resultNGNote" class="hidden mb-3">
+                  <label class="block text-xs font-medium text-slate-600 mb-1">
+                    Keterangan Penyebab NG
+                    <span class="text-red-500">(Wajib)</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="processNGNote"
+                    maxlength="200"
+                    class="ht-form-input"
+                    placeholder="Jelaskan penyebab NG"
+                  />
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <button
+                  id="btnFinish"
+                  onclick="confirmSelesaiProses()"
+                  class="ht-btn ht-btn-success ht-btn-lg"
+                  aria-label="Konfirmasi selesai proses"
+                >
+                  <img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI
+                </button>
+              </div>
+            </div>
+
+            <!-- Completed OK -->
+            <div
+              id="completedOkSection"
+              class="hidden ht-step-card success fade-in mb-6"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-base font-bold text-slate-800">
+                  SELESAI
+                </h3>
+                <span class="ht-step-indicator">
+                  <span class="dot bg-emerald-500"></span>
+                  <span>Proses selesai</span>
+                </span>
+              </div>
+              <p class="text-sm text-slate-600 mb-2">
+                Part selesai proses Anti Rust dengan hasil OK.
+              </p>
+              <div class="flex items-center gap-2">
+                <span class="ht-badge ht-badge-ok">SELESAI</span>
+                <span class="text-sm">HASIL: OK</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-2" id="okNoteDisplay"></p>
+            </div>
+
+            <!-- Completed NG -->
+            <div
+              id="completedNgSection"
+              class="hidden ht-step-card danger fade-in mb-6"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-base font-bold text-slate-800">
+                  SELESAI (NG)
+                </h3>
+                <span class="ht-step-indicator">
+                  <span class="dot bg-red-500"></span>
+                  <span>Proses selesai NG</span>
+                </span>
+              </div>
+              <p class="text-sm text-slate-600 mb-2">
+                Part selesai proses Anti Rust dengan hasil NG. Hubungi QC / supervisor.
+              </p>
+              <div class="flex items-center gap-2">
+                <span class="ht-badge ht-badge-ng">SELESAI</span>
+                <span class="text-sm">HASIL: NG</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-2" id="ngNoteDisplay"></p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+      if (!HTUI.requireAuth()) {
+        throw new Error("redirecting");
+      }
+      let html5QrCode = null;
+      let currentMaterial = null;
+      let currentProduction = null;
+      const session = Auth.getSession();
+      const PROCESS_KEY = "ANTI_RUST";
+      const JENIS_TREATMENT = "Anti Rust";
+
+      function startScanner() {
+        if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
+        if (!html5QrCode) return;
+        HTUI.startScanner(html5QrCode, function (decodedText) {
+          const id = HTUI.parseScanId(decodedText);
+          loadMaterialById(id);
+        });
+      }
+
+      function clearManualError() {
+        const err = document.getElementById("manualError");
+        if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
+      }
+
+      function resetInput() {
+        document.getElementById("manualId").value = "";
+        clearManualError();
+      }
+
+      function resetFormFields() {
+        var vOK = document.getElementById("visualOK");
+        var vNG = document.getElementById("visualNG");
+        if (vOK) vOK.checked = false;
+        if (vNG) vNG.checked = false;
+        var rOK = document.getElementById("resultOK");
+        var rNG = document.getElementById("resultNG");
+        if (rOK) rOK.checked = false;
+        if (rNG) rNG.checked = false;
+        var visualNote = document.getElementById("visualNote");
+        if (visualNote) visualNote.value = "";
+        var ngNote = document.getElementById("processNGNote");
+        if (ngNote) ngNote.value = "";
+        var vNoteDiv = document.getElementById("visualNGNote");
+        if (vNoteDiv) vNoteDiv.classList.add("hidden");
+        var rNoteDiv = document.getElementById("resultNGNote");
+        if (rNoteDiv) rNoteDiv.classList.add("hidden");
+      }
+
+      function updateVisualNoteVisibility() {
+        var vNG = document.getElementById("visualNG");
+        var note = document.getElementById("visualNGNote");
+        if (vNG.checked) {
+          note.classList.remove("hidden");
+        } else {
+          note.classList.add("hidden");
+        }
+      }
+
+      function updateNGNoteVisibility() {
+        var rNG = document.getElementById("resultNG");
+        var ngNote = document.getElementById("processNGNote");
+        if (rNG.checked) {
+          document.getElementById("resultNGNote").classList.remove("hidden");
+          ngNote.required = true;
+        } else {
+          document.getElementById("resultNGNote").classList.add("hidden");
+          ngNote.required = false;
+          ngNote.value = "";
+        }
+      }
+
+      function displayMaterialInfo(material) {
+        const part = DB.findPartById(material.part_id);
+        const cust = DB.findCustomerById(material.customer_id);
+
+        document.getElementById("matCust").textContent = cust ? cust.nama_customer : "-";
+        document.getElementById("matNoPart").textContent = part ? part.nomor_part : "-";
+        document.getElementById("matNamaPart").textContent = part ? part.nama_part : "-";
+        document.getElementById("matKode").textContent = material.kode || "-";
+        document.getElementById("matSJ").textContent = material.nomor_surat_jalan || "-";
+        document.getElementById("matLot").textContent = material.lot_no || "-";
+        document.getElementById("matCharge").textContent = material.material_charge || "-";
+        document.getElementById("matQty").textContent = material.qty || "-";
+        document.getElementById("matBeratTotal").textContent =
+          material.berat_total_part
+            ? material.berat_total_part.toLocaleString("id-ID") + " KG"
+            : "-";
+        document.getElementById("matStatusPart").textContent = material.status_part || "-";
+        document.getElementById("matProcessType").textContent = material.process_type || "-";
+        document.getElementById("matTreatment").textContent = material.process_type || "-";
+        document.getElementById("matTargetHardness").textContent =
+          part ? (part.target_hardness || "-") : "-";
+      }
+
+      function displayProcessStatus(material) {
+        var route = material.process_route;
+        var steps = DB._getRouteSteps(material);
+        var routeText = steps.length > 0 ? steps.join(" -> ") : "Tidak ada route";
+        document.getElementById("routeInfo").textContent = routeText;
+
+        // HT status
+        var htProd = DB.getProcessProduction(material, "HT");
+        var htStatusEl = document.getElementById("htStatus");
+        if (!htProd) {
+          htStatusEl.textContent = "BELUM DIMULAI";
+        } else if (htProd.production_status === "PROCESS" || htProd.production_status === "Process") {
+          htStatusEl.textContent = "SEDANG DIPROSES";
+        } else {
+          htStatusEl.textContent = htProd.production_status + " / " + (htProd.process_result || "-");
+        }
+
+        // QC status
+        var gate = DB.checkQualityGate(material);
+        var qcEl = document.getElementById("qcStatus");
+        qcEl.textContent = gate.qcStatus === "PASS"
+          ? "PASS"
+          : gate.qcStatus === "NG"
+            ? "NG"
+            : gate.qcStatus === "NOT_CHECKED"
+              ? "BELUM DILAKUKAN"
+              : gate.qcStatus === "NOT_FOUND"
+                ? "TIDAK DITEMUKAN"
+                : gate.qcStatus || "-";
+
+        // Shotblast status (only show if route includes it)
+        var sbStatusRow = document.getElementById("shotblastStatusRow");
+        var sbStatusEl = document.getElementById("shotblastStatus");
+        if (route && route.shotblast) {
+          sbStatusRow.classList.remove("hidden");
+          var sbProd = DB.getProcessProduction(material, "SHOTBLAST");
+          if (!sbProd) {
+            sbStatusEl.textContent = "BELUM DIMULAI";
+          } else if (sbProd.production_status === "PROCESS" || sbProd.production_status === "Process") {
+            sbStatusEl.textContent = "SEDANG DIPROSES";
+          } else {
+            sbStatusEl.textContent = sbProd.production_status + " / " + (sbProd.process_result || "-");
+          }
+        } else {
+          sbStatusRow.classList.add("hidden");
+          sbStatusEl.textContent = "-";
+        }
+
+        // Anti Rust status
+        var arProd = DB.getProcessProduction(material, PROCESS_KEY);
+        var arEl = document.getElementById("antiRustStatus");
+        if (!arProd) {
+          arEl.textContent = "BELUM DIMULAI";
+        } else if (arProd.production_status === "PROCESS" || arProd.production_status === "Process") {
+          arEl.textContent = "SEDANG DIPROSES";
+        } else {
+          arEl.textContent = arProd.production_status + " / " + (arProd.process_result || "-");
+        }
+      }
+
+      function showBlocked(reason) {
+        document.getElementById("blockedReason").textContent = reason;
+        document.getElementById("blockedNotice").classList.remove("hidden");
+        document.getElementById("entrySection").classList.add("hidden");
+        document.getElementById("finishSection").classList.add("hidden");
+        document.getElementById("completedOkSection").classList.add("hidden");
+        document.getElementById("completedNgSection").classList.add("hidden");
+      }
+
+      function hideBlocked() {
+        document.getElementById("blockedNotice").classList.add("hidden");
+      }
+
+      function resetAllSections() {
+        ["entrySection", "finishSection", "completedOkSection", "completedNgSection"].forEach(
+          function (id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.add("hidden");
+          },
+        );
+        document.getElementById("nextProcessCard").classList.add("hidden");
+      }
+
+      function renderStepper(production) {
+        var steps = document.querySelectorAll('.ht-stepper .ht-step');
+        if (steps.length < 4) return;
+
+        if (!production) {
+          steps.forEach(function (s) { s.classList.remove('active', 'completed'); });
+          steps[0].classList.add('active');
+          return;
+        }
+
+        var status = production.production_status;
+
+        steps[0].classList.remove('active');
+        steps[0].classList.toggle('completed', !!production.start_scan_at);
+
+        steps[1].classList.remove('completed');
+        steps[1].classList.toggle('active', !['PROCESS', 'FINISH', 'FINISH_NG'].includes(status));
+        steps[1].classList.toggle('completed', !!production.start_scan_at);
+
+        steps[2].classList.remove('active');
+        steps[2].classList.toggle('completed', status === 'PROCESS' || status === 'Process');
+
+        steps[3].classList.remove('active');
+        steps[3].classList.toggle('completed', status === 'FINISH' || status === 'FINISH_NG' || status === 'Finish');
+      }
+
+      function validateAndShowEntry(material) {
+        var route = material.process_route;
+
+        // Gate 1: Route must include ANTI_RUST
+        if (!route || typeof route !== "object" || !route.anti_rust) {
+          showBlocked("Part tidak memiliki proses Anti Rust pada route ini.");
+          return false;
+        }
+
+        // Gate 2: HT must be FINISH + OK
+        var htProd = DB.getProcessProduction(material, "HT");
+        if (!htProd) {
+          showBlocked("Heat Treatment belum selesai.");
+          return false;
+        }
+        if (htProd.production_status === "PROCESS" || htProd.production_status === "Process") {
+          showBlocked("Heat Treatment masih dalam proses.");
+          return false;
+        }
+        if (htProd.production_status === "FINISH_NG" || htProd.process_result === "NG") {
+          showBlocked("Heat Treatment berstatus NG.");
+          return false;
+        }
+        if (htProd.production_status !== "FINISH" || htProd.process_result !== "OK") {
+          showBlocked("Heat Treatment belum selesai.");
+          return false;
+        }
+
+        // Gate 3: QC must be PASS
+        var qc = DB.checkQualityGate(material);
+        if (qc.qcStatus === "NOT_CHECKED") {
+          showBlocked("QC belum dilakukan.");
+          return false;
+        }
+        if (qc.qcStatus === "NG") {
+          showBlocked("QC berstatus NG.");
+          return false;
+        }
+        if (qc.qcStatus !== "PASS") {
+          showBlocked("QC belum dilakukan.");
+          return false;
+        }
+
+        // Gate 4: If route includes SHOTBLAST, Shotblast must be FINISH + OK
+        if (route.shotblast) {
+          var sbProd = DB.getProcessProduction(material, "SHOTBLAST");
+          if (!sbProd) {
+            showBlocked("Shotblast belum selesai.");
+            return false;
+          }
+          if (sbProd.production_status === "PROCESS" || sbProd.production_status === "Process") {
+            showBlocked("Shotblast masih dalam proses.");
+            return false;
+          }
+          if (sbProd.production_status === "FINISH_NG" || sbProd.process_result === "NG") {
+            showBlocked("Shotblast berstatus NG.");
+            return false;
+          }
+          if (sbProd.production_status !== "FINISH" || sbProd.process_result !== "OK") {
+            showBlocked("Shotblast belum selesai.");
+            return false;
+          }
+        }
+
+        // All gates passed
+        hideBlocked();
+        return true;
+      }
+
+      function showNextProcess(material) {
+        var next = DB.getNextProcess(material);
+        if (next) {
+          document.getElementById("nextProcessLabel").textContent = next;
+          document.getElementById("nextProcessCard").classList.remove("hidden");
+        }
+      }
+
+      function renderProcessHistory(material) {
+        var history = DB.getProcessHistory(material);
+        var grid = document.getElementById("historyGrid");
+        if (!history || history.length === 0) {
+          grid.innerHTML = '<span class="text-xs text-slate-500">Belum ada riwayat proses.</span>';
+          return;
+        }
+        grid.innerHTML = "";
+        history.forEach(function (h) {
+          var isCompleted = DB.isProcessCompleted(material, h.process);
+          var statusLabel = h.status || "NOT_STARTED";
+          var badgeClass = "ht-badge-awaiting";
+          if (isCompleted || h.completed) {
+            badgeClass = "ht-badge-ok";
+            statusLabel = h.status === "PASS" ? "PASS" : h.status;
+          } else if (h.status === "PROCESS" || h.status === "Process") {
+            badgeClass = "ht-badge-processing";
+          } else if (h.status === "FINISH_NG" || h.status === "NG") {
+            badgeClass = "ht-badge-ng";
+          } else if (h.status === "FINISH" && h.production && h.production.process_result !== "OK") {
+            badgeClass = "ht-badge-ng";
+          }
+          var div = document.createElement("div");
+          div.className = "flex items-center justify-between py-1 px-2 bg-white border border-slate-200 rounded";
+          div.innerHTML = '<span class="text-xs text-slate-600">' + h.process + "</span>" +
+            '<span class="ht-badge ' + badgeClass + ' text-xs">' + statusLabel + "</span>";
+          grid.appendChild(div);
+        });
+      }
+
+      function loadMaterialById(manualId) {
+        var id = manualId || document.getElementById("manualId").value;
+        if (!id) return;
+        var material = DB.findByKode(id) || DB.findMaterial(id);
+        if (!material) {
+          HTUI.toast("Material tidak ditemukan! Kode: " + id, "error");
+          document.getElementById("manualError").textContent = "Kode tidak ditemukan: " + id;
+          document.getElementById("manualError").classList.remove("hidden");
+          return;
+        }
+
+        currentMaterial = material;
+        currentProduction = DB.getProcessProduction(material, PROCESS_KEY);
+        displayMaterialInfo(material);
+        displayProcessStatus(material);
+        renderProcessHistory(material);
+        renderSections(material, currentProduction);
+        document.getElementById("materialSection").classList.remove("hidden");
+        document.getElementById("blockedNotice").classList.add("hidden");
+        document.getElementById("materialSection").scrollIntoView({ behavior: "smooth" });
+      }
+
+      function renderSections(material, production) {
+        resetAllSections();
+        resetFormFields();
+        hideBlocked();
+
+        if (!production) {
+          // No Anti Rust production yet - validate gates
+          if (validateAndShowEntry(material)) {
+            document.getElementById("entrySection").classList.remove("hidden");
+          }
+          renderStepper(null);
+          return;
+        }
+
+        const status = production.production_status;
+        const result = production.process_result;
+
+        if (status === "PROCESS" || (status === "Process")) {
+          document.getElementById("finishSection").classList.remove("hidden");
+          renderStepper(production);
+        } else if (status === "FINISH" && result === "OK") {
+          document.getElementById("completedOkSection").classList.remove("hidden");
+          document.getElementById("okNoteDisplay").textContent = production.process_ng_note || "";
+          renderStepper(production);
+          showNextProcess(material);
+        } else if (status === "FINISH_NG" || result === "NG") {
+          document.getElementById("completedNgSection").classList.remove("hidden");
+          document.getElementById("ngNoteDisplay").textContent = "Catatan NG: " + (production.process_ng_note || "-");
+          renderStepper(production);
+          showNextProcess(material);
+        } else if (status === "WAITING" || (status === "Waiting")) {
+          // Validate gates even for WAITING status
+          if (validateAndShowEntry(material)) {
+            document.getElementById("finishSection").classList.remove("hidden");
+          }
+          renderStepper(production);
+        } else {
+          if (validateAndShowEntry(material)) {
+            document.getElementById("entrySection").classList.remove("hidden");
+          }
+          renderStepper(production);
+        }
+      }
+
+      function confirmMasukProses() {
+        if (!currentMaterial) {
+          HTUI.toast("Pilih material terlebih dahulu!", "error");
+          return;
+        }
+
+        // Re-validate all gates before entry
+        if (!validateAndShowEntry(currentMaterial)) {
+          return;
+        }
+
+        var visualOK = document.getElementById("visualOK").checked;
+        var visualNG = document.getElementById("visualNG").checked;
+        if (!visualOK && !visualNG) {
+          HTUI.toast("Pilih Visual Check OK atau NG!", "error");
+          return;
+        }
+        if (visualNG && !document.getElementById("visualNote").value.trim()) {
+          HTUI.toast("Keterangan NG wajib diisi!", "error");
+          return;
+        }
+
+        var existing = DB.getProcessProduction(currentMaterial, PROCESS_KEY);
+        if (existing && (existing.production_status === "PROCESS" || existing.production_status === "Process")) {
+          HTUI.toast("Part sedang dalam proses Anti Rust. Production record sudah tersedia.", "warning");
+          return;
+        }
+        if (existing && ((existing.production_status === "FINISH" && existing.process_result === "OK") || existing.production_status === "FINISH_NG")) {
+          HTUI.toast("Part sudah selesai diproses.", "warning");
+          return;
+        }
+
+        var btn = document.getElementById("btnEntry");
+        btn.disabled = true;
+        btn.classList.add("opacity-50");
+        btn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Mencatat...';
+
+        var scanTime = new Date().toLocaleString("id-ID", {
+          day: "2-digit", month: "2-digit", year: "numeric",
+          hour: "2-digit", minute: "2-digit", second: "2-digit",
+        });
+        var now = new Date().toISOString();
+        var data = {
+          material_id: currentMaterial.id,
+          incoming_id: currentMaterial.id,
+          kode: currentMaterial.kode || "",
+          status: "Process",
+          production_status: "PROCESS",
+          start_scan_at: now,
+          start_scan_by: session ? session.name : "Operator",
+          machine_start_at: scanTime,
+          machine_start_by: session ? session.name : "Operator",
+          tanggal_proses: new Date().toISOString().split("T")[0],
+          jenis_treatment: JENIS_TREATMENT,
+          visual_check_result: visualOK ? "OK" : "NG",
+          visual_check_note: document.getElementById("visualNote").value.trim(),
+          process_result: "",
+          process_ng_note: "",
+          machine_finish_at: "",
+          machine_finish_by: "",
+          finish_scan_at: "",
+          finish_scan_by: "",
+          remarks: "",
+          process_status: "Process",
+        };
+
+        try {
+          DB.insert("productions", data);
+          currentMaterial.status_proses = "Process";
+          DB.update("materials", currentMaterial.id, {
+            status_proses: "Process",
+          });
+          btn.innerHTML = '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
+          setTimeout(function () {
+            btn.innerHTML = '<img src="assets/icons/factory.svg" alt="Masuk" class="icon mr-2">KONFIRMASI MASUK PROSES';
+            btn.classList.remove("opacity-50");
+            btn.disabled = false;
+            HTUI.toast("Part berhasil masuk proses Anti Rust. Status: PROCESS", "success");
+            loadMaterialById(currentMaterial.kode);
+          }, 1500);
+        } catch (e) {
+          btn.innerHTML = '<img src="assets/icons/factory.svg" alt="Masuk" class="icon mr-2">KONFIRMASI MASUK PROSES';
+          btn.classList.remove("opacity-50");
+          btn.disabled = false;
+          HTUI.toast("Gagal memproses: " + e.message, "error");
+        }
+      }
+
+      function confirmSelesaiProses() {
+        if (!currentMaterial || !currentProduction) {
+          HTUI.toast("Pilih material terlebih dahulu!", "error");
+          return;
+        }
+
+        var rOK = document.getElementById("resultOK").checked;
+        var rNG = document.getElementById("resultNG").checked;
+        if (!rOK && !rNG) {
+          HTUI.toast("Pilih Hasil Proses OK atau NG!", "error");
+          return;
+        }
+        if (rNG && !document.getElementById("processNGNote").value.trim()) {
+          HTUI.toast("Keterangan wajib diisi jika hasil proses NG.", "error");
+          return;
+        }
+
+        if (
+          currentProduction.production_status === "FINISH" ||
+          currentProduction.production_status === "FINISH_NG"
+        ) {
+          HTUI.toast("Part sudah selesai diproses.", "error");
+          return;
+        }
+        if (currentProduction.production_status !== "PROCESS") {
+          HTUI.toast("Status produksi tidak valid untuk konfirmasi keluar.", "error");
+          return;
+        }
+
+        var btn = document.getElementById("btnFinish");
+        btn.disabled = true;
+        btn.classList.add("opacity-50");
+        btn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Memproses...';
+
+        var scanTime = new Date().toLocaleString("id-ID", {
+          day: "2-digit", month: "2-digit", year: "numeric",
+          hour: "2-digit", minute: "2-digit", second: "2-digit",
+        });
+        var data = {
+          status: "Finish",
+          production_status: rOK ? "FINISH" : "FINISH_NG",
+          finish_scan_at: new Date().toISOString(),
+          finish_scan_by: session ? session.name : "Operator",
+          process_result: rOK ? "OK" : "NG",
+          process_ng_note: rNG ? document.getElementById("processNGNote").value.trim() : "",
+          machine_finish_at: scanTime,
+          machine_finish_by: session ? session.name : "Operator",
+        };
+
+        try {
+          DB.update("productions", currentProduction.id, data);
+          currentMaterial.status_proses = rOK ? "Finish" : "Finish_NG";
+          DB.update("materials", currentMaterial.id, {
+            status_proses: rOK ? "Finish" : "Finish_NG",
+          });
+          btn.innerHTML = '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
+          setTimeout(function () {
+            btn.innerHTML = '<img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI';
+            btn.classList.remove("opacity-50");
+            btn.disabled = false;
+            HTUI.toast("Process selesai. Status: " + data.production_status + " / HASIL: " + data.process_result, "success");
+            loadMaterialById(currentMaterial.kode);
+          }, 1500);
+        } catch (e) {
+          btn.innerHTML = '<img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI';
+          btn.classList.remove("opacity-50");
+          btn.disabled = false;
+          HTUI.toast("Terjadi kesalahan: " + e.message, "error");
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", function () {
+        DB.init();
+        DB.migrate();
+        HTUI.initDate();
+
+        try {
+          startScanner();
+        } catch (e) {
+          console.warn("[anti-rust] scanner unavailable:", e);
+        }
+      });
+    </script>
+  </body>
+</html>

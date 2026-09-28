@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proses - Sistem Informasi Produksi Heat Treatment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
+  </head>
+  <body class="text-slate-800">
+    <div class="ht-app-shell">
+      <aside class="ht-sidebar" id="sidebar">
+        <div class="ht-sidebar-header">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
+                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+            </div>
+            <button
+              id="sidebarToggle"
+              data-sidebar-toggle
+              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
+              title="Toggle Menu"
+              aria-label="Toggle menu"
+            >
+              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
+            </button>
+          </div>
+        </div>
+        <nav class="ht-sidebar-nav">
+          <a href="index.html" class="ht-nav-link"
+            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
+          >
+          <div class="pt-2">
+            <p class="ht-nav-section-title">Master Data</p>
+          </div>
+          <a href="customer.html" class="ht-nav-link"
+            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
+          >
+          <a href="part.html" class="ht-nav-link"
+            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
+          >
+          <a href="incoming.html" class="ht-nav-link"
+            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
+          >
+          <div class="pt-2">
+            <p class="ht-nav-section-title">Produksi</p>
+          </div>
+          <a href="produksi-masuk.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
+          >
+          <a href="produksi-akhir.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
+          >
+          <a href="qc.html" class="ht-nav-link"
+            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
+          >
+          <a href="proses.html?process=SHOTBLAST" class="ht-nav-link sub active"
+            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
+          >
+          <a href="proses.html?process=ANTI_RUST" class="ht-nav-link sub"
+            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
+          >
+          <a href="delivery.html" class="ht-nav-link"
+            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
+          >
+          <a href="tracking.html" class="ht-nav-link"
+            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
+          >
+        </nav>
+        <div class="ht-sidebar-footer">
+          <div class="ht-user-panel">
+            <div class="ht-user-info">
+              <div
+                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
+                id="sidebarInitial"
+              >
+                A
+              </div>
+              <div class="ht-user-details">
+                <p class="ht-user-name" id="sidebarName">Admin User</p>
+                <p class="ht-user-role" id="sidebarRole">Administrator</p>
+              </div>
+            </div>
+            <button
+              onclick="Auth.logout(); window.location.href='login.html';"
+              class="ht-sidebar-logout"
+              title="Logout"
+              aria-label="Logout"
+            >
+              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
+            </button>
+          </div>
+        </div>
+      </aside>
+      
+      <main class="ht-main full-width">
+        <header class="ht-header">
+          <div class="ht-header-left">
+            <h1 class="text-xl font-bold text-slate-800" id="pageTitle">Proses</h1>
+            <p class="text-xs text-slate-500" id="pageSubtitle">Halaman proses belum valid.</p>
+          </div>
+        </header>
+        <div class="ht-content">
+          <div class="ht-content-max">
+            <!-- Invalid process notice -->
+            <div
+              id="invalidNotice"
+              class="hidden ht-card danger mb-6"
+            >
+              <div class="flex items-start gap-3">
+                <img src="assets/icons/error.svg" alt="Error" class="icon icon-md mt-0.5">
+                <div>
+                  <h3 class="font-bold text-danger-text mb-1">PROSES TIDAK VALID</h3>
+                  <p class="text-sm text-slate-700">
+                    Silakan buka halaman proses melalui menu yang sesuai.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scan / Input -->
+            <div id="scanSection" class="ht-card fade-in mb-6">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Scan Kode</h3>
+              </div>
+              <div class="flex gap-4 items-end">
+                <div class="flex-1">
+                  <input
+                    type="text"
+                    id="manualId"
+                    aria-label="Nomor kode material"
+                    placeholder="Kode (contoh: 20260004I)"
+                    class="ht-form-input w-full"
+                    oninput="clearManualError()"
+                  />
+                  <p
+                    id="manualError"
+                    class="hidden text-[11px] text-danger-text mt-1"
+                  ></p>
+                </div>
+                <button
+                  id="btnCari"
+                  onclick="loadMaterialById()"
+                  class="ht-btn ht-btn-primary ht-btn-sm"
+                  aria-label="Cari material"
+                >
+                  <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
+                </button>
+              </div>
+            </div>
+
+            <!-- Material & Gate info -->
+            <div
+              id="materialSection"
+              class="hidden ht-card fade-in mb-6"
+            >
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Informasi Material</h3>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                <div class="ht-info-grid">
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Customer</span>
+                    <span class="ht-info-value" id="matCust">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Nomor Part</span>
+                    <span class="ht-info-value mono" id="matNoPart">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Nama Part</span>
+                    <span class="ht-info-value" id="matNamaPart">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Kode</span>
+                    <span class="ht-info-value mono" id="matKode">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Nomor SJ</span>
+                    <span class="ht-info-value mono" id="matSJ">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Lot No</span>
+                    <span class="ht-info-value mono" id="matLot">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Material Charge</span>
+                    <span class="ht-info-value mono" id="matCharge">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Qty</span>
+                    <span class="ht-info-value" id="matQty">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Berat Total</span>
+                    <span class="ht-info-value" id="matBeratTotal">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Status Part</span>
+                    <span class="ht-info-value" id="matStatusPart">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Proses Material</span>
+                    <span class="ht-info-value" id="matProcessType">-</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
+                <h4 class="font-semibold text-sm mb-2">GATE / KUALITAS</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div class="flex items-center justify-between py-1">
+                    <span class="text-xs text-slate-600">QC</span>
+                    <span class="font-medium" id="gateQC">-</span>
+                  </div>
+                  <div class="flex items-center justify-between py-1">
+                    <span class="text-xs text-slate-600">Prerequisite</span>
+                    <span class="font-medium" id="gatePrereq">-</span>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-600 mt-2" id="gateReason"></p>
+              </div>
+            </div>
+
+            <!-- Action: start / finish -->
+            <div
+              id="actionSection"
+              class="hidden ht-card fade-in mb-6"
+            >
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">
+                  <span id="actionTitle">STATUS PROSES</span>
+                  <span class="text-sm font-normal text-slate-500 ml-2" id="actionStatus"></span>
+                </h3>
+              </div>
+
+              <!-- Locked -->
+              <div id="lockedBox" class="hidden">
+                <div class="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <img src="assets/icons/error.svg" alt="Terkunci" class="icon icon-md mt-0.5">
+                  <div>
+                    <h4 class="font-bold text-danger-text">PROSES TERKUNCI</h4>
+                    <p class="text-sm text-slate-700 mt-1" id="lockedReason">
+                      Proses belum dapat dimulai.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Not started -->
+              <div id="notStartedBox" class="hidden">
+                <p class="text-sm text-slate-600 mb-3">
+                  Belum ada produksi untuk proses ini.
+                </p>
+                <button
+                  id="btnStart"
+                  onclick="confirmStartProcess()"
+                  class="ht-btn ht-btn-warning ht-btn-lg"
+                >
+                  <img src="assets/icons/factory.svg" alt="Mulai" class="icon mr-2">KONFIRMASI MASUK PROSES
+                </button>
+              </div>
+
+              <!-- Not started but already finished OK -->
+              <div id="completedOkBox" class="hidden">
+                <p class="text-sm text-slate-600 mb-2">
+                  Proses sudah selesai dengan hasil OK.
+                </p>
+                <div class="flex items-center gap-2">
+                  <span class="ht-badge ht-badge-ok">SELESAI</span>
+                  <span class="text-sm">HASIL: OK</span>
+                </div>
+              </div>
+
+              <!-- Not started but ended NG -->
+              <div id="completedNgBox" class="hidden">
+                <p class="text-sm text-slate-600 mb-2">
+                  Proses selesai dengan hasil NG. Hubungi QC / supervisor.
+                </p>
+                <div class="flex items-center gap-2">
+                  <span class="ht-badge ht-badge-ng">SELESAI</span>
+                  <span class="text-sm">HASIL: NG</span>
+                </div>
+                <p class="text-xs text-slate-600 mt-2" id="ngNote"></p>
+              </div>
+
+              <!-- Processing -->
+              <div id="processingBox" class="hidden">
+                <p class="text-sm text-slate-600 mb-3">
+                  Proses sedang berjalan.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="processResult"
+                      id="resultOK"
+                      value="OK"
+                      class="w-4 h-4 text-emerald-500"
+                    />
+                    <span class="text-sm font-medium text-emerald-700">( ) OK</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="processResult"
+                      id="resultNG"
+                      value="NG"
+                      class="w-4 h-4 text-red-500"
+                    />
+                    <span class="text-sm font-medium text-red-700">( ) NG</span>
+                  </label>
+                </div>
+                <div id="resultNGNote" class="hidden mb-3">
+                  <label class="block text-xs font-medium text-slate-600 mb-1">
+                    Catatan NG
+                    <span class="text-red-500">(Wajib)</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="processNGNote"
+                    maxlength="200"
+                    class="ht-form-input w-full"
+                    placeholder="Tuliskan keterangan NG"
+                  />
+                </div>
+                <div class="flex justify-between items-center">
+                  <button
+                    id="btnFinish"
+                    onclick="confirmFinishProcess()"
+                    class="ht-btn ht-btn-primary ht-btn-lg"
+                  >
+                    <img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Next process -->
+            <div
+              id="nextSection"
+              class="hidden ht-card fade-in mb-6"
+            >
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Proses Berikutnya</h3>
+              </div>
+              <p class="text-sm text-slate-600 mb-2" id="nextInfo">
+                Menunggu proses selesai.
+              </p>
+              <p class="text-sm font-medium" id="nextProcess">
+                Semua proses pada route telah selesai.
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+      if (!HTUI.requireAuth()) {
+        throw new Error("redirecting");
+      }
+
+      const session = Auth.getSession();
+
+      var PROCESS_META = {
+        SHOTBLAST: {
+          label: "SHOTBLAST",
+          jenis_treatment: "Shotblast",
+          icon: "assets/icons/factory.svg",
+          navIcon: "assets/icons/production.svg",
+        },
+        ANTI_RUST: {
+          label: "ANTI RUST",
+          jenis_treatment: "Anti Rust",
+          icon: "assets/icons/process.svg",
+          navIcon: "assets/icons/process.svg",
+        },
+      };
+
+      var currentMaterial = null;
+      var currentProduction = null;
+      var currentProcessKey = null;
+      var html5QrCode = null;
+
+      function normalizeProcessParam(raw) {
+        if (!raw) return "";
+        return DB._normalizeProcessKey(raw);
+      }
+
+      function getProcessKey() {
+        var raw = new URLSearchParams(window.location.search).get("process");
+        return normalizeProcessParam(raw);
+      }
+
+      function clearManualError() {
+        var err = document.getElementById("manualError");
+        if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
+      }
+
+      function startScanner() {
+        if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
+        if (!html5QrCode) return;
+        HTUI.startScanner(html5QrCode, function (decodedText) {
+          var id = HTUI.parseScanId(decodedText);
+          loadMaterialById(id);
+        });
+      }
+
+      function renderProcessTitle(key) {
+        var meta = PROCESS_META[key];
+        var title = meta ? meta.label : "PROSES";
+        document.getElementById("pageTitle").textContent = meta ? meta.label : "Proses";
+        document.getElementById("pageSubtitle").textContent = meta
+          ? "Operasional lanjutan: " + meta.label
+          : "Halaman proses belum valid.";
+      }
+
+      function resetActionViews() {
+        ["lockedBox", "notStartedBox", "completedOkBox", "completedNgBox", "processingBox"].forEach(
+          function (id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.add("hidden");
+          },
+        );
+      }
+
+      function setGateInfo(material, processKey) {
+        var qcEl = document.getElementById("gateQC");
+        var prereqEl = document.getElementById("gatePrereq");
+        var reasonEl = document.getElementById("gateReason");
+        if (!material) {
+          qcEl.textContent = "-";
+          prereqEl.textContent = "-";
+          reasonEl.textContent = "";
+          return;
+        }
+        var gate = DB.checkQualityGate(material);
+        qcEl.textContent = gate.qcStatus === "PASS"
+          ? "PASS"
+          : gate.qcStatus === "NG"
+            ? "NG"
+            : gate.qcStatus === "NOT_CHECKED"
+              ? "BELUM DILAKUKAN"
+              : gate.qcStatus === "NOT_FOUND"
+                ? "TIDAK DITEMUKAN"
+                : gate.qcStatus || "-";
+
+        var steps = DB._getRouteSteps(material);
+        var targetIdx = steps.indexOf(processKey);
+        var prereqSteps = targetIdx > 0 ? steps.slice(0, targetIdx) : [];
+        var allPrereqDone = prereqSteps.every(function (s) {
+          return DB.isProcessCompleted(material, s);
+        });
+        if (processKey === "SHOTBLAST") {
+          prereqEl.textContent = allPrereqDone ? "SELESAI (HT + QC)" : "BELUM (HT + QC)";
+        } else if (processKey === "ANTI_RUST") {
+          prereqEl.textContent = allPrereqDone ? "SELESAI (HT + QC + Shotblast)" : "BELUM (HT + QC + Shotblast)";
+        } else {
+          prereqEl.textContent = allPrereqDone ? "SELESAI" : "BELUM";
+        }
+      }
+
+      function loadMaterialById(manualId) {
+        var id = manualId || document.getElementById("manualId").value;
+        if (!id) return;
+        var material = DB.findByKode(id) || DB.findMaterial(id);
+        if (!material) {
+          HTUI.toast("Material tidak ditemukan! Kode: " + id, "error");
+          return;
+        }
+        currentMaterial = material;
+        var gate = DB.canStartProcess(material, currentProcessKey);
+
+        var part = DB.findPartById(material.part_id);
+        var cust = DB.findCustomerById(material.customer_id);
+
+        document.getElementById("matCust").textContent = cust ? cust.nama_customer : "-";
+        document.getElementById("matNoPart").textContent = part ? part.nomor_part : "-";
+        document.getElementById("matNamaPart").textContent = part ? part.nama_part : "-";
+        document.getElementById("matKode").textContent = material.kode || "-";
+        document.getElementById("matSJ").textContent = material.nomor_surat_jalan || "-";
+        document.getElementById("matLot").textContent = material.lot_no || "-";
+        document.getElementById("matCharge").textContent = material.material_charge || "-";
+        document.getElementById("matQty").textContent = material.qty || "-";
+        document.getElementById("matBeratTotal").textContent = material.berat_total_part
+          ? material.berat_total_part.toLocaleString("id-ID") + " KG"
+          : "-";
+        document.getElementById("matStatusPart").textContent = material.status_part || "-";
+        document.getElementById("matProcessType").textContent = material.process_type || "-";
+
+        setGateInfo(material, currentProcessKey);
+
+        var prod = DB.getProcessProduction(material, currentProcessKey);
+        currentProduction = prod || null;
+
+        renderAction(gate, currentProduction, currentProcessKey);
+        renderNextProcess();
+
+        document.getElementById("materialSection").classList.remove("hidden");
+        document.getElementById("actionSection").classList.remove("hidden");
+        document.getElementById("materialSection").scrollIntoView({ behavior: "smooth" });
+      }
+
+      function renderAction(gate, production, processKey) {
+        var actionTitle = document.getElementById("actionTitle");
+        var actionStatus = document.getElementById("actionStatus");
+        var lockedReason = document.getElementById("lockedReason");
+        var ngNote = document.getElementById("ngNote");
+
+        resetActionViews();
+
+        if (!gate.allowed) {
+          actionTitle.textContent = "PROSES TERKUNCI";
+          actionStatus.textContent = "LOCKED";
+          lockedReason.textContent = gate.reason || "Proses tidak dapat dimulai.";
+          document.getElementById("lockedBox").classList.remove("hidden");
+          return;
+        }
+
+        if (production) {
+          if (production.production_status === "PROCESS") {
+            actionTitle.textContent = "SEDANG PROSES";
+            actionStatus.textContent = "PROCESS";
+            document.getElementById("processingBox").classList.remove("hidden");
+            return;
+          }
+          if (production.production_status === "FINISH") {
+            if (production.process_result === "OK") {
+              actionTitle.textContent = "SELESAI";
+              actionStatus.textContent = "FINISH + OK";
+              document.getElementById("completedOkBox").classList.remove("hidden");
+              return;
+            }
+          }
+          if (
+            production.production_status === "FINISH_NG" ||
+            production.process_result === "NG"
+          ) {
+            actionTitle.textContent = "SELESAI (NG)";
+            actionStatus.textContent = "FINISH_NG";
+            ngNote.textContent = production.process_ng_note || "Tanpa catatan";
+            document.getElementById("completedNgBox").classList.remove("hidden");
+            return;
+          }
+        }
+
+        actionTitle.textContent = "BELUM DIMULAI";
+        actionStatus.textContent = "BELUM DIMULAI";
+        document.getElementById("notStartedBox").classList.remove("hidden");
+      }
+
+      function renderNextProcess() {
+        var nextInfo = document.getElementById("nextInfo");
+        var nextProcess = document.getElementById("nextProcess");
+        nextInfo.textContent = "Setelah proses ini selesai, lanjutkan ke langkah berikutnya.";
+        var next = currentMaterial ? DB.getNextProcess(currentMaterial) : null;
+        if (!next || next === currentProcessKey) {
+          var allDone = currentMaterial
+            ? DB._getRouteSteps(currentMaterial).every(function (s) {
+                return DB.isProcessCompleted(currentMaterial, s);
+              })
+            : false;
+          nextProcess.textContent = allDone
+            ? "Semua proses pada route telah selesai."
+            : "Tidak ada proses berikutnya tersedia.";
+          return;
+        }
+        nextProcess.innerHTML =
+          '<span class="font-medium text-primary">' +
+          (PROCESS_META[next] ? PROCESS_META[next].label : next) +
+          '</span>';
+      }
+
+      function confirmStartProcess() {
+        if (!currentMaterial) {
+          HTUI.toast("Pilih material terlebih dahalu!", "error");
+          return;
+        }
+        var gate = DB.canStartProcess(currentMaterial, currentProcessKey);
+        if (!gate.allowed) {
+          HTUI.toast(gate.reason || "Proses tidak dapat dimulai.", "error");
+          return;
+        }
+        var existing = DB.getProcessProduction(currentMaterial, currentProcessKey);
+        if (existing && existing.production_status === "PROCESS") {
+          HTUI.toast("Proses sedang berjalan. Production record sudah tersedia.", "warning");
+          return;
+        }
+        if (existing && existing.production_status === "FINISH" && existing.process_result === "OK") {
+          HTUI.toast("Proses sudah selesai.", "warning");
+          return;
+        }
+        if (
+          existing &&
+          (existing.production_status === "FINISH_NG" || existing.process_result === "NG")
+        ) {
+          HTUI.toast("Proses selesai dengan hasil NG. Hubungi QC / supervisor.", "warning");
+          return;
+        }
+
+        var btn = document.getElementById("btnStart");
+        btn.disabled = true;
+        btn.classList.add("opacity-50");
+        var scanTime = new Date().toLocaleString("id-ID", {
+          day: "2-digit", month: "2-digit", year: "numeric",
+          hour: "2-digit", minute: "2-digit", second: "2-digit",
+        });
+        var now = new Date().toISOString();
+        var data = {
+          material_id: currentMaterial.id,
+          incoming_id: currentMaterial.id,
+          kode: currentMaterial.kode || "",
+          status: "Process",
+          production_status: "PROCESS",
+          start_scan_at: now,
+          start_scan_by: session ? session.name : "Operator",
+          machine_start_at: scanTime,
+          machine_start_by: session ? session.name : "Operator",
+          tanggal_proses: new Date().toISOString().split("T")[0],
+          jenis_treatment: PROCESS_META[currentProcessKey].jenis_treatment,
+          visual_check_result: "OK",
+          visual_check_note: "",
+          process_result: "",
+          process_ng_note: "",
+          finish_scan_at: "",
+          finish_scan_by: "",
+          machine_finish_at: "",
+          machine_finish_by: "",
+        };
+        try {
+          DB.insert("productions", data);
+          currentMaterial.status_proses = "Process";
+          DB.update("materials", currentMaterial.id, { status_proses: "Process" });
+          btn.innerHTML = '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
+          setTimeout(function () {
+            btn.innerHTML =
+              '<img src="assets/icons/factory.svg" alt="Mulai" class="icon mr-2">KONFIRMASI MASUK PROSES';
+            btn.classList.remove("opacity-50");
+            btn.disabled = false;
+            HTUI.toast(
+              "Process dimulai. Status: PROCESS (" + PROCESS_META[currentProcessKey].label + ")",
+              "success",
+            );
+            loadMaterialById(currentMaterial.kode);
+          }, 1500);
+        } catch (e) {
+          btn.innerHTML =
+            '<img src="assets/icons/factory.svg" alt="Mulai" class="icon mr-2">KONFIRMASI MASUK PROSES';
+          btn.classList.remove("opacity-50");
+          btn.disabled = false;
+          HTUI.toast("Gagal memproses: " + e.message, "error");
+        }
+      }
+
+      function confirmFinishProcess() {
+        if (!currentMaterial || !currentProduction) {
+          HTUI.toast("Pilih material terlebih dahulu!", "error");
+          return;
+        }
+        var rOK = document.getElementById("resultOK").checked;
+        var rNG = document.getElementById("resultNG").checked;
+        if (!rOK && !rNG) {
+          HTUI.toast("Pilih Hasil Proses OK atau NG!", "error");
+          return;
+        }
+        if (rNG && !document.getElementById("processNGNote").value.trim()) {
+          HTUI.toast("Keterangan wajib diisi jika hasil proses NG.", "error");
+          return;
+        }
+        if (
+          currentProduction.production_status === "FINISH" ||
+          currentProduction.production_status === "FINISH_NG"
+        ) {
+          HTUI.toast("Part sudah selesai diproses.", "error");
+          return;
+        }
+        if (currentProduction.production_status !== "PROCESS") {
+          HTUI.toast("Status produksi tidak valid untuk konfirmasi keluar.", "error");
+          return;
+        }
+
+        var btn = document.getElementById("btnFinish");
+        btn.disabled = true;
+        btn.classList.add("opacity-50");
+        btn.innerHTML =
+          '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Memproses...';
+
+        var scanTime = new Date().toLocaleString("id-ID", {
+          day: "2-digit", month: "2-digit", year: "numeric",
+          hour: "2-digit", minute: "2-digit", second: "2-digit",
+        });
+        var data = {
+          status: "Finish",
+          production_status: rOK ? "FINISH" : "FINISH_NG",
+          finish_scan_at: new Date().toISOString(),
+          finish_scan_by: session ? session.name : "Operator",
+          process_result: rOK ? "OK" : "NG",
+          process_ng_note: rNG ? document.getElementById("processNGNote").value.trim() : "",
+          machine_finish_at: scanTime,
+          machine_finish_by: session ? session.name : "Operator",
+        };
+        try {
+          DB.update("productions", currentProduction.id, data);
+          currentMaterial.status_proses = rOK ? "Finish" : "Finish_NG";
+          DB.update("materials", currentMaterial.id, {
+            status_proses: rOK ? "Finish" : "Finish_NG",
+          });
+          btn.innerHTML =
+            '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
+          setTimeout(function () {
+            btn.innerHTML =
+              '<img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI';
+            btn.classList.remove("opacity-50");
+            btn.disabled = false;
+            var gate = DB.canStartProcess(currentMaterial, currentProcessKey);
+            var prod = DB.getProcessProduction(currentMaterial, currentProcessKey);
+            renderAction(gate, prod, currentProcessKey);
+            renderNextProcess();
+            HTUI.toast(
+              "Process selesai. Status: " + data.production_status + " / HASIL: " + data.process_result,
+              "success",
+            );
+          }, 1500);
+        } catch (e) {
+          btn.innerHTML =
+            '<img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI';
+          btn.classList.remove("opacity-50");
+          btn.disabled = false;
+          HTUI.toast("Terjadi kesalahan: " + e.message, "error");
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", function () {
+        DB.init();
+        DB.migrate();
+        currentProcessKey = getProcessKey();
+        renderProcessTitle(currentProcessKey);
+
+        if (!currentProcessKey || !PROCESS_META[currentProcessKey]) {
+          document.getElementById("invalidNotice").classList.remove("hidden");
+          document.getElementById("scanSection").classList.add("hidden");
+          var actionSection = document.getElementById("actionSection");
+          if (actionSection) actionSection.classList.add("hidden");
+          var nextSection = document.getElementById("nextSection");
+          if (nextSection) nextSection.classList.add("hidden");
+          return;
+        }
+
+        document.getElementById("invalidNotice").classList.add("hidden");
+        document.getElementById("scanSection").classList.remove("hidden");
+
+        try {
+          startScanner();
+        } catch (e) {
+          console.warn("[proses] scanner unavailable:", e);
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -57,11 +57,14 @@
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
-          <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
+          <a href="heat-treatment.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Heat Treatment" class="icon"> Heat Treatment</a
           >
-          <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
+          <a href="shotblast.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
+          >
+          <a href="anti-rust.html" class="ht-nav-link sub"
+            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
           >
           <a href="qc.html" class="ht-nav-link"
             ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
@@ -347,55 +350,57 @@
         clearSearchError();
         renderTracking(material);
       }
-      function getStepState(material, production, qc, delivery) {
-        const steps = [
-          { id: "incoming", done: !!material.tanggal_masuk, ng: false },
-          { id: "scan_mulai", done: !!(production && production.start_scan_at), ng: false },
-          { id: "visual", done: !!(production && production.visual_check_result), ng: production && production.visual_check_result === "NG" },
-          { id: "mesin_masuk", done: !!(production && production.machine_start_at), ng: false },
-          {
-            id: "process",
-            done: production && ["PROCESS", "FINISH", "FINISH_NG"].includes(production.production_status || production.status),
-            ng: production && (production.production_status === "FINISH_NG"),
-          },
-          { id: "scan_keluar", done: !!(production && production.finish_scan_at), ng: false },
-          { id: "mesin_keluar", done: !!(production && production.machine_finish_at), ng: false },
-          { id: "hasil", done: !!(production && production.process_result), ng: production && production.process_result === "NG" },
-          { id: "qc", done: !!qc, ng: qc && qc.hasil === "NG" },
-          { id: "delivery", done: !!delivery, ng: false },
-        ];
-        return steps;
+      function getStepState(material) {
+        const history = DB.getProcessHistory(material);
+        return history.map(function(item) {
+          var isNg = false;
+          if (item.process === "QC" || item.process === "QC_CHECK") {
+            isNg = item.status === "NG";
+          } else {
+            isNg = item.status === "FINISH_NG";
+          }
+          return {
+            process: item.process,
+            status: item.status,
+            done: item.completed,
+            ng: isNg,
+            production: item.production || null,
+          };
+        });
       }
       function renderTracking(material) {
         document.getElementById("noResult").classList.add("hidden");
         document.getElementById("trackingResult").classList.remove("hidden");
-        const currentProduction = DB.get("productions").find(
-          (p) => p.material_id === material.id,
-        );
-        const production = currentProduction || null;
-        const qc = production
-          ? DB.get("qcs").find((q) => q.production_id === production.id)
+        const history = DB.getProcessHistory(material);
+        const currentProcess = DB.getCurrentProcess(material);
+        const routeCompleted = DB.isRouteCompleted(material);
+        const gate = DB.canDeliver(material);
+        const qcs = DB.get("qcs").filter((q) => String(q.material_id) === String(material.id));
+        const qc = qcs.length > 0
+          ? qcs.reduce((latest, q) => (!latest || (q.id || 0) > (latest.id || 0) ? q : latest), null)
           : null;
-        const delivery = production
-          ? DB.get("deliveries").find((d) => d.production_id === production.id)
-          : null;
+        const delivery = DB.get("deliveries").find((d) => String(d.material_id) === String(material.id)) || null;
         const customer = DB.findCustomerById(material.customer_id);
         const part = DB.findPartById(material.part_id);
 
         let status = "Waiting";
         let statusClass = "ht-badge-waiting";
-        if (production) {
-          status = production.status;
-          if (status === "Process") statusClass = "ht-badge-process";
-          else if (status === "Finish") statusClass = "ht-badge-finish";
-        }
-        if (qc) {
-          status = qc.hasil === "OK" ? "QC OK" : "QC NG";
-          statusClass = qc.hasil === "OK" ? "ht-badge-ok" : "ht-badge-ng";
-        }
-        if (delivery) {
+        var isLegitDelivery = delivery && gate.allowed === false && gate.reason === "Material sudah dikirim";
+        if (isLegitDelivery) {
           status = "Delivered";
           statusClass = "ht-badge-delivered";
+        } else if (gate.qcStatus === "NG") {
+          status = "QC NG";
+          statusClass = "ht-badge-ng";
+        } else if (currentProcess) {
+          status = "Process: " + currentProcess;
+          statusClass = "ht-badge-process";
+        } else if (routeCompleted && gate.qcStatus === "PASS") {
+          status = "QC OK";
+          statusClass = "ht-badge-ok";
+        } else if (routeCompleted) {
+          status = "Selesai";
+          statusClass = "ht-badge-finish";
         }
         const statusEl = document.getElementById("trackStatus");
         statusEl.textContent = status;
@@ -407,116 +412,95 @@
         document.getElementById("trackCustomer").textContent = customer ? customer.nama_customer : "-";
         document.getElementById("trackQty").textContent = material.qty || 0;
         document.getElementById("trackTanggalMasuk").textContent = material.tanggal_masuk || "-";
-        document.getElementById("trackTreatment").textContent = production ? production.jenis_treatment : "-";
+        document.getElementById("trackTreatment").textContent = history.length > 0 ? history[0].process : "-";
         document.getElementById("trackSJ").textContent = material.nomor_surat_jalan || "-";
         document.getElementById("trackLot").textContent = material.lot_no || "-";
         document.getElementById("trackCharge").textContent = material.material_charge || "-";
 
-        const steps = getStepState(material, production, qc, delivery);
+        const steps = getStepState(material);
         const stepLabels = {
-          incoming: "INCOMING",
-          scan_mulai: "SCAN MULAI",
-          visual: "VISUAL CHECK",
-          mesin_masuk: "MASUK MESIN",
-          process: "PROCESS",
-          scan_keluar: "SCAN KELUAR",
-          mesin_keluar: "KELUAR MESIN",
-          hasil: "HASIL PROSES",
-          qc: "QC",
-          delivery: "DELIVERY",
+          HT: "HEAT TREATMENT",
+          QC: "QUALITY CONTROL",
+          SHOTBLAST: "SHOT BLAST",
+          ANTI_RUST: "ANTI RUST",
         };
-        const timeline = steps.map((s, i) => {
-          const nextActive = steps.slice(i + 1).findIndex((x) => x.done || x.ng) === -1;
+        const timeline = steps.map(function(item) {
           let dotClass = "pending";
-          if (s.ng) dotClass = "ng";
-          else if (s.done) dotClass = i === steps.length - 1 ? (s.done ? "completed" : "pending") : "completed";
-          else if (nextActive) dotClass = "active";
+          if (item.ng) dotClass = "ng";
+          else if (item.completed) dotClass = "completed";
+          else if (item.status === "PROCESS" || item.status === "PROCESSING") dotClass = "active";
+
           let date = "-";
-          let desc = "Menunggu";
-          switch (s.id) {
-            case "incoming":
-              date = material.tanggal_masuk || "-";
-              desc = `Diinput Oleh: ${material.diinput_oleh || "-"} | SJ: ${material.nomor_surat_jalan || "-"} | Lot: ${material.lot_no || "-"} | Charge: ${material.material_charge || "-"}`;
-              break;
-            case "scan_mulai":
-              date = production ? formatDateTime(production.start_scan_at) : "-";
-              desc = production && production.start_scan_by ? `Operator: ${production.start_scan_by}` : "Menunggu";
-              break;
-            case "visual":
-              date = production && production.start_scan_at ? formatDateTime(production.start_scan_at) : "-";
-              desc = production && production.visual_check_result
-                ? `Result: ${production.visual_check_result}${production.visual_check_note ? " | " + production.visual_check_note : ""}`
-                : "Menunggu";
-              break;
-            case "mesin_masuk":
-              date = production ? formatDateTime(production.machine_start_at) : "-";
-              desc = production && production.machine_start_by ? `Operator: ${production.machine_start_by}` : "Menunggu";
-              break;
-            case "process":
-              date = production && production.machine_start_at ? formatDateTime(production.machine_start_at) : "-";
-              desc = production
-                ? (production.production_status === "PROCESS" ? "SEDANG DIPROSES" : "Proses selesai")
-                : "Menunggu";
-              break;
-            case "scan_keluar":
-              date = production ? formatDateTime(production.finish_scan_at) : "-";
-              desc = production && production.finish_scan_by ? `Operator: ${production.finish_scan_by}` : "Menunggu";
-              break;
-            case "mesin_keluar":
-              date = production ? formatDateTime(production.machine_finish_at) : "-";
-              desc = production && production.machine_finish_by ? `Operator: ${production.machine_finish_by}` : "Menunggu";
-              break;
-            case "hasil":
-              if (production && production.process_result) {
-                date = production.production_status === "FINISH" ? "OK" : "NG";
-                desc = production.process_ng_note || ("Hasil: " + production.process_result);
-              }
-              break;
-            case "qc":
-              date = qc ? formatDateTime(qc.tanggal_inspector) : "-";
-              desc = qc ? `Hardness: ${qc.hardness} | Hasil: ${qc.hasil}` : "Menunggu QC";
-              break;
-            case "delivery":
-              date = delivery ? delivery.tanggal_kirim : "-";
-              desc = delivery ? `Qty Kirim: ${delivery.qty_kirim}` : "Menunggu pengiriman";
-              break;
+          let desc = "";
+          const prod = item.production;
+
+          if (item.process === "QC" || item.process === "QC_CHECK") {
+            date = qc ? formatDateTime(qc.tanggal_inspector) : "-";
+            desc = qc ? ("Hardness: " + (qc.hardness || "-") + " | Hasil: " + (qc.hasil || "-")) : "Menunggu QC";
+            if (qc && qc.hasil === "NG") desc += " | " + (qc.catatan || "-");
+          } else if (prod) {
+            date = prod.tanggal_proses || "-";
+            const fields = [];
+            if (prod.start_scan_by) fields.push("Operator: " + prod.start_scan_by);
+            if (prod.machine_start_at) fields.push("Mesin mulai: " + formatDateTime(prod.machine_start_at));
+            if (prod.finish_scan_at) fields.push("Selesai: " + formatDateTime(prod.finish_scan_at));
+            if (prod.process_result === "NG" && prod.process_ng_note) fields.push("NG: " + prod.process_ng_note);
+            desc = fields.length > 0 ? fields.join(" | ") : (item.status === "NOT_STARTED" ? "Belum dimulai" : "Dalam proses");
+          } else {
+            desc = "Belum dimulai";
           }
-          return { title: stepLabels[s.id], date, desc, dotClass, done: s.done || s.ng };
+
+          return {
+            title: stepLabels[item.process] || item.process,
+            date: date,
+            desc: desc,
+            dotClass: dotClass,
+          };
         });
 
+        if (delivery) {
+          timeline.push({
+            title: "DELIVERY",
+            date: delivery.tanggal_kirim || "-",
+            desc: "Qty Kirim: " + (delivery.qty_kirim || "-") + " | " + (delivery.catatan || ""),
+            dotClass: isLegitDelivery ? "completed" : "pending",
+          });
+        }
+
         document.getElementById("timelineList").innerHTML = timeline
-          .map((item) => {
+          .map(function(item) {
             const isLast = timeline.indexOf(item) === timeline.length - 1;
             const lineClass = isLast ? "" : "after-line";
             return `<div class="ht-timeline-item relative ${lineClass}" data-state="${item.dotClass}">
-            <div class="absolute -left-10 top-1">
-              <div class="ht-timeline-dot ${item.dotClass}"></div>
-            </div>
-            <div class="ml-6">
-              <div class="flex items-center justify-between">
-                <h4 class="font-bold text-slate-800 text-xs">${item.title}</h4>
-                <span class="text-[10px] text-slate-400">${item.date}</span>
+              <div class="absolute -left-10 top-1">
+                <div class="ht-timeline-dot ${item.dotClass}"></div>
               </div>
-              <p class="text-[11px] text-slate-500 mt-1">${item.desc}</p>
-            </div>
-          </div>`;
+              <div class="ml-6">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-bold text-slate-800 text-xs">${item.title}</h4>
+                  <span class="text-[10px] text-slate-400">${item.date}</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1">${item.desc}</p>
+              </div>
+            </div>`;
           })
           .join("");
 
-        document.getElementById("detailTanggalProses").textContent = production ? production.tanggal_proses : "-";
-        document.getElementById("detailTreatment").textContent = production ? production.jenis_treatment : "-";
-        document.getElementById("detailProdStatus").textContent = production ? production.status : "Waiting";
-        document.getElementById("detailHardness").textContent = qc ? qc.hardness : "-";
+        const currentProd = currentProcess ? DB.getProcessProduction(material, currentProcess) : null;
+        document.getElementById("detailTanggalProses").textContent = currentProd ? (currentProd.tanggal_proses || "-") : "-";
+        document.getElementById("detailTreatment").textContent = currentProcess || "-";
+        document.getElementById("detailProdStatus").textContent = currentProd ? (currentProd.status || "Waiting") : "Waiting";
+        document.getElementById("detailHardness").textContent = qc ? (qc.hardness || "-") : "-";
         const hasilEl = document.getElementById("detailQcHasil");
-        hasilEl.textContent = qc ? qc.hasil : "-";
+        hasilEl.textContent = qc ? (qc.hasil || "-") : "-";
         hasilEl.className = "font-medium " + (qc ? (qc.hasil === "OK" ? "text-emerald-600" : "text-red-600") : "text-slate-400");
-        document.getElementById("detailTanggalQc").textContent = qc ? qc.tanggal_inspector || "-" : "-";
-        document.getElementById("detailQcCatatan").textContent = qc ? qc.catatan || "-" : "-";
-        document.getElementById("detailTanggalKirim").textContent = delivery ? delivery.tanggal_kirim : "-";
-        document.getElementById("detailQtyKirim").textContent = delivery ? delivery.qty_kirim : "-";
+        document.getElementById("detailTanggalQc").textContent = qc ? (qc.tanggal_inspector || "-") : "-";
+        document.getElementById("detailQcCatatan").textContent = qc ? (qc.catatan || "-") : "-";
+        document.getElementById("detailTanggalKirim").textContent = delivery ? (delivery.tanggal_kirim || "-") : "-";
+        document.getElementById("detailQtyKirim").textContent = delivery ? (delivery.qty_kirim || "-") : "-";
         const delStatus = document.getElementById("detailDelStatus");
-        delStatus.textContent = delivery ? "Delivered" : "-";
-        delStatus.className = "font-medium " + (delivery ? "text-pink-600" : "text-slate-400");
+        delStatus.textContent = isLegitDelivery ? "Delivered" : "-";
+        delStatus.className = "font-medium " + (isLegitDelivery ? "text-pink-600" : "text-slate-400");
       }
       function openScanModal() {
         HTUI.openModal("scanModal");

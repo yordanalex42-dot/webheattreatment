@@ -186,17 +186,22 @@ const HTDashboard = {
 
     const prodMap = {};
     productions.forEach(p => {
-      prodMap[p.material_id] = p;
+      if (!prodMap[p.material_id]) prodMap[p.material_id] = [];
+      prodMap[p.material_id].push(p);
     });
 
     const qcMap = {};
     qcs.forEach(q => {
-      qcMap[q.production_id] = q;
+      if (q.material_id !== undefined && q.material_id !== null && q.material_id !== "") {
+        qcMap[q.material_id] = q;
+      }
     });
 
     const delMap = {};
     deliveries.forEach(d => {
-      delMap[d.production_id] = d;
+      if (d.material_id !== undefined && d.material_id !== null && d.material_id !== "") {
+        delMap[d.material_id] = d;
+      }
     });
 
     const customers = DB.get("customers");
@@ -205,14 +210,48 @@ const HTDashboard = {
     this._data = { materials, productions, qcs, deliveries, prodMap, qcMap, delMap, customers, parts };
   },
 
+  _hasRoute(material) {
+    return !!(material && material.process_route && typeof material.process_route === "object");
+  },
+
+  _isMaterialProductionComplete(material) {
+    if (this._hasRoute(material)) {
+      return DB.isRouteCompleted(material) && DB.checkQualityGate(material).qcStatus === "PASS";
+    }
+    const prods = this._data.prodMap[material.id] || [];
+    return prods.some(p => p.production_status === "FINISH" && p.process_result !== "NG");
+  },
+
   _getRelations(material) {
-    if (!this._data) return { material, prod: null, qc: null, del: null, customer: null, part: null };
-    const prod = this._data.prodMap[material.id] || null;
-    const qc = prod ? (this._data.qcMap[prod.id] || null) : null;
-    const del = prod ? (this._data.delMap[prod.id] || null) : null;
+    if (!this._data) return { material, prod: null, qc: null, del: null, customer: null, part: null, history: [], routeCompleted: false, currentProcess: null };
     const customer = this._data.customers.find(c => c.id == material.customer_id) || null;
     const part = this._data.parts.find(p => p.id == material.part_id) || null;
-    return { material, prod, qc, del, customer, part };
+
+    const qc = this._data.qcMap[material.id] || null;
+    const del = this._data.delMap[material.id] || null;
+
+    let history = [];
+    let routeCompleted = false;
+    let currentProcess = null;
+
+    if (this._hasRoute(material)) {
+      history = DB.getProcessHistory(material);
+      routeCompleted = DB.isRouteCompleted(material);
+      currentProcess = DB.getCurrentProcess(material);
+    }
+
+    let prod = null;
+    if (currentProcess) {
+      prod = DB.getProcessProduction(material, currentProcess);
+    }
+    if (!prod) {
+      const prods = this._data.prodMap[material.id] || [];
+      if (prods.length > 0) {
+        prod = prods[prods.length - 1];
+      }
+    }
+
+    return { material, prod, qc, del, customer, part, history, routeCompleted, currentProcess };
   },
 
   _parseDate(str) {
@@ -336,9 +375,30 @@ const HTDashboard = {
   },
 
   computePartStatus(material) {
-    const { prod, qc, del } = this._getRelations(material);
+    const { prod, qc, del, history, routeCompleted, currentProcess } = this._getRelations(material);
 
     if (del) return "DELIVERY";
+
+    if (this._hasRoute(material)) {
+      const qcGate = DB.checkQualityGate(material);
+      const qcStatus = qcGate.qcStatus;
+
+      for (const step of history) {
+        if (step.process !== "QC" && step.process !== "QC_CHECK") {
+          if (step.status === "FINISH_NG") return "PRODUKSI - NG";
+        }
+      }
+
+      if (qcStatus === "NG") return "QC - NG";
+
+      if (currentProcess && !routeCompleted) return "PROSES PRODUKSI";
+
+      if (qcStatus === "NOT_CHECKED" || qcStatus === null) return "QC";
+
+      if (routeCompleted && qcStatus === "PASS") return "READY DELIVERY";
+
+      return "PROSES PRODUKSI";
+    }
 
     if (!prod) {
       if (material.status_proses === "Process") return "PROSES PRODUKSI";
@@ -631,22 +691,36 @@ const HTDashboard = {
   },
 
   _getProductionChartData() {
-    const { materials, productions, prodMap } = this._data;
-
-    const finishedProds = productions.filter(p => {
-      return p.production_status === "FINISH" && p.process_result !== "NG";
-    });
+    const { materials } = this._data;
 
     const dateWeightMap = {};
-    finishedProds.forEach(prod => {
-      const material = materials.find(m => m.id == prod.material_id);
-      if (!material) return;
 
-      let dateStr = prod.tanggal_proses || "";
-      if (!dateStr && prod.machine_finish_at) {
-        const d = this._parseDate(prod.machine_finish_at);
-        if (d) dateStr = this._toYMD(d);
+    materials.forEach(material => {
+      if (!this._isMaterialProductionComplete(material)) return;
+
+      let dateStr = "";
+      const history = this._hasRoute(material) ? DB.getProcessHistory(material) : [];
+      let lastProd = null;
+
+      if (history.length > 0) {
+        for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i].production) { lastProd = history[i].production; break; }
+        }
       }
+
+      if (!lastProd) {
+        const prods = this._data.prodMap[material.id] || [];
+        if (prods.length > 0) lastProd = prods[prods.length - 1];
+      }
+
+      if (lastProd) {
+        dateStr = lastProd.tanggal_proses || "";
+        if (!dateStr && lastProd.machine_finish_at) {
+          const d = this._parseDate(lastProd.machine_finish_at);
+          if (d) dateStr = this._toYMD(d);
+        }
+      }
+
       if (!dateStr) return;
 
       const weight = this._getMaterialWeight(material);
@@ -737,28 +811,41 @@ const HTDashboard = {
       this._el.monthlyYear.innerHTML = options.join("");
     }
 
-    const { materials, productions } = this._data;
-
-    const finishedProds = productions.filter(p => {
-      return p.production_status === "FINISH" && p.process_result !== "NG";
-    });
+    const { materials } = this._data;
 
     const monthWeightMap = {};
-    finishedProds.forEach(prod => {
-      const material = materials.find(m => m.id == prod.material_id);
-      if (!material) return;
+    materials.forEach(material => {
+      if (!this._isMaterialProductionComplete(material)) return;
 
-      let dateStr = prod.tanggal_proses || "";
-      if (!dateStr && prod.machine_finish_at) {
-        const d = this._parseDate(prod.machine_finish_at);
-        if (d) dateStr = this._toYMD(d);
+      let dateStr = "";
+      const history = this._hasRoute(material) ? DB.getProcessHistory(material) : [];
+      let lastProd = null;
+
+      if (history.length > 0) {
+        for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i].production) { lastProd = history[i].production; break; }
+        }
       }
+
+      if (!lastProd) {
+        const prods = this._data.prodMap[material.id] || [];
+        if (prods.length > 0) lastProd = prods[prods.length - 1];
+      }
+
+      if (lastProd) {
+        dateStr = lastProd.tanggal_proses || "";
+        if (!dateStr && lastProd.machine_finish_at) {
+          const d = this._parseDate(lastProd.machine_finish_at);
+          if (d) dateStr = this._toYMD(d);
+        }
+      }
+
       if (!dateStr) return;
 
       const year = dateStr.split("-")[0];
-      const month = dateStr.split("-")[1];
       if (parseInt(year) !== monthlyYear) return;
 
+      const month = dateStr.split("-")[1];
       const weight = this._getMaterialWeight(material);
       const key = `${year}-${month}`;
       if (monthWeightMap[key]) {
@@ -992,10 +1079,26 @@ const statusPart = material.status_part || "-";
     // never only the current page.
     const exportData = filtered.map((m, idx) => {
       const relations = this._getRelations(m);
-      const { material, prod, qc, del, customer, part } = relations;
+      const { material, prod, qc, del, customer, part, history, routeCompleted, currentProcess } = relations;
 
       const statusPart = this.computePartStatus(m);
-      const statusProduksi = prod ? (prod.production_status || prod.status || "-") : "-";
+      let statusProduksi;
+      if (this._hasRoute(material)) {
+        if (routeCompleted) {
+          statusProduksi = "FINISH";
+        } else if (currentProcess) {
+          const gate = DB.checkQualityGate(material);
+          if (gate.qcStatus === "NG") {
+            statusProduksi = "QC NG";
+          } else {
+            statusProduksi = "PROCESS";
+          }
+        } else {
+          statusProduksi = "INCOMING";
+        }
+      } else {
+        statusProduksi = prod ? (prod.production_status || prod.status || "-") : "-";
+      }
       const statusQC = qc ? (qc.hasil || "-") : "-";
       const statusDelivery = del ? "Delivered" : "-";
       const statusTerakhir = statusPart;

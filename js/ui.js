@@ -107,15 +107,21 @@ const HTUI = {
     }
     const el = document.createElement("div");
     el.className = "ht-toast " + (type || "success");
-    const iconMap = {
-      success: "check-circle",
-      error: "error",
-      warning: "warning"
-    };
-    const iconName = iconMap[type] || "info";
+
+    var iconName = "info";
+    var titleText = "";
+    if (type === "success") { iconName = "check-circle"; titleText = "Berhasil"; }
+    else if (type === "error") { iconName = "error"; titleText = "Gagal"; }
+    else if (type === "warning") { iconName = "warning"; titleText = "Peringatan"; }
+    else if (type === "info") { iconName = "info"; titleText = "Informasi"; }
+
     el.innerHTML =
-      '<img src="assets/icons/' + iconName + '.svg" alt="" class="icon icon-sm mr-2">' +
-      message;
+      '<img src="assets/icons/' + iconName + '.svg" alt="" class="ht-toast-icon">' +
+      '<div class="ht-toast-content">' +
+        '<div class="ht-toast-title">' + titleText + '</div>' +
+        '<div class="ht-toast-msg">' + message + '</div>' +
+      '</div>';
+
     container.appendChild(el);
     setTimeout(() => el.classList.add("show"), 10);
     setTimeout(() => {

@@ -335,9 +335,7 @@
           return;
         }
         currentMaterial = material;
-        const prod = DB.get("productions").find(
-          (p) => p.material_id == material.id,
-        );
+        const prod = DB.getProcessProduction(material, "HT");
         currentProduction = prod || null;
         const part = DB.findPartById(material.part_id);
         const cust = DB.findCustomerById(material.customer_id);
@@ -426,7 +424,7 @@
           HTUI.toast("Keterangan NG wajib diisi!", "error");
           return;
         }
-        const prod = DB.get("productions").find((p) => p.material_id == currentMaterial.id);
+        const prod = DB.getProcessProduction(currentMaterial, "HT");
         if (prod && (prod.production_status === "PROCESS" || prod.production_status === "FINISH" || prod.production_status === "FINISH_NG")) {
           HTUI.toast("Part sudah dalam proses!", "error");
           return;

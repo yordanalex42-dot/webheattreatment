@@ -57,11 +57,14 @@
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
-          <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
+          <a href="heat-treatment.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Heat Treatment" class="icon"> Heat Treatment</a
           >
-          <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
+          <a href="shotblast.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
+          >
+          <a href="anti-rust.html" class="ht-nav-link sub"
+            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
           >
           <a href="qc.html" class="ht-nav-link active"
             ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
@@ -237,14 +240,24 @@
                     </select>
                   </div>
                 </div>
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcHasil">Hasil QC</label>
-                  <select id="qcHasil" required class="ht-form-select">
-                    <option value="">Pilih Hasil</option>
-                    <option value="OK">OK (Lulus)</option>
-                    <option value="NG">NG (Tidak Lulus)</option>
-                  </select>
-                </div>
+                 <div class="ht-form-group">
+                   <label class="ht-form-label" for="qcMicrostructure">Microstructure</label>
+                   <select id="qcMicrostructure" required class="ht-form-select">
+                     <option value="">Pilih hasil microstructure</option>
+                     <option value="OK">OK</option>
+                     <option value="NG">NG</option>
+                   </select>
+                 </div>
+                 <div class="ht-form-group">
+                   <label class="ht-form-label" for="qcHasilDisplay">Hasil QC</label>
+                   <input
+                     type="text"
+                     id="qcHasilDisplay"
+                     readonly
+                     class="ht-form-input"
+                     value="-"
+                   />
+                 </div>
                 <div class="ht-form-group">
                   <label class="ht-form-label" for="qcCatatan">Catatan</label>
                   <textarea
@@ -279,8 +292,9 @@
                       <th>Customer</th>
                       <th>Nama Part</th>
                       <th>Treatment</th>
-                      <th>Hardness</th>
-                      <th>Hasil</th>
+                       <th>Hardness</th>
+                       <th>Microstructure</th>
+                       <th>Hasil</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -344,9 +358,7 @@
           return;
         }
         currentMaterial = material;
-        const production = DB.get("productions").find(
-          (p) => p.material_id == material.id,
-        );
+        const production = DB.getProcessProduction(material, "HT");
         currentProduction = production || null;
         if (!production) {
           HTUI.toast(
@@ -368,30 +380,80 @@
           part ? part.target_hardness || "-" : "-";
         document.getElementById("infoQty").textContent = material.qty || 0;
         document.getElementById("qcProductionId").value = production.id;
-        const existing = DB.get("qcs").find((q) => q.production_id == production.id);
-        if (existing) {
-          document.getElementById("qcId").value = existing.id;
-          document.getElementById("qcHardness").value = existing.hardness;
-          document.getElementById("qcSatuan").value = existing.satuan_hardness || "HRC";
-          document.getElementById("qcHasil").value = existing.hasil;
-          document.getElementById("qcInspector").value = existing.inspector || "";
-          document.getElementById("qcTanggalInspector").value = existing.tanggal_inspector || "";
-          document.getElementById("qcCatatan").value = existing.catatan || "";
-        } else {
-          document.getElementById("qcId").value = "";
-          document.getElementById("qcHardness").value = "";
-          document.getElementById("qcSatuan").value = "HRC";
-          document.getElementById("qcHasil").value = "";
-          document.getElementById("qcInspector").value = "";
-          document.getElementById("qcTanggalInspector").value = "";
-          document.getElementById("qcCatatan").value = "";
-        }
+        const existing = DB.get("qcs").find((q) => String(q.material_id) === String(material.id));
+         const hasilDisplay = document.getElementById("qcHasilDisplay");
+         const hardnessInput = document.getElementById("qcHardness");
+         const microInput = document.getElementById("qcMicrostructure");
+         if (!hardnessInput._hasComputeListener) {
+           hardnessInput.addEventListener("input", computeQcHasil);
+           microInput.addEventListener("change", computeQcHasil);
+           hardnessInput._hasComputeListener = true;
+         }
+         if (existing) {
+           document.getElementById("qcId").value = existing.id;
+           document.getElementById("qcHardness").value = existing.hardness;
+           document.getElementById("qcSatuan").value = existing.satuan_hardness || "HRC";
+           document.getElementById("qcMicrostructure").value = existing.microstructure || "";
+           document.getElementById("qcInspector").value = existing.inspector || "";
+           document.getElementById("qcTanggalInspector").value = existing.tanggal_inspector || "";
+           document.getElementById("qcCatatan").value = existing.catatan || "";
+           if (existing.microstructure) {
+             computeQcHasil();
+           } else {
+             hasilDisplay.value = existing.hasil || "-";
+           }
+         } else {
+           document.getElementById("qcId").value = "";
+           document.getElementById("qcHardness").value = "";
+           document.getElementById("qcSatuan").value = "HRC";
+           document.getElementById("qcMicrostructure").value = "";
+           document.getElementById("qcInspector").value = "";
+           document.getElementById("qcTanggalInspector").value = "";
+           document.getElementById("qcCatatan").value = "";
+           hasilDisplay.value = "-";
+         }
         document.getElementById("qcForm").classList.remove("hidden");
         document.getElementById("qcForm").scrollIntoView({ behavior: "smooth" });
       }
       function clearManualError() {
         const err = document.getElementById("manualError");
         if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
+      }
+      function parseHardnessTarget(target) {
+        if (!target || target === "-") return null;
+        const numericPart = target.replace(/[^\d.]/g, "").trim();
+        if (!numericPart) return null;
+        return parseFloat(numericPart);
+      }
+      function parseHardnessRange(target) {
+        if (!target || target === "-") return null;
+        const match = target.match(/(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)/);
+        if (match) {
+          const min = parseFloat(match[1]);
+          const max = parseFloat(match[2]);
+          if (!isNaN(min) && !isNaN(max)) return { min: Math.min(min, max), max: Math.max(min, max) };
+        }
+        const single = parseHardnessTarget(target);
+        if (single !== null && !isNaN(single)) return { min: single, max: single };
+        return null;
+      }
+      function checkHardness(target, actual) {
+        const range = parseHardnessRange(target);
+        if (!range) return true;
+        const actualVal = parseFloat(actual);
+        if (isNaN(actualVal)) return false;
+        return actualVal >= range.min && actualVal <= range.max;
+      }
+      function computeQcHasil() {
+        const hardness = document.getElementById("qcHardness").value.trim();
+        const microstructure = document.getElementById("qcMicrostructure").value;
+        const hasilDisplay = document.getElementById("qcHasilDisplay");
+        const target = document.getElementById("infoTargetHardness").textContent || "-";
+        const hardnessPass = hardness ? checkHardness(target, hardness) : false;
+        const microPass = microstructure === "OK";
+        const hasil = hardnessPass && microPass ? "PASS" : "NG";
+        hasilDisplay.value = hasil;
+        return { hasil: hasil, hardnessPass: hardnessPass, microPass: microPass };
       }
       document.getElementById("hasilForm").addEventListener("submit", (e) => {
         e.preventDefault();
@@ -401,7 +463,7 @@
         const tanggalInspector = document.getElementById("qcTanggalInspector").value;
         const hardness = document.getElementById("qcHardness").value.trim();
         const satuan = document.getElementById("qcSatuan").value;
-        const hasil = document.getElementById("qcHasil").value;
+        const microstructure = document.getElementById("qcMicrostructure").value;
         const catatan = document.getElementById("qcCatatan").value.trim();
         const kode = document.getElementById("infoKode").textContent;
         if (!kode || kode === "-") {
@@ -420,16 +482,19 @@
           HTUI.toast("Nilai Hardness wajib diisi!", "error");
           return;
         }
-        if (!hasil) {
-          HTUI.toast("Hasil QC wajib dipilih!", "error");
+        if (!microstructure) {
+          HTUI.toast("Silakan isi hasil Microstructure.", "error");
           return;
         }
+        const computed = computeQcHasil();
+        const hasil = computed.hasil;
         const data = {
           production_id: productionId,
           material_id: currentMaterial ? currentMaterial.id : "",
           hardness,
           satuan_hardness: satuan,
           hasil,
+          microstructure,
           inspector,
           tanggal_inspector: tanggalInspector,
           catatan,
@@ -450,17 +515,23 @@
             const part = DB.findPartById(m.part_id);
             const cust = DB.findCustomerById(m.customer_id);
             const hasilColor =
-              q.hasil === "OK"
+              q.hasil === "PASS" || q.hasil === "OK"
                 ? "ht-badge-ok"
                 : q.hasil === "NG"
                   ? "ht-badge-ng"
                   : "ht-badge-waiting";
+            const microDisplay = q.microstructure
+              ? q.microstructure === "OK"
+                ? '<span class="ht-badge ht-badge-ok">OK</span>'
+                : '<span class="ht-badge ht-badge-ng">NG</span>'
+              : '<span class="text-slate-400">-</span>';
             return `<tr class="hover:bg-slate-50 transition">
             <td class="px-3 py-2 font-mono">${m.kode || "-"}</td>
             <td class="px-3 py-2">${(cust && cust.nama_customer) || "-"}</td>
             <td class="px-3 py-2">${part ? part.nomor_part : "-"}</td>
             <td class="px-3 py-2 text-slate-500">${prod.jenis_treatment || "-"}</td>
             <td class="px-3 py-2 font-mono">${q.hardness || "-"} ${q.satuan_hardness || ""}</td>
+            <td class="px-3 py-2">${microDisplay}</td>
             <td class="px-3 py-2"><span class="ht-badge ${hasilColor}">${q.hasil || "-"}</span></td>
             <td class="px-3 py-2">
               <div class="ht-action-group">
@@ -473,7 +544,7 @@
           .join("");
         document.getElementById("qcTable").innerHTML =
           html ||
-          '<tr><td colspan="7" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data QC</p></td></tr>';
+          '<tr><td colspan="8" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data QC</p></td></tr>';
       }
       function deleteQC(id) {
         if (confirm("Hapus data QC ini?")) {

@@ -60,11 +60,14 @@
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
-          <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
+          <a href="heat-treatment.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Heat Treatment" class="icon"> Heat Treatment</a
           >
-          <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
+          <a href="shotblast.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
+          >
+          <a href="anti-rust.html" class="ht-nav-link sub"
+            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
           >
           <a href="qc.html" class="ht-nav-link"
             ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
@@ -380,8 +383,9 @@
                       <th>Status Part</th>
                       <th>Qty</th>
                       <th>Berat Total</th>
-                      <th>Jenis Proses</th>
-                      <th>Diinput Oleh</th>
+                       <th>Jenis Proses</th>
+                       <th>Rute Proses</th>
+                       <th>Diinput Oleh</th>
                       <th>Tanggal Incoming</th>
                       <th>Aksi</th>
                     </tr>
@@ -588,6 +592,20 @@
           document.getElementById("incProcessNote").value = "";
         }
       }
+      function renderProcessRoute(route) {
+        if (!route || typeof route !== "object") {
+          route = { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false };
+        }
+        const steps = [
+          { key: "heat_treatment", label: "Heat Treatment" },
+          { key: "qc_check", label: "QC Check" },
+          { key: "shotblast", label: "Shotblast" },
+          { key: "anti_rust", label: "Anti Rust" },
+        ];
+        const active = steps.filter((s) => route[s.key]);
+        if (active.length === 0) return "-";
+        return active.map((s) => s.label).join(" → ");
+      }
       function openForm() {
         document.getElementById("formTitle").textContent = "Tambah Incoming";
         document.getElementById("incomingForm").reset();
@@ -620,6 +638,16 @@
             .value.trim();
           const processTypeFinal =
             processType === "Lainnya" ? processNote || "Lainnya" : processType;
+          const selectedPart = DB.findPartById(pid);
+          const partRoute = selectedPart && selectedPart.standard_process_route
+            ? selectedPart.standard_process_route
+            : { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false };
+          const processRoute = {
+            heat_treatment: true,
+            qc_check: true,
+            shotblast: partRoute.shotblast === true,
+            anti_rust: partRoute.anti_rust === true,
+          };
           const data = {
             kode,
             customer_id: cid,
@@ -643,6 +671,7 @@
             tracking_id: "",
             qr_code: kode,
             status_proses: "Waiting",
+            process_route: processRoute,
           };
           if (document.getElementById("incId").value) {
             DB.update(
@@ -696,6 +725,7 @@
             <td class="px-3 py-2">${m.qty || 0}</td>
             <td class="px-3 py-2">${m.berat_total_part ? m.berat_total_part.toLocaleString("id-ID") : "-"}</td>
             <td class="px-3 py-2">${m.process_type || "-"}</td>
+            <td class="px-3 py-2 text-xs">${renderProcessRoute(m.process_route)}</td>
             <td class="px-3 py-2">${m.diinput_oleh || "-"}</td>
             <td class="px-3 py-2">${m.tanggal_masuk || "-"}</td>
             <td class="px-3 py-2">
@@ -711,7 +741,7 @@
           .join("");
         document.getElementById("incomingTable").innerHTML =
           html ||
-          '<tr><td colspan="15" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Tidak ada data ditemukan.</p></td></tr>';
+            '<tr><td colspan="16" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Tidak ada data ditemukan.</p></td></tr>';
       }
       function getProcessColor(s) {
         if (s === "Process") return "ht-badge-process";

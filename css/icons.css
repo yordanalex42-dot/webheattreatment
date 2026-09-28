@@ -210,7 +210,8 @@
 .ht-file-protocol .ht-btn-danger .icon,
 .ht-file-protocol .ht-step.active .step-icon .icon,
 .ht-file-protocol .ht-step.completed .step-icon .icon,
-.ht-file-protocol .ht-toast .icon {
+.ht-file-protocol .ht-toast .icon,
+.ht-file-protocol .ht-toast .ht-toast-icon {
   filter: brightness(0) invert(1);
 }
 

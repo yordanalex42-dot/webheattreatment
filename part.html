@@ -56,11 +56,14 @@
           <div class="pt-2">
             <p class="ht-nav-section-title">Produksi</p>
           </div>
-          <a href="produksi-masuk.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-start.svg" alt="Masuk Proses" class="icon"> Masuk Proses</a
+          <a href="heat-treatment.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Heat Treatment" class="icon"> Heat Treatment</a
           >
-          <a href="produksi-akhir.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production-finish.svg" alt="Akhir Proses" class="icon"> Akhir Proses</a
+          <a href="shotblast.html" class="ht-nav-link sub"
+            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
+          >
+          <a href="anti-rust.html" class="ht-nav-link sub"
+            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
           >
           <a href="qc.html" class="ht-nav-link"
             ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
@@ -235,6 +238,51 @@
               />
             </div>
             <div class="ht-form-group">
+              <label class="ht-form-label">Rute Proses Standar</label>
+              <div class="flex flex-col gap-2 mt-1">
+                <label class="flex items-center gap-2 cursor-not-allowed text-sm">
+                  <input
+                    type="checkbox"
+                    id="cbHeatTreatment"
+                    checked
+                    disabled
+                    class="h-4 w-4"
+                  />
+                  <span>Heat Treatment</span>
+                  <span class="text-xs text-slate-500">(Wajib)</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-not-allowed text-sm">
+                  <input
+                    type="checkbox"
+                    id="cbQcCheck"
+                    checked
+                    disabled
+                    class="h-4 w-4"
+                  />
+                  <span>QC Check</span>
+                  <span class="text-xs text-slate-500">(Wajib setelah Heat Treatment)</span>
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    id="cbShotblast"
+                    class="h-4 w-4"
+                  />
+                  <span>Shotblast</span>
+                  <span class="text-xs text-slate-500">(Optional)</span>
+                </label>
+                <label class="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    id="cbAntiRust"
+                    class="h-4 w-4"
+                  />
+                  <span>Anti Rust</span>
+                  <span class="text-xs text-slate-500">(Optional)</span>
+                </label>
+              </div>
+            </div>
+            <div class="ht-form-group">
               <label class="ht-form-label" for="partStatus">Status</label>
               <select id="partStatus" class="ht-form-select">
                 <option value="Active">Active</option>
@@ -350,6 +398,28 @@
           if (arrow) arrow.style.transform = "rotate(0deg)";
         }
       }
+      function renderProcessRoute(route) {
+        const steps = [
+          { key: "heat_treatment", label: "Heat Treatment", required: true },
+          { key: "qc_check", label: "QC Check", required: true },
+          { key: "shotblast", label: "Shotblast", required: false },
+          { key: "anti_rust", label: "Anti Rust", required: false },
+        ];
+        const active = steps.filter((s) => route[s.key]);
+        if (active.length === 0) {
+          return '<p class="text-xs text-slate-400">Tidak ada proses</p>';
+        }
+        let html = '<div class="flex items-center gap-2 flex-wrap">';
+        active.forEach((s, i) => {
+          if (i > 0) html += '<span class="text-slate-400" aria-hidden="true">→</span>';
+          html += `<span class="inline-flex items-center gap-1">
+            <span class="font-medium text-slate-800">${s.label}</span>
+            <span class="text-xs text-slate-500">(${s.required ? "Wajib" : "Optional"})</span>
+          </span>`;
+        });
+        html += '</div>';
+        return html;
+      }
       function showPartDetail(id) {
         const p = DB.find("parts", "id", id);
         if (!p) return;
@@ -370,9 +440,13 @@
               <div><p class="text-slate-500">Nama Part</p><p class="font-semibold text-slate-800">${p.nama_part}</p></div>
               <div><p class="text-slate-500">Berat Part</p><p class="font-semibold text-slate-800">${p.berat_part} ${p.satuan_berat}</p></div>
               <div><p class="text-slate-500">Target Hardness</p><p class="font-semibold text-slate-800 font-mono">${p.target_hardness || "-"}</p></div>
-              <div><p class="text-slate-500">Status</p><p class="font-semibold"><span class="ht-badge ${p.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${p.status}</span></p></div>
-            </div>
-          `;
+               <div><p class="text-slate-500">Status</p><p class="font-semibold"><span class="ht-badge ${p.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${p.status}</span></p></div>
+             </div>
+             <div class="mt-4">
+               <p class="text-xs font-semibold text-slate-500 mb-1">Rute Proses Standar</p>
+               ${renderProcessRoute(p.standard_process_route ? p.standard_process_route : { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false })}
+             </div>
+           `;
         detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
       function openForm() {
@@ -380,6 +454,14 @@
         document.getElementById("partForm").reset();
         document.getElementById("partId").value = "";
         document.getElementById("partNomorErr").classList.add("hidden");
+        document.getElementById("cbHeatTreatment").checked = true;
+        document.getElementById("cbHeatTreatment").disabled = true;
+        document.getElementById("cbQcCheck").checked = true;
+        document.getElementById("cbQcCheck").disabled = true;
+        document.getElementById("cbShotblast").checked = false;
+        document.getElementById("cbShotblast").disabled = false;
+        document.getElementById("cbAntiRust").checked = false;
+        document.getElementById("cbAntiRust").disabled = false;
         loadCustomerDropdown();
         HTUI.openModal("formModal");
       }
@@ -400,6 +482,17 @@
         document.getElementById("partSatuan").value = p.satuan_berat;
         document.getElementById("partStatus").value = p.status;
         document.getElementById("partTargetHardness").value = p.target_hardness || "";
+        const route = p.standard_process_route
+          ? p.standard_process_route
+          : { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false };
+        document.getElementById("cbHeatTreatment").checked = true;
+        document.getElementById("cbHeatTreatment").disabled = true;
+        document.getElementById("cbQcCheck").checked = true;
+        document.getElementById("cbQcCheck").disabled = true;
+        document.getElementById("cbShotblast").checked = !!route.shotblast;
+        document.getElementById("cbShotblast").disabled = false;
+        document.getElementById("cbAntiRust").checked = !!route.anti_rust;
+        document.getElementById("cbAntiRust").disabled = false;
         document.getElementById("partNomorErr").classList.add("hidden");
         HTUI.openModal("formModal");
       }
@@ -422,6 +515,12 @@
           berat_part: parseFloat(document.getElementById("partBerat").value),
           satuan_berat: document.getElementById("partSatuan").value,
           target_hardness: document.getElementById("partTargetHardness").value.trim(),
+          standard_process_route: {
+            heat_treatment: true,
+            qc_check: true,
+            shotblast: document.getElementById("cbShotblast").checked,
+            anti_rust: document.getElementById("cbAntiRust").checked,
+          },
           status: document.getElementById("partStatus").value,
         };
         if (editing) {
