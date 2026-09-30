@@ -1,28 +1,184 @@
 /* ============================================================
-   Dashboard Specific Styles
+   Dashboard Specific Styles — Modern Industrial Premium
+   Consistent with the Habanero + Deep Space Royal design language.
    ============================================================ */
 
-/* ---- KPI Layout (2 Columns) ----
-   Left: 5 KPIs (1 row) + Target card
-   Right: Persentase Capaian Target (tall card)
-   Heights must match via CSS Grid. */
+/* ============================================================
+   PAGE BACKGROUND & CONTAINER
+   ============================================================ */
+
+.ht-main {
+  background: var(--background);
+}
+
+.ht-content {
+  background: var(--background);
+  padding: 28px 28px 28px;
+}
+
+.ht-content-max {
+  max-width: 1500px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ============================================================
+   DASHBOARD HEADER — Premium, Clean, Industrial
+   ============================================================ */
+
+.ht-header {
+  background: var(--surface);
+  border-bottom: 3px solid var(--gradient-primary);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  padding: 20px 28px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-sm);
+  position: relative;
+}
+
+.ht-header:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.ht-header-left h1 {
+  font-size: 24px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.ht-header-left p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-normal);
+  margin-top: 4px;
+}
+
+.ht-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.ht-header-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  padding: 6px 12px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+/* Header action buttons — consistent with Login button style */
+.ht-header-actions .ht-btn {
+  height: 38px;
+  padding: 8px 16px;
+  border-radius: var(--radius-lg);
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  transition:
+    background-color var(--transition-sm),
+    border-color var(--transition-sm),
+    box-shadow var(--transition-sm),
+    transform var(--transition-fast);
+}
+
+.ht-header-actions .ht-btn .icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  transition: transform var(--transition-sm);
+}
+
+.ht-header-actions .ht-btn:hover .icon {
+  transform: scale(1.1);
+}
+
+.ht-header-actions .ht-btn:active {
+  transform: scale(0.97);
+}
+
+.ht-header-actions .ht-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.ht-header-actions .ht-btn-secondary {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.ht-header-actions .ht-btn-secondary:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 2px 8px rgba(34, 51, 130, 0.10);
+}
+
+.ht-header-actions .ht-btn-success {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: var(--text-inverse);
+  border: 1.5px solid var(--success);
+  border-radius: var(--radius-lg);
+}
+
+.ht-header-actions .ht-btn-success:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+/* Refresh button spin icon */
+.ht-header-actions .ht-btn .icon.icon-spin {
+  animation: spin 0.8s linear infinite;
+}
+
+.ht-header-actions .ht-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ============================================================
+   CONTENT SPACING
+   ============================================================ */
+
+.ht-content {
+  padding: 28px 28px 28px;
+}
+
+.ht-content-max {
+  max-width: 1500px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ============================================================
+   KPI LAYOUT — 2 Column Premium Industrial
+   ============================================================ */
+
 .ht-kpi-layout {
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   align-items: stretch;
 }
 
-/* Left column: 5 KPIs grid + target card stacked */
 .ht-kpi-left {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   min-height: 0;
 }
 
-/* 5 KPIs in one row */
 .ht-kpi-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -30,23 +186,197 @@
   flex-shrink: 0;
 }
 
-/* KPI card base - TALLER for more spacious look */
+/* ============================================================
+   KPI CARD — Modern Premium Industrial
+   ============================================================ */
+
 .ht-kpi-card {
   position: relative;
   display: flex;
   flex-direction: column;
   padding: 20px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-sm),
+    border-color var(--transition-sm);
   min-height: 140px;
   overflow: hidden;
+  animation: kpiEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Target card in left column - COMPACT */
+@keyframes kpiEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ht-kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.ht-kpi-card:focus-within {
+  box-shadow: var(--focus-ring-blue);
+}
+
+/* Staggered entrance */
+.ht-kpi-grid .ht-kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.ht-kpi-grid .ht-kpi-card:nth-child(2) { animation-delay: 0.1s; }
+.ht-kpi-grid .ht-kpi-card:nth-child(3) { animation-delay: 0.15s; }
+.ht-kpi-grid .ht-kpi-card:nth-child(4) { animation-delay: 0.2s; }
+.ht-kpi-grid .ht-kpi-card:nth-child(5) { animation-delay: 0.25s; }
+
+/* Icon tile */
+.ht-kpi-card::before {
+  content: "";
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-lg);
+  background: var(--primary-soft);
+  border: 1px solid rgba(34, 51, 130, 0.15);
+  opacity: 0.8;
+}
+
+.ht-kpi-card.primary::before { background: rgba(34, 51, 130, 0.08); }
+.ht-kpi-card.info::before { background: rgba(154, 172, 216, 0.12); }
+.ht-kpi-card.warning::before { background: rgba(245, 158, 11, 0.10); }
+.ht-kpi-card.success::before { background: rgba(16, 185, 129, 0.10); }
+.ht-kpi-card.danger::before { background: rgba(239, 68, 68, 0.10); }
+.ht-kpi-card.habanero::before { background: rgba(249, 133, 19, 0.12); }
+
+/* KPI icon */
+.ht-kpi-card .ht-kpi-icon {
+  position: absolute;
+  right: 27px;
+  bottom: 27px;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  flex-shrink: 0;
+  opacity: 0.95;
+  color: var(--primary);
+  transition: color var(--transition-sm);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.ht-kpi-card.primary .ht-kpi-icon { color: var(--primary); }
+.ht-kpi-card.info .ht-kpi-icon { color: var(--info-text); }
+.ht-kpi-card.warning .ht-kpi-icon { color: var(--warning-text); }
+.ht-kpi-card.success .ht-kpi-icon { color: var(--success-text); }
+.ht-kpi-card.danger .ht-kpi-icon { color: var(--danger-text); }
+.ht-kpi-card.habanero .ht-kpi-icon { color: var(--habanero); }
+
+.ht-kpi-card:hover .ht-kpi-icon {
+  filter: brightness(1.15);
+}
+
+/* KPI text container */
+.ht-kpi-card .ht-kpi-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.ht-kpi-card .ht-kpi-label {
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  line-height: 1.3;
+  opacity: 0.9;
+}
+
+.ht-kpi-card .ht-kpi-value {
+  font-size: 28px;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ht-kpi-card .ht-kpi-unit {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   TARGET CARD — Distinct from KPI, subtle accent
+   ============================================================ */
+
 .ht-kpi-left #targetCard {
   flex-shrink: 0;
   flex-grow: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  animation: kpiEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.ht-kpi-left #targetCard .ht-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-sm),
+    border-color var(--transition-sm);
+  border-left: 3px solid var(--habanero);
+}
+
+.ht-kpi-left #targetCard .ht-card:hover {
+  border-left-color: var(--habanero-hover);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.ht-kpi-left #targetCard .ht-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-hover);
+}
+
+.ht-kpi-left #targetCard .ht-card-title {
+  font-size: 14px;
+  font-weight: var(--font-weight-semi);
+  color: var(--text-primary);
 }
 
 .ht-kpi-left #targetCard .ht-card-body {
@@ -55,18 +385,49 @@
   align-items: center;
   justify-content: center;
   min-height: 0;
-  padding: 12px 16px;
+  padding: 16px 20px;
 }
 
-/* Target display value - LARGER font for prominence */
 #targetDisplay .ht-kpi-value {
   font-size: 28px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   line-height: 1.2;
-  color: var(--primary);
+  color: var(--habanero);
 }
 
-/* Right column: Persentase Capaian Target (Donut Chart) */
+.ht-kpi-left #targetCard .ht-btn-ghost {
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  transition:
+    color var(--transition-sm),
+    background-color var(--transition-sm),
+    border-color var(--transition-sm);
+}
+
+.ht-kpi-left #targetCard .ht-btn-ghost:hover {
+  background: var(--habanero-soft);
+  color: var(--habanero-hover);
+  border-color: rgba(249, 133, 19, 0.2);
+}
+
+.ht-kpi-left #targetCard .ht-btn-ghost:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.ht-kpi-left #targetCard .ht-btn-ghost .icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ============================================================
+   DONUT TARGET CARD — Right Column
+   ============================================================ */
+
 .ht-kpi-right {
   display: flex;
   flex-direction: column;
@@ -84,6 +445,15 @@
   overflow: hidden;
   flex: 1;
   min-height: 0;
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-sm);
+  animation: kpiEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+.ht-kpi-card-primary-large:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .ht-kpi-primary-content {
@@ -99,12 +469,13 @@
 
 .ht-kpi-primary-label {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semi);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   line-height: 1.3;
+  opacity: 0.9;
 }
 
 .ht-donut-wrapper {
@@ -132,7 +503,7 @@
 .ht-donut-value {
   display: block;
   font-size: 42px;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
   line-height: 1;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
@@ -141,404 +512,105 @@
 .ht-donut-unit {
   display: block;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semi);
   color: var(--text-secondary);
   margin-top: 2px;
 }
 
 .ht-donut-detail {
-  margin-top: 16px;
+  margin-top: 20px;
   font-size: 12px;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-}
-
-/* KPI icon tile for standard cards - positioned at bottom-right */
-.ht-kpi-card::before {
-  content: "";
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  width: 34px;
-  height: 34px;
-  border-radius: var(--radius-md);
-  background: var(--primary-soft);
-}
-
-.ht-kpi-card .ht-kpi-icon {
-  position: absolute;
-  right: 27px;
-  bottom: 27px;
-  z-index: 1;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  flex-shrink: 0;
-  opacity: 1;
-  color: var(--primary);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-}
-
-/* Per-variant tile tint + icon color (classes already in the markup) */
-.ht-kpi-card.primary::before { background: var(--primary-soft); }
-.ht-kpi-card.info::before { background: var(--info-bg); }
-.ht-kpi-card.warning::before { background: var(--warning-bg); }
-.ht-kpi-card.success::before { background: var(--success-bg); }
-.ht-kpi-card.danger::before { background: var(--danger-bg); }
-
-.ht-kpi-card.primary .ht-kpi-icon { color: var(--primary-hover); }
-.ht-kpi-card.info .ht-kpi-icon { color: var(--info-text); }
-.ht-kpi-card.warning .ht-kpi-icon { color: var(--warning-text); }
-.ht-kpi-card.success .ht-kpi-icon { color: var(--success-text); }
-.ht-kpi-card.danger .ht-kpi-icon { color: var(--danger-text); }
-
-/* Icon assets used by the KPI cards (mask map) */
-.ht-kpi-card .ht-kpi-icon[src$="incoming.svg"] {
-  -webkit-mask-image: url("../assets/icons/incoming.svg");
-  mask-image: url("../assets/icons/incoming.svg");
-  background-color: currentColor;
-}
-.ht-kpi-card .ht-kpi-icon[src$="weight.svg"] {
-  -webkit-mask-image: url("../assets/icons/weight.svg");
-  mask-image: url("../assets/icons/weight.svg");
-  background-color: currentColor;
-}
-.ht-kpi-card .ht-kpi-icon[src$="process.svg"] {
-  -webkit-mask-image: url("../assets/icons/process.svg");
-  mask-image: url("../assets/icons/process.svg");
-  background-color: currentColor;
-}
-.ht-kpi-card .ht-kpi-icon[src$="quality-control.svg"] {
-  -webkit-mask-image: url("../assets/icons/quality-control.svg");
-  mask-image: url("../assets/icons/quality-control.svg");
-  background-color: currentColor;
-}
-.ht-kpi-card .ht-kpi-icon[src$="delivery.svg"] {
-  -webkit-mask-image: url("../assets/icons/delivery.svg");
-  mask-image: url("../assets/icons/delivery.svg");
-  background-color: currentColor;
-}
-.ht-kpi-card .ht-kpi-icon[src$="warning.svg"] {
-  -webkit-mask-image: url("../assets/icons/warning.svg");
-  mask-image: url("../assets/icons/warning.svg");
-  background-color: currentColor;
-}
-
-/* Opened straight from disk: the mask cannot load, so the icon falls back
-   to its natural dark stroke on the tinted tile (visible, no filter). */
-.ht-file-protocol .ht-kpi-card .ht-kpi-icon {
-  -webkit-mask-image: none;
-  mask-image: none;
-  background-color: transparent;
-  opacity: 0.75;
-}
-
-/* ---- KPI text ----
-   min-height on the label keeps the value rows aligned even when a
-   label wraps to two lines on narrow screens. */
-.ht-kpi-card .ht-kpi-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-width: 0;
-}
-
-.ht-kpi-card .ht-kpi-label {
-  /* reserve exactly two lines (2 x 1.3) so every card puts its value on
-     the same baseline, whether the label wraps or not */
-  min-height: 2.6em;
-  margin-bottom: 6px;
-  line-height: 1.3;
-  overflow-wrap: break-word;
-}
-
-/* Main figure: the most prominent element on the card */
-.ht-kpi-card .ht-kpi-value {
-  font-size: 28px;
-  font-weight: var(--font-weight-bold);
-  line-height: 1.1;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Unit / context line — small and clearly secondary, but still readable
-   (--text-secondary keeps ~7.5:1 on the white card) */
-.ht-kpi-unit {
-  display: block;
-  margin-top: 3px;
-  font-size: 12px;
-  font-weight: var(--font-weight-semi);
   color: var(--text-secondary);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Staggered KPI card entrance animation */
-.ht-kpi-grid .ht-kpi-card:nth-child(2) { animation-delay: 0.05s; }
-.ht-kpi-grid .ht-kpi-card:nth-child(3) { animation-delay: 0.1s; }
-.ht-kpi-grid .ht-kpi-card:nth-child(4) { animation-delay: 0.15s; }
-.ht-kpi-grid .ht-kpi-card:nth-child(5) { animation-delay: 0.2s; }
-.ht-kpi-grid .ht-kpi-card:nth-child(6) { animation-delay: 0.25s; }
-
-/* Chart canvas wrapper */
-.ht-chart-canvas-wrapper {
-  position: relative;
-  height: 280px;
-  width: 100%;
-}
-
-/* Chart context line under the card title (unit of measure) */
-.ht-card-subtitle {
-  margin-top: 2px;
-  font-size: var(--text-xs);
   line-height: 1.4;
-  color: var(--text-tertiary);
+  white-space: nowrap;
+  opacity: 0.9;
 }
 
-/* Empty chart state — covers the canvas so an empty period reads as an
-   explicit empty state instead of a broken-looking chart */
-.ht-chart-empty {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  text-align: center;
+/* ============================================================
+   CHART CARDS — Daily & Monthly
+   ============================================================ */
+
+.ht-chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.ht-chart-grid .ht-card {
   background: var(--surface);
-  border-radius: var(--radius-md);
-  color: var(--text-tertiary);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* Filter bar */
-.ht-filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: flex-end;
-  padding: 16px;
-  background: var(--surface-hover);
-  border-radius: var(--radius-md);
   border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-sm);
+  overflow: hidden;
+  animation: chartEntrance 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.ht-filter-bar .ht-form-input,
-.ht-filter-bar .ht-form-select {
-  min-width: 140px;
-  flex: 1;
+@keyframes chartEntrance {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.ht-filter-bar .ht-form-input-sm,
-.ht-filter-bar .ht-form-select-sm {
-  padding: 6px 10px;
+.ht-chart-grid .ht-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.ht-chart-grid .ht-card {
+  padding: 20px;
+}
+
+.ht-chart-grid .ht-card-header-with-actions {
+  margin-bottom: 18px;
+}
+
+.ht-chart-grid .ht-card-title {
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.ht-chart-grid .ht-card-subtitle {
+  margin-top: 4px;
   font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-normal);
+  line-height: 1.4;
 }
 
-/* Pagination page numbers */
-#pageNumbers button {
-  min-width: 32px;
-}
-
-/* Scrollbar for table */
-.ht-table-wrapper::-webkit-scrollbar {
-  height: 8px;
-}
-
-.ht-table-wrapper::-webkit-scrollbar-track {
-  background: var(--surface-hover);
-  border-radius: 4px;
-}
-
-.ht-table-wrapper::-webkit-scrollbar-thumb {
-  background: var(--border-dark);
-  border-radius: 4px;
-}
-
-.ht-table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
-}
-
-/* Card header with actions */
-.ht-card-header-with-actions {
+/* Chart period controls */
+.ht-chart-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
-/* Responsive adjustments for new 2-column KPI layout */
-@media (max-width: 1199px) {
-  .ht-kpi-layout {
-    grid-template-columns: 1fr 300px;
-    gap: 16px;
-  }
-  .ht-kpi-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-  }
-  .ht-kpi-card {
-    padding: 16px 14px;
-    min-height: 104px;
-  }
-  .ht-kpi-card::before {
-    right: 14px;
-    bottom: 14px;
-    width: 30px;
-    height: 30px;
-  }
-  .ht-kpi-card .ht-kpi-icon {
-    right: 19px;
-    bottom: 19px;
-  }
-  .ht-kpi-card .ht-kpi-value {
-    font-size: 24px;
-  }
-  .ht-kpi-card-primary-large {
-    border-radius: var(--radius-lg);
-  }
-  .ht-kpi-primary-content {
-    padding: 28px 20px;
-  }
-  .ht-kpi-primary-icon {
-    width: 56px;
-    height: 56px;
-  }
-  .ht-kpi-primary-icon .icon {
-    width: 28px;
-    height: 28px;
-  }
-  .ht-kpi-primary-value {
-    font-size: 48px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .ht-kpi-layout {
-    grid-template-columns: 1fr 280px;
-    gap: 16px;
-  }
-  .ht-kpi-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
-  }
-  .ht-kpi-card {
-    padding: 14px 12px;
-    min-height: 96px;
-  }
-}
-
-@media (max-width: 768px) {
-  .ht-kpi-layout {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .ht-kpi-left {
-    gap: 12px;
-  }
-  .ht-kpi-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-  .ht-kpi-card {
-    padding: 14px 12px;
-    min-height: 96px;
-  }
-  .ht-kpi-card::before {
-    right: 12px;
-    bottom: 12px;
-    width: 28px;
-    height: 28px;
-  }
-  .ht-kpi-card .ht-kpi-icon {
-    right: 17px;
-    bottom: 17px;
-    width: 18px;
-    height: 18px;
-  }
-  .ht-kpi-card .ht-kpi-value {
-    font-size: 22px;
-  }
-  .ht-kpi-card .ht-kpi-label {
-    font-size: 10px;
-  }
-  .ht-kpi-card-primary-large {
-    min-height: 200px;
-  }
-  .ht-kpi-primary-content {
-    padding: 24px 16px;
-  }
-  .ht-kpi-primary-icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 12px;
-  }
-  .ht-kpi-primary-icon .icon {
-    width: 24px;
-    height: 24px;
-  }
-  .ht-kpi-primary-value {
-    font-size: 40px;
-  }
-  .ht-kpi-primary-label {
-    font-size: 12px;
-  }
-  .ht-kpi-primary-sub {
-    font-size: 12px;
-  }
-  .ht-kpi-left #targetCard .ht-card-body {
-    padding: 12px 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .ht-kpi-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-  .ht-kpi-card {
-    padding: 12px 10px;
-    min-height: 88px;
-  }
-  .ht-kpi-card .ht-kpi-value {
-    font-size: 20px;
-  }
-  .ht-kpi-card .ht-kpi-label {
-    font-size: 9px;
-  }
-  .ht-kpi-primary-value {
-    font-size: 36px;
-  }
-}
-
-/* Badge size for table */
-.ht-table .ht-badge {
-  font-size: 10px;
-  padding: 2px 8px;
-}
-
-/* Form select/input small variants */
-.ht-form-select-sm,
-.ht-form-input-sm {
-  padding: 6px 10px;
+.ht-chart-controls .ht-form-select,
+.ht-chart-controls .ht-form-input {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
   font-size: 12px;
+  background: var(--surface);
+  color: var(--text-primary);
+  transition:
+    border-color var(--transition-sm),
+    box-shadow var(--transition-sm);
 }
 
-/* Chart container — one height ladder shared by both charts so the daily
-   and monthly chart always render at the same visual size */
+.ht-chart-controls .ht-form-select:focus,
+.ht-chart-controls .ht-form-input:focus {
+  outline: none;
+  border-color: var(--habanero);
+  box-shadow: 0 0 0 3px rgba(249, 133, 19, 0.12);
+}
+
 .ht-chart-container {
   position: relative;
   width: 100%;
@@ -546,146 +618,224 @@
   min-height: 200px;
 }
 
-@media (max-width: 1024px) {
-  .ht-chart-container {
-    height: 260px;
-  }
+/* Chart empty state */
+.ht-chart-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  background: var(--surface-hover);
+  border-radius: var(--radius-lg);
+  color: var(--text-tertiary);
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px dashed var(--border);
 }
 
-@media (max-width: 768px) {
-  .ht-chart-container {
-    height: 240px;
-  }
+.ht-chart-empty .icon {
+  width: 28px;
+  height: 28px;
+  opacity: 0.4;
 }
 
-@media (max-width: 640px) {
-  .ht-chart-container {
-    height: 220px;
-  }
-}
-
-@media (max-width: 480px) {
-  .ht-chart-container {
-    height: 200px;
-  }
-}
 /* ============================================================
-   MONITORING TABLE (dashboard only)
-   The 19 columns are given explicit widths through table-layout:
-   fixed. That makes the horizontal scroll inside .ht-table-wrapper
-   deterministic instead of letting the browser squeeze text columns
-   and stretch label columns, and it keeps the badge columns wide
-   enough that no status text is ever cut.
+   FILTER BAR — Modern, Clean Industrial
+   ============================================================ */
+
+.ht-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 18px 20px;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  animation: filterEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+@keyframes filterEntrance {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ht-filter-bar .ht-form-input,
+.ht-filter-bar .ht-form-select {
+  min-width: 140px;
+  flex: 1;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  font-size: 13px;
+  background: var(--surface);
+  color: var(--text-primary);
+  transition:
+    border-color var(--transition-sm),
+    box-shadow var(--transition-sm),
+    background-color var(--transition-sm);
+  outline: none;
+}
+
+.ht-filter-bar .ht-form-input:hover:not(:focus),
+.ht-filter-bar .ht-form-select:hover:not(:focus) {
+  border-color: var(--primary);
+}
+
+.ht-filter-bar .ht-form-input:focus,
+.ht-filter-bar .ht-form-select:focus {
+  border-color: var(--habanero);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(249, 133, 19, 0.12);
+}
+
+.ht-filter-bar .ht-form-select {
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.ht-filter-bar .ht-form-select::after {
+  color: var(--text-tertiary);
+}
+
+.ht-filter-bar .filter-label {
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  margin-bottom: 2px;
+  display: block;
+}
+
+/* ============================================================
+   MONITORING TABLE CARD
+   ============================================================ */
+
+.ht-monitor-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--transition-sm),
+    box-shadow var(--transition-sm);
+  animation: tableEntrance 500ms cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+  overflow: hidden;
+}
+
+@keyframes tableEntrance {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ht-monitor-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.ht-monitor-card .ht-card-header-with-actions {
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-hover);
+}
+
+.ht-monitor-card .ht-card-title {
+  font-size: 16px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+}
+
+.ht-monitor-card .ht-pagination-info {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ht-monitor-card .ht-pagination-info {
+  min-width: 0;
+}
+
+.ht-monitor-card .ht-pagination-controls {
+  min-width: 0;
+}
+
+/* ============================================================
+   MONITORING TABLE
    ============================================================ */
 
 .ht-monitor-table {
-  /* the single horizontal scrolling area of the page */
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .ht-monitor-table .ht-table {
-  table-layout: fixed;
-  /* Explicit width = the sum of the 19 column widths below, so the columns
-     keep their declared size instead of being squeezed by shrink-to-fit.
-     min-width:100% stretches the same columns on very wide screens. */
-  width: 2080px;
+  table-layout: auto;
   min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.ht-monitor-table .ht-table th,
-.ht-monitor-table .ht-table td {
-  padding: 12px 14px;
+.ht-monitor-table .ht-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-hover);
+  border-bottom: 2px solid var(--border);
+}
+
+.ht-monitor-table .ht-table th {
+  padding: 10px 16px;
   vertical-align: middle;
-}
-
-/* ---- Column widths ----
-   Roomier: Customer, Nama Part, Jenis Proses, Diinput Oleh, Nomor Part.
-   Compact: No, Qty, Aksi, and the status columns.
-   Two constraints set the lower bound of each width:
-   - the header label of the column, which is uppercase 10px and never
-     wrapped, so "TANGGAL INCOMING" needs 131px and "STATUS DELIVERY" 117px;
-   - the widest status badge ("PROSES PRODUKSI" = 113px), so columns 9 and
-     18 keep enough room for it to stay fully readable. */
-.ht-monitor-table .ht-table th:nth-child(1) { width: 46px; }
-.ht-monitor-table .ht-table th:nth-child(2) { width: 110px; }
-.ht-monitor-table .ht-table th:nth-child(3) { width: 160px; }
-.ht-monitor-table .ht-table th:nth-child(4) { width: 120px; }
-.ht-monitor-table .ht-table th:nth-child(5) { width: 160px; }
-.ht-monitor-table .ht-table th:nth-child(6) { width: 160px; }
-.ht-monitor-table .ht-table th:nth-child(7) { width: 120px; }
-.ht-monitor-table .ht-table th:nth-child(8) { width: 140px; }
-.ht-monitor-table .ht-table th:nth-child(9) { width: 140px; }
-.ht-monitor-table .ht-table th:nth-child(10) { width: 56px; }
-.ht-monitor-table .ht-table th:nth-child(11) { width: 100px; }
-.ht-monitor-table .ht-table th:nth-child(12) { width: 140px; }
-.ht-monitor-table .ht-table th:nth-child(13) { width: 120px; }
-.ht-monitor-table .ht-table th:nth-child(14) { width: 140px; }
-.ht-monitor-table .ht-table th:nth-child(15) { width: 130px; }
-.ht-monitor-table .ht-table th:nth-child(16) { width: 82px; }
-.ht-monitor-table .ht-table th:nth-child(17) { width: 120px; }
-.ht-monitor-table .ht-table th:nth-child(18) { width: 140px; }
-.ht-monitor-table .ht-table th:nth-child(19) { width: 56px; }
-
-/* ---- Alignment ----
-   Numbers, dates, statuses and the action column are centered or
-   right aligned; identifiers and descriptive text stay left. */
-.ht-monitor-table .ht-table th:nth-child(1),
-.ht-monitor-table .ht-table td:nth-child(1),
-.ht-monitor-table .ht-table th:nth-child(9),
-.ht-monitor-table .ht-table td:nth-child(9),
-.ht-monitor-table .ht-table th:nth-child(14),
-.ht-monitor-table .ht-table td:nth-child(14),
-.ht-monitor-table .ht-table th:nth-child(15),
-.ht-monitor-table .ht-table td:nth-child(15),
-.ht-monitor-table .ht-table th:nth-child(16),
-.ht-monitor-table .ht-table td:nth-child(16),
-.ht-monitor-table .ht-table th:nth-child(17),
-.ht-monitor-table .ht-table td:nth-child(17),
-.ht-monitor-table .ht-table th:nth-child(18),
-.ht-monitor-table .ht-table td:nth-child(18),
-.ht-monitor-table .ht-table th:nth-child(19),
-.ht-monitor-table .ht-table td:nth-child(19) {
-  text-align: center;
-}
-
-.ht-monitor-table .ht-table th:nth-child(10),
-.ht-monitor-table .ht-table td:nth-child(10),
-.ht-monitor-table .ht-table th:nth-child(11),
-.ht-monitor-table .ht-table td:nth-child(11) {
-  text-align: right;
-}
-
-.ht-monitor-table .ht-table th:nth-child(10),
-.ht-monitor-table .ht-table th:nth-child(11) {
-  text-align: right;
-}
-
-/* ---- Kode: primary identifier, tabular and never wrapped ---- */
-.ht-monitor-table .ht-table td:nth-child(2) {
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  font-weight: var(--font-weight-semi);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  background: var(--surface-hover);
+  border-bottom: 2px solid var(--border);
+  position: relative;
   white-space: nowrap;
-}
-
-/* ---- Long text: single line + ellipsis ----
-   The full value stays available through the title attribute set by
-   the renderer, so nothing is removed from the data. */
-.ht-monitor-table .ht-table td:nth-child(3),
-.ht-monitor-table .ht-table td:nth-child(4),
-.ht-monitor-table .ht-table td:nth-child(5),
-.ht-monitor-table .ht-table td:nth-child(6),
-.ht-monitor-table .ht-table td:nth-child(7),
-.ht-monitor-table .ht-table td:nth-child(8),
-.ht-monitor-table .ht-table td:nth-child(12),
-.ht-monitor-table .ht-table td:nth-child(13) {
-  max-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-/* ---- Status cells: badges never wrap or stretch the row ---- */
+.ht-monitor-table .ht-table th:first-child {
+  border-top-left-radius: var(--radius-lg);
+}
+
+.ht-monitor-table .ht-table th:last-child {
+  border-top-right-radius: var(--radius-lg);
+}
+
+.ht-monitor-table .ht-table td {
+  padding: 10px 16px;
+  vertical-align: middle;
+  font-size: 12px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Row stripe + hover */
+.ht-monitor-table .ht-table tbody tr:nth-child(even) {
+  background: var(--surface);
+}
+
+.ht-monitor-table .ht-table tbody tr:hover {
+  background: var(--primary-soft);
+  transition: background-color var(--transition-sm);
+}
+
+.ht-monitor-table .ht-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Status cell alignment */
 .ht-monitor-table .ht-table td:nth-child(9),
 .ht-monitor-table .ht-table td:nth-child(15),
 .ht-monitor-table .ht-table td:nth-child(16),
@@ -694,48 +844,214 @@
   white-space: nowrap;
 }
 
-.ht-monitor-table .ht-badge {
-  padding: 2px 8px;
-  max-width: 100%;
+/* Kode — primary identifier */
+.ht-monitor-table .ht-table td:nth-child(2) {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--primary);
+}
+
+/* Long text ellipsis — teks panjang (nama customer, part, ops) + kode pendek */
+.ht-monitor-table .ht-table td:nth-child(3),
+.ht-monitor-table .ht-table td:nth-child(4),
+.ht-monitor-table .ht-table td:nth-child(5),
+.ht-monitor-table .ht-table td:nth-child(6),
+.ht-monitor-table .ht-table td:nth-child(7),
+.ht-monitor-table .ht-table td:nth-child(8),
+.ht-monitor-table .ht-table td:nth-child(12),
+.ht-monitor-table .ht-table td:nth-child(13),
+.ht-monitor-table .ht-table td:nth-child(16) {
+  max-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  vertical-align: middle;
-}
-
-/* ---- Rows ----
-   The stripe and the hover rule have the same specificity, so the hover
-   state is declared last to win. The hover class the renderer puts on the
-   <tr> is never generated by the Tailwind CDN (it only scans the HTML),
-   so this is the rule that actually provides the hover state. */
-.ht-monitor-table .ht-table tbody tr {
-  transition: background-color var(--transition-sm);
-}
-
-.ht-monitor-table .ht-table tbody tr:nth-child(even) {
-  background: var(--surface);
-}
-
-.ht-monitor-table .ht-table tbody tr:hover {
-  background: var(--surface-hover);
-}
-
-/* ---- Action column ---- */
-.ht-monitor-table .ht-table td:nth-child(19) {
   white-space: nowrap;
 }
 
-.ht-monitor-table .ht-table td:nth-child(19) .ht-action-group {
+/* Action column */
+.ht-monitor-table .ht-table td:nth-child(18) {
+  white-space: nowrap;
+}
+
+.ht-monitor-table .ht-table td:nth-child(18) .ht-action-group {
   gap: 6px;
 }
 
-/* ---- Empty state ---- */
+/* ===== Column widths (via th, since table-layout: auto) ===== */
+.ht-monitor-table .ht-table th:nth-child(1)  { width: 2.5%;   min-width: 36px; }   /* No */
+.ht-monitor-table .ht-table th:nth-child(2)  { width: 5.5%;   min-width: 80px; }   /* Nomor Kode */
+.ht-monitor-table .ht-table th:nth-child(3)  { width: 10%;    min-width: 110px; }  /* Customer */
+.ht-monitor-table .ht-table th:nth-child(4)  { width: 5.5%;   min-width: 80px; }   /* Nomor Part */
+.ht-monitor-table .ht-table th:nth-child(5)  { width: 11%;    min-width: 120px; }  /* Nama Part */
+.ht-monitor-table .ht-table th:nth-child(6)  { width: 5%;     min-width: 70px; }   /* Status Part */
+.ht-monitor-table .ht-table th:nth-child(7)  { width: 6.5%;   min-width: 90px; }   /* No Surat Jalan */
+.ht-monitor-table .ht-table th:nth-child(8)  { width: 6%;     min-width: 70px; }   /* Lot No */
+.ht-monitor-table .ht-table th:nth-child(9)  { width: 5.5%;   min-width: 70px; }   /* Material Charge */
+.ht-monitor-table .ht-table th:nth-child(10) { width: 3.5%;   min-width: 48px; }   /* Qty */
+.ht-monitor-table .ht-table th:nth-child(11) { width: 5%;     min-width: 60px; }   /* Berat Total */
+.ht-monitor-table .ht-table th:nth-child(12) { width: 6.5%;   min-width: 80px; }   /* Jenis Proses */
+.ht-monitor-table .ht-table th:nth-child(13) { width: 6%;     min-width: 80px; }   /* Diinput Oleh */
+.ht-monitor-table .ht-table th:nth-child(14) { width: 5.5%;   min-width: 80px; }   /* Tanggal Incoming */
+.ht-monitor-table .ht-table th:nth-child(15) { width: 5%;     min-width: 60px; }   /* Status QC */
+.ht-monitor-table .ht-table th:nth-child(16) { width: 5%;     min-width: 60px; }   /* Inspector */
+.ht-monitor-table .ht-table th:nth-child(17) { width: 5.5%;   min-width: 80px; }   /* Tanggal Delivery */
+.ht-monitor-table .ht-table th:nth-child(18) { width: 4%;     min-width: 48px; }   /* Aksi */
+
+/* ===== Column text alignment ===== */
+
+/* Center: No, Nomor Kode, Nomor Part, Status Part, No SJ, Lot No, Qty, Berat Total,
+           Jenis Proses, Tanggal, Status QC, Tanggal Delivery, Aksi */
+.ht-monitor-table .ht-table th:nth-child(1),
+.ht-monitor-table .ht-table td:nth-child(1),
+.ht-monitor-table .ht-table th:nth-child(2),
+.ht-monitor-table .ht-table td:nth-child(2),
+.ht-monitor-table .ht-table th:nth-child(4),
+.ht-monitor-table .ht-table td:nth-child(4),
+.ht-monitor-table .ht-table th:nth-child(6),
+.ht-monitor-table .ht-table td:nth-child(6),
+.ht-monitor-table .ht-table th:nth-child(7),
+.ht-monitor-table .ht-table td:nth-child(7),
+.ht-monitor-table .ht-table th:nth-child(8),
+.ht-monitor-table .ht-table td:nth-child(8),
+.ht-monitor-table .ht-table th:nth-child(10),
+.ht-monitor-table .ht-table td:nth-child(10),
+.ht-monitor-table .ht-table th:nth-child(11),
+.ht-monitor-table .ht-table td:nth-child(11),
+.ht-monitor-table .ht-table th:nth-child(12),
+.ht-monitor-table .ht-table td:nth-child(12),
+.ht-monitor-table .ht-table th:nth-child(14),
+.ht-monitor-table .ht-table td:nth-child(14),
+.ht-monitor-table .ht-table th:nth-child(15),
+.ht-monitor-table .ht-table td:nth-child(15),
+.ht-monitor-table .ht-table th:nth-child(17),
+.ht-monitor-table .ht-table td:nth-child(17),
+.ht-monitor-table .ht-table th:nth-child(18),
+.ht-monitor-table .ht-table td:nth-child(18) {
+  text-align: center;
+}
+
+/* Left: Customer, Nama Part, Diinput Oleh, Inspector (nama/tempat/orang) */
+.ht-monitor-table .ht-table th:nth-child(3),
+.ht-monitor-table .ht-table td:nth-child(3),
+.ht-monitor-table .ht-table th:nth-child(5),
+.ht-monitor-table .ht-table td:nth-child(5),
+.ht-monitor-table .ht-table th:nth-child(13),
+.ht-monitor-table .ht-table td:nth-child(13),
+.ht-monitor-table .ht-table th:nth-child(16),
+.ht-monitor-table .ht-table td:nth-child(16) {
+  text-align: left;
+}
+
+/* Material Charge is a code identifier — center align header + body */
+.ht-monitor-table .ht-table th:nth-child(9),
+.ht-monitor-table .ht-table td:nth-child(9) {
+  text-align: center;
+}
+
+.ht-monitor-card .ht-table-wrapper {
+  padding: 8px 4px 0;
+}
+
+/* Badges — clean, readable, subtle */
+.ht-monitor-table .ht-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: var(--font-weight-semi);
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+  line-height: 1.5;
+  border: 0.5px solid transparent;
+  transition: all var(--transition-sm);
+}
+
+.ht-monitor-table .ht-badge:hover {
+  transform: scale(1.03);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* Action button */
+.ht-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  transition: all var(--transition-sm);
+  font-size: 12px;
+  border: 1.5px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ht-action-btn:hover {
+  color: var(--primary);
+  background: var(--info-bg);
+  border-color: rgba(154, 172, 216, 0.3);
+}
+
+.ht-action-btn.view:hover { color: var(--info-text); }
+
+.ht-action-btn .icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   SCROLLBAR for table
+   ============================================================ */
+
+.ht-table-wrapper::-webkit-scrollbar,
+.ht-monitor-table::-webkit-scrollbar {
+  height: 8px;
+}
+
+.ht-table-wrapper::-webkit-scrollbar-track,
+.ht-monitor-table::-webkit-scrollbar-track {
+  background: var(--surface-muted);
+  border-radius: 4px;
+}
+
+.ht-table-wrapper::-webkit-scrollbar-thumb,
+.ht-monitor-table::-webkit-scrollbar-thumb {
+  background: var(--border-dark);
+  border-radius: 4px;
+}
+
+.ht-table-wrapper::-webkit-scrollbar-thumb:hover,
+.ht-monitor-table::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
 .ht-monitor-table .ht-table-empty {
   padding: 40px 16px;
+  text-align: center;
+  background: var(--surface-hover);
+  border-radius: var(--radius-md);
+}
+
+.ht-monitor-table .ht-table-empty .icon,
+.ht-monitor-table .ht-table-empty i {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 12px;
+  opacity: 0.4;
 }
 
 .ht-monitor-table .ht-table-empty p {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
 }
 
@@ -743,37 +1059,375 @@
   display: block;
   margin-top: 4px;
   font-size: 12px;
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   color: var(--text-tertiary);
 }
 
-/* ---- Pagination of this card ----
-   The algorithm is untouched; only the narrow layout is allowed to wrap
-   so the controls never spill past the card padding at 320px. */
-.ht-monitor-card .ht-pagination-info,
-.ht-monitor-card .ht-pagination-controls {
-  min-width: 0;
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+
+.ht-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+  padding-bottom: 8px;
 }
 
-@media (max-width: 480px) {
-  .ht-monitor-card .ht-pagination {
-    justify-content: center;
-    text-align: center;
+.ht-pagination-info {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ht-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ht-pagination-controls button {
+  min-width: 32px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  transition:
+    background-color var(--transition-sm),
+    border-color var(--transition-sm),
+    color var(--transition-sm),
+    transform var(--transition-fast);
+  cursor: pointer;
+}
+
+.ht-pagination-controls button:hover:not(:disabled) {
+  background: var(--habanero-soft);
+  border-color: var(--habanero);
+  color: var(--habanero-hover);
+  transform: translateY(-1px);
+}
+
+.ht-pagination-controls button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.ht-pagination-controls button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.ht-pagination-controls button[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  pointer-events: none;
+}
+
+/* Active page */
+#pageNumbers button.ht-btn-primary {
+  background: var(--gradient-primary);
+  color: var(--text-inverse);
+  border-color: var(--habanero);
+  box-shadow: 0 2px 8px rgba(249, 133, 19, 0.25);
+}
+
+#pageNumbers button.ht-btn-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+#pageNumbers button.ht-btn-ghost {
+  background: var(--surface);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+#pageNumbers button.ht-btn-ghost:hover {
+  background: var(--habanero-soft);
+  color: var(--habanero-hover);
+  border-color: var(--habanero);
+}
+
+/* ============================================================
+   LOADING / ERROR STATE
+   ============================================================ */
+
+.ht-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(244, 241, 236, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  flex-direction: column;
+  gap: 12px;
+  backdrop-filter: blur(2px);
+}
+
+.ht-loading-overlay .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--habanero);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.ht-error-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-tertiary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.ht-error-state .icon,
+.ht-error-state i {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 12px;
+  color: var(--danger);
+}
+
+.ht-error-state p {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ============================================================
+   RESPONSIVE — Desktop Priority
+   ============================================================ */
+
+/* Desktop 1366px and below */
+@media (max-width: 1366px) {
+  .ht-content {
+    padding: 22px 24px;
   }
 
-  .ht-monitor-card .ht-pagination-controls {
-    flex-wrap: wrap;
-    justify-content: center;
+  .ht-header {
+    padding: 16px 24px;
+  }
+
+  .ht-header-left h1 {
+    font-size: 22px;
+  }
+
+  .ht-header-left p {
+    font-size: 12px;
+  }
+
+  .ht-header-actions .ht-btn {
+    height: 36px;
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+
+  .ht-kpi-layout {
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+  }
+
+  .ht-kpi-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .ht-kpi-card {
+    padding: 18px 18px;
+    min-height: 130px;
+  }
+
+  .ht-kpi-card .ht-kpi-value {
+    font-size: 26px;
+  }
+
+  .ht-kpi-card::before {
+    right: 18px;
+    bottom: 18px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .ht-kpi-card .ht-kpi-icon {
+    right: 25px;
+    bottom: 25px;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+  }
+
+  .ht-kpi-left #targetCard .ht-card {
+    border-radius: var(--radius-xl);
+  }
+
+  .ht-donut-wrapper {
+    width: 170px;
+    height: 170px;
+  }
+
+  .ht-chart-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .ht-chart-container {
+    height: 260px;
+  }
+
+  .ht-chart-grid .ht-card {
+    padding: 18px;
   }
 }
 
-/* ---- Narrow viewports ----
-   Same 19 columns and the same alignment, slightly smaller cells so the
-   wrapper needs less horizontal travel. Every width below sums to the
-   table width of the same breakpoint, the header labels are already
-   smaller at these font sizes, and the status columns stay wide enough
-   for the widest badge at the reduced badge padding. */
-@media (max-width: 768px) {
+/* Desktop 1440px */
+@media (min-width: 1440px) and (max-width: 1920px) {
+  .ht-content {
+    padding: 26px 32px;
+  }
+
+  .ht-header {
+    padding: 20px 32px;
+  }
+
+  .ht-kpi-layout {
+    gap: 28px;
+  }
+
+  .ht-chart-grid {
+    gap: 24px;
+  }
+}
+
+/* Desktop 1920px+ */
+@media (min-width: 1920px) {
+  .ht-content {
+    padding: 28px 40px;
+  }
+
+  .ht-header {
+    padding: 20px 40px;
+  }
+
+  .ht-header-left h1 {
+    font-size: 26px;
+  }
+
+  .ht-kpi-grid {
+    gap: 20px;
+  }
+
+  .ht-kpi-card {
+    padding: 24px 24px;
+    min-height: 150px;
+  }
+
+  .ht-kpi-card .ht-kpi-value {
+    font-size: 30px;
+  }
+
+  .ht-chart-grid {
+    gap: 28px;
+  }
+
+  .ht-chart-container {
+    height: 300px;
+  }
+
+  .ht-donut-wrapper {
+    width: 190px;
+    height: 190px;
+  }
+
+  .ht-donut-value {
+    font-size: 46px;
+  }
+}
+
+/* Tablet 1024px */
+@media (max-width: 1024px) {
+  .ht-content {
+    padding: 20px 22px;
+  }
+
+  .ht-header {
+    padding: 14px 20px;
+    min-height: 64px;
+  }
+
+  .ht-header-left h1 {
+    font-size: 20px;
+  }
+
+  .ht-header-left p {
+    font-size: 12px;
+  }
+
+  .ht-content-max {
+    max-width: 100%;
+  }
+
+  .ht-kpi-layout {
+    grid-template-columns: 1fr 280px;
+    gap: 18px;
+  }
+
+  .ht-kpi-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .ht-kpi-card {
+    padding: 16px 14px;
+    min-height: 120px;
+  }
+
+  .ht-kpi-card .ht-kpi-value {
+    font-size: 24px;
+  }
+
+  .ht-kpi-card::before {
+    right: 14px;
+    bottom: 14px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .ht-kpi-card .ht-kpi-icon {
+    right: 19px;
+    bottom: 19px;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+  }
+
+  .ht-kpi-left #targetCard .ht-card-body {
+    padding: 14px 16px;
+  }
+
+  #targetDisplay .ht-kpi-value {
+    font-size: 26px;
+  }
+
+  .ht-donut-wrapper {
+    width: 160px;
+    height: 160px;
+  }
+
+  .ht-donut-value {
+    font-size: 38px;
+  }
+
   .ht-monitor-table .ht-table {
     width: 1920px;
   }
@@ -783,32 +1437,105 @@
     padding: 10px 12px;
   }
 
-  .ht-monitor-table .ht-table th:nth-child(1) { width: 44px; }
-  .ht-monitor-table .ht-table th:nth-child(2) { width: 100px; }
-  .ht-monitor-table .ht-table th:nth-child(3) { width: 140px; }
-  .ht-monitor-table .ht-table th:nth-child(4) { width: 110px; }
-  .ht-monitor-table .ht-table th:nth-child(5) { width: 140px; }
-  .ht-monitor-table .ht-table th:nth-child(6) { width: 140px; }
-  .ht-monitor-table .ht-table th:nth-child(7) { width: 100px; }
-  .ht-monitor-table .ht-table th:nth-child(8) { width: 120px; }
-  .ht-monitor-table .ht-table th:nth-child(9) { width: 130px; }
-  .ht-monitor-table .ht-table th:nth-child(10) { width: 52px; }
-  .ht-monitor-table .ht-table th:nth-child(11) { width: 90px; }
-  .ht-monitor-table .ht-table th:nth-child(12) { width: 120px; }
-  .ht-monitor-table .ht-table th:nth-child(13) { width: 110px; }
-  .ht-monitor-table .ht-table th:nth-child(14) { width: 120px; }
-  .ht-monitor-table .ht-table th:nth-child(15) { width: 110px; }
-  .ht-monitor-table .ht-table th:nth-child(16) { width: 78px; }
-  .ht-monitor-table .ht-table th:nth-child(17) { width: 110px; }
-  .ht-monitor-table .ht-table th:nth-child(18) { width: 130px; }
-  .ht-monitor-table .ht-table th:nth-child(19) { width: 52px; }
-
-  .ht-monitor-table .ht-badge {
-    padding: 2px 6px;
+  .ht-monitor-table .ht-table th {
+    font-size: 9px;
   }
 }
 
-@media (max-width: 480px) {
+/* Tablet 768px */
+@media (max-width: 768px) {
+  .ht-content {
+    padding: 16px;
+  }
+
+  .ht-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    min-height: auto;
+  }
+
+  .ht-header-left h1 {
+    font-size: 20px;
+  }
+
+  .ht-header-right {
+    justify-content: flex-start;
+  }
+
+  .ht-header-date {
+    display: none;
+  }
+
+  .ht-kpi-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .ht-kpi-left {
+    gap: 12px;
+  }
+
+  .ht-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .ht-kpi-card {
+    padding: 14px 12px;
+    min-height: 110px;
+  }
+
+  .ht-kpi-card::before {
+    right: 12px;
+    bottom: 12px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .ht-kpi-card .ht-kpi-icon {
+    right: 17px;
+    bottom: 17px;
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+  }
+
+  .ht-kpi-card .ht-kpi-value {
+    font-size: 22px;
+  }
+
+  .ht-kpi-card .ht-kpi-label {
+    font-size: 10px;
+  }
+
+  .ht-kpi-card-primary-large {
+    min-height: 220px;
+  }
+
+  .ht-kpi-primary-content {
+    padding: 24px 16px;
+  }
+
+  .ht-donut-wrapper {
+    width: 150px;
+    height: 150px;
+  }
+
+  .ht-donut-value {
+    font-size: 36px;
+  }
+
+  .ht-chart-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .ht-chart-container {
+    height: 240px;
+  }
+
   .ht-monitor-table .ht-table {
     width: 1780px;
   }
@@ -818,28 +1545,144 @@
     padding: 8px 10px;
   }
 
-  .ht-monitor-table .ht-table th:nth-child(1) { width: 42px; }
-  .ht-monitor-table .ht-table th:nth-child(2) { width: 96px; }
-  .ht-monitor-table .ht-table th:nth-child(3) { width: 126px; }
-  .ht-monitor-table .ht-table th:nth-child(4) { width: 104px; }
-  .ht-monitor-table .ht-table th:nth-child(5) { width: 126px; }
-  .ht-monitor-table .ht-table th:nth-child(6) { width: 126px; }
-  .ht-monitor-table .ht-table th:nth-child(7) { width: 90px; }
-  .ht-monitor-table .ht-table th:nth-child(8) { width: 110px; }
-  .ht-monitor-table .ht-table th:nth-child(9) { width: 120px; }
-  .ht-monitor-table .ht-table th:nth-child(10) { width: 48px; }
-  .ht-monitor-table .ht-table th:nth-child(11) { width: 84px; }
-  .ht-monitor-table .ht-table th:nth-child(12) { width: 110px; }
-  .ht-monitor-table .ht-table th:nth-child(13) { width: 100px; }
-  .ht-monitor-table .ht-table th:nth-child(14) { width: 114px; }
-  .ht-monitor-table .ht-table th:nth-child(15) { width: 106px; }
-  .ht-monitor-table .ht-table th:nth-child(16) { width: 74px; }
-  .ht-monitor-table .ht-table th:nth-child(17) { width: 102px; }
-  .ht-monitor-table .ht-table th:nth-child(18) { width: 120px; }
-  .ht-monitor-table .ht-table th:nth-child(19) { width: 48px; }
-
   .ht-monitor-table .ht-badge {
     padding: 1px 5px;
-    letter-spacing: 0.01em;
+  }
+}
+
+/* Mobile 480px */
+@media (max-width: 480px) {
+  .ht-content {
+    padding: 12px;
+  }
+
+  .ht-header {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .ht-header-left h1 {
+    font-size: 18px;
+  }
+
+  .ht-header-actions .ht-btn {
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+
+  .ht-kpi-card {
+    padding: 12px 10px;
+    min-height: 100px;
+  }
+
+  .ht-kpi-card .ht-kpi-value {
+    font-size: 20px;
+  }
+
+  .ht-kpi-card .ht-kpi-label {
+    font-size: 9px;
+  }
+
+  .ht-donut-value {
+    font-size: 34px;
+  }
+
+  .ht-chart-container {
+    height: 220px;
+  }
+
+  .ht-chart-grid .ht-card {
+    padding: 14px;
+  }
+
+  .ht-monitor-card {
+    border-radius: var(--radius-lg);
+  }
+
+  .ht-pagination-controls {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ht-monitor-card .ht-pagination {
+    text-align: center;
+  }
+}
+
+/* Mobile 360px */
+@media (max-width: 360px) {
+  .ht-content {
+    padding: 8px;
+  }
+
+  .ht-monitor-table .ht-table th,
+  .ht-monitor-table .ht-table td {
+    padding: 6px 8px;
+  }
+
+  .ht-monitor-table .ht-table th {
+    font-size: 8px;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-kpi-card {
+    animation: none;
+    transition: none;
+  }
+
+  .ht-kpi-card:hover {
+    transform: none;
+  }
+
+  .ht-kpi-card-primary-large {
+    animation: none;
+    transition: none;
+  }
+
+  .ht-chart-grid .ht-card {
+    animation: none;
+  }
+
+  .ht-monitor-card {
+    animation: none;
+  }
+
+  .ht-filter-bar {
+    animation: none;
+  }
+
+  .ht-pagination-controls button {
+    transition: none;
+  }
+
+  .ht-pagination-controls button:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .ht-chart-empty .icon,
+  .ht-monitor-table .ht-table-empty .icon {
+    animation: none;
+  }
+
+  .ht-header-actions .ht-btn .icon {
+    transition: none;
+  }
+
+  .ht-header-actions .ht-btn:hover .icon {
+    transform: none;
+  }
+
+  .ht-header-actions .ht-btn:active {
+    transform: none;
+  }
+
+  .badge:hover {
+    transform: none;
   }
 }

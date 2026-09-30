@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="css/components.css" />
     <link rel="stylesheet" href="css/tables.css" />
     <link rel="stylesheet" href="css/forms.css" />
-    <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
     <link rel="stylesheet" href="css/login.css" />
   </head>
@@ -37,13 +36,24 @@
         </div>
         <div class="ht-form-group">
           <label class="ht-form-label" for="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            required
-            class="ht-form-input"
-            placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-          />
+          <div class="ht-password-wrapper">
+            <input
+              id="password"
+              type="password"
+              required
+              class="ht-form-input"
+              placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+            />
+            <button
+              type="button"
+              class="ht-password-toggle"
+              aria-label="Tampilkan password"
+              tabindex="-1"
+            >
+              <img src="assets/icons/eye.svg" alt="" class="icon icon-sm ht-eye-open">
+              <img src="assets/icons/eye-slash.svg" alt="" class="icon icon-sm ht-eye-close hidden">
+            </button>
+          </div>
         </div>
         <div id="loginError" class="ht-login-error hidden"></div>
         <div class="ht-login-actions">
@@ -65,12 +75,26 @@
       if (Auth.isLoggedIn()) {
         window.location.href = "index.html";
       }
-      document.getElementById("loginForm").addEventListener("submit", (e) => {
+      const loginForm = document.getElementById("loginForm");
+      const errEl = document.getElementById("loginError");
+      const passwordInput = document.getElementById("password");
+      const toggleBtn = document.querySelector(".ht-password-toggle");
+      const eyeOpen = toggleBtn.querySelector(".ht-eye-open");
+      const eyeClose = toggleBtn.querySelector(".ht-eye-close");
+
+      toggleBtn.addEventListener("click", () => {
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type = isPassword ? "text" : "password";
+        eyeOpen.classList.toggle("hidden", isPassword);
+        eyeClose.classList.toggle("hidden", !isPassword);
+        toggleBtn.setAttribute("aria-label", isPassword ? "Sembunyikan password" : "Tampilkan password");
+      });
+
+      loginForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        const errEl = document.getElementById("loginError");
         errEl.classList.add("hidden");
         const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value;
+        const password = passwordInput.value;
         if (Auth.login(username, password)) {
           window.location.href = "index.html";
         } else {

@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shotblast - Sistem Informasi Produksi Heat Treatment</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/layout.css" />
@@ -15,7 +14,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
-  <body class="text-slate-800">
+  <body>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
@@ -23,19 +22,10 @@
             <div>
               <div class="flex items-center gap-2">
                 <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
-            <button
-              id="sidebarToggle"
-              data-sidebar-toggle
-              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
-              title="Toggle Menu"
-              aria-label="Toggle menu"
-            >
-              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
-            </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
@@ -79,10 +69,7 @@
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div
-                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
-                id="sidebarInitial"
-              >
+              <div class="ht-user-avatar" id="sidebarInitial">
                 A
               </div>
               <div class="ht-user-details">
@@ -105,15 +92,15 @@
       <main class="ht-main full-width">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1 class="text-xl font-bold text-slate-800" id="pageTitle">Shotblast</h1>
-            <p class="text-xs text-slate-500" id="pageSubtitle">Scan part untuk masuk dan menyelesaikan proses Shotblast</p>
+            <h1 id="pageTitle">Shotblast</h1>
+            <p id="pageSubtitle">Scan part untuk masuk dan menyelesaikan proses Shotblast</p>
           </div>
           <div class="ht-header-right" id="currentDate"></div>
         </header>
         <div class="ht-content">
           <div class="ht-content-max">
             <!-- Stepper -->
-            <div class="ht-stepper mb-6" role="status" aria-label="Progress step">
+            <div class="ht-stepper" role="status" aria-label="Progress step">
               <div class="ht-step">
                 <div class="step-icon"><img src="assets/icons/qr.svg" alt="Scan Kode" class="icon"></div>
                 <span class="step-label">Scan Kode</span>
@@ -133,19 +120,19 @@
             </div>
 
             <!-- Scan / Input -->
-            <div class="ht-card fade-in mb-6">
+            <div class="ht-card fade-in">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Scan QR / Input Kode</h3>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="flex-1">
                   <div id="qr-reader" class="ht-qr-frame"></div>
-                  <p class="text-xs text-slate-500 text-center mt-3">
+                  <p class="ht-hint text-center mt-3">
                     Arahkan kamera ke QR Code material
                   </p>
                 </div>
                 <div class="space-y-2">
-                  <p class="text-xs text-slate-500">
+                  <p class="ht-hint">
                     Atau masukkan Kode secara manual:
                   </p>
                   <div class="flex gap-2">
@@ -168,7 +155,7 @@
                   </div>
                   <p
                     id="manualError"
-                    class="hidden text-[11px] text-danger-text"
+                    class="hidden ht-error-text"
                   ></p>
                 </div>
               </div>
@@ -177,7 +164,7 @@
             <!-- Material & Status info -->
             <div
               id="materialSection"
-              class="hidden ht-card fade-in mb-6"
+              class="hidden ht-card fade-in"
             >
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Informasi Material</h3>
@@ -240,40 +227,40 @@
               </div>
 
               <!-- Process status -->
-              <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
-                <h4 class="font-semibold text-sm mb-2">STATUS PROSES</h4>
+              <div class="ht-info-summary">
+                <h4 class="font-semibold">STATUS PROSES</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div class="flex items-center justify-between py-1">
-                    <span class="text-xs text-slate-600">Route</span>
-                    <span class="font-medium mono" id="routeInfo">-</span>
+                    <span class="ht-hint">Route</span>
+                    <span class="font-medium" id="routeInfo">-</span>
                   </div>
                   <div class="flex items-center justify-between py-1">
-                    <span class="text-xs text-slate-600">Status Heat Treatment</span>
+                    <span class="ht-hint">Status Heat Treatment</span>
                     <span class="font-medium" id="htStatus">-</span>
                   </div>
                   <div class="flex items-center justify-between py-1">
-                    <span class="text-xs text-slate-600">Status QC</span>
+                    <span class="ht-hint">Status QC</span>
                     <span class="font-medium" id="qcStatus">-</span>
                   </div>
                   <div class="flex items-center justify-between py-1">
-                    <span class="text-xs text-slate-600">Status Shotblast</span>
+                    <span class="ht-hint">Status Shotblast</span>
                     <span class="font-medium" id="shotblastStatus">-</span>
                   </div>
                 </div>
-                <p class="text-xs text-slate-600 mt-2" id="gateReason"></p>
+                <p class="ht-hint mt-2" id="gateReason"></p>
               </div>
 
               <!-- Next process -->
-              <div id="nextProcessCard" class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 hidden">
-                <h4 class="font-semibold text-sm mb-1">Proses Berikutnya</h4>
-                <p class="text-sm text-slate-700">Setelah Shotblast selesai OK, lanjutkan ke: <span class="font-medium text-primary" id="nextProcessLabel">-</span></p>
+              <div id="nextProcessCard" class="ht-alert ht-alert-info hidden">
+                <h4 class="font-semibold">Proses Berikutnya</h4>
+                <p class="text-sm">Setelah Shotblast selesai OK, lanjutkan ke: <span class="font-medium text-primary" id="nextProcessLabel">-</span></p>
               </div>
 
               <!-- Process history -->
-              <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
-                <h4 class="font-semibold text-sm mb-2">Riwayat Proses</h4>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="historyGrid">
-                  <span class="text-xs text-slate-500">Memuat...</span>
+              <div class="ht-info-summary">
+                <h4 class="font-semibold">Riwayat Proses</h4>
+                <div class="ht-history-grid" id="historyGrid">
+                  <span class="ht-hint">Memuat...</span>
                 </div>
               </div>
             </div>
@@ -281,13 +268,13 @@
             <!-- Blocked notice -->
             <div
               id="blockedNotice"
-              class="hidden ht-card danger fade-in mb-6"
+              class="hidden ht-alert ht-alert-danger fade-in"
             >
               <div class="flex items-start gap-3">
                 <img src="assets/icons/error.svg" alt="Error" class="icon icon-md mt-0.5">
                 <div>
-                  <h3 class="font-bold text-danger-text mb-1">PROSES DIBLOKIR</h3>
-                  <p class="text-sm text-slate-700" id="blockedReason">
+                  <h3 class="font-bold text-danger">PROSES DIBLOKIR</h3>
+                  <p class="text-secondary" id="blockedReason">
                     Part tidak dapat memasuki proses ini.
                   </p>
                 </div>
@@ -297,48 +284,34 @@
             <!-- Entry form (Scan 1) -->
             <div
               id="entrySection"
-              class="hidden ht-step-card warning fade-in mb-6"
+              class="hidden ht-step-card warning fade-in"
             >
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-base font-bold text-slate-800">
+              <div class="ht-step-header">
+                <h3 class="ht-step-title">
                   SIAP MASUK PROSES
                 </h3>
                 <span class="ht-step-indicator">
-                  <span class="dot"></span>
+                  <span class="dot dot-pending"></span>
                   <span>Belum diproses</span>
                 </span>
               </div>
 
-              <div class="bg-white border-2 border-slate-200 rounded-xl p-4 mb-4">
-                <h4 class="font-bold text-sm mb-3">CHECK VISUAL SEBELUM PROSES</h4>
-                <div class="flex gap-4 mb-3">
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="visualCheck"
-                      id="visualOK"
-                      value="OK"
-                      class="w-4 h-4 text-emerald-500"
-                      onchange="updateVisualNoteVisibility()"
-                    />
-                    <span class="text-sm font-medium text-emerald-700">( ) OK</span>
+              <div class="ht-step-form">
+                <h4 class="font-bold">CHECK VISUAL SEBELUM PROSES</h4>
+                <div class="ht-form-row">
+                  <label class="ht-checkbox-label">
+                    <input type="radio" name="visualCheck" id="visualOK" value="OK" class="ht-checkbox" onchange="updateVisualNoteVisibility()">
+                    <span class="text-success">( ) OK</span>
                   </label>
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="visualCheck"
-                      id="visualNG"
-                      value="NG"
-                      class="w-4 h-4 text-red-500"
-                      onchange="updateVisualNoteVisibility()"
-                    />
-                    <span class="text-sm font-medium text-red-700">( ) NG</span>
+                  <label class="ht-checkbox-label">
+                    <input type="radio" name="visualCheck" id="visualNG" value="NG" class="ht-checkbox" onchange="updateVisualNoteVisibility()">
+                    <span class="text-danger">( ) NG</span>
                   </label>
                 </div>
                 <div id="visualNGNote" class="hidden">
-                  <label class="block text-xs font-medium text-slate-600 mb-1">
+                  <label class="ht-form-label">
                     Keterangan NG
-                    <span class="text-red-500">(Wajib)</span>
+                    <span class="ht-required">(Wajib)</span>
                   </label>
                   <input
                     type="text"
@@ -350,13 +323,8 @@
                 </div>
               </div>
 
-              <div class="flex justify-end">
-                <button
-                  id="btnEntry"
-                  onclick="confirmMasukProses()"
-                  class="ht-btn ht-btn-warning ht-btn-lg"
-                  aria-label="Konfirmasi masuk proses"
-                >
+              <div class="ht-flex-end">
+                <button id="btnEntry" onclick="confirmMasukProses()" class="ht-btn ht-btn-warning ht-btn-lg" aria-label="Konfirmasi masuk proses">
                   <img src="assets/icons/factory.svg" alt="Masuk" class="icon mr-2">KONFIRMASI MASUK PROSES
                 </button>
               </div>
@@ -365,48 +333,34 @@
             <!-- Finish form (Scan 2) -->
             <div
               id="finishSection"
-              class="hidden ht-step-card success fade-in mb-6"
+              class="hidden ht-step-card success fade-in"
             >
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-base font-bold text-slate-800">
+              <div class="ht-step-header">
+                <h3 class="ht-step-title">
                   PENYELAKSANAAN PROSES
                 </h3>
                 <span class="ht-step-indicator">
-                  <span class="dot bg-amber-500"></span>
+                  <span class="dot dot-warning"></span>
                   <span>Produksi Aktif</span>
                 </span>
               </div>
 
-              <div class="bg-white border-2 border-slate-200 rounded-xl p-4 mb-4">
-                <h4 class="font-bold text-sm mb-3">HASIL PROSES</h4>
-                <div class="flex gap-4 mb-3">
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="processResult"
-                      id="resultOK"
-                      value="OK"
-                      class="w-4 h-4 text-emerald-500"
-                      onchange="updateNGNoteVisibility()"
-                    />
-                    <span class="text-sm font-medium text-emerald-700">( ) OK</span>
+              <div class="ht-step-form">
+                <h4 class="font-bold">HASIL PROSES</h4>
+                <div class="ht-form-row">
+                  <label class="ht-checkbox-label">
+                    <input type="radio" name="processResult" id="resultOK" value="OK" class="ht-checkbox" onchange="updateNGNoteVisibility()">
+                    <span class="text-success">( ) OK</span>
                   </label>
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="processResult"
-                      id="resultNG"
-                      value="NG"
-                      class="w-4 h-4 text-red-500"
-                      onchange="updateNGNoteVisibility()"
-                    />
-                    <span class="text-sm font-medium text-red-700">( ) NG</span>
+                  <label class="ht-checkbox-label">
+                    <input type="radio" name="processResult" id="resultNG" value="NG" class="ht-checkbox" onchange="updateNGNoteVisibility()">
+                    <span class="text-danger">( ) NG</span>
                   </label>
                 </div>
-                <div id="resultNGNote" class="hidden mb-3">
-                  <label class="block text-xs font-medium text-slate-600 mb-1">
+                <div id="resultNGNote" class="hidden">
+                  <label class="ht-form-label">
                     Keterangan Penyebab NG
-                    <span class="text-red-500">(Wajib)</span>
+                    <span class="ht-required">(Wajib)</span>
                   </label>
                   <input
                     type="text"
@@ -418,13 +372,8 @@
                 </div>
               </div>
 
-              <div class="flex justify-end">
-                <button
-                  id="btnFinish"
-                  onclick="confirmSelesaiProses()"
-                  class="ht-btn ht-btn-success ht-btn-lg"
-                  aria-label="Konfirmasi selesai proses"
-                >
+              <div class="ht-flex-end">
+                <button id="btnFinish" onclick="confirmSelesaiProses()" class="ht-btn ht-btn-success ht-btn-lg" aria-label="Konfirmasi selesai proses">
                   <img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI
                 </button>
               </div>
@@ -433,49 +382,49 @@
             <!-- Completed OK -->
             <div
               id="completedOkSection"
-              class="hidden ht-step-card success fade-in mb-6"
+              class="hidden ht-step-card success fade-in"
             >
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-base font-bold text-slate-800">
+              <div class="ht-step-header">
+                <h3 class="ht-step-title">
                   SELESAI
                 </h3>
                 <span class="ht-step-indicator">
-                  <span class="dot bg-emerald-500"></span>
+                  <span class="dot dot-success"></span>
                   <span>Proses selesai</span>
                 </span>
               </div>
-              <p class="text-sm text-slate-600 mb-2">
+              <p class="text-secondary">
                 Part selesai proses Shotblast dengan hasil OK.
               </p>
               <div class="flex items-center gap-2">
                 <span class="ht-badge ht-badge-ok">SELESAI</span>
-                <span class="text-sm">HASIL: OK</span>
+                <p class="text-sm">HASIL: OK</p>
               </div>
-              <p class="text-xs text-slate-600 mt-2" id="okNoteDisplay"></p>
+              <p class="ht-hint mt-2" id="okNoteDisplay"></p>
             </div>
 
             <!-- Completed NG -->
             <div
               id="completedNgSection"
-              class="hidden ht-step-card danger fade-in mb-6"
+              class="hidden ht-step-card danger fade-in"
             >
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-base font-bold text-slate-800">
+              <div class="ht-step-header">
+                <h3 class="ht-step-title">
                   SELESAI (NG)
                 </h3>
                 <span class="ht-step-indicator">
-                  <span class="dot bg-red-500"></span>
+                  <span class="dot dot-danger"></span>
                   <span>Proses selesai NG</span>
                 </span>
               </div>
-              <p class="text-sm text-slate-600 mb-2">
+              <p class="text-secondary">
                 Part selesai proses Shotblast dengan hasil NG. Hubungi QC / supervisor.
               </p>
               <div class="flex items-center gap-2">
                 <span class="ht-badge ht-badge-ng">SELESAI</span>
-                <span class="text-sm">HASIL: NG</span>
+                <p class="text-sm">HASIL: NG</p>
               </div>
-              <p class="text-xs text-slate-600 mt-2" id="ngNoteDisplay"></p>
+              <p class="ht-hint mt-2" id="ngNoteDisplay"></p>
             </div>
           </div>
         </div>
@@ -513,48 +462,6 @@
       function resetInput() {
         document.getElementById("manualId").value = "";
         clearManualError();
-      }
-
-      function resetFormFields() {
-        var vOK = document.getElementById("visualOK");
-        var vNG = document.getElementById("visualNG");
-        if (vOK) vOK.checked = false;
-        if (vNG) vNG.checked = false;
-        var rOK = document.getElementById("resultOK");
-        var rNG = document.getElementById("resultNG");
-        if (rOK) rOK.checked = false;
-        if (rNG) rNG.checked = false;
-        var visualNote = document.getElementById("visualNote");
-        if (visualNote) visualNote.value = "";
-        var ngNote = document.getElementById("processNGNote");
-        if (ngNote) ngNote.value = "";
-        var vNoteDiv = document.getElementById("visualNGNote");
-        if (vNoteDiv) vNoteDiv.classList.add("hidden");
-        var rNoteDiv = document.getElementById("resultNGNote");
-        if (rNoteDiv) rNoteDiv.classList.add("hidden");
-      }
-
-      function updateVisualNoteVisibility() {
-        var vNG = document.getElementById("visualNG");
-        var note = document.getElementById("visualNGNote");
-        if (vNG.checked) {
-          note.classList.remove("hidden");
-        } else {
-          note.classList.add("hidden");
-        }
-      }
-
-      function updateNGNoteVisibility() {
-        var rNG = document.getElementById("resultNG");
-        var ngNote = document.getElementById("processNGNote");
-        if (rNG.checked) {
-          document.getElementById("resultNGNote").classList.remove("hidden");
-          ngNote.required = true;
-        } else {
-          document.getElementById("resultNGNote").classList.add("hidden");
-          ngNote.required = false;
-          ngNote.value = "";
-        }
       }
 
       function displayMaterialInfo(material) {
@@ -680,7 +587,6 @@
         hideBlocked();
 
         if (!production) {
-          // No Shotblast production yet - validate and show entry form or blocked notice
           validateAndShowEntry(material);
           renderStepper(null);
           return;
@@ -718,7 +624,6 @@
           return;
         }
 
-        // Check HT completion
         var htProd = DB.getProcessProduction(material, "HT");
         if (!htProd) {
           showBlocked("Heat Treatment belum selesai.");
@@ -737,7 +642,6 @@
           return;
         }
 
-        // Check QC gate
         var gate = DB.checkQualityGate(material);
         if (gate.qcStatus === "NOT_CHECKED") {
           showBlocked("QC belum dilakukan.");
@@ -752,7 +656,6 @@
           return;
         }
 
-        // All gates passed - show entry form
         document.getElementById("entrySection").classList.remove("hidden");
       }
 
@@ -768,7 +671,7 @@
         var history = DB.getProcessHistory(material);
         var grid = document.getElementById("historyGrid");
         if (!history || history.length === 0) {
-          grid.innerHTML = '<span class="text-xs text-slate-500">Belum ada riwayat proses.</span>';
+          grid.innerHTML = '<span class="ht-hint">Belum ada riwayat proses.</span>';
           return;
         }
         grid.innerHTML = "";
@@ -787,9 +690,9 @@
             badgeClass = "ht-badge-ng";
           }
           var div = document.createElement("div");
-          div.className = "flex items-center justify-between py-1 px-2 bg-white border border-slate-200 rounded";
-          div.innerHTML = '<span class="text-xs text-slate-600">' + h.process + "</span>" +
-            '<span class="ht-badge ' + badgeClass + ' text-xs">' + statusLabel + "</span>";
+          div.className = "ht-history-item";
+          div.innerHTML = '<span class="ht-hint">' + h.process + "</span>" +
+            '<span class="ht-badge ' + badgeClass + '">' + statusLabel + "</span>";
           grid.appendChild(div);
         });
       }
@@ -822,7 +725,6 @@
           return;
         }
 
-        // Re-validate before entry
         var route = currentMaterial.process_route;
         if (!route || typeof route !== "object" || !route.shotblast) {
           HTUI.toast("Part tidak memiliki proses Shotblast pada route ini.", "error");
@@ -864,7 +766,7 @@
 
         var btn = document.getElementById("btnEntry");
         btn.disabled = true;
-        btn.classList.add("opacity-50");
+        btn.classList.add("is-loading");
         btn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Mencatat...';
 
         var scanTime = new Date().toLocaleString("id-ID", {
@@ -905,14 +807,14 @@
           btn.innerHTML = '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
           setTimeout(function () {
             btn.innerHTML = '<img src="assets/icons/factory.svg" alt="Masuk" class="icon mr-2">KONFIRMASI MASUK PROSES';
-            btn.classList.remove("opacity-50");
+            btn.classList.remove("is-loading");
             btn.disabled = false;
             HTUI.toast("Part berhasil masuk proses Shotblast. Status: PROCESS", "success");
             loadMaterialById(currentMaterial.kode);
           }, 1500);
         } catch (e) {
           btn.innerHTML = '<img src="assets/icons/factory.svg" alt="Masuk" class="icon mr-2">KONFIRMASI MASUK PROSES';
-          btn.classList.remove("opacity-50");
+          btn.classList.remove("is-loading");
           btn.disabled = false;
           HTUI.toast("Gagal memproses: " + e.message, "error");
         }
@@ -949,7 +851,7 @@
 
         var btn = document.getElementById("btnFinish");
         btn.disabled = true;
-        btn.classList.add("opacity-50");
+        btn.classList.add("is-loading");
         btn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Memproses...';
 
         var scanTime = new Date().toLocaleString("id-ID", {
@@ -976,14 +878,14 @@
           btn.innerHTML = '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
           setTimeout(function () {
             btn.innerHTML = '<img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI';
-            btn.classList.remove("opacity-50");
+            btn.classList.remove("is-loading");
             btn.disabled = false;
             HTUI.toast("Process selesai. Status: " + data.production_status + " / HASIL: " + data.process_result, "success");
             loadMaterialById(currentMaterial.kode);
           }, 1500);
         } catch (e) {
           btn.innerHTML = '<img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI';
-          btn.classList.remove("opacity-50");
+          btn.classList.remove("is-loading");
           btn.disabled = false;
           HTUI.toast("Terjadi kesalahan: " + e.message, "error");
         }

@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Part - Master Data</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/sidebar.css" />
@@ -14,7 +13,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
-  <body class="text-slate-800">
+  <body>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
@@ -22,19 +21,10 @@
             <div>
               <div class="flex items-center gap-2">
                 <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
-            <button
-              id="sidebarToggle"
-              data-sidebar-toggle
-              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
-              title="Toggle Menu"
-              aria-label="Toggle menu"
-            >
-              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
-            </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
@@ -78,10 +68,8 @@
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div
-                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
-                id="sidebarInitial"
-              >
+              <div class="ht-user-avatar"
+                 id="sidebarInitial">
                 A
               </div>
               <div class="ht-user-details">
@@ -103,8 +91,8 @@
       <main class="ht-main full-width">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1 class="text-xl font-bold text-slate-800">Master Data Part</h1>
-            <p class="text-xs text-slate-500">Kelola data part heat treatment.</p>
+            <h1>Master Data Part</h1>
+            <p>Kelola data part heat treatment.</p>
           </div>
           <div class="ht-header-actions">
             <button
@@ -148,10 +136,7 @@
                 <h3 class="ht-card-title">Data Part</h3>
               </div>
               <div id="partExplorer" class="space-y-1"></div>
-              <div
-                id="partDetail"
-                class="hidden mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200"
-              ></div>
+              <div id="partDetail" class="hidden ht-alert ht-alert-info"></div>
             </div>
           </div>
         </div>
@@ -188,10 +173,7 @@
                 class="ht-form-input"
                 placeholder="HT-CUST001-001"
               />
-              <p
-                class="text-[10px] text-danger-text mt-1 hidden"
-                id="partNomorErr"
-              >
+            <p class="ht-error-text hidden" id="partNomorErr">
                 Nomor Part sudah ada untuk customer ini!
               </p>
             </div>
@@ -239,48 +221,26 @@
             </div>
             <div class="ht-form-group">
               <label class="ht-form-label">Rute Proses Standar</label>
-              <div class="flex flex-col gap-2 mt-1">
-                <label class="flex items-center gap-2 cursor-not-allowed text-sm">
-                  <input
-                    type="checkbox"
-                    id="cbHeatTreatment"
-                    checked
-                    disabled
-                    class="h-4 w-4"
-                  />
-                  <span>Heat Treatment</span>
-                  <span class="text-xs text-slate-500">(Wajib)</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-not-allowed text-sm">
-                  <input
-                    type="checkbox"
-                    id="cbQcCheck"
-                    checked
-                    disabled
-                    class="h-4 w-4"
-                  />
-                  <span>QC Check</span>
-                  <span class="text-xs text-slate-500">(Wajib setelah Heat Treatment)</span>
-                </label>
-                <label class="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    id="cbShotblast"
-                    class="h-4 w-4"
-                  />
-                  <span>Shotblast</span>
-                  <span class="text-xs text-slate-500">(Optional)</span>
-                </label>
-                <label class="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    id="cbAntiRust"
-                    class="h-4 w-4"
-                  />
-                  <span>Anti Rust</span>
-                  <span class="text-xs text-slate-500">(Optional)</span>
-                </label>
-              </div>
+              <label class="ht-checkbox-label disabled">
+                <input type="checkbox" id="cbHeatTreatment" checked disabled class="ht-checkbox">
+                <span>Heat Treatment</span>
+                <span class="ht-disabled-hint">(Wajib)</span>
+              </label>
+            <label class="ht-checkbox-label">
+              <input type="checkbox" id="cbQcCheck" checked disabled class="ht-checkbox">
+              <span>QC Check</span>
+              <span class="ht-disabled-hint">(Wajib setelah Heat Treatment)</span>
+            </label>
+            <label class="ht-checkbox-label">
+              <input type="checkbox" id="cbShotblast" class="ht-checkbox">
+              <span>Shotblast</span>
+              <span class="ht-hint">(Optional)</span>
+            </label>
+            <label class="ht-checkbox-label">
+              <input type="checkbox" id="cbAntiRust" class="ht-checkbox">
+              <span>Anti Rust</span>
+              <span class="ht-hint">(Optional)</span>
+            </label>
             </div>
             <div class="ht-form-group">
               <label class="ht-form-label" for="partStatus">Status</label>
@@ -365,19 +325,19 @@
               .map(
                 (p) =>
                   `<div class="ht-tree-node" onclick="showPartDetail(${p.id})">
-                <img src="assets/icons/file.svg" alt="Part" class="icon">
+                <img src="assets/icons/file.svg" alt="Part" class="icon text-secondary">
                 <span class="font-mono">${p.nomor_part}</span>
-                <span class="text-slate-600">${p.nama_part}</span>
+                <span class="text-secondary">${p.nama_part}</span>
                 <span class="ht-badge ${p.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${p.status}</span>
               </div>`,
               )
               .join("");
             return `<div class="ht-card fade-in">
-            <div class="flex items-center gap-2 px-4 py-3 bg-slate-50 hover:bg-slate-100 cursor-pointer transition" onclick="toggleFolder(this)">
-              <img src="assets/icons/folder-open.svg" alt="Folder" class="icon text-blue-500">
-              <span class="font-semibold text-sm text-slate-800">${c.nama_customer}</span>
-              <span class="text-[10px] text-slate-400 ml-auto">${parts.length} part(s)</span>
-              <img src="assets/icons/chevron-down.svg" alt="Expand" class="icon icon-xs text-slate-400 ml-1 transition-transform" id="folder-arrow-${c.id}">
+            <div class="ht-tree-folder" onclick="toggleFolder(this)">
+              <img src="assets/icons/folder-open.svg" alt="Folder" class="icon">
+              <span class="font-semibold text-sm">${c.nama_customer}</span>
+              <span class="ht-folder-count">${parts.length} part(s)</span>
+              <img src="assets/icons/chevron-down.svg" alt="Expand" class="icon icon-xs ht-folder-arrow" id="folder-arrow-${c.id}">
             </div>
             <div class="folder-content hidden" id="folder-${c.id}">${partsHtml}</div>
           </div>`;
@@ -385,11 +345,11 @@
           .join("");
         document.getElementById("partExplorer").innerHTML =
           html ||
-          '<p class="text-center py-6 text-slate-400 text-sm">Belum ada data part</p>';
+          '<p class="text-center py-6 text-secondary">Belum ada data part</p>';
       }
       function toggleFolder(el) {
         const next = el.nextElementSibling;
-        const arrow = el.querySelector(".icon.transition-transform");
+         const arrow = el.querySelector(".ht-folder-arrow");
         if (next.classList.contains("hidden")) {
           next.classList.remove("hidden");
           if (arrow) arrow.style.transform = "rotate(180deg)";
@@ -407,14 +367,14 @@
         ];
         const active = steps.filter((s) => route[s.key]);
         if (active.length === 0) {
-          return '<p class="text-xs text-slate-400">Tidak ada proses</p>';
+          return '<p class="text-xs text-secondary">Tidak ada proses</p>';
         }
-        let html = '<div class="flex items-center gap-2 flex-wrap">';
+        let html = '<div class="ht-process-route">';
         active.forEach((s, i) => {
-          if (i > 0) html += '<span class="text-slate-400" aria-hidden="true">→</span>';
-          html += `<span class="inline-flex items-center gap-1">
-            <span class="font-medium text-slate-800">${s.label}</span>
-            <span class="text-xs text-slate-500">(${s.required ? "Wajib" : "Optional"})</span>
+          if (i > 0) html += '<span class="ht-route-separator" aria-hidden="true">→</span>';
+          html += `<span class="ht-route-step">
+            <span class="font-medium text-primary">${s.label}</span>
+            <span class="ht-hint">${s.required ? "Wajib" : "Optional"}</span>
           </span>`;
         });
         html += '</div>';
@@ -427,26 +387,26 @@
         const detail = document.getElementById("partDetail");
         detail.classList.remove("hidden");
         detail.innerHTML = `
-            <div class="flex items-center justify-between mb-3">
-              <h4 class="text-sm font-bold text-slate-800">Detail Part</h4>
+            <div class="ht-detail-header">
+              <h4 class="ht-detail-title">Detail Part</h4>
               <div class="ht-action-group">
                 <button onclick="editPart(${p.id})" class="ht-action-btn edit" title="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>
                 <button onclick="deletePart(${p.id})" class="ht-action-btn delete" title="Delete"><img src="assets/icons/delete.svg" alt="Delete" class="icon"></button>
               </div>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-              <div><p class="text-slate-500">Customer</p><p class="font-semibold text-slate-800">${c ? c.nama_customer : "-"}</p></div>
-              <div><p class="text-slate-500">Nomor Part</p><p class="font-semibold font-mono text-slate-800">${p.nomor_part}</p></div>
-              <div><p class="text-slate-500">Nama Part</p><p class="font-semibold text-slate-800">${p.nama_part}</p></div>
-              <div><p class="text-slate-500">Berat Part</p><p class="font-semibold text-slate-800">${p.berat_part} ${p.satuan_berat}</p></div>
-              <div><p class="text-slate-500">Target Hardness</p><p class="font-semibold text-slate-800 font-mono">${p.target_hardness || "-"}</p></div>
-               <div><p class="text-slate-500">Status</p><p class="font-semibold"><span class="ht-badge ${p.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${p.status}</span></p></div>
-             </div>
-             <div class="mt-4">
-               <p class="text-xs font-semibold text-slate-500 mb-1">Rute Proses Standar</p>
-               ${renderProcessRoute(p.standard_process_route ? p.standard_process_route : { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false })}
-             </div>
-           `;
+            <div class="ht-detail-grid">
+              <div><p class="ht-detail-label">Customer</p><p class="ht-detail-value">${c ? c.nama_customer : "-"}</p></div>
+              <div><p class="ht-detail-label">Nomor Part</p><p class="ht-detail-value font-mono">${p.nomor_part}</p></div>
+              <div><p class="ht-detail-label">Nama Part</p><p class="ht-detail-value">${p.nama_part}</p></div>
+              <div><p class="ht-detail-label">Berat Part</p><p class="ht-detail-value">${p.berat_part} ${p.satuan_berat}</p></div>
+              <div><p class="ht-detail-label">Target Hardness</p><p class="ht-detail-value font-mono">${p.target_hardness || "-"}</p></div>
+              <div><p class="ht-detail-label">Status</p><p class="ht-detail-value"><span class="ht-badge ${p.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${p.status}</span></p></div>
+            </div>
+            <div class="ht-detail-section">
+              <p class="ht-detail-section-title">Rute Proses Standar</p>
+              ${renderProcessRoute(p.standard_process_route ? p.standard_process_route : { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false })}
+            </div>
+          `;
         detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
       function openForm() {

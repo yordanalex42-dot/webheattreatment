@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tracking - Sistem Informasi Produksi Heat Treatment</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/layout.css" />
@@ -15,7 +14,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
-  <body class="text-slate-800">
+  <body>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
@@ -23,19 +22,10 @@
             <div>
               <div class="flex items-center gap-2">
                 <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
-            <button
-              id="sidebarToggle"
-              data-sidebar-toggle
-              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
-              title="Toggle Menu"
-              aria-label="Toggle menu"
-            >
-              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
-            </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
@@ -79,10 +69,7 @@
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div
-                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
-                id="sidebarInitial"
-              >
+              <div class="ht-user-avatar" id="sidebarInitial">
                 A
               </div>
               <div class="ht-user-details">
@@ -104,8 +91,8 @@
       <main class="ht-main full-width">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1 class="text-xl font-bold text-slate-800">Tracking System</h1>
-            <p class="text-xs text-slate-500">Lacak status produksi material.</p>
+            <h1>Tracking System</h1>
+            <p>Lacak status produksi material.</p>
           </div>
           <div class="ht-header-actions">
             <button
@@ -141,7 +128,7 @@
                   <img src="assets/icons/search.svg" alt="Tracking" class="icon mr-1">Tracking
                 </button>
               </div>
-              <p id="searchError" class="hidden text-[11px] text-danger-text mt-1"></p>
+              <p id="searchError" class="hidden ht-error-text mt-1"></p>
             </div>
 
             <!-- Result -->
@@ -149,17 +136,14 @@
               <div class="ht-card">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
                   <div>
-                    <h3 class="text-lg font-bold text-slate-800" id="trackNamaPart">-</h3>
-                    <p class="text-xs text-slate-500 mt-1" id="trackNoPart">-</p>
+                    <h3 class="font-bold" id="trackNamaPart">-</h3>
+                    <p class="ht-hint mt-1" id="trackNoPart">-</p>
                   </div>
                   <div class="mt-3 md:mt-0">
-                    <span
-                      id="trackStatus"
-                      class="ht-badge"
-                    >-</span>
+                    <span id="trackStatus" class="ht-badge">-</span>
                   </div>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div class="ht-info-item">
                     <span class="ht-info-label">Nomor Kode</span>
                     <span class="ht-info-value mono" id="trackKode">-</span>
@@ -181,7 +165,7 @@
                     <span class="ht-info-value" id="trackTreatment">-</span>
                   </div>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs mt-3">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
                   <div class="ht-info-item">
                     <span class="ht-info-label">Nomor SJ</span>
                     <span class="ht-info-value mono" id="trackSJ">-</span>
@@ -213,17 +197,17 @@
                   <div class="ht-card-header">
                     <h3 class="ht-card-title">Data Produksi</h3>
                   </div>
-                  <div class="space-y-2 text-xs">
+                  <div class="space-y-2">
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Tanggal Proses</span>
+                      <span class="text-secondary">Tanggal Proses</span>
                       <span class="font-medium" id="detailTanggalProses">-</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Jenis Treatment</span>
+                      <span class="text-secondary">Jenis Treatment</span>
                       <span class="font-medium" id="detailTreatment">-</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Status Produksi</span>
+                      <span class="text-secondary">Status Produksi</span>
                       <span class="font-medium" id="detailProdStatus">-</span>
                     </div>
                   </div>
@@ -232,21 +216,21 @@
                   <div class="ht-card-header">
                     <h3 class="ht-card-title">Data Quality Control</h3>
                   </div>
-                  <div class="space-y-2 text-xs">
+                  <div class="space-y-2">
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Nilai Hardness</span>
+                      <span class="text-secondary">Nilai Hardness</span>
                       <span class="font-medium font-mono" id="detailHardness">-</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Hasil QC</span>
+                      <span class="text-secondary">Hasil QC</span>
                       <span class="font-medium" id="detailQcHasil">-</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Tanggal QC</span>
+                      <span class="text-secondary">Tanggal QC</span>
                       <span class="font-medium" id="detailTanggalQc">-</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Catatan</span>
+                      <span class="text-secondary">Catatan</span>
                       <span class="font-medium" id="detailQcCatatan">-</span>
                     </div>
                   </div>
@@ -255,17 +239,17 @@
                   <div class="ht-card-header">
                     <h3 class="ht-card-title">Data Delivery</h3>
                   </div>
-                  <div class="space-y-2 text-xs">
+                  <div class="space-y-2">
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Tanggal Kirim</span>
+                      <span class="text-secondary">Tanggal Kirim</span>
                       <span class="font-medium" id="detailTanggalKirim">-</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Qty Kirim</span>
+                      <span class="text-secondary">Qty Kirim</span>
                       <span class="font-medium" id="detailQtyKirim">-</span>
                     </div>
                     <div class="flex justify-between">
-                      <span class="text-slate-500">Status</span>
+                      <span class="text-secondary">Status</span>
                       <span class="font-medium" id="detailDelStatus">-</span>
                     </div>
                   </div>
@@ -275,11 +259,11 @@
 
             <!-- Empty state -->
             <div id="noResult" class="hidden text-center py-12">
-              <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div class="ht-empty-icon">
                 <img src="assets/icons/search.svg" alt="Search" class="icon icon-xl icon-muted">
               </div>
-              <h3 class="text-base font-bold text-slate-600">Material tidak ditemukan</h3>
-              <p class="text-xs text-slate-400 mt-1">
+              <h3 class="font-bold text-secondary">Material tidak ditemukan</h3>
+              <p class="ht-hint mt-1">
                 Silakan periksa kembali Nomor Kode yang dimasukkan
               </p>
             </div>
@@ -300,7 +284,7 @@
         <div class="ht-modal-body">
           <div class="ht-qr-scanner-wrapper">
             <div id="qr-reader-modal" class="ht-qr-frame"></div>
-            <p class="text-xs text-slate-500 text-center mt-3">
+            <p class="ht-hint text-center mt-3">
               Arahkan kamera ke QR Code
             </p>
           </div>
@@ -477,10 +461,10 @@
               </div>
               <div class="ml-6">
                 <div class="flex items-center justify-between">
-                  <h4 class="font-bold text-slate-800 text-xs">${item.title}</h4>
-                  <span class="text-[10px] text-slate-400">${item.date}</span>
+                  <h4 class="font-bold text-xs">${item.title}</h4>
+                  <span class="text-[10px] text-secondary">${item.date}</span>
                 </div>
-                <p class="text-[11px] text-slate-500 mt-1">${item.desc}</p>
+                <p class="text-[11px] text-secondary mt-1">${item.desc}</p>
               </div>
             </div>`;
           })
@@ -493,14 +477,14 @@
         document.getElementById("detailHardness").textContent = qc ? (qc.hardness || "-") : "-";
         const hasilEl = document.getElementById("detailQcHasil");
         hasilEl.textContent = qc ? (qc.hasil || "-") : "-";
-        hasilEl.className = "font-medium " + (qc ? (qc.hasil === "OK" ? "text-emerald-600" : "text-red-600") : "text-slate-400");
+        hasilEl.className = "font-medium " + (qc ? (qc.hasil === "OK" ? "text-success" : "text-danger") : "text-secondary");
         document.getElementById("detailTanggalQc").textContent = qc ? (qc.tanggal_inspector || "-") : "-";
         document.getElementById("detailQcCatatan").textContent = qc ? (qc.catatan || "-") : "-";
         document.getElementById("detailTanggalKirim").textContent = delivery ? (delivery.tanggal_kirim || "-") : "-";
         document.getElementById("detailQtyKirim").textContent = delivery ? (delivery.qty_kirim || "-") : "-";
         const delStatus = document.getElementById("detailDelStatus");
         delStatus.textContent = isLegitDelivery ? "Delivered" : "-";
-        delStatus.className = "font-medium " + (isLegitDelivery ? "text-pink-600" : "text-slate-400");
+        delStatus.className = "font-medium " + (isLegitDelivery ? "text-success" : "text-secondary");
       }
       function openScanModal() {
         HTUI.openModal("scanModal");

@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Customer - Master Data</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/sidebar.css" />
@@ -14,7 +13,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
-  <body class="text-slate-800">
+  <body>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
@@ -22,19 +21,10 @@
             <div>
               <div class="flex items-center gap-2">
                 <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
-            <button
-              id="sidebarToggle"
-              data-sidebar-toggle
-              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
-              title="Toggle Menu"
-              aria-label="Toggle menu"
-            >
-              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
-            </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
@@ -78,10 +68,8 @@
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div
-                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
-                id="sidebarInitial"
-              >
+              <div class="ht-user-avatar"
+                 id="sidebarInitial">
                 A
               </div>
               <div class="ht-user-details">
@@ -103,8 +91,8 @@
       <main class="ht-main full-width">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1 class="text-xl font-bold text-slate-800">Master Data Customer</h1>
-            <p class="text-xs text-slate-500">Kelola data customer heat treatment.</p>
+            <h1>Master Data Customer</h1>
+            <p>Kelola data customer heat treatment.</p>
           </div>
           <div class="ht-header-actions">
             <button
@@ -153,10 +141,7 @@
                       <th>Aksi</th>
                     </tr>
                   </thead>
-                  <tbody
-                    class="divide-y divide-slate-100"
-                    id="customerTable"
-                  ></tbody>
+                  <tbody id="customerTable"></tbody>
                 </table>
               </div>
             </div>
@@ -186,10 +171,7 @@
                 class="ht-form-input"
                 placeholder="CUST-001"
               />
-              <p
-                class="text-[10px] text-danger-text mt-1 hidden"
-                id="custKodeErr"
-              >
+              <p class="ht-error-text hidden" id="custKodeErr">
                 Kode Customer sudah ada!
               </p>
             </div>
@@ -238,10 +220,7 @@
                 class="ht-form-input"
                 placeholder="email@company.com"
               />
-              <p
-                class="text-[10px] text-danger-text mt-1 hidden"
-                id="custEmailErr"
-              >
+              <p class="ht-error-text hidden" id="custEmailErr">
                 Format email tidak valid
               </p>
             </div>
@@ -297,15 +276,15 @@
         const html = data
           .map(
             (c) => `
-          <tr class="hover:bg-slate-50 transition">
-            <td class="px-3 py-2 font-mono">${c.kode_customer || "-"}</td>
-            <td class="px-3 py-2">${c.nama_customer || "-"}</td>
-            <td class="px-3 py-2 text-slate-500">${c.alamat || "-"}</td>
-            <td class="px-3 py-2">${c.pic || "-"}</td>
-            <td class="px-3 py-2 text-slate-500">${c.phone || "-"}</td>
-            <td class="px-3 py-2 text-slate-500">${c.email || "-"}</td>
-            <td class="px-3 py-2"><span class="ht-badge ${c.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${c.status || "-"}</span></td>
-            <td class="px-3 py-2">
+          <tr class="ht-table-row">
+            <td class="font-mono">${c.kode_customer || "-"}</td>
+            <td>${c.nama_customer || "-"}</td>
+            <td class="text-secondary">${c.alamat || "-"}</td>
+            <td>${c.pic || "-"}</td>
+            <td class="text-secondary">${c.phone || "-"}</td>
+            <td class="text-secondary">${c.email || "-"}</td>
+            <td><span class="ht-badge ${c.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${c.status || "-"}</span></td>
+            <td>
               <div class="ht-action-group">
                 <button onclick="editCustomer(${c.id})" class="ht-action-btn edit" title="Edit" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>
                 <button onclick="deleteCustomer(${c.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><img src="assets/icons/delete.svg" alt="Delete" class="icon"></button>

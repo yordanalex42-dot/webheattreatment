@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Sistem Informasi Produksi Heat Treatment</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -18,7 +17,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
-  <body class="text-slate-800">
+  <body>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
@@ -26,21 +25,12 @@
             <div>
               <div class="flex items-center gap-2">
                 <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">
+              <p class="brand-subtitle">
                 Sistem Informasi Produksi
               </p>
             </div>
-            <button
-              id="sidebarToggle"
-              data-sidebar-toggle
-              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
-              title="Toggle Menu"
-              aria-label="Toggle menu"
-            >
-              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
-            </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
@@ -84,10 +74,7 @@
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div
-                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
-                id="sidebarInitial"
-              >
+              <div class="ht-user-avatar" id="sidebarInitial">
                 A
               </div>
               <div class="ht-user-details">
@@ -112,10 +99,8 @@
       <main class="ht-main full-width">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1 class="text-xl font-bold text-slate-800">Dashboard</h1>
-            <p class="text-xs text-slate-500">
-              Monitoring Produksi Heat Treatment
-            </p>
+            <h1>Dashboard</h1>
+            <p>Monitoring Produksi Heat Treatment</p>
           </div>
           <div class="ht-header-right">
             <span class="ht-header-date" id="currentDate"></span>
@@ -129,7 +114,7 @@
               </button>
               <button
                 id="exportBtn"
-                class="ht-btn ht-btn-success ht-btn-sm"
+                class="ht-btn ht-btn-primary ht-btn-sm"
                 aria-label="Export data to Excel"
               >
                 <img src="assets/icons/download.svg" alt="Export Excel" class="icon mr-1"> Export Excel
@@ -140,19 +125,19 @@
         <div class="ht-content">
           <div class="ht-content-max">
             <!-- Loading State -->
-            <div id="loadingState" class="hidden text-center py-12">
-              <div
-                class="w-12 h-12 border-3 border-slate-200 border-t-primary rounded-full animate-spin mx-auto"
-              ></div>
-              <p class="mt-3 text-sm text-slate-500">
+            <div id="loadingState" class="hidden ht-empty-state">
+              <div class="spinner-border">
+                <img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-xl icon-spin">
+              </div>
+              <p class="mt-3 text-sm" style="color: var(--text-secondary);">
                 Memuat data dashboard...
               </p>
             </div>
 
             <!-- Error State -->
-            <div id="errorState" class="hidden text-center py-12">
+            <div id="errorState" class="hidden ht-empty-state">
               <img src="assets/icons/error.svg" alt="Error" class="icon icon-3xl icon-danger">
-              <p class="mt-3 text-sm text-slate-500" id="errorMessage">
+              <p class="mt-3 text-sm" style="color: var(--text-secondary);" id="errorMessage">
                 Gagal memuat data dashboard. Silakan coba refresh.
               </p>
             </div>
@@ -163,7 +148,7 @@
               <div class="ht-kpi-left">
                 <!-- Top Row: 5 KPI Cards -->
                 <div class="ht-kpi-grid" id="kpiGrid">
-                  <div class="ht-kpi-card primary fade-in">
+                  <div class="ht-kpi-card primary kpiEntranceDelay1">
                     <img src="assets/icons/incoming.svg" alt="Total Input" class="icon icon-md ht-kpi-icon">
                     <div class="ht-kpi-container">
                       <p class="ht-kpi-label">Total Input</p>
@@ -171,7 +156,7 @@
                       <span class="ht-kpi-unit">Part</span>
                     </div>
                   </div>
-                  <div class="ht-kpi-card success fade-in">
+                  <div class="ht-kpi-card success kpiEntranceDelay2">
                     <img src="assets/icons/delivery.svg" alt="Total Output" class="icon icon-md ht-kpi-icon">
                     <div class="ht-kpi-container">
                       <p class="ht-kpi-label">Total Output</p>
@@ -179,7 +164,7 @@
                       <span class="ht-kpi-unit">Part</span>
                     </div>
                   </div>
-                  <div class="ht-kpi-card info fade-in">
+                  <div class="ht-kpi-card info kpiEntranceDelay3">
                     <img src="assets/icons/weight.svg" alt="Total Berat Input" class="icon icon-md ht-kpi-icon">
                     <div class="ht-kpi-container">
                       <p class="ht-kpi-label">Total Berat Input</p>
@@ -187,7 +172,7 @@
                       <span class="ht-kpi-unit">KG</span>
                     </div>
                   </div>
-                  <div class="ht-kpi-card warning fade-in">
+                  <div class="ht-kpi-card habanero kpiEntranceDelay4">
                     <img src="assets/icons/weight.svg" alt="Total Berat Output" class="icon icon-md ht-kpi-icon">
                     <div class="ht-kpi-container">
                       <p class="ht-kpi-label">Total Berat Output</p>
@@ -195,7 +180,7 @@
                       <span class="ht-kpi-unit">KG</span>
                     </div>
                   </div>
-                  <div class="ht-kpi-card danger fade-in">
+                  <div class="ht-kpi-card danger kpiEntranceDelay5">
                     <img src="assets/icons/warning.svg" alt="Part NG" class="icon icon-md ht-kpi-icon">
                     <div class="ht-kpi-container">
                       <p class="ht-kpi-label">Part NG</p>
@@ -205,19 +190,19 @@
                   </div>
                 </div>
 
-                <!-- Target Berat Output Bulan Ini (Compact) -->
+                <!-- Target Berat Output Bulan Ini -->
                 <div class="ht-card fade-in" id="targetCard">
                   <div class="ht-card-header ht-card-header-with-actions">
                     <h3 class="ht-card-title">Target Berat Output Bulan Ini</h3>
                     <div class="flex items-center gap-2">
-                      <span id="targetMonthLabel" class="text-xs text-slate-500 hidden md:block"></span>
-                      <button id="targetEditBtn" class="ht-btn ht-btn-ghost ht-btn-sm p-2" aria-label="Edit target" title="Edit Target">
+                      <span id="targetMonthLabel" class="ht-info-label" style="display: none;"></span>
+                      <button id="targetEditBtn" class="ht-btn ht-btn-ghost ht-btn-sm" aria-label="Edit target" title="Edit Target">
                         <img src="assets/icons/edit.svg" alt="Edit" class="icon icon-sm">
                       </button>
                     </div>
                   </div>
-                  <div class="ht-card-body py-4">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4" id="targetDisplay">
+                  <div class="ht-card-body">
+                    <div class="ht-info-item" id="targetDisplay">
                       <!-- Target value rendered by JS -->
                     </div>
                   </div>
@@ -252,14 +237,14 @@
                   </button>
                 </div>
                 <div class="ht-modal-body">
-                  <div class="space-y-4">
+                  <div class="ht-form">
                     <div>
                       <label class="ht-form-label">Target Berat Output (Kg)</label>
                       <input type="number" id="targetEditInput" class="ht-form-input" placeholder="Contoh: 10000" min="0" step="1" />
                     </div>
-                    <div class="flex justify-end gap-2 pt-2">
-                      <button onclick="HTDashboard.closeTargetModal()" class="ht-btn ht-btn-secondary ht-btn-sm">Batal</button>
-                      <button onclick="HTDashboard.saveTargetFromModal()" class="ht-btn ht-btn-primary ht-btn-sm">
+                    <div class="ht-form-actions">
+                      <button onclick="HTDashboard.closeTargetModal()" class="ht-btn ht-btn-secondary">Batal</button>
+                      <button onclick="HTDashboard.saveTargetFromModal()" class="ht-btn ht-btn-primary">
                         <img src="assets/icons/save.svg" alt="Simpan" class="icon mr-1">Simpan
                       </button>
                     </div>
@@ -269,15 +254,15 @@
             </div>
 
             <!-- Charts -->
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+            <div class="ht-chart-grid">
               <!-- Daily Production Chart -->
               <div class="ht-card fade-in">
-                <div class="ht-card-header-with-actions">
+                <div class="ht-card-header ht-card-header-with-actions">
                   <div>
                     <h3 class="ht-card-title">Produksi Harian</h3>
                     <p class="ht-card-subtitle">Total Berat Produksi (KG)</p>
                   </div>
-                  <div class="flex items-end gap-2 flex-wrap">
+                  <div class="ht-chart-controls">
                     <select
                       id="dailyPeriod"
                       class="ht-form-select ht-form-select-sm"
@@ -306,6 +291,7 @@
                 <div class="ht-chart-container">
                   <canvas id="dailyChart" height="280"></canvas>
                   <div id="dailyChartEmpty" class="ht-chart-empty hidden">
+                    <img src="assets/icons/empty-state.svg" alt="Kosong" class="icon">
                     <p>Belum ada data produksi pada periode ini.</p>
                   </div>
                 </div>
@@ -313,7 +299,7 @@
 
               <!-- Monthly Production Chart -->
               <div class="ht-card fade-in">
-                <div class="ht-card-header-with-actions">
+                <div class="ht-card-header ht-card-header-with-actions">
                   <div>
                     <h3 class="ht-card-title">Produksi Bulanan</h3>
                     <p class="ht-card-subtitle">Total Berat Produksi (KG)</p>
@@ -327,6 +313,7 @@
                 <div class="ht-chart-container">
                   <canvas id="monthlyChart" height="280"></canvas>
                   <div id="monthlyChartEmpty" class="ht-chart-empty hidden">
+                    <img src="assets/icons/empty-state.svg" alt="Kosong" class="icon">
                     <p>Belum ada data produksi pada tahun ini.</p>
                   </div>
                 </div>
@@ -388,10 +375,10 @@
 
             <!-- Monitoring Table -->
             <div class="ht-card ht-monitor-card fade-in">
-              <div class="ht-card-header-with-actions">
+              <div class="ht-card-header ht-card-header-with-actions">
                 <h3 class="ht-card-title">Monitoring Seluruh Data Incoming</h3>
                 <div class="flex items-center gap-2">
-                  <span class="text-xs text-slate-500">Per halaman:</span>
+                  <span class="ht-info-label">Per halaman:</span>
                   <select
                     id="pageSizeSelect"
                     class="ht-form-select ht-form-select-sm w-auto"
@@ -429,7 +416,7 @@
                     </tr>
                   </thead>
                   <tbody
-                    class="divide-y divide-slate-100 text-xs"
+                    class="divide-y"
                     id="monitoringTableBody"
                   ></tbody>
                 </table>
@@ -444,7 +431,7 @@
                   Menampilkan <span id="pageInfo">0-0</span> dari
                   <span id="totalItems">0</span> data
                 </div>
-                <div class="ht-pagination-controls flex items-center gap-2">
+                <div class="ht-pagination-controls">
                   <button
                     id="prevPage"
                     class="ht-btn ht-btn-ghost ht-btn-sm"
@@ -490,7 +477,7 @@
         <div class="ht-modal-body">
           <div class="ht-qr-scanner-wrapper">
             <div id="qr-reader" class="ht-qr-frame"></div>
-            <p class="text-xs text-slate-500 text-center mt-3">
+            <p class="ht-info-label" style="text-align: center; margin-top: 12px;">
               Arahkan kamera ke QR Code material
             </p>
           </div>

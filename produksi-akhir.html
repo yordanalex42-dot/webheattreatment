@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Produksi Akhir - Sistem Informasi Produksi Heat Treatment</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/layout.css" />
@@ -15,7 +14,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
-  <body class="text-slate-800">
+  <body>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
@@ -23,19 +22,10 @@
             <div>
               <div class="flex items-center gap-2">
                 <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
-            <button
-              id="sidebarToggle"
-              data-sidebar-toggle
-              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
-              title="Toggle Menu"
-              aria-label="Toggle menu"
-            >
-              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
-            </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
@@ -76,10 +66,7 @@
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div
-                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
-                id="sidebarInitial"
-              >
+              <div class="ht-user-avatar" id="sidebarInitial">
                 A
               </div>
               <div class="ht-user-details">
@@ -101,8 +88,8 @@
       <main class="ht-main full-width">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1 class="text-xl font-bold text-slate-800">Produksi Akhir</h1>
-            <p class="text-xs text-slate-500">Konfirmasi part keluar mesin heat treatment.</p>
+            <h1>Produksi Akhir</h1>
+            <p>Konfirmasi part keluar mesin heat treatment.</p>
           </div>
         </header>
         <div class="ht-content">
@@ -135,12 +122,12 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="flex-1">
                   <div id="qr-reader" class="ht-qr-frame"></div>
-                  <p class="text-xs text-slate-500 text-center mt-3">
+                  <p class="ht-hint text-center mt-3">
                     Arahkan kamera ke QR Code material
                   </p>
                 </div>
                 <div class="space-y-2">
-                  <p class="text-xs text-slate-500">
+                  <p class="ht-hint">
                     Atau masukkan Kode secara manual:
                   </p>
                   <div class="flex gap-2">
@@ -160,22 +147,17 @@
                       <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
                     </button>
                   </div>
-                  <p id="manualError" class="hidden text-[11px] text-danger-text"></p>
+                  <p id="manualError" class="hidden ht-error-text"></p>
                 </div>
               </div>
             </div>
 
             <!-- Finish section -->
-            <div
-              id="finishSection"
-              class="hidden ht-step-card success fade-in"
-            >
+            <div id="finishSection" class="hidden ht-step-card success fade-in">
               <div class="flex items-center justify-between mb-3">
-                <h3 class="text-base font-bold text-slate-800">
-                  FINISH / PART SELESAI PROSES
-                </h3>
+                <h3 class="font-bold">FINISH / PART SELESAI PROSES</h3>
                 <span class="ht-step-indicator">
-                  <span class="dot bg-amber-500"></span>
+                  <span class="dot dot-warning"></span>
                   <span>Produksi Aktif</span>
                 </span>
               </div>
@@ -236,46 +218,29 @@
                 </div>
               </div>
 
-              <div
-                id="prodFinishInfo"
-                class="hidden text-xs text-slate-500 mb-3 p-2 bg-blue-50 rounded"
-              >
+              <div id="prodFinishInfo" class="hidden ht-alert ht-alert-info">
                 <p>
                   Waktu Scan Keluar: <span id="prodFinishScanTime">-</span> |
                   Operator Finish: <span id="prodFinishOperator">-</span>
                 </p>
               </div>
 
-              <div class="bg-white border-2 border-slate-200 rounded-xl p-4 mb-4">
-                <h4 class="font-bold text-sm mb-3">HASIL PROSES</h4>
+              <div class="ht-step-form">
+                <h4 class="font-bold mb-3">HASIL PROSES</h4>
                 <div class="flex gap-4 mb-3">
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="prodResult"
-                      id="resultOK"
-                      value="OK"
-                      class="w-4 h-4 text-emerald-500"
-                      onchange="updateNGNoteVisibility()"
-                    />
-                    <span class="text-sm font-medium text-emerald-700">( ) OK</span>
+                  <label class="ht-checkbox-label">
+                    <input type="radio" name="prodResult" id="resultOK" value="OK" class="ht-checkbox" onchange="updateNGNoteVisibility()">
+                    <span class="text-success">( ) OK</span>
                   </label>
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="prodResult"
-                      id="resultNG"
-                      value="NG"
-                      class="w-4 h-4 text-red-500"
-                      onchange="updateNGNoteVisibility()"
-                    />
-                    <span class="text-sm font-medium text-red-700">( ) NG</span>
+                  <label class="ht-checkbox-label">
+                    <input type="radio" name="prodResult" id="resultNG" value="NG" class="ht-checkbox" onchange="updateNGNoteVisibility()">
+                    <span class="text-danger">( ) NG</span>
                   </label>
                 </div>
                 <div id="resultNGNote" class="hidden">
-                  <label class="block text-xs font-medium text-slate-600 mb-1">
+                  <label class="ht-form-label">
                     Keterangan Penyebab NG
-                    <span class="text-red-500">(Wajib)</span>
+                    <span class="text-danger">(Wajib)</span>
                   </label>
                   <input
                     type="text"
@@ -288,12 +253,7 @@
               </div>
 
               <div class="flex justify-end">
-                <button
-                  onclick="confirmKeluarMesin()"
-                  id="btnKeluarMesin"
-                  class="ht-btn ht-btn-success ht-btn-lg"
-                  aria-label="Konfirmasi part keluar"
-                >
+                <button onclick="confirmKeluarMesin()" id="btnKeluarMesin" class="ht-btn ht-btn-success ht-btn-lg" aria-label="Konfirmasi part keluar">
                   <img src="assets/icons/check.svg" alt="Keluar" class="icon mr-2">KONFIRMASI PART KELUAR
                 </button>
               </div>
@@ -407,13 +367,13 @@
               currentProduction.process_ng_note || "";
           }
           document.getElementById("btnKeluarMesin").disabled = true;
-          document.getElementById("btnKeluarMesin").classList.add("opacity-50");
+          document.getElementById("btnKeluarMesin").classList.add("is-disabled");
         } else if (isProcessing) {
           document.getElementById("btnKeluarMesin").disabled = false;
-          document.getElementById("btnKeluarMesin").classList.remove("opacity-50");
+          document.getElementById("btnKeluarMesin").classList.remove("is-disabled");
         } else {
           document.getElementById("btnKeluarMesin").disabled = true;
-          document.getElementById("btnKeluarMesin").classList.add("opacity-50");
+          document.getElementById("btnKeluarMesin").classList.add("is-disabled");
           HTUI.toast("Status produksi tidak valid untuk konfirmasi keluar.", "error");
         }
         updateNGNoteVisibility();
@@ -432,20 +392,20 @@
         const hasProcessResult = currentProduction.process_result;
         const hasStartScan = currentProduction.start_scan_at;
         const formVisible = !document.getElementById('finishSection').classList.contains('hidden');
-        
+
         // Step 1: Scan Kode
         steps[0].classList.remove('active');
         steps[0].classList.toggle('completed', !!hasStartScan);
-        
+
         // Step 2: Data Part
         steps[1].classList.remove('completed');
         steps[1].classList.toggle('active', formVisible && !['FINISH', 'FINISH_NG'].includes(status));
         steps[1].classList.toggle('completed', !formVisible && !!hasStartScan);
-        
+
         // Step 3: Hasil Proses
         steps[2].classList.remove('active');
         steps[2].classList.toggle('completed', !!hasProcessResult);
-        
+
         // Step 4: Keluar Mesin
         steps[3].classList.remove('active');
         steps[3].classList.toggle('completed', ['FINISH', 'FINISH_NG'].includes(status));
@@ -478,7 +438,7 @@
         }
         const btn = document.getElementById("btnKeluarMesin");
         btn.disabled = true;
-        btn.classList.add("opacity-50");
+        btn.classList.add("is-disabled");
         btn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Memproses...';
         try {
           const scanTime = new Date().toLocaleString("id-ID", {
@@ -502,15 +462,15 @@
           });
           btn.innerHTML = '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
           setTimeout(function () {
-btn.innerHTML = '<img src="assets/icons/check.svg" alt="Keluar" class="icon mr-2">KONFIRMASI PART KELUAR';
-            btn.classList.remove("opacity-50");
+            btn.innerHTML = '<img src="assets/icons/check.svg" alt="Keluar" class="icon mr-2">KONFIRMASI PART KELUAR';
+            btn.classList.remove("is-disabled");
             btn.disabled = false;
             HTUI.toast("Part berhasil dikonfirmasi keluar mesin. Status: " + data.production_status, "success");
             loadMaterialById(currentMaterial.kode || currentMaterial.id);
           }, 1500);
         } catch (e) {
           btn.innerHTML = '<img src="assets/icons/check.svg" alt="Keluar" class="icon mr-2">KONFIRMASI PART KELUAR';
-          btn.classList.remove("opacity-50");
+          btn.classList.remove("is-disabled");
           btn.disabled = false;
           HTUI.toast("Terjadi kesalahan: " + e.message, "error");
         }

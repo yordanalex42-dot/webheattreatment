@@ -1,42 +1,10 @@
 /* ============================================================
    HT-UI — Shared UI utilities for Heat Treatment system.
-   Provides: auth guard, sidebar toggle (desktop + mobile drawer),
-   modal open/close, toast notifications, QR scanner lifecycle,
-   and form helper utilities. All logic stays in-page; this only
-   centralizes presentation/state helpers so pages stay consistent.
+   Provides: auth guard, modal open/close, toast notifications,
+   QR scanner lifecycle, and form helper utilities.
    ============================================================ */
 
 const HTUI = {
-  /* ---- Sidebar ---- */
-  initSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    if (!sidebar) return;
-    const stored = localStorage.getItem("htSidebarCollapsed");
-    if (stored === "true") sidebar.classList.add("collapsed");
-  },
-
-  toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("sidebarOverlay");
-    if (!sidebar) return;
-    sidebar.classList.toggle("open");
-    sidebar.classList.toggle("collapsed");
-    if (overlay) overlay.classList.toggle("active");
-    if (sidebar.classList.contains("open") || sidebar.classList.contains("collapsed")) {
-      localStorage.setItem("htSidebarCollapsed", "true");
-    } else {
-      localStorage.setItem("htSidebarCollapsed", "false");
-    }
-  },
-
-  closeSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    const overlay = document.getElementById("sidebarOverlay");
-    if (!sidebar) return;
-    sidebar.classList.remove("open");
-    if (overlay) overlay.classList.remove("active");
-  },
-
   /* ---- Auth guard ---- */
   requireAuth() {
     if (typeof Auth === "undefined") return false;
@@ -204,21 +172,4 @@ const HTUI = {
   if (location.protocol === "file:") {
     document.documentElement.classList.add("ht-file-protocol");
   }
-  if (!document.getElementById("sidebarOverlay")) {
-    const overlay = document.createElement("div");
-    overlay.id = "sidebarOverlay";
-    overlay.className = "ht-overlay";
-    overlay.setAttribute("onclick", "HTUI.closeSidebar()");
-    document.body.appendChild(overlay);
-  }
-  document.addEventListener("click", function (e) {
-    const togglers = document.querySelectorAll("[data-sidebar-toggle]");
-    togglers.forEach((b) => {
-      if (b.contains(e.target) || e.target === b) {
-        e.preventDefault();
-        HTUI.toggleSidebar();
-      }
-    });
-  });
-  HTUI.initSidebar();
 })();

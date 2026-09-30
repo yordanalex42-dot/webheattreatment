@@ -1,69 +1,68 @@
 /* ============================================================
    GLOBAL — Heat Treatment Information System
    Design tokens, base reset, typography, animation keyframes.
-   Modern industrial dashboard design system.
+   Modern Industrial Premium design system.
+
+   Palette:
+     HABANERO           #F98513  — signature accent (CTA, highlight)
+     LUSTER WHITE       #F4F1EC  — background, surface
+     JODHPUR TAN        #DAD1C8  — borders, dividers, subtle surface
+     ASTER FLOWER BLUE   #9BACD8  — secondary info accent
+     DEEP SPACE ROYAL   #223382  — primary UI, navigation, buttons
+     DEADLY DEPTHS      #111144  — headings, text, dark elements
    ============================================================ */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 :root {
+  /* ===== SIGNATURE / ACCENT ===== */
+  --habanero: #223382;
+  --habanero-hover: #e0730a;
+  --habanero-soft: rgba(249, 133, 19, 0.1);
+
+  /* ===== PRIMARY / STRUCTURAL ===== */
+  --primary: #223382; /* Deep Space Royal */
+  --primary-hover: #1a2866; /* deeper */
+  --primary-soft: rgba(34, 51, 130, 0.08);
+
   /* ===== SIDEBAR / BRAND ===== */
-  --sidebar: #0b172a;
-  --sidebar-elevated: #11203a;
-  --sidebar-border: #1e2c4a;
-
-  /* ===== BRAND / PRIMARY ===== */
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-dark: #1d4ed8;
-  --primary-soft: #dbeafe;
-
-  /* ===== TYPOGRAPHY SCALE ===== */
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "Courier New", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --text-xs: 11px;
-  --text-sm: 12px;
-  --text-base: 14px;
-  --text-lg: 16px;
-  --text-xl: 20px;
-  --text-2xl: 24px;
-  --text-3xl: 30px;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semi: 600;
-  --font-weight-bold: 700;
-
-  /* ===== ACCENT COLORS ===== */
-  --accent-blue: #2563eb;
-  --accent-green: #10b981;
-  --accent-green-soft: #dcfce7;
-  --accent-green-text: #065f46;
-  --accent-orange: #f59e0b;
-  --accent-orange-soft: #fef3c7;
-  --accent-orange-text: #92400e;
-  --accent-red: #ef4444;
-  --accent-red-soft: #fee2e2;
-  --accent-red-text: #991b1b;
+  --sidebar: #111144; /* Deadly Depths */
+  --sidebar-elevated: #111144;
+  --sidebar-border: #2a3a7a; /* subtle divider on dark */
 
   /* ===== BACKGROUND & SURFACE ===== */
-  --background: #f5f7fa;
-  --surface: #ffffff;
-  --surface-hover: #f1f3f6;
-  --surface-muted: #eef1f5;
-  --surface-elevated: #ffffff;
+  --background: #fefdfb; /* Luster White */
+  --surface: #fefdfb; /* Luster White */
+  --surface-hover: #fefdfb; /* pure white on hover */
+  --surface-muted: #ede9e4; /* subtle off-white */
+  --surface-elevated: #f4f1ec;
+  --surface-glass: rgba(244, 241, 236, 0.7);
 
   /* ===== TEXT ===== */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary: #94a3b8;
+  --text-primary: #111144; /* Deadly Depths — strong headings */
+  --text-secondary: #5a5a64; /* softer secondary */
+  --text-tertiary: #9bacd8; /* Aster Flower Blue — muted */
   --text-inverse: #ffffff;
-  --text-disabled: #cbd5e1;
+  --text-disabled: #c4c9d9;
 
   /* ===== BORDERS ===== */
-  --border: #e5e7eb;
-  --border-dark: #cbd5e1;
+  --border: #dad1c8; /* Jodhpur Tan */
+  --border-dark: #c4c9d9;
 
-  /* ===== STATUS (kept for backward compat) ===== */
+  /* ===== GRADIENTS ===== */
+  --gradient-primary: linear-gradient(110deg, #f98513 0%, #223382 100%);
+  --gradient-dark: linear-gradient(110deg, #f98513 0%, #111144 100%);
+  --gradient-blue: linear-gradient(110deg, #9bacd8 0%, #223382 100%);
+  --gradient-warm: linear-gradient(110deg, #f98513 0%, #dad1c8 100%);
+
+  /* ===== ACCENT COLORS (semantic aliases) ===== */
+  --accent-blue: #223382; /* Deep Space Royal */
+  --accent-blue-soft: rgba(34, 51, 130, 0.08);
+  --accent-orange: #f98513; /* Habanero */
+  --accent-orange-soft: rgba(249, 133, 19, 0.08);
+  --accent-blue-text: #223382;
+
+  /* ===== STATUS (semantic) ===== */
   --success: #10b981;
   --success-bg: #dcfce7;
   --success-text: #065f46;
@@ -73,23 +72,27 @@
   --danger: #ef4444;
   --danger-bg: #fee2e2;
   --danger-text: #991b1b;
-  --info: #3b82f6;
-  --info-bg: #dbeafe;
-  --info-text: #1d4ed8;
+  --info: #9bacd8; /* Aster Flower Blue */
+  --info-bg: rgba(154, 172, 216, 0.12);
+  --info-text: #223382; /* Deep Space Royal on info bg */
 
   /* ===== BADGE PALETTE ===== */
-  --badge-incoming-bg: #dbeafe;
-  --badge-incoming-text: #1d4ed8;
-  --badge-process-bg: #fef3c7;
-  --badge-process-text: #92400e;
-  --badge-qc-bg: #dbeafe;
-  --badge-qc-text: #1d4ed8;
-  --badge-delivery-bg: #dcfce7;
-  --badge-delivery-text: #065f46;
-  --badge-ng-bg: #fee2e2;
-  --badge-ng-text: #991b1b;
-  --badge-waiting-bg: #f1f3f6;
-  --badge-waiting-text: #475569;
+  --badge-incoming-bg: var(--info-bg);
+  --badge-incoming-text: var(--info-text);
+  --badge-process-bg: var(--warning-bg);
+  --badge-process-text: var(--warning-text);
+  --badge-qc-bg: var(--info-bg);
+  --badge-qc-text: var(--info-text);
+  --badge-delivery-bg: var(--success-bg);
+  --badge-delivery-text: var(--success-text);
+  --badge-ng-bg: var(--danger-bg);
+  --badge-ng-text: var(--danger-text);
+  --badge-waiting-bg: var(--surface-muted);
+  --badge-waiting-text: var(--text-secondary);
+  --badge-active-bg: var(--habanero-soft);
+  --badge-active-text: var(--habanero-hover);
+  --badge-pending-bg: var(--surface-muted);
+  --badge-pending-text: var(--text-secondary);
 
   /* ===== SPACING SCALE (4px grid) ===== */
   --space-0: 0;
@@ -123,22 +126,43 @@
   --radius-2xl: 20px;
   --radius-pill: 999px;
 
-  /* ===== SHADOWS (soft, not dark) ===== */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.08);
-  --shadow-xl: 0 20px 40px rgba(15, 23, 42, 0.10);
-  --shadow-modal: 0 24px 60px rgba(15, 23, 42, 0.18);
+  /* ===== SHADOWS (soft, industrial) ===== */
+  --shadow-xs: 0 1px 2px rgba(17, 17, 68, 0.04);
+  --shadow-sm:
+    0 1px 3px rgba(17, 17, 68, 0.06), 0 1px 2px rgba(17, 17, 68, 0.04);
+  --shadow-md:
+    0 4px 12px rgba(17, 17, 68, 0.08), 0 2px 4px rgba(17, 17, 68, 0.05);
+  --shadow-lg:
+    0 10px 25px rgba(17, 17, 68, 0.1), 0 4px 6px rgba(17, 17, 68, 0.06);
+  --shadow-xl:
+    0 20px 40px rgba(17, 17, 68, 0.12), 0 8px 16px rgba(17, 17, 68, 0.08);
+  --shadow-modal: 0 24px 60px rgba(17, 17, 68, 0.2);
 
   /* ===== FOCUS RING ===== */
-  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  --focus-ring: 0 0 0 3px rgba(249, 133, 19, 0.25);
+  --focus-ring-blue: 0 0 0 3px rgba(34, 51, 130, 0.2);
 
   /* ===== TRANSITIONS ===== */
   --transition-fast: 120ms ease;
   --transition-sm: 150ms ease;
   --transition-md: 200ms ease;
   --transition-lg: 250ms ease;
+
+  /* ===== TYPOGRAPHY SCALE ===== */
+  --font-family-base:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Courier New", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --font-weight-normal: 300;
+  --font-weight-medium: 500;
+  --font-weight-semi: 600;
+  --font-weight-bold: 700;
 }
 
 /* ============================================================
@@ -154,10 +178,11 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  font-family: var(--font-family-base);
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-family-base);
   background: var(--background);
   color: var(--text-primary);
   font-size: 14px;
@@ -166,7 +191,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-img, svg {
+/* Form elements inherit the base font (Inter) */
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
+img,
+svg {
   font-size: inherit;
 }
 
@@ -179,8 +213,14 @@ img, svg {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .slide-up {
@@ -188,21 +228,36 @@ img, svg {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Skeleton shimmer */
 .ht-skeleton {
-  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--surface-hover) 25%,
+    var(--border) 50%,
+    var(--surface-hover) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--radius-sm);
 }
 
 @keyframes shimmer {
-  0% { background-position: 200%; }
-  100% { background-position: -200%; }
+  0% {
+    background-position: 200%;
+  }
+  100% {
+    background-position: -200%;
+  }
 }
 
 /* Spinner */
@@ -212,6 +267,536 @@ img, svg {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================
+   UTILITY CLASSES — Layout, spacing, typography, colors
+   Rebuild of Tailwind-style utilities using design tokens.
+   ============================================================ */
+
+/* ===== Display / Layout ===== */
+.hidden {
+  display: none !important;
+}
+.block {
+  display: block;
+}
+.inline-flex {
+  display: inline-flex;
+}
+.flex {
+  display: flex;
+}
+.flex-row {
+  flex-direction: row;
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+/* ===== Flexbox alignment ===== */
+.items-start {
+  align-items: flex-start;
+}
+.items-center {
+  align-items: center;
+}
+.items-end {
+  align-items: flex-end;
+}
+.items-stretch {
+  align-items: stretch;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.justify-items-end {
+  justify-content: flex-end;
+}
+
+/* ht-flex-end — flex container with end-justified content */
+.ht-flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ===== Positioning ===== */
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+.fixed {
+  position: fixed;
+}
+.sticky {
+  position: sticky;
+}
+
+/* Position utilities (using spacing tokens) */
+.top-1 {
+  top: var(--space-1);
+}
+.left-10 {
+  left: var(--space-10);
+}
+.-left-10 {
+  left: calc(0 - var(--space-10));
+}
+.-left-12 {
+  left: calc(0 - var(--space-12));
+}
+
+/* ===== Grid ===== */
+.grid {
+  display: grid;
+}
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* ===== Responsive (md >= 768px) ===== */
+@media (min-width: 768px) {
+  .md\:flex {
+    display: flex;
+  }
+  .md\:flex-row {
+    flex-direction: row;
+  }
+  .md\:flex-col {
+    flex-direction: column;
+  }
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .md\:items-center {
+    align-items: center;
+  }
+  .md\:items-start {
+    align-items: flex-start;
+  }
+  .md\:mt-0 {
+    margin-top: 0;
+  }
+}
+
+/* ===== Gaps ===== */
+.gap-1 {
+  gap: var(--space-1);
+}
+.gap-2 {
+  gap: var(--space-2);
+}
+.gap-3 {
+  gap: var(--space-3);
+}
+.gap-4 {
+  gap: var(--space-4);
+}
+.gap-6 {
+  gap: var(--space-6);
+}
+.gap-8 {
+  gap: var(--space-8);
+}
+
+/* ===== Space-y (vertical gaps between children) ===== */
+.space-y-1 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: var(--space-1);
+}
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: var(--space-2);
+}
+.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: var(--space-3);
+}
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: var(--space-4);
+}
+.space-y-5 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: var(--space-5);
+}
+
+/* ===== Margin ===== */
+.mt-0 {
+  margin-top: 0;
+}
+.mt-1 {
+  margin-top: var(--space-1);
+}
+.mt-2 {
+  margin-top: var(--space-2);
+}
+.mt-3 {
+  margin-top: var(--space-3);
+}
+.mt-4 {
+  margin-top: var(--space-4);
+}
+.mt-0\.5 {
+  margin-top: 2px;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+.mb-1 {
+  margin-bottom: var(--space-1);
+}
+.mb-2 {
+  margin-bottom: var(--space-2);
+}
+.mb-3 {
+  margin-bottom: var(--space-3);
+}
+.mb-4 {
+  margin-bottom: var(--space-4);
+}
+.mb-6 {
+  margin-bottom: var(--space-6);
+}
+
+.ml-1 {
+  margin-left: var(--space-1);
+}
+.ml-2 {
+  margin-left: var(--space-2);
+}
+.ml-3 {
+  margin-left: var(--space-3);
+}
+.ml-6 {
+  margin-left: var(--space-6);
+}
+
+.mr-1 {
+  margin-right: var(--space-1);
+}
+.mr-2 {
+  margin-right: var(--space-2);
+}
+.mr-3 {
+  margin-right: var(--space-3);
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== Padding ===== */
+.p-3 {
+  padding: var(--space-3);
+}
+.p-4 {
+  padding: var(--space-4);
+}
+
+.pt-2 {
+  padding-top: var(--space-2);
+}
+
+.px-2 {
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+.px-3 {
+  padding-left: var(--space-3);
+  padding-right: var(--space-3);
+}
+.px-4 {
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.py-1 {
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+.py-2 {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.py-3 {
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+}
+.py-4 {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+}
+.py-6 {
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-6);
+}
+.py-12 {
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.pl-2 {
+  padding-left: var(--space-2);
+}
+.pr-2 {
+  padding-right: var(--space-2);
+}
+
+/* ===== Typography — font-size ===== */
+.text-xs {
+  font-size: var(--text-xs);
+}
+.text-sm {
+  font-size: var(--text-sm);
+}
+.text-base {
+  font-size: var(--text-base);
+}
+.text-lg {
+  font-size: var(--text-lg);
+}
+.text-xl {
+  font-size: var(--text-xl);
+}
+.text-2xl {
+  font-size: var(--text-2xl);
+}
+.text-3xl {
+  font-size: var(--text-3xl);
+}
+
+/* Inline text sizes (bracket notation) */
+.text-\[10px\] {
+  font-size: 10px;
+}
+.text-\[11px\] {
+  font-size: 11px;
+}
+.text-\[12px\] {
+  font-size: 12px;
+}
+
+/* ===== Typography — font-weight ===== */
+.font-normal {
+  font-weight: var(--font-weight-normal);
+}
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+.font-semi {
+  font-weight: var(--font-weight-semi);
+}
+.font-semibold {
+  font-weight: var(--font-weight-semi);
+}
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+.font-light {
+  font-weight: var(--font-weight-normal);
+}
+.font-mono {
+  font-family: inherit;
+}
+.mono {
+  font-family: inherit;
+}
+
+/* ===== Typography — text-align ===== */
+.text-center {
+  text-align: center;
+}
+.text-right {
+  text-align: right;
+}
+
+/* ===== Semantic text colors ===== */
+.text-primary {
+  color: var(--primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-tertiary {
+  color: var(--text-tertiary);
+}
+.text-success {
+  color: var(--success);
+}
+.text-danger {
+  color: var(--danger);
+}
+.text-danger-text {
+  color: var(--danger-text);
+}
+.text-warning {
+  color: var(--warning);
+}
+.text-info {
+  color: var(--info);
+}
+.text-inverse {
+  color: var(--text-inverse);
+}
+.text-disabled {
+  color: var(--text-disabled);
+}
+
+/* Hint text — subtle secondary info */
+.ht-hint {
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+.ht-hint.text-sm {
+  font-size: var(--text-sm);
+}
+.ht-hint.text-xs {
+  font-size: var(--text-xs);
+}
+
+/* ===== Background ===== */
+.bg-white {
+  background-color: var(--surface-hover);
+}
+
+/* ===== Border radius ===== */
+.rounded-full {
+  border-radius: var(--radius-pill);
+}
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+
+/* ===== Border / Divide ===== */
+.border {
+  border: 1px solid var(--border);
+}
+.divide-y > :not([hidden]) ~ :not([hidden]) {
+  border-top: 1px solid var(--border);
+}
+
+/* ===== Width ===== */
+.w-full {
+  width: 100%;
+}
+.w-48 {
+  width: 192px;
+}
+.w-40 {
+  width: 160px;
+}
+.min-w-48 {
+  min-width: 192px;
+}
+.min-w-\[140px\] {
+  min-width: 140px;
+}
+.min-w-\[160px\] {
+  min-width: 160px;
+}
+
+/* ===== Spinner container ===== */
+.spinner-border {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== Disabled state ===== */
+.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ===== Empty icon container ===== */
+.ht-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* ===== Transition ===== */
+.transition {
+  transition: var(--transition-md);
+}
+
+/* ===== Hover utilities ===== */
+.hover\:bg-slate-50:hover {
+  background-color: var(--surface-muted);
+}
+
+/* ===== Standalone dot indicators (for history grids) ===== */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.dot-pending {
+  background: var(--text-tertiary);
+}
+.dot-success {
+  background: var(--success);
+}
+.dot-warning {
+  background: var(--warning);
+}
+.dot-danger {
+  background: var(--danger);
+}
+
+/* ===== Standalone modifier colors (non ht-* prefixed) ===== */
+.ht-card.danger {
+  border-left-color: var(--danger);
+}
+.ht-card.warning {
+  border-left-color: var(--warning);
+}
+.ht-card.success {
+  border-left-color: var(--success);
+}
+.ht-card.info {
+  border-left-color: var(--habanero);
 }

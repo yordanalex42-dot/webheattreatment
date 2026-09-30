@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Proses - Sistem Informasi Produksi Heat Treatment</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/layout.css" />
@@ -15,7 +14,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
-  <body class="text-slate-800">
+  <body>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
@@ -23,19 +22,10 @@
             <div>
               <div class="flex items-center gap-2">
                 <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
-            <button
-              id="sidebarToggle"
-              data-sidebar-toggle
-              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
-              title="Toggle Menu"
-              aria-label="Toggle menu"
-            >
-              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
-            </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
@@ -82,10 +72,7 @@
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div
-                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
-                id="sidebarInitial"
-              >
+              <div class="ht-user-avatar" id="sidebarInitial">
                 A
               </div>
               <div class="ht-user-details">
@@ -104,26 +91,23 @@
           </div>
         </div>
       </aside>
-      
+
       <main class="ht-main full-width">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1 class="text-xl font-bold text-slate-800" id="pageTitle">Proses</h1>
-            <p class="text-xs text-slate-500" id="pageSubtitle">Halaman proses belum valid.</p>
+            <h1 id="pageTitle">Proses</h1>
+            <p id="pageSubtitle">Halaman proses belum valid.</p>
           </div>
         </header>
         <div class="ht-content">
           <div class="ht-content-max">
             <!-- Invalid process notice -->
-            <div
-              id="invalidNotice"
-              class="hidden ht-card danger mb-6"
-            >
+            <div id="invalidNotice" class="hidden ht-card danger mb-6">
               <div class="flex items-start gap-3">
                 <img src="assets/icons/error.svg" alt="Error" class="icon icon-md mt-0.5">
                 <div>
                   <h3 class="font-bold text-danger-text mb-1">PROSES TIDAK VALID</h3>
-                  <p class="text-sm text-slate-700">
+                  <p>
                     Silakan buka halaman proses melalui menu yang sesuai.
                   </p>
                 </div>
@@ -144,28 +128,18 @@
                     placeholder="Kode (contoh: 20260004I)"
                     class="ht-form-input w-full"
                     oninput="clearManualError()"
+                    onkeydown="if(event.key==='Enter') loadMaterialById()"
                   />
-                  <p
-                    id="manualError"
-                    class="hidden text-[11px] text-danger-text mt-1"
-                  ></p>
+                  <p id="manualError" class="hidden ht-error-text mt-1"></p>
                 </div>
-                <button
-                  id="btnCari"
-                  onclick="loadMaterialById()"
-                  class="ht-btn ht-btn-primary ht-btn-sm"
-                  aria-label="Cari material"
-                >
+                <button id="btnCari" onclick="loadMaterialById()" class="ht-btn ht-btn-primary ht-btn-sm" aria-label="Cari material">
                   <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
                 </button>
               </div>
             </div>
 
             <!-- Material & Gate info -->
-            <div
-              id="materialSection"
-              class="hidden ht-card fade-in mb-6"
-            >
+            <div id="materialSection" class="hidden ht-card fade-in mb-6">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Informasi Material</h3>
               </div>
@@ -218,41 +192,38 @@
                 </div>
               </div>
 
-              <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4">
-                <h4 class="font-semibold text-sm mb-2">GATE / KUALITAS</h4>
+              <div class="ht-alert ht-alert-info">
+                <h4 class="font-semibold mb-2">GATE / KUALITAS</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div class="flex items-center justify-between py-1">
-                    <span class="text-xs text-slate-600">QC</span>
+                    <span class="text-xs text-tertiary">QC</span>
                     <span class="font-medium" id="gateQC">-</span>
                   </div>
                   <div class="flex items-center justify-between py-1">
-                    <span class="text-xs text-slate-600">Prerequisite</span>
+                    <span class="text-xs text-tertiary">Prerequisite</span>
                     <span class="font-medium" id="gatePrereq">-</span>
                   </div>
                 </div>
-                <p class="text-xs text-slate-600 mt-2" id="gateReason"></p>
+                <p class="text-xs text-tertiary mt-2" id="gateReason"></p>
               </div>
             </div>
 
             <!-- Action: start / finish -->
-            <div
-              id="actionSection"
-              class="hidden ht-card fade-in mb-6"
-            >
+            <div id="actionSection" class="hidden ht-card fade-in mb-6">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">
                   <span id="actionTitle">STATUS PROSES</span>
-                  <span class="text-sm font-normal text-slate-500 ml-2" id="actionStatus"></span>
+                  <span class="text-xs text-tertiary ml-2" id="actionStatus"></span>
                 </h3>
               </div>
 
               <!-- Locked -->
               <div id="lockedBox" class="hidden">
-                <div class="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div class="flex items-start gap-3 p-3 ht-alert ht-alert-danger">
                   <img src="assets/icons/error.svg" alt="Terkunci" class="icon icon-md mt-0.5">
                   <div>
                     <h4 class="font-bold text-danger-text">PROSES TERKUNCI</h4>
-                    <p class="text-sm text-slate-700 mt-1" id="lockedReason">
+                    <p class="text-sm text-secondary mt-1" id="lockedReason">
                       Proses belum dapat dimulai.
                     </p>
                   </div>
@@ -261,21 +232,17 @@
 
               <!-- Not started -->
               <div id="notStartedBox" class="hidden">
-                <p class="text-sm text-slate-600 mb-3">
+                <p class="text-sm text-secondary mb-3">
                   Belum ada produksi untuk proses ini.
                 </p>
-                <button
-                  id="btnStart"
-                  onclick="confirmStartProcess()"
-                  class="ht-btn ht-btn-warning ht-btn-lg"
-                >
+                <button id="btnStart" onclick="confirmStartProcess()" class="ht-btn ht-btn-warning ht-btn-lg">
                   <img src="assets/icons/factory.svg" alt="Mulai" class="icon mr-2">KONFIRMASI MASUK PROSES
                 </button>
               </div>
 
               <!-- Not started but already finished OK -->
               <div id="completedOkBox" class="hidden">
-                <p class="text-sm text-slate-600 mb-2">
+                <p class="text-sm text-secondary mb-2">
                   Proses sudah selesai dengan hasil OK.
                 </p>
                 <div class="flex items-center gap-2">
@@ -286,47 +253,35 @@
 
               <!-- Not started but ended NG -->
               <div id="completedNgBox" class="hidden">
-                <p class="text-sm text-slate-600 mb-2">
+                <p class="text-sm text-secondary mb-2">
                   Proses selesai dengan hasil NG. Hubungi QC / supervisor.
                 </p>
                 <div class="flex items-center gap-2">
                   <span class="ht-badge ht-badge-ng">SELESAI</span>
                   <span class="text-sm">HASIL: NG</span>
                 </div>
-                <p class="text-xs text-slate-600 mt-2" id="ngNote"></p>
+                <p class="text-xs text-tertiary mt-2" id="ngNote"></p>
               </div>
 
               <!-- Processing -->
               <div id="processingBox" class="hidden">
-                <p class="text-sm text-slate-600 mb-3">
+                <p class="text-sm text-secondary mb-3">
                   Proses sedang berjalan.
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="processResult"
-                      id="resultOK"
-                      value="OK"
-                      class="w-4 h-4 text-emerald-500"
-                    />
-                    <span class="text-sm font-medium text-emerald-700">( ) OK</span>
+                  <label class="ht-checkbox-label">
+                    <input type="radio" name="processResult" id="resultOK" value="OK" class="ht-checkbox">
+                    <span class="text-success">( ) OK</span>
                   </label>
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="processResult"
-                      id="resultNG"
-                      value="NG"
-                      class="w-4 h-4 text-red-500"
-                    />
-                    <span class="text-sm font-medium text-red-700">( ) NG</span>
+                  <label class="ht-checkbox-label">
+                    <input type="radio" name="processResult" id="resultNG" value="NG" class="ht-checkbox">
+                    <span class="text-danger">( ) NG</span>
                   </label>
                 </div>
                 <div id="resultNGNote" class="hidden mb-3">
-                  <label class="block text-xs font-medium text-slate-600 mb-1">
+                  <label class="ht-form-label">
                     Catatan NG
-                    <span class="text-red-500">(Wajib)</span>
+                    <span class="text-danger">(Wajib)</span>
                   </label>
                   <input
                     type="text"
@@ -337,11 +292,7 @@
                   />
                 </div>
                 <div class="flex justify-between items-center">
-                  <button
-                    id="btnFinish"
-                    onclick="confirmFinishProcess()"
-                    class="ht-btn ht-btn-primary ht-btn-lg"
-                  >
+                  <button id="btnFinish" onclick="confirmFinishProcess()" class="ht-btn ht-btn-primary ht-btn-lg">
                     <img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI
                   </button>
                 </div>
@@ -349,17 +300,14 @@
             </div>
 
             <!-- Next process -->
-            <div
-              id="nextSection"
-              class="hidden ht-card fade-in mb-6"
-            >
+            <div id="nextSection" class="hidden ht-card fade-in mb-6">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Proses Berikutnya</h3>
               </div>
-              <p class="text-sm text-slate-600 mb-2" id="nextInfo">
+              <p class="text-sm text-secondary mb-2" id="nextInfo">
                 Menunggu proses selesai.
               </p>
-              <p class="text-sm font-medium" id="nextProcess">
+              <p class="font-medium" id="nextProcess">
                 Semua proses pada route telah selesai.
               </p>
             </div>
@@ -424,7 +372,6 @@
 
       function renderProcessTitle(key) {
         var meta = PROCESS_META[key];
-        var title = meta ? meta.label : "PROSES";
         document.getElementById("pageTitle").textContent = meta ? meta.label : "Proses";
         document.getElementById("pageSubtitle").textContent = meta
           ? "Operasional lanjutan: " + meta.label
@@ -589,7 +536,7 @@
 
       function confirmStartProcess() {
         if (!currentMaterial) {
-          HTUI.toast("Pilih material terlebih dahalu!", "error");
+          HTUI.toast("Pilih material terlebih dahului!", "error");
           return;
         }
         var gate = DB.canStartProcess(currentMaterial, currentProcessKey);
@@ -616,7 +563,7 @@
 
         var btn = document.getElementById("btnStart");
         btn.disabled = true;
-        btn.classList.add("opacity-50");
+        btn.classList.add("is-disabled");
         var scanTime = new Date().toLocaleString("id-ID", {
           day: "2-digit", month: "2-digit", year: "numeric",
           hour: "2-digit", minute: "2-digit", second: "2-digit",
@@ -651,7 +598,7 @@
           setTimeout(function () {
             btn.innerHTML =
               '<img src="assets/icons/factory.svg" alt="Mulai" class="icon mr-2">KONFIRMASI MASUK PROSES';
-            btn.classList.remove("opacity-50");
+            btn.classList.remove("is-disabled");
             btn.disabled = false;
             HTUI.toast(
               "Process dimulai. Status: PROCESS (" + PROCESS_META[currentProcessKey].label + ")",
@@ -662,7 +609,7 @@
         } catch (e) {
           btn.innerHTML =
             '<img src="assets/icons/factory.svg" alt="Mulai" class="icon mr-2">KONFIRMASI MASUK PROSES';
-          btn.classList.remove("opacity-50");
+          btn.classList.remove("is-disabled");
           btn.disabled = false;
           HTUI.toast("Gagal memproses: " + e.message, "error");
         }
@@ -697,7 +644,7 @@
 
         var btn = document.getElementById("btnFinish");
         btn.disabled = true;
-        btn.classList.add("opacity-50");
+        btn.classList.add("is-disabled");
         btn.innerHTML =
           '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Memproses...';
 
@@ -726,7 +673,7 @@
           setTimeout(function () {
             btn.innerHTML =
               '<img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI';
-            btn.classList.remove("opacity-50");
+            btn.classList.remove("is-disabled");
             btn.disabled = false;
             var gate = DB.canStartProcess(currentMaterial, currentProcessKey);
             var prod = DB.getProcessProduction(currentMaterial, currentProcessKey);
@@ -740,7 +687,7 @@
         } catch (e) {
           btn.innerHTML =
             '<img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI';
-          btn.classList.remove("opacity-50");
+          btn.classList.remove("is-disabled");
           btn.disabled = false;
           HTUI.toast("Terjadi kesalahan: " + e.message, "error");
         }

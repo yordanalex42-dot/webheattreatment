@@ -310,6 +310,11 @@
   mask-image: url("../assets/icons/eye.svg");
   background-color: currentColor;
 }
+.icon[src$="eye-slash.svg"] {
+  -webkit-mask-image: url("../assets/icons/eye-slash.svg");
+  mask-image: url("../assets/icons/eye-slash.svg");
+  background-color: currentColor;
+}
 .icon[src$="factory.svg"] {
   -webkit-mask-image: url("../assets/icons/factory.svg");
   mask-image: url("../assets/icons/factory.svg");

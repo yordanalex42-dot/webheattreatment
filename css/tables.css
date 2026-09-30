@@ -1,6 +1,8 @@
 /* ============================================================
    TABLES — Table container, table, header, row, hover,
    scrollbar, pagination, badges, action buttons.
+   Industrial Premium design with Deep Space Royal headers,
+   Habanero accents, semantic status badges.
    ============================================================ */
 
 .ht-table-container {
@@ -9,6 +11,7 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
+  animation: cardEntrance 200ms ease-out both;
 }
 
 .ht-table {
@@ -48,12 +51,17 @@
   background: var(--surface);
 }
 
+.ht-table tbody tr:nth-child(even):hover {
+  background: var(--surface-hover);
+}
+
 .ht-table tbody tr:last-child td {
   border-bottom: none;
 }
 
 .ht-table-wrapper {
   overflow-x: auto;
+  border-radius: var(--radius-lg);
 }
 
 .ht-table-empty {
@@ -72,38 +80,113 @@
 }
 
 /* ============================================================
-   STATUS BADGES
+   STATUS BADGES — semantic, modern, scannable
    ============================================================ */
 
 .ht-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 10px;
+  padding: 4px 10px;
   border-radius: 999px;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.025em;
   white-space: nowrap;
+  line-height: 1.5;
+  border: 0.5px solid transparent;
+  transition: all var(--transition-sm);
 }
 
-.ht-badge-ok { background: var(--success-bg); color: var(--success-text); }
-.ht-badge-ng { background: var(--danger-bg); color: var(--danger-text); }
-.ht-badge-waiting { background: var(--surface-hover); color: var(--text-secondary); }
-.ht-badge-process { background: var(--warning-bg); color: var(--warning-text); }
-.ht-badge-finish { background: var(--info-bg); color: var(--info-text); }
-.ht-badge-pending { background: rgba(132, 55, 241, 0.1); color: #6d28d9; }
-.ht-badge-delivered { background: rgba(217, 70, 176, 0.1); color: #9d14a5; }
-.ht-badge-inactive { background: var(--surface-hover); color: var(--text-secondary); }
+/* Semantic status badges */
+.ht-badge-ok {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-color: rgba(16, 185, 129, 0.3);
+}
 
-.ht-badge-finish-ng { background: #ffefef; color: #b91c1c; }
+.ht-badge-ng {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.ht-badge-waiting {
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.ht-badge-process {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.ht-badge-finish {
+  background: var(--info-bg);
+  color: var(--info-text);
+  border-color: rgba(154, 172, 216, 0.3);
+}
+
+.ht-badge-pending {
+  background: rgba(132, 55, 241, 0.10);
+  color: #7c3aed;
+  border-color: rgba(132, 55, 241, 0.3);
+}
+
+.ht-badge-delivered {
+  background: rgba(217, 70, 176, 0.10);
+  color: #9d14a5;
+  border-color: rgba(217, 70, 176, 0.3);
+}
+
+.ht-badge-inactive {
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+/* Active / Process — Habanero */
+.ht-badge-active,
+.ht-badge-processing,
+.ht-badge-proses {
+  background: var(--habanero-soft);
+  color: var(--habanero-hover);
+  border-color: rgba(249, 133, 19, 0.3);
+}
+
+.ht-badge-finish-ng {
+  background: #ffefef;
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Incoming badge — Aster Flower Blue */
+.ht-badge-incoming {
+  background: var(--info-bg);
+  color: var(--info-text);
+  border-color: rgba(154, 172, 216, 0.3);
+}
+
+/* Delivery badge — success green */
+.ht-badge-delivery {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.ht-badge:hover {
+  transform: scale(1.03);
+  box-shadow: 0 1px 3px rgba(17, 17, 68, 0.06);
+}
 
 /* Inline JS color helpers (kept stable for backward compatibility) */
 .bg-emerald-100.text-emerald-600 { background-color: var(--success-bg); color: var(--success-text); }
 .bg-red-100.text-red-600 { background-color: var(--danger-bg); color: var(--danger-text); }
 .bg-amber-100.text-amber-600 { background-color: var(--warning-bg); color: var(--warning-text); }
 .bg-blue-100.text-blue-600 { background-color: var(--info-bg); color: var(--info-text); }
-.bg-slate-100.text-slate-600 { background-color: var(--surface-hover); color: var(--text-secondary); }
+.bg-slate-100.text-slate-600 { background-color: var(--surface-muted); color: var(--text-secondary); }
 .bg-pink-100.text-pink-600 { background-color: rgba(217, 70, 176, 0.1); color: #9d14a5; }
 .bg-purple-100.text-purple-600 { background-color: rgba(132, 55, 241, 0.1); color: #6d28d9; }
 
@@ -123,11 +206,11 @@
   justify-content: center;
   width: 28px;
   height: 26px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
   transition: all var(--transition-sm);
   font-size: 12px;
-  border: 1px solid transparent;
+  border: 1.5px solid transparent;
   background: transparent;
   cursor: pointer;
   flex-shrink: 0;
@@ -136,7 +219,7 @@
 .ht-action-btn:hover {
   color: var(--primary);
   background: var(--info-bg);
-  border-color: var(--info-bg);
+  border-color: rgba(154, 172, 216, 0.3);
 }
 
 .ht-action-btn.view:hover { color: var(--info-text); }
@@ -180,29 +263,93 @@
 }
 
 .ht-pagination-controls button {
-  padding: 4px 10px;
+  min-width: 32px;
+  padding: 6px 12px;
   font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  transition:
+    background-color var(--transition-sm),
+    border-color var(--transition-sm),
+    color var(--transition-sm),
+    transform var(--transition-fast);
+  cursor: pointer;
+}
+
+.ht-pagination-controls button:hover:not(:disabled) {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.ht-pagination-controls button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.ht-pagination-controls button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring-blue);
+}
+
+.ht-pagination-controls button[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  pointer-events: none;
+}
+
+/* Active page */
+#pageNumbers button.ht-btn-primary {
+  background: var(--gradient-primary);
+  color: var(--text-inverse);
+  border-color: var(--habanero);
+  box-shadow: 0 2px 8px rgba(249, 133, 19, 0.25);
+}
+
+#pageNumbers button.ht-btn-primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+#pageNumbers button.ht-btn-ghost {
+  background: var(--surface);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+#pageNumbers button.ht-btn-ghost:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 /* ============================================================
    SCROLLBAR for table
    ============================================================ */
 
-.ht-table-wrapper::-webkit-scrollbar {
+.ht-table-wrapper::-webkit-scrollbar,
+.ht-monitor-table::-webkit-scrollbar {
   height: 8px;
 }
 
-.ht-table-wrapper::-webkit-scrollbar-track {
-  background: var(--surface-hover);
+.ht-table-wrapper::-webkit-scrollbar-track,
+.ht-monitor-table::-webkit-scrollbar-track {
+  background: var(--surface-muted);
   border-radius: 4px;
 }
 
-.ht-table-wrapper::-webkit-scrollbar-thumb {
+.ht-table-wrapper::-webkit-scrollbar-thumb,
+.ht-monitor-table::-webkit-scrollbar-thumb {
   background: var(--border-dark);
   border-radius: 4px;
 }
 
-.ht-table-wrapper::-webkit-scrollbar-thumb:hover {
+.ht-table-wrapper::-webkit-scrollbar-thumb:hover,
+.ht-monitor-table::-webkit-scrollbar-thumb:hover {
   background: var(--text-tertiary);
 }
 
@@ -257,5 +404,19 @@
 
   .ht-table th {
     font-size: 8px;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-table-container {
+    animation: none;
+  }
+
+  .ht-badge:hover {
+    transform: none;
   }
 }

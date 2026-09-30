@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quality Control - Sistem Informasi Produksi Heat Treatment</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/layout.css" />
@@ -15,7 +14,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
-  <body class="text-slate-800">
+  <body>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
@@ -23,19 +22,10 @@
             <div>
               <div class="flex items-center gap-2">
                 <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
-            <button
-              id="sidebarToggle"
-              data-sidebar-toggle
-              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
-              title="Toggle Menu"
-              aria-label="Toggle menu"
-            >
-              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
-            </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
@@ -79,10 +69,7 @@
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div
-                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
-                id="sidebarInitial"
-              >
+              <div class="ht-user-avatar" id="sidebarInitial">
                 A
               </div>
               <div class="ht-user-details">
@@ -104,8 +91,8 @@
       <main class="ht-main full-width">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1 class="text-xl font-bold text-slate-800">Modul Quality Control (QC)</h1>
-            <p class="text-xs text-slate-500">Input hasil pemeriksaan keras material.</p>
+            <h1>Modul Quality Control (QC)</h1>
+            <p>Input hasil pemeriksaan keras material.</p>
           </div>
         </header>
         <div class="ht-content">
@@ -118,12 +105,12 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="flex-1">
                   <div id="qr-reader" class="ht-qr-frame"></div>
-                  <p class="text-xs text-slate-500 text-center mt-3">
+                  <p class="ht-hint text-center mt-3">
                     Arahkan kamera ke QR Code material
                   </p>
                 </div>
                 <div class="space-y-2">
-                  <p class="text-xs text-slate-500">
+                  <p class="ht-hint">
                     Atau masukkan Kode Part secara manual:
                   </p>
                   <div class="flex gap-2">
@@ -143,13 +130,13 @@
                       <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
                     </button>
                   </div>
-                  <p id="manualError" class="hidden text-[11px] text-danger-text"></p>
+                  <p id="manualError" class="hidden ht-error-text"></p>
                 </div>
               </div>
             </div>
 
             <!-- Form -->
-            <div id="qcForm" class="hidden ht-step-card success fade-in">
+            <div id="qcForm" class="hidden ht-card fade-in">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Data Part</h3>
               </div>
@@ -192,28 +179,15 @@
                 </div>
               </div>
 
-              <h3 class="text-base font-bold text-slate-800 mb-3">
-                Input Hasil QC
-              </h3>
+              <h3 class="font-bold mb-3">Input Hasil QC</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 ht-form-group">
                 <div class="ht-form-group">
                   <label class="ht-form-label" for="qcInspector">Nama Inspector</label>
-                  <input
-                    type="text"
-                    id="qcInspector"
-                    required
-                    class="ht-form-input"
-                    placeholder="Nama Inspector"
-                  />
+                  <input type="text" id="qcInspector" required class="ht-form-input" placeholder="Nama Inspector" />
                 </div>
                 <div class="ht-form-group">
                   <label class="ht-form-label" for="qcTanggalInspector">Tanggal Inspector</label>
-                  <input
-                    type="date"
-                    id="qcTanggalInspector"
-                    required
-                    class="ht-form-input"
-                  />
+                  <input type="date" id="qcTanggalInspector" required class="ht-form-input" />
                 </div>
               </div>
 
@@ -223,13 +197,7 @@
                 <div class="ht-form-row">
                   <div class="ht-form-group">
                     <label class="ht-form-label" for="qcHardness">Nilai Hardness</label>
-                    <input
-                      type="text"
-                      id="qcHardness"
-                      required
-                      class="ht-form-input"
-                      placeholder="Contoh: 58-62 HRC"
-                    />
+                    <input type="text" id="qcHardness" required class="ht-form-input" placeholder="Contoh: 58-62 HRC" />
                   </div>
                   <div class="ht-form-group">
                     <label class="ht-form-label" for="qcSatuan">Satuan</label>
@@ -240,39 +208,24 @@
                     </select>
                   </div>
                 </div>
-                 <div class="ht-form-group">
-                   <label class="ht-form-label" for="qcMicrostructure">Microstructure</label>
-                   <select id="qcMicrostructure" required class="ht-form-select">
-                     <option value="">Pilih hasil microstructure</option>
-                     <option value="OK">OK</option>
-                     <option value="NG">NG</option>
-                   </select>
-                 </div>
-                 <div class="ht-form-group">
-                   <label class="ht-form-label" for="qcHasilDisplay">Hasil QC</label>
-                   <input
-                     type="text"
-                     id="qcHasilDisplay"
-                     readonly
-                     class="ht-form-input"
-                     value="-"
-                   />
-                 </div>
+                <div class="ht-form-group">
+                  <label class="ht-form-label" for="qcMicrostructure">Microstructure</label>
+                  <select id="qcMicrostructure" required class="ht-form-select">
+                    <option value="">Pilih hasil microstructure</option>
+                    <option value="OK">OK</option>
+                    <option value="NG">NG</option>
+                  </select>
+                </div>
+                <div class="ht-form-group">
+                  <label class="ht-form-label" for="qcHasilDisplay">Hasil QC</label>
+                  <input type="text" id="qcHasilDisplay" readonly class="ht-form-input" value="-" />
+                </div>
                 <div class="ht-form-group">
                   <label class="ht-form-label" for="qcCatatan">Catatan</label>
-                  <textarea
-                    id="qcCatatan"
-                    rows="2"
-                    class="ht-form-input ht-form-textarea"
-                    placeholder="Opsional"
-                  ></textarea>
+                  <textarea id="qcCatatan" rows="2" class="ht-form-input ht-form-textarea" placeholder="Opsional"></textarea>
                 </div>
                 <div class="ht-form-actions">
-                  <button
-                    type="submit"
-                    class="ht-btn ht-btn-success"
-                    aria-label="Simpan hasil QC"
-                  >
+                  <button type="submit" class="ht-btn ht-btn-success" aria-label="Simpan hasil QC">
                     <img src="assets/icons/save.svg" alt="Simpan" class="icon mr-2">Simpan Hasil QC
                   </button>
                 </div>
@@ -292,16 +245,13 @@
                       <th>Customer</th>
                       <th>Nama Part</th>
                       <th>Treatment</th>
-                       <th>Hardness</th>
-                       <th>Microstructure</th>
-                       <th>Hasil</th>
+                      <th>Hardness</th>
+                      <th>Microstructure</th>
+                      <th>Hasil</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
-                  <tbody
-                    class="divide-y divide-slate-100 text-xs"
-                    id="qcTable"
-                  ></tbody>
+                  <tbody id="qcTable"></tbody>
                 </table>
               </div>
             </div>
@@ -322,7 +272,7 @@
         <div class="ht-modal-body">
           <div class="ht-qr-scanner-wrapper">
             <div id="qr-reader-modal" class="ht-qr-frame"></div>
-            <p class="text-xs text-slate-500 text-center mt-3">
+            <p class="ht-hint text-center mt-3">
               Arahkan kamera ke QR Code
             </p>
           </div>
@@ -381,37 +331,37 @@
         document.getElementById("infoQty").textContent = material.qty || 0;
         document.getElementById("qcProductionId").value = production.id;
         const existing = DB.get("qcs").find((q) => String(q.material_id) === String(material.id));
-         const hasilDisplay = document.getElementById("qcHasilDisplay");
-         const hardnessInput = document.getElementById("qcHardness");
-         const microInput = document.getElementById("qcMicrostructure");
-         if (!hardnessInput._hasComputeListener) {
-           hardnessInput.addEventListener("input", computeQcHasil);
-           microInput.addEventListener("change", computeQcHasil);
-           hardnessInput._hasComputeListener = true;
-         }
-         if (existing) {
-           document.getElementById("qcId").value = existing.id;
-           document.getElementById("qcHardness").value = existing.hardness;
-           document.getElementById("qcSatuan").value = existing.satuan_hardness || "HRC";
-           document.getElementById("qcMicrostructure").value = existing.microstructure || "";
-           document.getElementById("qcInspector").value = existing.inspector || "";
-           document.getElementById("qcTanggalInspector").value = existing.tanggal_inspector || "";
-           document.getElementById("qcCatatan").value = existing.catatan || "";
-           if (existing.microstructure) {
-             computeQcHasil();
-           } else {
-             hasilDisplay.value = existing.hasil || "-";
-           }
-         } else {
-           document.getElementById("qcId").value = "";
-           document.getElementById("qcHardness").value = "";
-           document.getElementById("qcSatuan").value = "HRC";
-           document.getElementById("qcMicrostructure").value = "";
-           document.getElementById("qcInspector").value = "";
-           document.getElementById("qcTanggalInspector").value = "";
-           document.getElementById("qcCatatan").value = "";
-           hasilDisplay.value = "-";
-         }
+        const hasilDisplay = document.getElementById("qcHasilDisplay");
+        const hardnessInput = document.getElementById("qcHardness");
+        const microInput = document.getElementById("qcMicrostructure");
+        if (!hardnessInput._hasComputeListener) {
+          hardnessInput.addEventListener("input", computeQcHasil);
+          microInput.addEventListener("change", computeQcHasil);
+          hardnessInput._hasComputeListener = true;
+        }
+        if (existing) {
+          document.getElementById("qcId").value = existing.id;
+          document.getElementById("qcHardness").value = existing.hardness;
+          document.getElementById("qcSatuan").value = existing.satuan_hardness || "HRC";
+          document.getElementById("qcMicrostructure").value = existing.microstructure || "";
+          document.getElementById("qcInspector").value = existing.inspector || "";
+          document.getElementById("qcTanggalInspector").value = existing.tanggal_inspector || "";
+          document.getElementById("qcCatatan").value = existing.catatan || "";
+          if (existing.microstructure) {
+            computeQcHasil();
+          } else {
+            hasilDisplay.value = existing.hasil || "-";
+          }
+        } else {
+          document.getElementById("qcId").value = "";
+          document.getElementById("qcHardness").value = "";
+          document.getElementById("qcSatuan").value = "HRC";
+          document.getElementById("qcMicrostructure").value = "";
+          document.getElementById("qcInspector").value = "";
+          document.getElementById("qcTanggalInspector").value = "";
+          document.getElementById("qcCatatan").value = "";
+          hasilDisplay.value = "-";
+        }
         document.getElementById("qcForm").classList.remove("hidden");
         document.getElementById("qcForm").scrollIntoView({ behavior: "smooth" });
       }
@@ -524,16 +474,16 @@
               ? q.microstructure === "OK"
                 ? '<span class="ht-badge ht-badge-ok">OK</span>'
                 : '<span class="ht-badge ht-badge-ng">NG</span>'
-              : '<span class="text-slate-400">-</span>';
-            return `<tr class="hover:bg-slate-50 transition">
-            <td class="px-3 py-2 font-mono">${m.kode || "-"}</td>
-            <td class="px-3 py-2">${(cust && cust.nama_customer) || "-"}</td>
-            <td class="px-3 py-2">${part ? part.nomor_part : "-"}</td>
-            <td class="px-3 py-2 text-slate-500">${prod.jenis_treatment || "-"}</td>
-            <td class="px-3 py-2 font-mono">${q.hardness || "-"} ${q.satuan_hardness || ""}</td>
-            <td class="px-3 py-2">${microDisplay}</td>
-            <td class="px-3 py-2"><span class="ht-badge ${hasilColor}">${q.hasil || "-"}</span></td>
-            <td class="px-3 py-2">
+              : '<span class="text-secondary">-</span>';
+            return `<tr class="ht-table-row">
+            <td class="font-mono">${m.kode || "-"}</td>
+            <td>${(cust && cust.nama_customer) || "-"}</td>
+            <td>${part ? part.nomor_part : "-"}</td>
+            <td class="text-secondary">${prod.jenis_treatment || "-"}</td>
+            <td class="font-mono">${q.hardness || "-"} ${q.satuan_hardness || ""}</td>
+            <td>${microDisplay}</td>
+            <td><span class="ht-badge ${hasilColor}">${q.hasil || "-"}</span></td>
+            <td>
               <div class="ht-action-group">
                 <button onclick="loadMaterialById('${m.kode || m.id}')" class="ht-action-btn edit" title="Edit" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>
                 <button onclick="deleteQC(${q.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><img src="assets/icons/delete.svg" alt="Delete" class="icon"></button>

@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Delivery - Sistem Informasi Produksi Heat Treatment</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/layout.css" />
@@ -15,7 +14,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
-  <body class="text-slate-800">
+  <body>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
@@ -23,19 +22,10 @@
             <div>
               <div class="flex items-center gap-2">
                 <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="text-lg font-bold text-white">Heat Treatment</h1>
+                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
               </div>
-              <p class="text-xs text-slate-400 mt-1">Sistem Informasi Produksi</p>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
-            <button
-              id="sidebarToggle"
-              data-sidebar-toggle
-              class="text-slate-400 hover:text-white text-xs p-1 rounded hover:bg-slate-700 transition lg:hidden"
-              title="Toggle Menu"
-              aria-label="Toggle menu"
-            >
-              <img src="assets/icons/close.svg" alt="Close menu" class="icon icon-sm">
-            </button>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
@@ -79,10 +69,7 @@
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div
-                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-sm"
-                id="sidebarInitial"
-              >
+              <div class="ht-user-avatar" id="sidebarInitial">
                 A
               </div>
               <div class="ht-user-details">
@@ -104,8 +91,8 @@
       <main class="ht-main full-width">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1 class="text-xl font-bold text-slate-800">Modul Delivery</h1>
-            <p class="text-xs text-slate-500">Pencatatan pengiriman part yang selesai.</p>
+            <h1>Modul Delivery</h1>
+            <p>Pencatatan pengiriman part yang selesai.</p>
           </div>
         </header>
         <div class="ht-content">
@@ -118,12 +105,12 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="flex-1">
                   <div id="qr-reader" class="ht-qr-frame"></div>
-                  <p class="text-xs text-slate-500 text-center mt-3">
+                  <p class="ht-hint text-center mt-3">
                     Arahkan kamera ke QR Code material
                   </p>
                 </div>
                 <div class="space-y-2">
-                  <p class="text-xs text-slate-500">
+                  <p class="ht-hint">
                     Atau masukkan Kode Material secara manual:
                   </p>
                   <div class="flex gap-2">
@@ -133,6 +120,7 @@
                       placeholder="Kode (contoh: 20260004I)"
                       class="ht-form-input flex-1"
                       oninput="clearManualError()"
+                      onkeydown="if(event.key==='Enter') loadMaterialById()"
                     />
                     <button
                       onclick="loadMaterialById()"
@@ -142,13 +130,13 @@
                       <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
                     </button>
                   </div>
-                  <p id="manualError" class="hidden text-[11px] text-danger-text"></p>
+                  <p id="manualError" class="hidden ht-error-text"></p>
                 </div>
               </div>
             </div>
 
             <!-- Delivery form -->
-            <div id="deliveryForm" class="hidden ht-step-card success fade-in">
+            <div id="deliveryForm" class="hidden ht-card fade-in">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Input Data Pengiriman</h3>
               </div>
@@ -178,40 +166,19 @@
                 <div class="ht-form-row">
                   <div class="ht-form-group">
                     <label class="ht-form-label" for="delTanggal">Tanggal Kirim</label>
-                    <input
-                      type="date"
-                      id="delTanggal"
-                      required
-                      class="ht-form-input"
-                    />
+                    <input type="date" id="delTanggal" required class="ht-form-input" />
                   </div>
                   <div class="ht-form-group">
                     <label class="ht-form-label" for="delQty">Qty Kirim</label>
-                    <input
-                      type="number"
-                      id="delQty"
-                      required
-                      min="1"
-                      class="ht-form-input"
-                      placeholder="Jumlah dikirim"
-                    />
+                    <input type="number" id="delQty" required min="1" class="ht-form-input" placeholder="Jumlah dikirim" />
                   </div>
                 </div>
                 <div class="ht-form-group">
                   <label class="ht-form-label" for="delCatatan">Catatan</label>
-                  <textarea
-                    id="delCatatan"
-                    rows="2"
-                    class="ht-form-input ht-form-textarea"
-                    placeholder="Opsional"
-                  ></textarea>
+                  <textarea id="delCatatan" rows="2" class="ht-form-input ht-form-textarea" placeholder="Opsional"></textarea>
                 </div>
                 <div class="ht-form-actions">
-                  <button
-                    type="submit"
-                    class="ht-btn ht-btn-success"
-                    aria-label="Update status delivered"
-                  >
+                  <button type="submit" class="ht-btn ht-btn-success" aria-label="Update status delivered">
                     <img src="assets/icons/paper-plane.svg" alt="Delivered" class="icon mr-2">Update Status Delivered
                   </button>
                 </div>
@@ -235,10 +202,7 @@
                       <th>Status</th>
                     </tr>
                   </thead>
-                  <tbody
-                    class="divide-y divide-slate-100 text-xs"
-                    id="deliveryTable"
-                  ></tbody>
+                  <tbody id="deliveryTable"></tbody>
                 </table>
               </div>
             </div>
@@ -259,7 +223,7 @@
         <div class="ht-modal-body">
           <div class="ht-qr-scanner-wrapper">
             <div id="qr-reader-modal" class="ht-qr-frame"></div>
-            <p class="text-xs text-slate-500 text-center mt-3">
+            <p class="ht-hint text-center mt-3">
               Arahkan kamera ke QR Code
             </p>
           </div>
@@ -356,13 +320,13 @@
             const m = materials.find((mat) => String(mat.id) === String(d.material_id)) || {};
             const part = DB.findPartById(m.part_id);
             const customer = DB.findCustomerById(m.customer_id);
-            return `<tr class="hover:bg-slate-50 transition">
-            <td class="px-3 py-2 font-medium">${part ? part.nomor_part : "-"}</td>
-            <td class="px-3 py-2">${part ? part.nama_part : "-"}</td>
-            <td class="px-3 py-2 text-slate-500">${(customer && customer.nama_customer) || "-"}</td>
-            <td class="px-3 py-2">${d.qty_kirim ?? "-"}</td>
-            <td class="px-3 py-2 text-slate-500">${d.tanggal_kirim || "-"}</td>
-            <td class="px-3 py-2"><span class="ht-badge ht-badge-delivered">Delivered</span></td>
+            return `<tr class="ht-table-row">
+            <td class="font-medium">${part ? part.nomor_part : "-"}</td>
+            <td>${part ? part.nama_part : "-"}</td>
+            <td class="text-secondary">${(customer && customer.nama_customer) || "-"}</td>
+            <td>${d.qty_kirim ?? "-"}</td>
+            <td class="text-secondary">${d.tanggal_kirim || "-"}</td>
+            <td><span class="ht-badge ht-badge-delivered">Delivered</span></td>
           </tr>`;
           })
           .join("");

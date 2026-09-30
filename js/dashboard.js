@@ -304,12 +304,14 @@ const HTDashboard = {
     };
 
     return {
-      primary: token("--primary", "#2563EB"),
+      primary: token("--primary", "#223382"),
+      habanero: token("--habanero", "#F98513"),
       success: token("--success", "#10B981"),
-      border: token("--border", "#E2E8F0"),
-      textMuted: token("--text-tertiary", "#94A3B8"),
-      textStrong: token("--text-primary", "#0F172A"),
-      surface: token("--surface", "#FFFFFF"),
+      info: token("--info", "#9BACD8"),
+      border: token("--border", "#DAD1C8"),
+      textMuted: token("--text-tertiary", "#9BACD8"),
+      textStrong: token("--text-primary", "#111144"),
+      surface: token("--surface", "#F4F1EC"),
       font: getComputedStyle(document.body).fontFamily,
       toRgba,
     };
@@ -574,9 +576,9 @@ const HTDashboard = {
     detailEl.textContent = `Output ${this._formatWeight(output)} Kg dari Target ${this._formatWeight(target)} Kg`;
 
     const css = getComputedStyle(document.documentElement);
-    const primaryColor = css.getPropertyValue("--primary") || "#2563EB";
+    const habaneroColor = css.getPropertyValue("--habanero") || "#F98513";
     const successColor = css.getPropertyValue("--success") || "#10B981";
-    const borderColor = css.getPropertyValue("--border") || "#E2E8F0";
+    const borderColor = css.getPropertyValue("--border") || "#DAD1C8";
 
     const isOverTarget = output >= target;
 
@@ -585,7 +587,7 @@ const HTDashboard = {
       data: {
         datasets: [{
           data: [displayPersentase, 100 - displayPersentase],
-          backgroundColor: [isOverTarget ? successColor : primaryColor, borderColor],
+          backgroundColor: [isOverTarget ? successColor : habaneroColor, borderColor],
           borderWidth: 0,
         }]
       },
@@ -622,14 +624,14 @@ const HTDashboard = {
     if (target === 0) {
       targetDisplay.innerHTML = `
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 w-full">
-          <span class="ht-kpi-value font-bold text-slate-400">Belum Diatur</span>
+          <span class="ht-kpi-value font-bold" style="color: var(--text-tertiary);">Belum Diatur</span>
         </div>
       `;
     } else {
       targetDisplay.innerHTML = `
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 w-full">
-          <span class="ht-kpi-value font-bold text-primary">${this._formatWeight(target)}</span>
-          <span class="text-xs text-slate-400">Kg</span>
+          <span class="ht-kpi-value font-bold" style="color: var(--habanero);">${this._formatWeight(target)}</span>
+          <span class="text-xs" style="color: var(--text-secondary);">Kg</span>
         </div>
       `;
     }
@@ -781,8 +783,8 @@ const HTDashboard = {
         datasets: [{
           label: "Total Berat Produksi (KG)",
           data: data,
-          backgroundColor: theme.toRgba(theme.primary, 0.75),
-          hoverBackgroundColor: theme.primary,
+          backgroundColor: theme.toRgba(theme.habanero, 0.75),
+          hoverBackgroundColor: theme.habanero,
           borderRadius: 6,
           borderSkipped: false,
           maxBarThickness: 34,
@@ -880,8 +882,8 @@ const HTDashboard = {
         datasets: [{
           label: "Total Berat Produksi (KG)",
           data: data,
-          backgroundColor: theme.toRgba(theme.success, 0.75),
-          hoverBackgroundColor: theme.success,
+          backgroundColor: theme.toRgba(theme.primary, 0.75),
+          hoverBackgroundColor: theme.primary,
           borderRadius: 6,
           borderSkipped: false,
           maxBarThickness: 34,
@@ -1017,7 +1019,7 @@ const statusPart = material.status_part || "-";
 
       return `<tr class="hover:bg-slate-50 transition">
         <td class="px-3 py-2">${start + idx + 1}</td>
-        <td class="px-3 py-2 font-mono"${title(nomorKode)}>${nomorKode}</td>
+        <td class="px-3 py-2 font-mono" style="color: var(--primary); font-weight: 600;"${title(nomorKode)}>${nomorKode}</td>
         <td class="px-3 py-2"${title(customerName)}>${customerName}</td>
         <td class="px-3 py-2 font-mono"${title(nomorPart)}>${nomorPart}</td>
         <td class="px-3 py-2"${title(namaPart)}>${namaPart}</td>
@@ -1031,8 +1033,8 @@ const statusPart = material.status_part || "-";
         <td class="px-3 py-2"${title(diinputOleh)}>${diinputOleh}</td>
         <td class="px-3 py-2">${material.tanggal_masuk || "-"}</td>
         <td class="px-3 py-2"><span class="ht-badge ${statusQC === "OK" ? "ht-badge-ok" : (statusQC === "NG" ? "ht-badge-ng" : "ht-badge-waiting")}">${statusQC}</span></td>
-        <td class="px-3 py-2">${inspectorName}</td>
-        <td class="px-3 py-2">${deliveryDate}</td>
+        <td class="px-3 py-2"${title(inspectorName)}>${inspectorName}</td>
+        <td class="px-3 py-2"${title(deliveryDate)}>${deliveryDate}</td>
         <td class="px-3 py-2">
           <div class="ht-action-group">
              <button onclick="window.location.href='tracking.html?id=${encodeURIComponent(material.id)}'" class="ht-action-btn view" title="Tracking" aria-label="Tracking"><img src="assets/icons/eye.svg" alt="Tracking" class="icon"></button>
@@ -1041,9 +1043,9 @@ const statusPart = material.status_part || "-";
       </tr>`;
     }).join("");
 
-    if (this._el.tableBody) {
-      this._el.tableBody.innerHTML =            html || '<tr><td colspan="19" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Kosong" class="icon"><p>Data monitoring tidak ditemukan.</p><small>Coba ubah kata kunci atau filter yang dipilih.</small></td></tr>';
-    }
+      if (this._el.tableBody) {
+        this._el.tableBody.innerHTML = html || '<tr><td colspan="18" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Kosong" class="icon"><p>Data monitoring tidak ditemukan.</p><small>Coba ubah kata kunci atau filter yang dipilih.</small></td></tr>';
+      }
   },
 
   renderCustomerFilter() {
