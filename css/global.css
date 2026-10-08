@@ -1,86 +1,96 @@
 /* ============================================================
-   GLOBAL — Heat Treatment Information System
-   Design tokens, base reset, typography, animation keyframes.
-   Modern Industrial Premium design system.
+    GLOBAL — Sistem Informasi Heat Treatment
+    Design tokens, reset dasar, tipografi, keyframes animasi.
+    Sistem desain Dashboard Produksi Manufaktur Modern.
 
-   Palette:
-     HABANERO           #F98513  — signature accent (CTA, highlight)
-     LUSTER WHITE       #F4F1EC  — background, surface
-     JODHPUR TAN        #DAD1C8  — borders, dividers, subtle surface
-     ASTER FLOWER BLUE   #9BACD8  — secondary info accent
-     DEEP SPACE ROYAL   #223382  — primary UI, navigation, buttons
-     DEADLY DEPTHS      #111144  — headings, text, dark elements
-   ============================================================ */
+    Palet Warna (Biru / Putih / Biru-Hitam — industrial modern):
+      NAVY              #0F172A  — judul, teks tubuh, sidebar
+      DEEP BLUE         #1E3A8A  — sidebar terangkat, judul halaman
+      BLUE 600          #2563EB  — UI primer, navigasi, tombol, aksen
+      BLUE 700          #1D4ED8  — primer hover/aktif
+      LIGHT BLUE 100    #DBEAFE  — latar belakang biru muda, latar badge
+      VERY LIGHT BLUE   #EFF6FF  — biru sangat muda (status hover)
+      BACKGROUND        #F8FAFC  — latar belakang halaman
+      SURFACE           #FFFFFF  — kartu, tabel
+      TEXT PRIMARY      #0F172A
+      TEXT SECONDARY    #475569
+      TEXT TERTIARY     #94A3B8
+      BORDER            #E2E8F0  — batas, pembagi
+      SUCCESS           #16A34A  — hanya untuk status sukses
+      WARNING           #D97706  — hanya untuk status peringatan
+      DANGER            #DC2626  — hanya untuk status kesalahan
+    ============================================================ */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 :root {
-  /* ===== SIGNATURE / ACCENT ===== */
-  --habanero: #223382;
-  --habanero-hover: #e0730a;
-  --habanero-soft: rgba(249, 133, 19, 0.1);
+  /* ===== PRIMER — Biru ===== */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --primary-soft: rgba(37, 99, 235, 0.08);
 
-  /* ===== PRIMARY / STRUCTURAL ===== */
-  --primary: #223382; /* Deep Space Royal */
-  --primary-hover: #1a2866; /* deeper */
-  --primary-soft: rgba(34, 51, 130, 0.08);
+  /* ===== AKSEN (biru) ===== */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.08);
 
-  /* ===== SIDEBAR / BRAND ===== */
-  --sidebar: #111144; /* Deadly Depths */
-  --sidebar-elevated: #111144;
-  --sidebar-border: #2a3a7a; /* subtle divider on dark */
+  /* ===== SIDEBAR / NAVY ===== */
+  --sidebar: #0f172a;
+  --sidebar-elevated: #1e3a8a;
+  --sidebar-border: #33415a;
+  --sidebar-text: #cbd5e1;
+  --sidebar-text-active: #ffffff;
 
-  /* ===== BACKGROUND & SURFACE ===== */
-  --background: #fefdfb; /* Luster White */
-  --surface: #fefdfb; /* Luster White */
-  --surface-hover: #fefdfb; /* pure white on hover */
-  --surface-muted: #ede9e4; /* subtle off-white */
-  --surface-elevated: #f4f1ec;
-  --surface-glass: rgba(244, 241, 236, 0.7);
+  /* ===== LATAR BELAKANG & PERMUKAAN ===== */
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-hover: #f1f5f9;
+  --surface-muted: #e2e8f0;
+  --surface-elevated: #f8fafc;
+  --surface-glass: rgba(255, 255, 255, 0.7);
 
-  /* ===== TEXT ===== */
-  --text-primary: #111144; /* Deadly Depths — strong headings */
-  --text-secondary: #5a5a64; /* softer secondary */
-  --text-tertiary: #9bacd8; /* Aster Flower Blue — muted */
+  /* ===== TEKS ===== */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
   --text-inverse: #ffffff;
-  --text-disabled: #c4c9d9;
+  --text-disabled: #cbd5e1;
 
-  /* ===== BORDERS ===== */
-  --border: #dad1c8; /* Jodhpur Tan */
-  --border-dark: #c4c9d9;
+  /* ===== BENTOAN ===== */
+  --border: #e2e8f0;
+  --border-dark: #cbd5e1;
 
-  /* ===== GRADIENTS ===== */
-  --gradient-primary: linear-gradient(110deg, #f98513 0%, #223382 100%);
-  --gradient-dark: linear-gradient(110deg, #f98513 0%, #111144 100%);
-  --gradient-blue: linear-gradient(110deg, #9bacd8 0%, #223382 100%);
-  --gradient-warm: linear-gradient(110deg, #f98513 0%, #dad1c8 100%);
+  /* ===== GRADIEN (hanya biru) ===== */
+  --gradient-primary: linear-gradient(110deg, #2563eb 0%, #1d4ed8 100%);
+  --gradient-dark: linear-gradient(110deg, #0f172a 0%, #1e3a8a 100%);
+  --gradient-blue: linear-gradient(110deg, #94a3b8 0%, #2563eb 100%);
+  --gradient-light: linear-gradient(110deg, #eff6ff 0%, #e2e8f0 100%);
 
-  /* ===== ACCENT COLORS (semantic aliases) ===== */
-  --accent-blue: #223382; /* Deep Space Royal */
-  --accent-blue-soft: rgba(34, 51, 130, 0.08);
-  --accent-orange: #f98513; /* Habanero */
-  --accent-orange-soft: rgba(249, 133, 19, 0.08);
-  --accent-blue-text: #223382;
+  /* ===== WARNA AKSEN (alias semantik) ===== */
+  --accent-blue: #2563eb;
+  --accent-blue-soft: rgba(37, 99, 235, 0.08);
+  --accent-blue-text: #1d4ed8;
 
-  /* ===== STATUS (semantic) ===== */
-  --success: #10b981;
+  /* ===== STATUS (semantik) ===== */
+  --success: #16a34a;
   --success-bg: #dcfce7;
-  --success-text: #065f46;
-  --warning: #f59e0b;
+  --success-text: #166534;
+  --warning: #d97706;
   --warning-bg: #fef3c7;
   --warning-text: #92400e;
-  --danger: #ef4444;
+  --danger: #dc2626;
   --danger-bg: #fee2e2;
   --danger-text: #991b1b;
-  --info: #9bacd8; /* Aster Flower Blue */
-  --info-bg: rgba(154, 172, 216, 0.12);
-  --info-text: #223382; /* Deep Space Royal on info bg */
+  --info: #3b82f6;
+  --info-bg: rgba(59, 130, 246, 0.1);
+  --info-text: #1e40af;
 
-  /* ===== BADGE PALETTE ===== */
+  /* ===== PALET WARNA BADGE ===== */
   --badge-incoming-bg: var(--info-bg);
   --badge-incoming-text: var(--info-text);
-  --badge-process-bg: var(--warning-bg);
-  --badge-process-text: var(--warning-text);
+  --badge-process-bg: var(--accent-soft);
+  --badge-process-text: var(--accent-blue-text);
   --badge-qc-bg: var(--info-bg);
   --badge-qc-text: var(--info-text);
   --badge-delivery-bg: var(--success-bg);
@@ -89,12 +99,12 @@
   --badge-ng-text: var(--danger-text);
   --badge-waiting-bg: var(--surface-muted);
   --badge-waiting-text: var(--text-secondary);
-  --badge-active-bg: var(--habanero-soft);
-  --badge-active-text: var(--habanero-hover);
-  --badge-pending-bg: var(--surface-muted);
-  --badge-pending-text: var(--text-secondary);
+  --badge-active-bg: var(--primary-light);
+  --badge-active-text: var(--primary-hover);
+  --badge-pending-bg: var(--warning-bg);
+  --badge-pending-text: var(--warning-text);
 
-  /* ===== SPACING SCALE (4px grid) ===== */
+  /* ===== SKALA JARAK (grid 4px) ===== */
   --space-0: 0;
   --space-1: 4px;
   --space-2: 8px;
@@ -109,7 +119,7 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* ===== SPACING ALIASES ===== */
+  /* ===== ALIAS JARAK ===== */
   --space-xs: var(--space-1);
   --space-sm: var(--space-2);
   --space-md: var(--space-3);
@@ -117,38 +127,40 @@
   --space-xl: var(--space-5);
   --space-2xl: var(--space-6);
 
-  /* ===== BORDER RADIUS ===== */
+  /* ===== RADIUS BENTOAN ===== */
   --radius-xs: 6px;
   --radius-sm: 8px;
   --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
   --radius-2xl: 20px;
+  --radius-3xl: 24px;
   --radius-pill: 999px;
 
-  /* ===== SHADOWS (soft, industrial) ===== */
-  --shadow-xs: 0 1px 2px rgba(17, 17, 68, 0.04);
+  /* ===== BENTUK TIANGA (lembut, biru-harul) ===== */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-sm:
-    0 1px 3px rgba(17, 17, 68, 0.06), 0 1px 2px rgba(17, 17, 68, 0.04);
+    0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-md:
-    0 4px 12px rgba(17, 17, 68, 0.08), 0 2px 4px rgba(17, 17, 68, 0.05);
+    0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.05);
   --shadow-lg:
-    0 10px 25px rgba(17, 17, 68, 0.1), 0 4px 6px rgba(17, 17, 68, 0.06);
+    0 10px 25px rgba(15, 23, 42, 0.10), 0 4px 6px rgba(15, 23, 42, 0.06);
   --shadow-xl:
-    0 20px 40px rgba(17, 17, 68, 0.12), 0 8px 16px rgba(17, 17, 68, 0.08);
-  --shadow-modal: 0 24px 60px rgba(17, 17, 68, 0.2);
+    0 20px 40px rgba(15, 23, 42, 0.12), 0 8px 16px rgba(15, 23, 42, 0.08);
+  --shadow-modal: 0 24px 60px rgba(15, 23, 42, 0.15);
 
-  /* ===== FOCUS RING ===== */
-  --focus-ring: 0 0 0 3px rgba(249, 133, 19, 0.25);
-  --focus-ring-blue: 0 0 0 3px rgba(34, 51, 130, 0.2);
+  /* ===== CINCIN FOKUS (biru) ===== */
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.25);
+  --focus-ring-blue: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  --focus-ring-primary: 0 0 0 3px rgba(37, 99, 235, 0.15);
 
-  /* ===== TRANSITIONS ===== */
+  /* ===== TRANSISI ===== */
   --transition-fast: 120ms ease;
   --transition-sm: 150ms ease;
   --transition-md: 200ms ease;
   --transition-lg: 250ms ease;
 
-  /* ===== TYPOGRAPHY SCALE ===== */
+  /* ===== SKALA TIPOGRAFI ===== */
   --font-family-base:
     "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "Courier New", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -166,7 +178,7 @@
 }
 
 /* ============================================================
-   BASE
+   DASAR
    ============================================================ */
 
 * {
@@ -191,7 +203,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Form elements inherit the base font (Inter) */
+/* Elemen form mewarisi font dasar (Inter) */
 input,
 select,
 textarea,
@@ -205,7 +217,7 @@ svg {
 }
 
 /* ============================================================
-   ANIMATION UTILITIES
+   UTILITAS ANIMASI
    ============================================================ */
 
 .fade-in {
@@ -238,7 +250,7 @@ svg {
   }
 }
 
-/* Skeleton shimmer */
+/* Efek kilau skeleton */
 .ht-skeleton {
   background: linear-gradient(
     90deg,
@@ -276,11 +288,11 @@ svg {
 }
 
 /* ============================================================
-   UTILITY CLASSES — Layout, spacing, typography, colors
-   Rebuild of Tailwind-style utilities using design tokens.
+   KELAS UTILITAS — Tata letak, jarak, tipografi, warna
+   Versi ulang utilitas bertumpun (Tailwind-style) menggunakan design tokens.
    ============================================================ */
 
-/* ===== Display / Layout ===== */
+/* ===== Tampilan / Tata letak ===== */
 .hidden {
   display: none !important;
 }
@@ -306,7 +318,7 @@ svg {
   flex: 1 1 0%;
 }
 
-/* ===== Flexbox alignment ===== */
+/* ===== Penyelarasan Flexbox ===== */
 .items-start {
   align-items: flex-start;
 }
@@ -336,13 +348,13 @@ svg {
   justify-content: flex-end;
 }
 
-/* ht-flex-end — flex container with end-justified content */
+/* ht-flex-end — penampung flex dengan konten di-end */
 .ht-flex-end {
   display: flex;
   justify-content: flex-end;
 }
 
-/* ===== Positioning ===== */
+/* ===== Posisi ===== */
 .relative {
   position: relative;
 }
@@ -356,7 +368,7 @@ svg {
   position: sticky;
 }
 
-/* Position utilities (using spacing tokens) */
+/* Utilitas posisi (menggunakan token jarak) */
 .top-1 {
   top: var(--space-1);
 }
@@ -387,7 +399,7 @@ svg {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-/* ===== Responsive (md >= 768px) ===== */
+/* ===== Responsif (md >= 768px) ===== */
 @media (min-width: 768px) {
   .md\:flex {
     display: flex;
@@ -418,7 +430,7 @@ svg {
   }
 }
 
-/* ===== Gaps ===== */
+/* ===== Celah ===== */
 .gap-1 {
   gap: var(--space-1);
 }
@@ -438,7 +450,7 @@ svg {
   gap: var(--space-8);
 }
 
-/* ===== Space-y (vertical gaps between children) ===== */
+/* ===== Space-y (celah vertikal antar anak) ===== */
 .space-y-1 > :not([hidden]) ~ :not([hidden]) {
   margin-top: var(--space-1);
 }
@@ -579,7 +591,7 @@ svg {
   padding-right: var(--space-2);
 }
 
-/* ===== Typography — font-size ===== */
+/* ===== Tipografi — ukuran font ===== */
 .text-xs {
   font-size: var(--text-xs);
 }
@@ -602,7 +614,7 @@ svg {
   font-size: var(--text-3xl);
 }
 
-/* Inline text sizes (bracket notation) */
+/* Ukuran teks inline (notasi kurung siku) */
 .text-\[10px\] {
   font-size: 10px;
 }
@@ -613,7 +625,7 @@ svg {
   font-size: 12px;
 }
 
-/* ===== Typography — font-weight ===== */
+/* ===== Tipografi — ketebalan font ===== */
 .font-normal {
   font-weight: var(--font-weight-normal);
 }
@@ -639,7 +651,7 @@ svg {
   font-family: inherit;
 }
 
-/* ===== Typography — text-align ===== */
+/* ===== Tipografi — perataan teks ===== */
 .text-center {
   text-align: center;
 }
@@ -647,7 +659,7 @@ svg {
   text-align: right;
 }
 
-/* ===== Semantic text colors ===== */
+/* ===== Warna teks semantik ===== */
 .text-primary {
   color: var(--primary);
 }
@@ -679,7 +691,7 @@ svg {
   color: var(--text-disabled);
 }
 
-/* Hint text — subtle secondary info */
+/* Teks petunjuk — info sekunder yang samar */
 .ht-hint {
   color: var(--text-tertiary);
   font-size: var(--text-sm);
@@ -691,12 +703,12 @@ svg {
   font-size: var(--text-xs);
 }
 
-/* ===== Background ===== */
+/* ===== Latar belakang ===== */
 .bg-white {
   background-color: var(--surface-hover);
 }
 
-/* ===== Border radius ===== */
+/* ===== Radius bengkok ===== */
 .rounded-full {
   border-radius: var(--radius-pill);
 }
@@ -707,7 +719,7 @@ svg {
   border-radius: var(--radius-xl);
 }
 
-/* ===== Border / Divide ===== */
+/* ===== Batas / Pembagi ===== */
 .border {
   border: 1px solid var(--border);
 }
@@ -715,7 +727,7 @@ svg {
   border-top: 1px solid var(--border);
 }
 
-/* ===== Width ===== */
+/* ===== Lebar ===== */
 .w-full {
   width: 100%;
 }
@@ -735,20 +747,20 @@ svg {
   min-width: 160px;
 }
 
-/* ===== Spinner container ===== */
+/* ===== Wadah spinner ===== */
 .spinner-border {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ===== Disabled state ===== */
+/* ===== Status non-aktif ===== */
 .is-disabled {
   opacity: 0.5;
   pointer-events: none;
 }
 
-/* ===== Empty icon container ===== */
+/* ===== Wadah ikon kosong ===== */
 .ht-empty-icon {
   display: flex;
   align-items: center;
@@ -756,17 +768,17 @@ svg {
   margin-bottom: 16px;
 }
 
-/* ===== Transition ===== */
+/* ===== Transisi ===== */
 .transition {
   transition: var(--transition-md);
 }
 
-/* ===== Hover utilities ===== */
+/* ===== Utilitas hover ===== */
 .hover\:bg-slate-50:hover {
   background-color: var(--surface-muted);
 }
 
-/* ===== Standalone dot indicators (for history grids) ===== */
+/* ===== Penunjuk titik mandiri (untuk grid riwayat) ===== */
 .dot {
   width: 8px;
   height: 8px;
@@ -787,7 +799,7 @@ svg {
   background: var(--danger);
 }
 
-/* ===== Standalone modifier colors (non ht-* prefixed) ===== */
+/* ===== Warna modifer mandiri (bukan yang didahului ht-*) ===== */
 .ht-card.danger {
   border-left-color: var(--danger);
 }
@@ -798,5 +810,5 @@ svg {
   border-left-color: var(--success);
 }
 .ht-card.info {
-  border-left-color: var(--habanero);
+  border-left-color: var(--primary);
 }

@@ -1,9 +1,9 @@
 /* ============================================================
-   FORMS — Form layout, inputs, selects, textareas,
-   labels, focus states, actions, search bar.
+   FORMULIR — Tata letak formulir, input, select, textarea,
+   label, status fokus, aksi, bilah pencarian.
 
-   Industrial Premium design: Jodhpur Tan borders, Habanero/Deep Space
-   Royal focus accents, clean Luster White surfaces.
+   Desain Modern Manufaktur: Fokus biru primer,
+   aksen Habanero untuk CTA.
    ============================================================ */
 
 .ht-form {
@@ -57,8 +57,8 @@
 .ht-form-input:focus,
 .ht-form-select:focus,
 .ht-form-textarea:focus {
-  border-color: var(--habanero);
-  box-shadow: 0 0 0 3px rgba(249, 133, 19, 0.12);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   background: var(--surface);
 }
 
@@ -77,21 +77,21 @@
 .ht-form-input::placeholder,
 .ht-form-select::placeholder,
 .ht-form-textarea::placeholder {
-  color: #9bacd8;
-  opacity: 0.6;
+  color: var(--text-tertiary);
+  opacity: 0.5;
 }
 
 .ht-form-select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239BACD8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   background-size: 12px;
 }
 
 .ht-form-select:focus {
-  border-color: var(--habanero);
-  box-shadow: 0 0 0 3px rgba(249, 133, 19, 0.12);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .ht-form-textarea {
@@ -112,7 +112,7 @@
 }
 
 /* ============================================================
-   FORM SIZE VARIANTS
+   VARIAN UKURAN FORMULIR
    ============================================================ */
 
 .ht-form-select-sm,
@@ -128,13 +128,13 @@
   border-radius: var(--radius-md);
 }
 
-/* Full width variants for responsive */
+/* Varian lebar penuh untuk responsif */
 .w-auto {
   width: auto;
 }
 
 /* ============================================================
-   FORM ACTIONS
+   AKSI FORMULIR
    ============================================================ */
 
 .ht-form-actions {
@@ -148,7 +148,7 @@
 }
 
 /* ============================================================
-   SEARCH / FILTER BAR
+   BILAH PENCARIAN / FILTER
    ============================================================ */
 
 .ht-search-bar {
@@ -170,7 +170,110 @@
 }
 
 /* ============================================================
-   REDUCED MOTION
+   BILAH FILTER (gaya dashboard)
+   ============================================================ */
+
+.ht-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.ht-filter-bar .ht-form-input,
+.ht-filter-bar .ht-form-select {
+  height: 36px;
+  font-size: 13px;
+}
+
+/* ============================================================
+   LABEL CHECKBOX / RADIO KUSTOM
+   ============================================================ */
+
+.ht-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: all var(--transition-sm);
+  user-select: none;
+}
+
+.ht-checkbox-label:hover {
+  color: var(--primary);
+}
+
+.ht-checkbox-label .ht-disabled-hint {
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.ht-checkbox-label.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ht-checkbox-label.disabled:hover {
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   INPUT CHECKBOX / RADIO KUSTOM
+   ============================================================ */
+
+.ht-checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+.ht-checkbox[type="checkbox"] {
+  border-radius: var(--radius-xs);
+}
+
+.ht-checkbox[type="radio"] {
+  border-radius: var(--radius-pill);
+}
+
+.ht-checkbox:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   PENUNJUK WAJIB
+   ============================================================ */
+
+.ht-required {
+  color: var(--danger);
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+/* ============================================================
+   PETUNJUK NON-AKTIF — petunjuk samar untuk checkbox yang dinonaktifkan
+   ============================================================ */
+
+.ht-disabled-hint {
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ============================================================
+   GERAKAN REDUCED
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {

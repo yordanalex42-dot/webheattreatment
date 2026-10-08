@@ -21,69 +21,124 @@
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
+                <img
+                  src="assets/logo/logo baru.svg"
+                  alt="PT CHUNETSU INDONESIA"
+                  class="sidebar-logo"
+                />
+                <div class="ht-sidebar-brand">
+                  <span class="brand-sub">Heat Treatment of</span>
+                  <span class="brand-name">PT CHUNETSU INDONESIA</span>
+                </div>
               </div>
               <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
-          <a href="index.html" class="ht-nav-link"
-            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
-          >
-          <div class="pt-2">
-            <p class="ht-nav-section-title">Master Data</p>
+          <div class="nav-section">
+            <a href="index.html" class="ht-nav-link">
+              <img
+                src="assets/icons/dashboard.svg"
+                alt="Dashboard"
+                class="sidebar-menu-icon"
+              />
+              Dashboard
+            </a>
           </div>
-          <a href="customer.html" class="ht-nav-link"
-            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
-          >
-          <a href="part.html" class="ht-nav-link"
-            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
-          >
-          <a href="incoming.html" class="ht-nav-link"
-            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
-          >
-          <div class="pt-2">
-            <p class="ht-nav-section-title">Produksi</p>
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Master Data</p>
+            <a href="customer.html" class="ht-nav-link">
+              <img
+                src="assets/icons/customer.svg"
+                alt="Customer"
+                class="sidebar-menu-icon"
+              />
+              Customer
+            </a>
+            <a href="part.html" class="ht-nav-link">
+              <img src="assets/icons/part.svg" alt="Part" class="sidebar-menu-icon" /> Part
+            </a>
+            <a href="incoming.html" class="ht-nav-link">
+              <img
+                src="assets/icons/incoming.svg"
+                alt="Incoming"
+                class="sidebar-menu-icon"
+              />
+              Incoming
+            </a>
           </div>
-          <a href="heat-treatment.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production.svg" alt="Heat Treatment" class="icon"> Heat Treatment</a
-          >
-          <a href="shotblast.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
-          >
-          <a href="anti-rust.html" class="ht-nav-link sub"
-            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
-          >
-          <a href="qc.html" class="ht-nav-link active"
-            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
-          >
-          <a href="delivery.html" class="ht-nav-link"
-            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
-          >
-          <a href="tracking.html" class="ht-nav-link"
-            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
-          >
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Produksi</p>
+            <a href="heat-treatment.html" class="ht-nav-link sub">
+              <img
+                src="assets/icons/production.svg"
+                alt="Heat Treatment"
+                class="sidebar-menu-icon"
+              />
+              Heat Treatment
+            </a>
+            <a href="shotblast.html" class="ht-nav-link sub">
+              <img
+                src="assets/icons/production.svg"
+                alt="Shotblast"
+                class="sidebar-menu-icon"
+              />
+              Shotblast
+            </a>
+            <a href="anti-rust.html" class="ht-nav-link sub">
+              <img
+                src="assets/icons/process.svg"
+                alt="Anti Rust"
+                class="sidebar-menu-icon"
+              />
+              Anti Rust
+            </a>
+            <a href="qc.html" class="ht-nav-link active">
+              <img
+                src="assets/icons/quality-control.svg"
+                alt="Quality Control"
+                class="sidebar-menu-icon"
+              />
+              Quality Control
+            </a>
+            <a href="delivery.html" class="ht-nav-link">
+              <img
+                src="assets/icons/delivery.svg"
+                alt="Delivery"
+                class="sidebar-menu-icon"
+              />
+              Delivery
+            </a>
+            <a href="tracking.html" class="ht-nav-link">
+              <img
+                src="assets/icons/tracking.svg"
+                alt="Tracking"
+                class="sidebar-menu-icon"
+              />
+              Tracking
+            </a>
+          </div>
         </nav>
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div class="ht-user-avatar" id="sidebarInitial">
-                A
-              </div>
+              <div class="ht-user-avatar" id="sidebarInitial">A</div>
               <div class="ht-user-details">
                 <p class="ht-user-name" id="sidebarName">Admin User</p>
                 <p class="ht-user-role" id="sidebarRole">Administrator</p>
               </div>
             </div>
             <button
-              onclick="Auth.logout(); window.location.href='login.html';"
+              onclick="
+                Auth.logout();
+                window.location.href = 'login.html';
+              "
               class="ht-sidebar-logout"
               title="Logout"
               aria-label="Logout"
             >
-              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
+              <img src="assets/icons/logout.svg" alt="Logout" class="sidebar-menu-icon" />
             </button>
           </div>
         </div>
@@ -94,10 +149,13 @@
             <h1>Modul Quality Control (QC)</h1>
             <p>Input hasil pemeriksaan keras material.</p>
           </div>
+          <div class="ht-header-right">
+            <span class="ht-header-date" id="currentDate"></span>
+          </div>
         </header>
         <div class="ht-content">
           <div class="ht-content-max">
-            <!-- Scan -->
+            <!-- Pemindaian -->
             <div class="ht-card fade-in">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Scan QR Code Material</h3>
@@ -110,24 +168,27 @@
                   </p>
                 </div>
                 <div class="space-y-2">
-                  <p class="ht-hint">
-                    Atau masukkan Kode Part secara manual:
-                  </p>
+                  <p class="ht-hint">Atau masukkan Kode Part secara manual:</p>
                   <div class="flex gap-2">
                     <input
                       type="text"
-                      id="manualId" aria-label="Nomor kode material"
+                      id="manualId"
+                      aria-label="Nomor kode material"
                       placeholder="Kode Part (contoh: 20260004I)"
                       class="ht-form-input flex-1"
                       oninput="clearManualError()"
-                      onkeydown="if(event.key==='Enter') loadMaterialById()"
+                      onkeydown="if (event.key === 'Enter') loadMaterialById();"
                     />
                     <button
                       onclick="loadMaterialById()"
                       class="ht-btn ht-btn-primary ht-btn-sm"
                       aria-label="Cari material"
                     >
-                      <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
+                      <img
+                        src="assets/icons/search.svg"
+                        alt="Cari"
+                        class="icon mr-1"
+                      />Cari
                     </button>
                   </div>
                   <p id="manualError" class="hidden ht-error-text"></p>
@@ -135,7 +196,7 @@
               </div>
             </div>
 
-            <!-- Form -->
+            <!-- Formulir -->
             <div id="qcForm" class="hidden ht-card fade-in">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Data Part</h3>
@@ -171,7 +232,11 @@
                 </div>
                 <div class="ht-info-item">
                   <span class="ht-info-label">Target Hardness</span>
-                  <span class="ht-info-value mono hardness" id="infoTargetHardness">-</span>
+                  <span
+                    class="ht-info-value mono hardness"
+                    id="infoTargetHardness"
+                    >-</span
+                  >
                 </div>
                 <div class="ht-info-item">
                   <span class="ht-info-label">Qty</span>
@@ -180,14 +245,31 @@
               </div>
 
               <h3 class="font-bold mb-3">Input Hasil QC</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 ht-form-group">
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 ht-form-group"
+              >
                 <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcInspector">Nama Inspector</label>
-                  <input type="text" id="qcInspector" required class="ht-form-input" placeholder="Nama Inspector" />
+                  <label class="ht-form-label" for="qcInspector"
+                    >Nama Inspector</label
+                  >
+                  <input
+                    type="text"
+                    id="qcInspector"
+                    required
+                    class="ht-form-input"
+                    placeholder="Nama Inspector"
+                  />
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcTanggalInspector">Tanggal Inspector</label>
-                  <input type="date" id="qcTanggalInspector" required class="ht-form-input" />
+                  <label class="ht-form-label" for="qcTanggalInspector"
+                    >Tanggal Inspector</label
+                  >
+                  <input
+                    type="date"
+                    id="qcTanggalInspector"
+                    required
+                    class="ht-form-input"
+                  />
                 </div>
               </div>
 
@@ -196,8 +278,16 @@
                 <input type="hidden" id="qcId" />
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="qcHardness">Nilai Hardness</label>
-                    <input type="text" id="qcHardness" required class="ht-form-input" placeholder="Contoh: 58-62 HRC" />
+                    <label class="ht-form-label" for="qcHardness"
+                      >Nilai Hardness</label
+                    >
+                    <input
+                      type="text"
+                      id="qcHardness"
+                      required
+                      class="ht-form-input"
+                      placeholder="Contoh: 58-62 HRC"
+                    />
                   </div>
                   <div class="ht-form-group">
                     <label class="ht-form-label" for="qcSatuan">Satuan</label>
@@ -209,7 +299,9 @@
                   </div>
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcMicrostructure">Microstructure</label>
+                  <label class="ht-form-label" for="qcMicrostructure"
+                    >Microstructure</label
+                  >
                   <select id="qcMicrostructure" required class="ht-form-select">
                     <option value="">Pilih hasil microstructure</option>
                     <option value="OK">OK</option>
@@ -217,22 +309,43 @@
                   </select>
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcHasilDisplay">Hasil QC</label>
-                  <input type="text" id="qcHasilDisplay" readonly class="ht-form-input" value="-" />
+                  <label class="ht-form-label" for="qcHasilDisplay"
+                    >Hasil QC</label
+                  >
+                  <input
+                    type="text"
+                    id="qcHasilDisplay"
+                    readonly
+                    class="ht-form-input"
+                    value="-"
+                  />
                 </div>
                 <div class="ht-form-group">
                   <label class="ht-form-label" for="qcCatatan">Catatan</label>
-                  <textarea id="qcCatatan" rows="2" class="ht-form-input ht-form-textarea" placeholder="Opsional"></textarea>
+                  <textarea
+                    id="qcCatatan"
+                    rows="2"
+                    class="ht-form-input ht-form-textarea"
+                    placeholder="Opsional"
+                  ></textarea>
                 </div>
                 <div class="ht-form-actions">
-                  <button type="submit" class="ht-btn ht-btn-success" aria-label="Simpan hasil QC">
-                    <img src="assets/icons/save.svg" alt="Simpan" class="icon mr-2">Simpan Hasil QC
+                  <button
+                    type="submit"
+                    class="ht-btn ht-btn-success"
+                    aria-label="Simpan hasil QC"
+                  >
+                    <img
+                      src="assets/icons/save.svg"
+                      alt="Simpan"
+                      class="icon mr-2"
+                    />Simpan Hasil QC
                   </button>
                 </div>
               </form>
             </div>
 
-            <!-- History table -->
+            <!-- Tabel riwayat -->
             <div class="ht-card fade-in">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Riwayat QC</h3>
@@ -260,21 +373,23 @@
       </main>
     </div>
 
-    <!-- Scan Modal -->
+    <!-- Modal Pemindaian -->
     <div id="scanModal" class="ht-modal-overlay">
       <div class="ht-modal">
         <div class="ht-modal-header">
           <h3 class="ht-modal-title">Scan QR Code</h3>
-          <button onclick="closeScanModal()" class="ht-modal-close" aria-label="Close">
-            <img src="assets/icons/close.svg" alt="Close" class="icon">
+          <button
+            onclick="closeScanModal()"
+            class="ht-modal-close"
+            aria-label="Close"
+          >
+            <img src="assets/icons/close.svg" alt="Close" class="icon" />
           </button>
         </div>
         <div class="ht-modal-body">
           <div class="ht-qr-scanner-wrapper">
             <div id="qr-reader-modal" class="ht-qr-frame"></div>
-            <p class="ht-hint text-center mt-3">
-              Arahkan kamera ke QR Code
-            </p>
+            <p class="ht-hint text-center mt-3">Arahkan kamera ke QR Code</p>
           </div>
         </div>
       </div>
@@ -283,6 +398,7 @@
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/date-format.js"></script>
     <script>
       if (!HTUI.requireAuth()) {
         throw new Error("redirecting");
@@ -320,17 +436,28 @@
         const part = DB.findPartById(material.part_id);
         const customer = DB.findCustomerById(material.customer_id);
         document.getElementById("infoKode").textContent = material.kode || "-";
-        document.getElementById("infoCustomer").textContent = customer ? customer.nama_customer : "-";
-        document.getElementById("infoNoPart").textContent = part ? part.nomor_part : "-";
-        document.getElementById("infoNamaPart").textContent = part ? part.nama_part : "-";
-        document.getElementById("infoStatusPart").textContent = material.status_part || "-";
+        document.getElementById("infoCustomer").textContent = customer
+          ? customer.nama_customer
+          : "-";
+        document.getElementById("infoNoPart").textContent = part
+          ? part.nomor_part
+          : "-";
+        document.getElementById("infoNamaPart").textContent = part
+          ? part.nama_part
+          : "-";
+        document.getElementById("infoStatusPart").textContent =
+          material.status_part || "-";
         document.getElementById("infoLot").textContent = material.lot_no || "-";
-        document.getElementById("infoCharge").textContent = material.material_charge || "-";
-        document.getElementById("infoTargetHardness").textContent =
-          part ? part.target_hardness || "-" : "-";
+        document.getElementById("infoCharge").textContent =
+          material.material_charge || "-";
+        document.getElementById("infoTargetHardness").textContent = part
+          ? part.target_hardness || "-"
+          : "-";
         document.getElementById("infoQty").textContent = material.qty || 0;
         document.getElementById("qcProductionId").value = production.id;
-        const existing = DB.get("qcs").find((q) => String(q.material_id) === String(material.id));
+        const existing = DB.get("qcs").find(
+          (q) => String(q.material_id) === String(material.id),
+        );
         const hasilDisplay = document.getElementById("qcHasilDisplay");
         const hardnessInput = document.getElementById("qcHardness");
         const microInput = document.getElementById("qcMicrostructure");
@@ -342,10 +469,14 @@
         if (existing) {
           document.getElementById("qcId").value = existing.id;
           document.getElementById("qcHardness").value = existing.hardness;
-          document.getElementById("qcSatuan").value = existing.satuan_hardness || "HRC";
-          document.getElementById("qcMicrostructure").value = existing.microstructure || "";
-          document.getElementById("qcInspector").value = existing.inspector || "";
-          document.getElementById("qcTanggalInspector").value = existing.tanggal_inspector || "";
+          document.getElementById("qcSatuan").value =
+            existing.satuan_hardness || "HRC";
+          document.getElementById("qcMicrostructure").value =
+            existing.microstructure || "";
+          document.getElementById("qcInspector").value =
+            existing.inspector || "";
+          document.getElementById("qcTanggalInspector").value =
+            existing.tanggal_inspector || "";
           document.getElementById("qcCatatan").value = existing.catatan || "";
           if (existing.microstructure) {
             computeQcHasil();
@@ -363,11 +494,14 @@
           hasilDisplay.value = "-";
         }
         document.getElementById("qcForm").classList.remove("hidden");
-        document.getElementById("qcForm").scrollIntoView({ behavior: "smooth" });
+        document
+          .getElementById("qcForm")
+          .scrollIntoView({ behavior: "smooth" });
       }
       function clearManualError() {
         const err = document.getElementById("manualError");
-        if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
+        if (err && !err.classList.contains("hidden"))
+          err.classList.add("hidden");
       }
       function parseHardnessTarget(target) {
         if (!target || target === "-") return null;
@@ -381,10 +515,12 @@
         if (match) {
           const min = parseFloat(match[1]);
           const max = parseFloat(match[2]);
-          if (!isNaN(min) && !isNaN(max)) return { min: Math.min(min, max), max: Math.max(min, max) };
+          if (!isNaN(min) && !isNaN(max))
+            return { min: Math.min(min, max), max: Math.max(min, max) };
         }
         const single = parseHardnessTarget(target);
-        if (single !== null && !isNaN(single)) return { min: single, max: single };
+        if (single !== null && !isNaN(single))
+          return { min: single, max: single };
         return null;
       }
       function checkHardness(target, actual) {
@@ -396,24 +532,34 @@
       }
       function computeQcHasil() {
         const hardness = document.getElementById("qcHardness").value.trim();
-        const microstructure = document.getElementById("qcMicrostructure").value;
+        const microstructure =
+          document.getElementById("qcMicrostructure").value;
         const hasilDisplay = document.getElementById("qcHasilDisplay");
-        const target = document.getElementById("infoTargetHardness").textContent || "-";
+        const target =
+          document.getElementById("infoTargetHardness").textContent || "-";
         const hardnessPass = hardness ? checkHardness(target, hardness) : false;
         const microPass = microstructure === "OK";
-        const hasil = hardnessPass && microPass ? "PASS" : "NG";
+        const hasil = hardnessPass && microPass ? "OK" : "NG";
         hasilDisplay.value = hasil;
-        return { hasil: hasil, hardnessPass: hardnessPass, microPass: microPass };
+        return {
+          hasil: hasil,
+          hardnessPass: hardnessPass,
+          microPass: microPass,
+        };
       }
       document.getElementById("hasilForm").addEventListener("submit", (e) => {
         e.preventDefault();
-        const productionId = parseInt(document.getElementById("qcProductionId").value);
+        const productionId = parseInt(
+          document.getElementById("qcProductionId").value,
+        );
         const qcId = document.getElementById("qcId").value;
         const inspector = document.getElementById("qcInspector").value.trim();
-        const tanggalInspector = document.getElementById("qcTanggalInspector").value;
+        const tanggalInspector =
+          document.getElementById("qcTanggalInspector").value;
         const hardness = document.getElementById("qcHardness").value.trim();
         const satuan = document.getElementById("qcSatuan").value;
-        const microstructure = document.getElementById("qcMicrostructure").value;
+        const microstructure =
+          document.getElementById("qcMicrostructure").value;
         const catatan = document.getElementById("qcCatatan").value.trim();
         const kode = document.getElementById("infoKode").textContent;
         if (!kode || kode === "-") {
@@ -520,9 +666,15 @@
       window.addEventListener("DOMContentLoaded", () => {
         DB.init();
         DB.migrate();
-        try { startScanner(); } catch (e) { console.warn("[QC] Scanner init failed:", e); }
+        HTDateFormat.init();
+        try {
+          startScanner();
+        } catch (e) {
+          console.warn("[QC] Scanner init failed:", e);
+        }
         loadQCs();
       });
     </script>
   </body>
 </html>
+

@@ -1,10 +1,10 @@
 /* ============================================================
-   Dashboard Specific Styles — Modern Industrial Premium
-   Consistent with the Habanero + Deep Space Royal design language.
+   GAYA KHUSUS DASHBOARD — Dashboard Produksi Manufaktur Modern
+    Konsisten dengan sistem desain biru + putih + biru-harul modern.
    ============================================================ */
 
 /* ============================================================
-   PAGE BACKGROUND & CONTAINER
+   LATAR BELAKANG HALAMAN & KONTAINER
    ============================================================ */
 
 .ht-main {
@@ -23,17 +23,15 @@
 }
 
 /* ============================================================
-   DASHBOARD HEADER — Premium, Clean, Industrial
+   HEADER DASHBOARD — Bersih, Modern
    ============================================================ */
 
 .ht-header {
   background: var(--surface);
-  border-bottom: 3px solid var(--gradient-primary);
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  border-bottom: 1px solid var(--border);
   padding: 20px 28px;
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition-sm);
-  position: relative;
 }
 
 .ht-header:hover {
@@ -74,7 +72,7 @@
   border: 1px solid var(--border);
 }
 
-/* Header action buttons — consistent with Login button style */
+/* Tombol aksi header — konsisten dengan gaya tombol Login */
 .ht-header-actions .ht-btn {
   height: 38px;
   padding: 8px 16px;
@@ -105,7 +103,7 @@
 
 .ht-header-actions .ht-btn:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring);
+  box-shadow: var(--focus-ring-blue);
 }
 
 .ht-header-actions .ht-btn-secondary {
@@ -134,7 +132,7 @@
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 
-/* Refresh button spin icon */
+/* Ikon putar pada tombol refresh */
 .ht-header-actions .ht-btn .icon.icon-spin {
   animation: spin 0.8s linear infinite;
 }
@@ -147,7 +145,7 @@
 }
 
 /* ============================================================
-   CONTENT SPACING
+   JARAK KONTEN
    ============================================================ */
 
 .ht-content {
@@ -161,7 +159,7 @@
 }
 
 /* ============================================================
-   KPI LAYOUT — 2 Column Premium Industrial
+   TATA LETAK KPI — Premium Industrial 2 Kolom
    ============================================================ */
 
 .ht-kpi-layout {
@@ -187,22 +185,25 @@
 }
 
 /* ============================================================
-   KPI CARD — Modern Premium Industrial
+   KARTU KPI — Minimal Industrial Bersih
    ============================================================ */
 
 .ht-kpi-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 20px 22px;
+  align-items: flex-start;
+  padding: 24px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   transition:
-    transform var(--transition-sm),
-    box-shadow var(--transition-sm),
-    border-color var(--transition-sm);
+    background-color 250ms ease,
+    border-color 250ms ease,
+    color 250ms ease,
+    transform 250ms ease,
+    box-shadow 250ms ease;
   min-height: 140px;
   overflow: hidden;
   animation: kpiEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -220,119 +221,62 @@
 }
 
 .ht-kpi-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%);
+  border-color: #BFDBFE;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.10);
 }
 
 .ht-kpi-card:focus-within {
   box-shadow: var(--focus-ring-blue);
 }
 
-/* Staggered entrance */
+/* Masuk berjenjar */
 .ht-kpi-grid .ht-kpi-card:nth-child(1) { animation-delay: 0.05s; }
 .ht-kpi-grid .ht-kpi-card:nth-child(2) { animation-delay: 0.1s; }
 .ht-kpi-grid .ht-kpi-card:nth-child(3) { animation-delay: 0.15s; }
 .ht-kpi-grid .ht-kpi-card:nth-child(4) { animation-delay: 0.2s; }
 .ht-kpi-grid .ht-kpi-card:nth-child(5) { animation-delay: 0.25s; }
 
-/* Icon tile */
-.ht-kpi-card::before {
-  content: "";
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-lg);
-  background: var(--primary-soft);
-  border: 1px solid rgba(34, 51, 130, 0.15);
-  opacity: 0.8;
-}
-
-.ht-kpi-card.primary::before { background: rgba(34, 51, 130, 0.08); }
-.ht-kpi-card.info::before { background: rgba(154, 172, 216, 0.12); }
-.ht-kpi-card.warning::before { background: rgba(245, 158, 11, 0.10); }
-.ht-kpi-card.success::before { background: rgba(16, 185, 129, 0.10); }
-.ht-kpi-card.danger::before { background: rgba(239, 68, 68, 0.10); }
-.ht-kpi-card.habanero::before { background: rgba(249, 133, 19, 0.12); }
-
-/* KPI icon */
-.ht-kpi-card .ht-kpi-icon {
-  position: absolute;
-  right: 27px;
-  bottom: 27px;
-  z-index: 1;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  flex-shrink: 0;
-  opacity: 0.95;
-  color: var(--primary);
-  transition: color var(--transition-sm);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-}
-
-.ht-kpi-card.primary .ht-kpi-icon { color: var(--primary); }
-.ht-kpi-card.info .ht-kpi-icon { color: var(--info-text); }
-.ht-kpi-card.warning .ht-kpi-icon { color: var(--warning-text); }
-.ht-kpi-card.success .ht-kpi-icon { color: var(--success-text); }
-.ht-kpi-card.danger .ht-kpi-icon { color: var(--danger-text); }
-.ht-kpi-card.habanero .ht-kpi-icon { color: var(--habanero); }
-
-.ht-kpi-card:hover .ht-kpi-icon {
-  filter: brightness(1.15);
-}
-
-/* KPI text container */
 .ht-kpi-card .ht-kpi-container {
   display: flex;
   flex-direction: column;
+  gap: 6px;
   width: 100%;
-  min-width: 0;
 }
 
 .ht-kpi-card .ht-kpi-label {
-  font-size: 10px;
-  font-weight: var(--font-weight-medium);
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary);
-  margin-bottom: 6px;
   line-height: 1.3;
-  opacity: 0.9;
 }
 
 .ht-kpi-card .ht-kpi-value {
-  font-size: 28px;
-  font-weight: var(--font-weight-bold);
+  font-size: 32px;
+  font-weight: 800;
   line-height: 1.1;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.ht-kpi-card .ht-kpi-unit {
-  display: block;
-  margin-top: 3px;
+.ht-kpi-card:hover .ht-kpi-value {
+  color: var(--primary);
+}
+
+.ht-kpi-card .ht-kpi-description {
   font-size: 12px;
-  font-weight: var(--font-weight-medium);
+  font-weight: 400;
   color: var(--text-secondary);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.4;
 }
 
 /* ============================================================
-   TARGET CARD — Distinct from KPI, subtle accent
+   KARTU TARGET — Berbeda dari KPI, aksen halus
    ============================================================ */
 
 .ht-kpi-left #targetCard {
@@ -353,11 +297,11 @@
     transform var(--transition-sm),
     box-shadow var(--transition-sm),
     border-color var(--transition-sm);
-  border-left: 3px solid var(--habanero);
+  border-left: 3px solid var(--primary);
 }
 
 .ht-kpi-left #targetCard .ht-card:hover {
-  border-left-color: var(--habanero-hover);
+  border-left-color: var(--primary-hover);
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
 }
@@ -392,7 +336,7 @@
   font-size: 28px;
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
-  color: var(--habanero);
+  color: var(--primary);
 }
 
 .ht-kpi-left #targetCard .ht-btn-ghost {
@@ -409,14 +353,14 @@
 }
 
 .ht-kpi-left #targetCard .ht-btn-ghost:hover {
-  background: var(--habanero-soft);
-  color: var(--habanero-hover);
-  border-color: rgba(249, 133, 19, 0.2);
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+  border-color: rgba(37, 99, 235, 0.2);
 }
 
 .ht-kpi-left #targetCard .ht-btn-ghost:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring);
+  box-shadow: var(--focus-ring-blue);
 }
 
 .ht-kpi-left #targetCard .ht-btn-ghost .icon {
@@ -425,7 +369,7 @@
 }
 
 /* ============================================================
-   DONUT TARGET CARD — Right Column
+   KARTU TARGET DONUT — Kolom Kanan
    ============================================================ */
 
 .ht-kpi-right {
@@ -445,15 +389,7 @@
   overflow: hidden;
   flex: 1;
   min-height: 0;
-  transition:
-    transform var(--transition-sm),
-    box-shadow var(--transition-sm);
   animation: kpiEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
-}
-
-.ht-kpi-card-primary-large:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
 }
 
 .ht-kpi-primary-content {
@@ -469,13 +405,21 @@
 
 .ht-kpi-primary-label {
   font-size: 13px;
-  font-weight: var(--font-weight-semi);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary);
   margin-bottom: 20px;
   line-height: 1.3;
-  opacity: 0.9;
+}
+
+.ht-donut-value {
+  display: block;
+  font-size: 42px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 .ht-donut-wrapper {
@@ -500,19 +444,10 @@
   pointer-events: none;
 }
 
-.ht-donut-value {
-  display: block;
-  font-size: 42px;
-  font-weight: var(--font-weight-bold);
-  line-height: 1;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
 .ht-donut-unit {
   display: block;
   font-size: 16px;
-  font-weight: var(--font-weight-semi);
+  font-weight: 600;
   color: var(--text-secondary);
   margin-top: 2px;
 }
@@ -523,11 +458,10 @@
   color: var(--text-secondary);
   line-height: 1.4;
   white-space: nowrap;
-  opacity: 0.9;
 }
 
 /* ============================================================
-   CHART CARDS — Daily & Monthly
+   KARTU GRAFIK — Harian & Bulanan
    ============================================================ */
 
 .ht-chart-grid {
@@ -582,7 +516,7 @@
   line-height: 1.4;
 }
 
-/* Chart period controls */
+/* Kontrol periode grafik */
 .ht-chart-controls {
   display: flex;
   align-items: center;
@@ -607,8 +541,8 @@
 .ht-chart-controls .ht-form-select:focus,
 .ht-chart-controls .ht-form-input:focus {
   outline: none;
-  border-color: var(--habanero);
-  box-shadow: 0 0 0 3px rgba(249, 133, 19, 0.12);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .ht-chart-container {
@@ -618,7 +552,7 @@
   min-height: 200px;
 }
 
-/* Chart empty state */
+/* Status kosong grafik */
 .ht-chart-empty {
   position: absolute;
   inset: 0;
@@ -644,7 +578,7 @@
 }
 
 /* ============================================================
-   FILTER BAR — Modern, Clean Industrial
+   BILAH FILTER — Modern, Clean Industrial
    ============================================================ */
 
 .ht-filter-bar {
@@ -690,9 +624,9 @@
 
 .ht-filter-bar .ht-form-input:focus,
 .ht-filter-bar .ht-form-select:focus {
-  border-color: var(--habanero);
+  border-color: var(--primary);
   background: var(--surface);
-  box-shadow: 0 0 0 3px rgba(249, 133, 19, 0.12);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .ht-filter-bar .ht-form-select {
@@ -715,7 +649,7 @@
 }
 
 /* ============================================================
-   MONITORING TABLE CARD
+   KARTU TABEL PEMANTAUAN
    ============================================================ */
 
 .ht-monitor-card {
@@ -766,17 +700,19 @@
 }
 
 /* ============================================================
-   MONITORING TABLE
+   TABEL PEMANTAUAN
    ============================================================ */
 
 .ht-monitor-table {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  overflow-y: hidden;
 }
 
 .ht-monitor-table .ht-table {
   table-layout: auto;
-  min-width: 100%;
+  min-width: max-content;
+  width: 100%;
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -785,21 +721,20 @@
   position: sticky;
   top: 0;
   z-index: 2;
-  background: var(--surface-hover);
-  border-bottom: 2px solid var(--border);
+  background: #EFF6FF;
+  border-bottom: 2px solid #E2E8F0;
 }
 
 .ht-monitor-table .ht-table th {
-  padding: 10px 16px;
+  padding: 12px 16px;
   vertical-align: middle;
   font-size: 10px;
-  font-weight: var(--font-weight-semi);
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-secondary);
-  background: var(--surface-hover);
-  border-bottom: 2px solid var(--border);
-  position: relative;
+  color: #0F172A;
+  background: #EFF6FF;
+  border-bottom: 2px solid #E2E8F0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -814,153 +749,170 @@
 }
 
 .ht-monitor-table .ht-table td {
-  padding: 10px 16px;
+  padding: 14px 16px;
   vertical-align: middle;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-primary);
   border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Row stripe + hover */
+/* Striping baris + hover */
 .ht-monitor-table .ht-table tbody tr:nth-child(even) {
   background: var(--surface);
 }
 
 .ht-monitor-table .ht-table tbody tr:hover {
-  background: var(--primary-soft);
-  transition: background-color var(--transition-sm);
+  background: #F0F7FF;
+  transition: background-color 180ms ease;
 }
 
 .ht-monitor-table .ht-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-/* Status cell alignment */
-.ht-monitor-table .ht-table td:nth-child(9),
-.ht-monitor-table .ht-table td:nth-child(15),
-.ht-monitor-table .ht-table td:nth-child(16),
-.ht-monitor-table .ht-table td:nth-child(17),
-.ht-monitor-table .ht-table td:nth-child(18) {
-  white-space: nowrap;
-}
+/* ===== Lebar kolom (melalui th, karena table-layout: auto) ===== */
+.ht-monitor-table .ht-table th:nth-child(1)  { width: 36px;    min-width: 36px; }   /* No */
+.ht-monitor-table .ht-table th:nth-child(2)  { width: 100px;   min-width: 100px; }  /* Nomor Kode */
+.ht-monitor-table .ht-table th:nth-child(3)  { width: 180px;   min-width: 150px; }  /* Customer */
+.ht-monitor-table .ht-table th:nth-child(4)  { width: 120px;   min-width: 100px; }  /* Nomor Part */
+.ht-monitor-table .ht-table th:nth-child(5)  { width: 160px;   min-width: 130px; }  /* Nama Part */
+.ht-monitor-table .ht-table th:nth-child(6)  { width: 140px;   min-width: 130px; }  /* Status */
+.ht-monitor-table .ht-table th:nth-child(7)  { width: 110px;   min-width: 100px; }  /* No Surat Jalan */
+.ht-monitor-table .ht-table th:nth-child(8)  { width: 90px;    min-width: 80px; }   /* Lot No */
+.ht-monitor-table .ht-table th:nth-child(9)  { width: 90px;    min-width: 80px; }   /* Material Charge */
+.ht-monitor-table .ht-table th:nth-child(10) { width: 56px;    min-width: 56px; }   /* Qty */
+.ht-monitor-table .ht-table th:nth-child(11) { width: 90px;    min-width: 80px; }   /* Berat Total */
+.ht-monitor-table .ht-table th:nth-child(12) { width: 100px;   min-width: 90px; }  /* Jenis Proses */
+.ht-monitor-table .ht-table th:nth-child(13) { width: 120px;   min-width: 100px; }  /* Diinput Oleh */
+.ht-monitor-table .ht-table th:nth-child(14) { width: 100px;   min-width: 90px; }  /* Tanggal Incoming */
+.ht-monitor-table .ht-table th:nth-child(15) { width: 70px;    min-width: 70px; }   /* Status QC */
+.ht-monitor-table .ht-table th:nth-child(16) { width: 100px;   min-width: 90px; }  /* Inspector */
+.ht-monitor-table .ht-table th:nth-child(17) { width: 100px;   min-width: 90px; }  /* Tanggal Delivery */
+.ht-monitor-table .ht-table th:nth-child(18) { width: 56px;   min-width: 56px; }   /* Aksi */
 
-/* Kode — primary identifier */
-.ht-monitor-table .ht-table td:nth-child(2) {
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  color: var(--primary);
-}
+/* ===== Perataan teks kolom ===== */
 
-/* Long text ellipsis — teks panjang (nama customer, part, ops) + kode pendek */
+/* Tengah: No */.ht-monitor-table .ht-table th:nth-child(1),
+.ht-monitor-table .ht-table td:nth-child(1) { text-align: center; }
+
+/* Kiri: Nomor Kode */
+.ht-monitor-table .ht-table th:nth-child(2),
+.ht-monitor-table .ht-table td:nth-child(2) { text-align: left; }
+
+/* Kiri: Customer */
+.ht-monitor-table .ht-table th:nth-child(3),
+.ht-monitor-table .ht-table td:nth-child(3) { text-align: left; }
+
+/* Kiri: Nomor Part */
+.ht-monitor-table .ht-table th:nth-child(4),
+.ht-monitor-table .ht-table td:nth-child(4) { text-align: left; }
+
+/* Kiri: Nama Part */
+.ht-monitor-table .ht-table th:nth-child(5),
+.ht-monitor-table .ht-table td:nth-child(5) { text-align: left; }
+
+/* Tengah: Status (jangan potong teks) */
+.ht-monitor-table .ht-table th:nth-child(6),
+.ht-monitor-table .ht-table td:nth-child(6) { text-align: center; white-space: nowrap; }
+
+/* Kiri: No Surat Jalan */
+.ht-monitor-table .ht-table th:nth-child(7),
+.ht-monitor-table .ht-table td:nth-child(7) { text-align: left; }
+
+/* Kiri: Lot No */
+.ht-monitor-table .ht-table th:nth-child(8),
+.ht-monitor-table .ht-table td:nth-child(8) { text-align: left; }
+
+/* Kiri: Material Charge */
+.ht-monitor-table .ht-table th:nth-child(9),
+.ht-monitor-table .ht-table td:nth-child(9) { text-align: left; }
+
+/* Kanan: Qty */
+.ht-monitor-table .ht-table th:nth-child(10),
+.ht-monitor-table .ht-table td:nth-child(10) { text-align: right; }
+
+/* Kanan: Berat Total */
+.ht-monitor-table .ht-table th:nth-child(11),
+.ht-monitor-table .ht-table td:nth-child(11) { text-align: right; }
+
+/* Tengah: Jenis Proses */
+.ht-monitor-table .ht-table th:nth-child(12),
+.ht-monitor-table .ht-table td:nth-child(12) { text-align: center; }
+
+/* Kiri: Diinput Oleh */
+.ht-monitor-table .ht-table th:nth-child(13),
+.ht-monitor-table .ht-table td:nth-child(13) { text-align: left; }
+
+/* Tengah: Tanggal Incoming */
+.ht-monitor-table .ht-table th:nth-child(14),
+.ht-monitor-table .ht-table td:nth-child(14) { text-align: center; }
+
+/* Tengah: Status QC */
+.ht-monitor-table .ht-table th:nth-child(15),
+.ht-monitor-table .ht-table td:nth-child(15) { text-align: center; white-space: nowrap; }
+
+/* Kiri: Inspector */
+.ht-monitor-table .ht-table th:nth-child(16),
+.ht-monitor-table .ht-table td:nth-child(16) { text-align: left; }
+
+/* Tengah: Tanggal Delivery */
+.ht-monitor-table .ht-table th:nth-child(17),
+.ht-monitor-table .ht-table td:nth-child(17) { text-align: center; white-space: nowrap; }
+
+/* Tengah: Aksi */
+.ht-monitor-table .ht-table th:nth-child(18),
+.ht-monitor-table .ht-table td:nth-child(18) { text-align: center; white-space: nowrap; }
+
+/* ===== Ellipses teks hanya untuk kolom teks panjang ===== */
 .ht-monitor-table .ht-table td:nth-child(3),
-.ht-monitor-table .ht-table td:nth-child(4),
-.ht-monitor-table .ht-table td:nth-child(5),
-.ht-monitor-table .ht-table td:nth-child(6),
-.ht-monitor-table .ht-table td:nth-child(7),
-.ht-monitor-table .ht-table td:nth-child(8),
-.ht-monitor-table .ht-table td:nth-child(12),
-.ht-monitor-table .ht-table td:nth-child(13),
-.ht-monitor-table .ht-table td:nth-child(16) {
+.ht-monitor-table .ht-table td:nth-child(5) {
   max-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Action column */
-.ht-monitor-table .ht-table td:nth-child(18) {
+/* Tanpa ellipses pada kolom ini — selalu tampilkan teks penuh */
+.ht-monitor-table .ht-table td:nth-child(2),
+.ht-monitor-table .ht-table td:nth-child(4),
+.ht-monitor-table .ht-table td:nth-child(6),
+.ht-monitor-table .ht-table td:nth-child(7),
+.ht-monitor-table .ht-table td:nth-child(8),
+.ht-monitor-table .ht-table td:nth-child(9),
+.ht-monitor-table .ht-table td:nth-child(10),
+.ht-monitor-table .ht-table td:nth-child(11),
+.ht-monitor-table .ht-table td:nth-child(12),
+.ht-monitor-table .ht-table td:nth-child(13),
+.ht-monitor-table .ht-table td:nth-child(14),
+.ht-monitor-table .ht-table td:nth-child(15),
+.ht-monitor-table .ht-table td:nth-child(16),
+.ht-monitor-table .ht-table td:nth-child(17) {
   white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
 }
 
+/* Tombol aksi */
 .ht-monitor-table .ht-table td:nth-child(18) .ht-action-group {
   gap: 6px;
-}
-
-/* ===== Column widths (via th, since table-layout: auto) ===== */
-.ht-monitor-table .ht-table th:nth-child(1)  { width: 2.5%;   min-width: 36px; }   /* No */
-.ht-monitor-table .ht-table th:nth-child(2)  { width: 5.5%;   min-width: 80px; }   /* Nomor Kode */
-.ht-monitor-table .ht-table th:nth-child(3)  { width: 10%;    min-width: 110px; }  /* Customer */
-.ht-monitor-table .ht-table th:nth-child(4)  { width: 5.5%;   min-width: 80px; }   /* Nomor Part */
-.ht-monitor-table .ht-table th:nth-child(5)  { width: 11%;    min-width: 120px; }  /* Nama Part */
-.ht-monitor-table .ht-table th:nth-child(6)  { width: 5%;     min-width: 70px; }   /* Status Part */
-.ht-monitor-table .ht-table th:nth-child(7)  { width: 6.5%;   min-width: 90px; }   /* No Surat Jalan */
-.ht-monitor-table .ht-table th:nth-child(8)  { width: 6%;     min-width: 70px; }   /* Lot No */
-.ht-monitor-table .ht-table th:nth-child(9)  { width: 5.5%;   min-width: 70px; }   /* Material Charge */
-.ht-monitor-table .ht-table th:nth-child(10) { width: 3.5%;   min-width: 48px; }   /* Qty */
-.ht-monitor-table .ht-table th:nth-child(11) { width: 5%;     min-width: 60px; }   /* Berat Total */
-.ht-monitor-table .ht-table th:nth-child(12) { width: 6.5%;   min-width: 80px; }   /* Jenis Proses */
-.ht-monitor-table .ht-table th:nth-child(13) { width: 6%;     min-width: 80px; }   /* Diinput Oleh */
-.ht-monitor-table .ht-table th:nth-child(14) { width: 5.5%;   min-width: 80px; }   /* Tanggal Incoming */
-.ht-monitor-table .ht-table th:nth-child(15) { width: 5%;     min-width: 60px; }   /* Status QC */
-.ht-monitor-table .ht-table th:nth-child(16) { width: 5%;     min-width: 60px; }   /* Inspector */
-.ht-monitor-table .ht-table th:nth-child(17) { width: 5.5%;   min-width: 80px; }   /* Tanggal Delivery */
-.ht-monitor-table .ht-table th:nth-child(18) { width: 4%;     min-width: 48px; }   /* Aksi */
-
-/* ===== Column text alignment ===== */
-
-/* Center: No, Nomor Kode, Nomor Part, Status Part, No SJ, Lot No, Qty, Berat Total,
-           Jenis Proses, Tanggal, Status QC, Tanggal Delivery, Aksi */
-.ht-monitor-table .ht-table th:nth-child(1),
-.ht-monitor-table .ht-table td:nth-child(1),
-.ht-monitor-table .ht-table th:nth-child(2),
-.ht-monitor-table .ht-table td:nth-child(2),
-.ht-monitor-table .ht-table th:nth-child(4),
-.ht-monitor-table .ht-table td:nth-child(4),
-.ht-monitor-table .ht-table th:nth-child(6),
-.ht-monitor-table .ht-table td:nth-child(6),
-.ht-monitor-table .ht-table th:nth-child(7),
-.ht-monitor-table .ht-table td:nth-child(7),
-.ht-monitor-table .ht-table th:nth-child(8),
-.ht-monitor-table .ht-table td:nth-child(8),
-.ht-monitor-table .ht-table th:nth-child(10),
-.ht-monitor-table .ht-table td:nth-child(10),
-.ht-monitor-table .ht-table th:nth-child(11),
-.ht-monitor-table .ht-table td:nth-child(11),
-.ht-monitor-table .ht-table th:nth-child(12),
-.ht-monitor-table .ht-table td:nth-child(12),
-.ht-monitor-table .ht-table th:nth-child(14),
-.ht-monitor-table .ht-table td:nth-child(14),
-.ht-monitor-table .ht-table th:nth-child(15),
-.ht-monitor-table .ht-table td:nth-child(15),
-.ht-monitor-table .ht-table th:nth-child(17),
-.ht-monitor-table .ht-table td:nth-child(17),
-.ht-monitor-table .ht-table th:nth-child(18),
-.ht-monitor-table .ht-table td:nth-child(18) {
-  text-align: center;
-}
-
-/* Left: Customer, Nama Part, Diinput Oleh, Inspector (nama/tempat/orang) */
-.ht-monitor-table .ht-table th:nth-child(3),
-.ht-monitor-table .ht-table td:nth-child(3),
-.ht-monitor-table .ht-table th:nth-child(5),
-.ht-monitor-table .ht-table td:nth-child(5),
-.ht-monitor-table .ht-table th:nth-child(13),
-.ht-monitor-table .ht-table td:nth-child(13),
-.ht-monitor-table .ht-table th:nth-child(16),
-.ht-monitor-table .ht-table td:nth-child(16) {
-  text-align: left;
-}
-
-/* Material Charge is a code identifier — center align header + body */
-.ht-monitor-table .ht-table th:nth-child(9),
-.ht-monitor-table .ht-table td:nth-child(9) {
-  text-align: center;
 }
 
 .ht-monitor-card .ht-table-wrapper {
   padding: 8px 4px 0;
 }
 
-/* Badges — clean, readable, subtle */
+/* Lencana — bersih, dapat dibaca, samar */
 .ht-monitor-table .ht-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
   border-radius: 999px;
-  font-size: 10px;
-  font-weight: var(--font-weight-semi);
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.025em;
   white-space: nowrap;
   line-height: 1.5;
@@ -973,7 +925,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-/* Action button */
+/* Tombol aksi */
 .ht-action-btn {
   display: inline-flex;
   align-items: center;
@@ -1005,7 +957,7 @@
 }
 
 /* ============================================================
-   SCROLLBAR for table
+   Scrollbar untuk tabel
    ============================================================ */
 
 .ht-table-wrapper::-webkit-scrollbar,
@@ -1031,7 +983,7 @@
 }
 
 /* ============================================================
-   EMPTY STATE
+   STATUS KOSONG
    ============================================================ */
 
 .ht-monitor-table .ht-table-empty {
@@ -1064,7 +1016,7 @@
 }
 
 /* ============================================================
-   PAGINATION
+   Paginasi
    ============================================================ */
 
 .ht-pagination {
@@ -1108,9 +1060,9 @@
 }
 
 .ht-pagination-controls button:hover:not(:disabled) {
-  background: var(--habanero-soft);
-  border-color: var(--habanero);
-  color: var(--habanero-hover);
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -1120,7 +1072,7 @@
 
 .ht-pagination-controls button:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring);
+  box-shadow: var(--focus-ring-blue);
 }
 
 .ht-pagination-controls button[disabled] {
@@ -1130,12 +1082,12 @@
   pointer-events: none;
 }
 
-/* Active page */
+/* Halaman aktif */
 #pageNumbers button.ht-btn-primary {
   background: var(--gradient-primary);
   color: var(--text-inverse);
-  border-color: var(--habanero);
-  box-shadow: 0 2px 8px rgba(249, 133, 19, 0.25);
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 #pageNumbers button.ht-btn-primary:hover {
@@ -1150,13 +1102,13 @@
 }
 
 #pageNumbers button.ht-btn-ghost:hover {
-  background: var(--habanero-soft);
-  color: var(--habanero-hover);
-  border-color: var(--habanero);
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+  border-color: var(--primary);
 }
 
 /* ============================================================
-   LOADING / ERROR STATE
+   STATUS PEMBEBANAN / KESALAHAN
    ============================================================ */
 
 .ht-loading-overlay {
@@ -1176,7 +1128,7 @@
   width: 40px;
   height: 40px;
   border: 3px solid var(--border);
-  border-top-color: var(--habanero);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -1206,10 +1158,10 @@
 }
 
 /* ============================================================
-   RESPONSIVE — Desktop Priority
+   RESPONSIF — Prioritas Desktop
    ============================================================ */
 
-/* Desktop 1366px and below */
+/* Desktop 1366px ke bawah */
 @media (max-width: 1366px) {
   .ht-content {
     padding: 22px 24px;
@@ -1250,21 +1202,6 @@
 
   .ht-kpi-card .ht-kpi-value {
     font-size: 26px;
-  }
-
-  .ht-kpi-card::before {
-    right: 18px;
-    bottom: 18px;
-    width: 34px;
-    height: 34px;
-  }
-
-  .ht-kpi-card .ht-kpi-icon {
-    right: 25px;
-    bottom: 25px;
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
   }
 
   .ht-kpi-left #targetCard .ht-card {
@@ -1396,21 +1333,6 @@
     font-size: 24px;
   }
 
-  .ht-kpi-card::before {
-    right: 14px;
-    bottom: 14px;
-    width: 30px;
-    height: 30px;
-  }
-
-  .ht-kpi-card .ht-kpi-icon {
-    right: 19px;
-    bottom: 19px;
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-  }
-
   .ht-kpi-left #targetCard .ht-card-body {
     padding: 14px 16px;
   }
@@ -1429,12 +1351,12 @@
   }
 
   .ht-monitor-table .ht-table {
-    width: 1920px;
+    min-width: max(1280px, 100%);
   }
 
   .ht-monitor-table .ht-table th,
   .ht-monitor-table .ht-table td {
-    padding: 10px 12px;
+    padding: 9px 14px;
   }
 
   .ht-monitor-table .ht-table th {
@@ -1487,21 +1409,6 @@
     min-height: 110px;
   }
 
-  .ht-kpi-card::before {
-    right: 12px;
-    bottom: 12px;
-    width: 28px;
-    height: 28px;
-  }
-
-  .ht-kpi-card .ht-kpi-icon {
-    right: 17px;
-    bottom: 17px;
-    width: 14px;
-    height: 14px;
-    min-width: 14px;
-  }
-
   .ht-kpi-card .ht-kpi-value {
     font-size: 22px;
   }
@@ -1537,7 +1444,7 @@
   }
 
   .ht-monitor-table .ht-table {
-    width: 1780px;
+    min-width: max(1100px, 100%);
   }
 
   .ht-monitor-table .ht-table th,
@@ -1547,6 +1454,7 @@
 
   .ht-monitor-table .ht-badge {
     padding: 1px 5px;
+    font-size: 10px;
   }
 }
 
@@ -1626,8 +1534,18 @@
   }
 }
 
+  .ht-monitor-table .ht-table th,
+  .ht-monitor-table .ht-table td {
+    padding: 6px 8px;
+  }
+
+  .ht-monitor-table .ht-table th {
+    font-size: 8px;
+  }
+}
+
 /* ============================================================
-   REDUCED MOTION
+   GERAKAN REDUCED
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,76 @@
 const DB = {
   tables: ["customers", "parts", "materials", "productions", "qcs", "deliveries", "tracking", "targets"],
-  SEED_VERSION: "2026-v1",
+  SEED_VERSION: "2026-v2",
+
+  /* ---- Konstanta status ternormalisasi (satu sumber kebenaran) ---- */
+  STATUSES: {
+    /* Status entitas (Customer / Part / Material) */
+    ACTIVE: "Active",
+    INACTIVE: "Inactive",
+    /* Status produksi umum (untuk field `status` dan `production_status`) */
+    STATUS_WAITING: "WAITING",
+    STATUS_PROCESS: "PROCESS",
+    STATUS_FINISH: "FINISH",
+    STATUS_FINISH_NG: "FINISH_NG",
+    /* Status material (alias untuk nilai kanonis yang sama) */
+    PROSES_WAITING: "WAITING",
+    PROSES_PROCESS: "PROCESS",
+    PROSES_FINISH: "FINISH",
+    /* Status produksi (alias) */
+    PROD_WAITING: "WAITING",
+    PROD_PROCESS: "PROCESS",
+    PROD_FINISH: "FINISH",
+    PROD_FINISH_NG: "FINISH_NG",
+    /* Hasil proses / QC */
+    RESULT_OK: "OK",
+    RESULT_NG: "NG",
+    /* Status pengiriman */
+    DELIVERY_DELIVERED: "Delivered",
+    DELIVERY_PENDING: "Pending",
+    DELIVERY_CANCELLED: "Cancelled",
+  },
+
+  /* Definisi skema per-tabel untuk validasi */
+  SCHEMAS: {
+    customers: ["id", "kode_customer", "nama_customer", "alamat", "pic", "phone", "email", "status", "created_at", "updated_at"],
+    parts: ["id", "customer_id", "nomor_part", "nama_part", "berat_part", "satuan_berat", "target_hardness", "standard_process_route", "status", "created_at", "updated_at"],
+    materials: ["id", "kode", "customer_id", "part_id", "nomor_surat_jalan", "lot_no", "material_charge", "status_part", "qty", "berat_part_snapshot", "berat_total_part", "tanggal_masuk", "keterangan", "remarks", "process_type", "diinput_oleh", "qr_code", "status_proses", "process_route", "created_at", "updated_at"],
+    productions: ["id", "material_id", "incoming_id", "tracking_id", "status", "production_status", "kode", "process_result", "visual_check_result", "visual_check_note", "start_scan_at", "start_scan_by", "machine_start_at", "machine_start_by", "finish_scan_at", "finish_scan_by", "process_ng_note", "machine_finish_at", "machine_finish_by", "tanggal_proses", "jenis_treatment", "remarks", "created_at", "updated_at"],
+    qcs: ["id", "production_id", "material_id", "hardness", "satuan_hardness", "hasil", "microstructure", "remarks", "inspector", "tanggal_inspector", "catatan", "user_id", "created_at", "updated_at"],
+    deliveries: ["id", "production_id", "material_id", "customer_id", "tanggal_kirim", "qty_kirim", "status", "catatan", "user_id", "remarks", "created_at", "updated_at"],
+    tracking: ["id", "material_id", "production_id", "delivery_id", "remarks", "created_at", "updated_at"],
+    targets: ["id", "year", "month", "target_berat_output", "created_at", "updated_at"],
+  },
+
+  /* Referensi kunci asing: field → { tabel, kolomKunci } */
+  REFERENTIAL_INTEGRITY: {
+    materials: { customer_id: "customers", part_id: "parts" },
+    productions: { material_id: "materials" },
+    qcs: { material_id: "materials", production_id: "productions" },
+    deliveries: { material_id: "materials", production_id: "productions" },
+    tracking: { material_id: "materials", production_id: "productions", delivery_id: "deliveries" },
+  },
+
+  _seq: 0,
+
+  /* ---- Penghitung ID monoton (aman dari tabrakan, persisten) ---- */
+  _initIdCounter() {
+    if (!localStorage.getItem("ht_id_counter")) {
+      let maxId = 0;
+      this.tables.forEach((t) => {
+        const rows = this.get(t);
+        rows.forEach((r) => {
+          if (r && typeof r.id === "number" && r.id > maxId) maxId = r.id;
+        });
+      });
+      localStorage.setItem("ht_id_counter", String(maxId));
+    }
+  },
+
+  _nextId() {
+    this._seq += 1;
+    return Date.now() + this._seq;
+  },
   init() {
     const currentVersion = localStorage.getItem("ht_db_seed_version");
     if (currentVersion === this.SEED_VERSION) {
@@ -9,6 +79,7 @@ const DB = {
           localStorage.setItem("ht_" + t, JSON.stringify([]));
         }
       });
+      this._initIdCounter();
       this.migrate();
       return;
     }
@@ -17,13 +88,15 @@ const DB = {
     });
     this.seedDemoData();
     localStorage.setItem("ht_db_seed_version", this.SEED_VERSION);
+    this._initIdCounter();
+    this.migrate();
   },
   get(table) {
     return JSON.parse(localStorage.getItem("ht_" + table) || "[]");
   },
   insert(table, record) {
     const data = this.get(table);
-    record.id = Date.now() + Math.floor(Math.random() * 1000);
+    record.id = this._nextId();
     record.created_at = new Date().toISOString();
     data.push(record);
     localStorage.setItem("ht_" + table, JSON.stringify(data));
@@ -74,7 +147,107 @@ const DB = {
     return this.get("materials").filter((m) => m.customer_id == customerId);
   },
 
-  /* ---- Quality Gate (Tahap 3B-1) ---- */
+  /* ---- Validasi Data ---- */
+  /* Mengembalikan { errors: [], warnings: [] } — panggil di konsol
+      atau dari halaman pemeliharaan untuk mengaudit integritas data. */
+  validate() {
+    const errors = [];
+    const warnings = [];
+
+    /* 1. ID duplikat di dalam setiap tabel */
+    this.tables.forEach((table) => {
+      const rows = this.get(table);
+      const seen = {};
+      rows.forEach((r) => {
+        if (r && r.id !== undefined && r.id !== null) {
+          const key = String(r.id);
+          if (seen[key]) {
+            errors.push("Duplicate ID " + r.id + " in table " + table);
+          }
+          seen[key] = true;
+        }
+      });
+    });
+
+    /* 2. Referensi kunci asing (deteksi data yatim) */
+    Object.keys(this.REFERENTIAL_INTEGRITY).forEach((table) => {
+      const refs = this.REFERENTIAL_INTEGRITY[table];
+      const rows = this.get(table);
+      Object.keys(refs).forEach((field) => {
+        const refTable = refs[field];
+        rows.forEach((r) => {
+          if (r && r[field] !== undefined && r[field] !== null && r[field] !== "") {
+            const refRow = this.get(refTable).find((ref) => ref.id == r[field]);
+            if (!refRow) {
+              errors.push(
+                "Orphan reference: " + table + "." + field + " = " + r[field] +
+                " has no matching " + refTable + ".id"
+              );
+            }
+          }
+        });
+      });
+    });
+
+    /* 3. Field wajib yang hilang (bandingkan dengan skema) */
+    this.tables.forEach((table) => {
+      const schema = this.SCHEMAS[table];
+      if (!schema) return;
+      const rows = this.get(table);
+      rows.forEach((r) => {
+        schema.forEach((field) => {
+          if (r && !(field in r)) {
+            warnings.push("Missing field: " + table + "." + field + " (record id=" + (r ? r.id : "?") + ")");
+          }
+        });
+      });
+    });
+
+    /* 4. Status produksi vs production_status yang tidak cocok */
+    const productions = this.get("productions");
+    productions.forEach((p) => {
+      if (p.status !== p.production_status) {
+        warnings.push(
+          "Status mismatch in productions id=" + p.id +
+          ": status='" + p.status + "' vs production_status='" + p.production_status + "'"
+        );
+      }
+    });
+
+    /* 5. Kode material duplikat */
+    const materials = this.get("materials");
+    const kodeSeen = {};
+    materials.forEach((m) => {
+      if (m.kode) {
+        if (kodeSeen[m.kode]) {
+          errors.push("Duplicate material kode: " + m.kode);
+        }
+        kodeSeen[m.kode] = true;
+      }
+    });
+
+    return { errors, warnings };
+  },
+
+  /* ---- Normalisasi status (untuk migrate) ---- */
+  /* Memetakan string status lama/varian ke nilai kanonis yang didefinisikan di STATUSES. */
+  _normalizeStatusValue(value) {
+    if (value === null || value === undefined) return value;
+    var s = String(value).trim();
+    var lower = s.toLowerCase();
+    if (lower === "active" || lower === "aktif") return this.STATUSES.ACTIVE;
+    if (lower === "inactive" || lower === "non-aktif") return this.STATUSES.INACTIVE;
+    if (lower === "waiting" || lower === "proses_waiting") return this.STATUSES.PROD_WAITING;
+    if (lower === "process" || lower === "processing" || lower === "proses") return this.STATUSES.PROD_PROCESS;
+    if (lower === "finish" || lower === "finished") return this.STATUSES.PROD_FINISH;
+    if (lower === "finish_ng" || lower === "finished_ng" || lower === "ng") return this.STATUSES.PROD_FINISH_NG;
+    if (lower === "ok" || lower === "pass") return this.STATUSES.RESULT_OK;
+    if (lower === "delivered") return this.STATUSES.DELIVERY_DELIVERED;
+    if (lower === "pending") return this.STATUSES.DELIVERY_PENDING;
+    if (lower === "cancelled" || lower === "canceled") return this.STATUSES.DELIVERY_CANCELLED;
+    return s;
+  },
+
   _processRouteToSteps(route) {
     if (!route || typeof route !== "object") return [];
     var steps = [];
@@ -170,7 +343,7 @@ const DB = {
     };
   },
 
-  /* ---- Quality Gate integration for post-QC processes (Tahap 3B-2) ---- */
+  /* ---- Integrasi pintu gerbang kualitas (QC) untuk proses pasca-QC (Tahap 3B-2) ---- */
   _normalizeProcessName(name) {
     if (!name) return "";
     return String(name).toUpperCase().replace(/\s+/g, "_").replace("-", "_");
@@ -248,7 +421,7 @@ const DB = {
     };
   },
 
-  /* ---- Multi-Process Data Layer (Tahap 3B-3A) ---- */
+  /* ---- Lapisan Data Multi-Proses (Tahap 3B-3A) ---- */
   _PROCESS_KEY_MAP: {
     "HEAT_TREATMENT": "HT",
     "HT": "HT",
@@ -404,11 +577,12 @@ const DB = {
     };
   },
 
-  /* ---- Multi-Process Read Model (Tahap 3B-3C-1) ----
-     Helpers for tracking/dashboard/delivery to interpret a material's
-     full process route. All route decisions use material.process_route
-     (incoming snapshot). QC always comes from the `qcs` table, never
-     from productions. These helpers are READ-ONLY (no insert/update). */
+  /* ---- Model Baca Multi-Proses (Tahap 3B-3C-1) ----
+     Helper untuk tracking/dashboard/pengiriman untuk menafsirkan
+     seluruh rute proses sebuah material. Semua keputusan rute
+     menggunakan material.process_route (snapshot incoming). QC
+     selalu berasal dari tabel `qcs`, bukan dari productions.
+     Helper ini BACA-SAHAJA (tidak melakukan insert/update). */
   _qcStatusFor(material) {
     return this.checkQualityGate(material).qcStatus;
   },
@@ -435,10 +609,10 @@ const DB = {
       var info = { process: step, status: "NOT_STARTED", completed: false, production: null };
 
       if (prod) {
-        if (prod.production_status === "PROCESS" || prod.production_status === "PROCESSING" || prod.status === "Process") {
+        if (prod.production_status === "PROCESS" || prod.status === "PROCESS") {
           info.status = "PROCESS";
           info.completed = false;
-        } else if (prod.production_status === "FINISH" || prod.status === "Finish") {
+        } else if (prod.production_status === "FINISH" || prod.status === "FINISH") {
           if (prod.process_result === "OK") {
             info.status = "FINISH";
             info.completed = true;
@@ -446,10 +620,10 @@ const DB = {
             info.status = "FINISH_NG";
             info.completed = false;
           }
-        } else if (prod.production_status === "FINISH_NG" || prod.production_status === "NG") {
+        } else if (prod.production_status === "FINISH_NG" || prod.process_result === "NG") {
           info.status = "FINISH_NG";
           info.completed = false;
-        } else if (prod.production_status === "WAITING" || prod.status === "Waiting") {
+        } else if (prod.production_status === "WAITING" || prod.status === "WAITING") {
           info.status = "WAITING";
           info.completed = false;
         }
@@ -465,7 +639,7 @@ const DB = {
     var steps = this._getRouteSteps(material);
     if (steps.length === 0) return null;
 
-    // 1) A production that is in PROCESS state -> that step is the current one.
+    // 1) Produksi yang dalam status PROSES -> itu langkah yang sedang berjalan.
     for (var i = 0; i < steps.length; i++) {
       var step = steps[i];
       if (step === "QC" || step === "QC_CHECK") continue;
@@ -473,15 +647,14 @@ const DB = {
       if (
         prod &&
         (prod.production_status === "PROCESS" ||
-          prod.production_status === "PROCESSING" ||
-          prod.status === "Process")
+          prod.status === "PROCESS")
       ) {
         return step;
       }
     }
 
-    // 2) No PROCESS running: the current/active step is the next unfinished one,
-    //    but only if it is actually startable (gate passes).
+    // 2) Tidak ada PROSES berjalan: langkah saat ini/aktif adalah langkah
+    //    belum selesai berikutnya, tetapi hanya jika memang dapat dimulai (gates lulus).
     var next = this.getNextProcess(material);
     if (next) {
       if (this.canStartProcess(material, next).allowed) {
@@ -490,7 +663,7 @@ const DB = {
       return null;
     }
 
-    // 3) Everything completed.
+    // 3) Semua selesai.
     return null;
   },
 
@@ -523,13 +696,13 @@ const DB = {
       return { allowed: false, reason: "QC belum dilakukan", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false };
     }
 
-    // Entire route must be completed.
+    // Seluruh rute harus selesai.
     for (var i = 0; i < steps.length; i++) {
       var step = steps[i];
       if (!this.isProcessCompleted(material, step)) {
         var prod = this.getProcessProduction(material, step);
         if (prod) {
-          if (prod.production_status === "PROCESS" || prod.production_status === "PROCESSING" || prod.status === "Process") {
+          if (prod.production_status === "PROCESS" || prod.status === "PROCESS") {
             return { allowed: false, reason: "Proses " + step + " sedang berjalan", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false };
           }
           if (prod.production_status === "FINISH_NG" || prod.process_result === "NG") {
@@ -540,7 +713,7 @@ const DB = {
       }
     }
 
-    // No process may be left in PROCESS / not started.
+    // Tidak boleh ada proses yang tersisa dalam status PROSES / belum dimulai.
     var current = this.getCurrentProcess(material);
     if (current) {
       return { allowed: false, reason: "Route belum selesai (ada proses berjalan)", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false };
@@ -563,8 +736,11 @@ const DB = {
     for (const p of parts) {
       const keys = Object.keys(p);
       for (const k of keys) { if (!validPartFields.includes(k)) { delete p[k]; changed = true; } }
-      if (!("target_hardness" in p)) { p.target_hardness = null; changed = true; }
-      if (!("status" in p)) { p.status = "Active"; changed = true; }
+       if (!("target_hardness" in p)) { p.target_hardness = null; changed = true; }
+      if (!("status" in p)) { p.status = this.STATUSES.ACTIVE; changed = true; }
+      /* Normalisasi status ke nilai kanonis Active/Inactive */
+      const ns = this._normalizeStatusValue(p.status);
+      if (ns !== p.status) { p.status = ns; changed = true; }
       if (!("standard_process_route" in p)) { p.standard_process_route = { ...defaultProcessRoute }; changed = true; }
       else {
         const r = p.standard_process_route;
@@ -598,9 +774,17 @@ const DB = {
           if (!("anti_rust" in r)) { r.anti_rust = false; changed = true; }
         }
       }
+      /* Normalisasi status_proses ke nilai kanonis WAITING / PROCESS / FINISH */
+      if ("status_proses" in m) {
+        const nsp = this._normalizeStatusValue(m.status_proses);
+        if (nsp !== m.status_proses) { m.status_proses = nsp; changed = true; }
+      } else {
+        m.status_proses = this.STATUSES.PROSES_WAITING;
+        changed = true;
+      }
     }
     if (changed) localStorage.setItem("ht_materials", JSON.stringify(materials));
-    const validProductionFields = ["id","material_id","incoming_id","tracking_id","status","production_status","start_scan_at","start_scan_by","visual_check_result","visual_check_note","machine_start_at","machine_start_by","finish_scan_at","finish_scan_by","process_result","process_ng_note","machine_finish_at","machine_finish_by","tanggal_proses","jenis_treatment","remarks","created_at","updated_at"];
+    const validProductionFields = ["id","material_id","incoming_id","tracking_id","status","production_status","kode","process_result","visual_check_result","visual_check_note","start_scan_at","start_scan_by","machine_start_at","machine_start_by","finish_scan_at","finish_scan_by","process_ng_note","machine_finish_at","machine_finish_by","tanggal_proses","jenis_treatment","remarks","created_at","updated_at"];
     const productions = this.get("productions");
     changed = false;
     for (const p of productions) {
@@ -608,7 +792,18 @@ const DB = {
       for (const k of keys) { if (!validProductionFields.includes(k)) { delete p[k]; changed = true; } }
       const fields = ["start_scan_at","start_scan_by","visual_check_result","visual_check_note","machine_start_at","machine_start_by","finish_scan_at","finish_scan_by","process_result","process_ng_note","machine_finish_at","machine_finish_by","production_status","incoming_id","tracking_id","tanggal_proses","jenis_treatment","remarks"];
       for (const f of fields) { if (!(f in p)) { p[f] = ""; changed = true; } }
-      if (!("status" in p)) { p.status = "Waiting"; changed = true; }
+      if (!("status" in p)) { p.status = this.STATUSES.PROD_WAITING; changed = true; }
+      if (!("production_status" in p)) { p.production_status = this.STATUSES.PROD_WAITING; changed = true; }
+      /* Normalisasi status produksi ke nilai kanonis WAITING / PROCESS / FINISH / FINISH_NG */
+      const np = this._normalizeStatusValue(p.status);
+      if (np !== p.status) { p.status = np; changed = true; }
+      const nps = this._normalizeStatusValue(p.production_status);
+      if (nps !== p.production_status) { p.production_status = nps; changed = true; }
+      /* Sinkronkan production_status agar cocok dengan status jika mereka berbeda */
+      if (p.status !== p.production_status) {
+        p.production_status = p.status;
+        changed = true;
+      }
       if (!("remarks" in p)) { p.remarks = ""; changed = true; }
       if (!("tracking_id" in p)) { p.tracking_id = ""; changed = true; }
     }
@@ -622,9 +817,16 @@ const DB = {
       if (!("remarks" in q)) { q.remarks = ""; changed = true; }
       if (!("material_id" in q)) { q.material_id = ""; changed = true; }
       if (!("microstructure" in q)) { q.microstructure = null; changed = true; }
+      /* Normalisasi hasil: PASS -> OK (hasil QC menggunakan OK/NG) */
+      if ("hasil" in q) {
+        const hOK = String(q.hasil).toUpperCase();
+        if (hOK === "PASS") { q.hasil = this.STATUSES.RESULT_OK; changed = true; }
+        else if (hOK === "NG") { q.hasil = this.STATUSES.RESULT_NG; changed = true; }
+        else if (hOK === "OK") { q.hasil = this.STATUSES.RESULT_OK; changed = true; }
+      }
     }
     if (changed) localStorage.setItem("ht_qcs", JSON.stringify(qcs));
-    const validDeliveryFields = ["id","production_id","material_id","tanggal_kirim","qty_kirim","status","catatan","user_id","remarks","created_at","updated_at"];
+    const validDeliveryFields = ["id","production_id","material_id","customer_id","tanggal_kirim","qty_kirim","status","catatan","user_id","remarks","created_at","updated_at"];
     const deliveries = this.get("deliveries");
     changed = false;
     for (const d of deliveries) {
@@ -633,6 +835,11 @@ const DB = {
       if (!("remarks" in d)) { d.remarks = ""; changed = true; }
       if (!("material_id" in d)) { d.material_id = ""; changed = true; }
       if (!("customer_id" in d)) { d.customer_id = ""; changed = true; }
+      /* Normalisasi status pengiriman */
+      if ("status" in d) {
+        const nds = this._normalizeStatusValue(d.status);
+        if (nds !== d.status) { d.status = nds; changed = true; }
+      }
     }
     if (changed) localStorage.setItem("ht_deliveries", JSON.stringify(deliveries));
     const validTrackingFields = ["id","material_id","production_id","delivery_id","remarks","created_at","updated_at"];
@@ -690,14 +897,14 @@ const DB = {
     ];
     localStorage.setItem("ht_materials", JSON.stringify(materials));
     const productions = [
-      { id: 2001, material_id: 1001, incoming_id: 1001, tracking_id: 5001, status: "Finish", production_status: "FINISH", kode: "20260001I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-01T08:10:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-01T08:15:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "2026-09-01T10:30:00", finish_scan_by: "Operator Produksi 01", machine_finish_at: "2026-09-01T10:35:00", machine_finish_by: "Operator Mesin 01", process_ng_note: "", tanggal_proses: "2026-09-01", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", created_at: "2026-09-01T00:00:00Z", updated_at: "2026-09-01T00:00:00Z" },
-      { id: 2002, material_id: 1002, incoming_id: 1002, tracking_id: 5002, status: "Finish", production_status: "FINISH", kode: "20260002I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-03T08:20:00", start_scan_by: "Operator Produksi 02", machine_start_at: "2026-09-03T08:25:00", machine_start_by: "Operator Mesin 02", finish_scan_at: "2026-09-03T11:00:00", finish_scan_by: "Operator Produksi 02", machine_finish_at: "2026-09-03T11:05:00", machine_finish_by: "Operator Mesin 02", process_ng_note: "", tanggal_proses: "2026-09-03", jenis_treatment: "Hardening", remarks: "Proses selesai normal", created_at: "2026-09-03T00:00:00Z", updated_at: "2026-09-03T00:00:00Z" },
-      { id: 2003, material_id: 1003, incoming_id: 1003, tracking_id: 5003, status: "Finish", production_status: "FINISH", kode: "20260003I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-05T09:00:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-05T09:05:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "2026-09-05T12:00:00", finish_scan_by: "Operator Produksi 01", machine_finish_at: "2026-09-05T12:05:00", machine_finish_by: "Operator Mesin 01", process_ng_note: "", tanggal_proses: "2026-09-05", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", created_at: "2026-09-05T00:00:00Z", updated_at: "2026-09-05T00:00:00Z" },
-      { id: 2004, material_id: 1004, incoming_id: 1004, tracking_id: 5004, status: "Finish", production_status: "FINISH_NG", kode: "20260004I", process_result: "NG", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-08T08:30:00", start_scan_by: "Operator Produksi 02", machine_start_at: "2026-09-08T08:35:00", machine_start_by: "Operator Mesin 02", finish_scan_at: "2026-09-08T11:30:00", finish_scan_by: "Operator Produksi 02", machine_finish_at: "2026-09-08T11:35:00", machine_finish_by: "Operator Mesin 02", process_ng_note: "Hasil proses tidak memenuhi parameter yang ditetapkan", tanggal_proses: "2026-09-08", jenis_treatment: "Annealing", remarks: "Part NG setelah proses", created_at: "2026-09-08T00:00:00Z", updated_at: "2026-09-08T00:00:00Z" },
-      { id: 2005, material_id: 1005, incoming_id: 1005, tracking_id: 5005, status: "Finish", production_status: "FINISH", kode: "20260005I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-10T08:15:00", start_scan_by: "Operator Produksi 03", machine_start_at: "2026-09-10T08:20:00", machine_start_by: "Operator Mesin 03", finish_scan_at: "2026-09-10T11:00:00", finish_scan_by: "Operator Produksi 03", machine_finish_at: "2026-09-10T11:05:00", machine_finish_by: "Operator Mesin 03", process_ng_note: "", tanggal_proses: "2026-09-10", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", created_at: "2026-09-10T00:00:00Z", updated_at: "2026-09-10T00:00:00Z" },
-      { id: 2006, material_id: 1006, incoming_id: 1006, tracking_id: 5006, status: "Process", production_status: "PROCESS", kode: "20260006I", process_result: "", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-12T08:00:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-12T08:10:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "2026-09-12", jenis_treatment: "Tempering", remarks: "Sedang dalam proses produksi", created_at: "2026-09-12T00:00:00Z", updated_at: "2026-09-12T00:00:00Z" },
-      { id: 2007, material_id: 1007, incoming_id: 1007, tracking_id: 5007, status: "Waiting", production_status: "WAITING", kode: "20260007I", process_result: "", visual_check_result: "", visual_check_note: "", start_scan_at: "", start_scan_by: "", machine_start_at: "", machine_start_by: "", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "", jenis_treatment: "Carburizing", remarks: "Menunggu proses produksi", created_at: "2026-09-15T00:00:00Z", updated_at: "2026-09-15T00:00:00Z" },
-      { id: 2008, material_id: 1008, incoming_id: 1008, tracking_id: 5008, status: "Process", production_status: "PROCESS", kode: "20260008I", process_result: "", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-18T08:20:00", start_scan_by: "Operator Produksi 04", machine_start_at: "2026-09-18T08:30:00", machine_start_by: "Operator Mesin 04", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "2026-09-18", jenis_treatment: "Hardening", remarks: "Sedang dalam proses produksi", created_at: "2026-09-18T00:00:00Z", updated_at: "2026-09-18T00:00:00Z" },
+       { id: 2001, material_id: 1001, incoming_id: 1001, tracking_id: 5001, status: "FINISH", production_status: "FINISH", kode: "20260001I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-01T08:10:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-01T08:15:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "2026-09-01T10:30:00", finish_scan_by: "Operator Produksi 01", machine_finish_at: "2026-09-01T10:35:00", machine_finish_by: "Operator Mesin 01", process_ng_note: "", tanggal_proses: "2026-09-01", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", created_at: "2026-09-01T00:00:00Z", updated_at: "2026-09-01T00:00:00Z" },
+      { id: 2002, material_id: 1002, incoming_id: 1002, tracking_id: 5002, status: "FINISH", production_status: "FINISH", kode: "20260002I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-03T08:20:00", start_scan_by: "Operator Produksi 02", machine_start_at: "2026-09-03T08:25:00", machine_start_by: "Operator Mesin 02", finish_scan_at: "2026-09-03T11:00:00", finish_scan_by: "Operator Produksi 02", machine_finish_at: "2026-09-03T11:05:00", machine_finish_by: "Operator Mesin 02", process_ng_note: "", tanggal_proses: "2026-09-03", jenis_treatment: "Hardening", remarks: "Proses selesai normal", created_at: "2026-09-03T00:00:00Z", updated_at: "2026-09-03T00:00:00Z" },
+      { id: 2003, material_id: 1003, incoming_id: 1003, tracking_id: 5003, status: "FINISH", production_status: "FINISH", kode: "20260003I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-05T09:00:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-05T09:05:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "2026-09-05T12:00:00", finish_scan_by: "Operator Produksi 01", machine_finish_at: "2026-09-05T12:05:00", machine_finish_by: "Operator Mesin 01", process_ng_note: "", tanggal_proses: "2026-09-05", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", created_at: "2026-09-05T00:00:00Z", updated_at: "2026-09-05T00:00:00Z" },
+      { id: 2004, material_id: 1004, incoming_id: 1004, tracking_id: 5004, status: "FINISH_NG", production_status: "FINISH_NG", kode: "20260004I", process_result: "NG", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-08T08:30:00", start_scan_by: "Operator Produksi 02", machine_start_at: "2026-09-08T08:35:00", machine_start_by: "Operator Mesin 02", finish_scan_at: "2026-09-08T11:30:00", finish_scan_by: "Operator Produksi 02", machine_finish_at: "2026-09-08T11:35:00", machine_finish_by: "Operator Mesin 02", process_ng_note: "Hasil proses tidak memenuhi parameter yang ditetapkan", tanggal_proses: "2026-09-08", jenis_treatment: "Annealing", remarks: "Part NG setelah proses", created_at: "2026-09-08T00:00:00Z", updated_at: "2026-09-08T00:00:00Z" },
+      { id: 2005, material_id: 1005, incoming_id: 1005, tracking_id: 5005, status: "FINISH", production_status: "FINISH", kode: "20260005I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-10T08:15:00", start_scan_by: "Operator Produksi 03", machine_start_at: "2026-09-10T08:20:00", machine_start_by: "Operator Mesin 03", finish_scan_at: "2026-09-10T11:00:00", finish_scan_by: "Operator Produksi 03", machine_finish_at: "2026-09-10T11:05:00", machine_finish_by: "Operator Mesin 03", process_ng_note: "", tanggal_proses: "2026-09-10", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", created_at: "2026-09-10T00:00:00Z", updated_at: "2026-09-10T00:00:00Z" },
+      { id: 2006, material_id: 1006, incoming_id: 1006, tracking_id: 5006, status: "PROCESS", production_status: "PROCESS", kode: "20260006I", process_result: "", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-12T08:00:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-12T08:10:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "2026-09-12", jenis_treatment: "Tempering", remarks: "Sedang dalam proses produksi", created_at: "2026-09-12T00:00:00Z", updated_at: "2026-09-12T00:00:00Z" },
+      { id: 2007, material_id: 1007, incoming_id: 1007, tracking_id: 5007, status: "WAITING", production_status: "WAITING", kode: "20260007I", process_result: "", visual_check_result: "", visual_check_note: "", start_scan_at: "", start_scan_by: "", machine_start_at: "", machine_start_by: "", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "", jenis_treatment: "Carburizing", remarks: "Menunggu proses produksi", created_at: "2026-09-15T00:00:00Z", updated_at: "2026-09-15T00:00:00Z" },
+      { id: 2008, material_id: 1008, incoming_id: 1008, tracking_id: 5008, status: "PROCESS", production_status: "PROCESS", kode: "20260008I", process_result: "", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-18T08:20:00", start_scan_by: "Operator Produksi 04", machine_start_at: "2026-09-18T08:30:00", machine_start_by: "Operator Mesin 04", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "2026-09-18", jenis_treatment: "Hardening", remarks: "Sedang dalam proses produksi", created_at: "2026-09-18T00:00:00Z", updated_at: "2026-09-18T00:00:00Z" },
     ];
     localStorage.setItem("ht_productions", JSON.stringify(productions));
     const qcs = [

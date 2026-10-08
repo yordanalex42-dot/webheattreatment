@@ -21,69 +21,124 @@
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
+                <img
+                  src="assets/logo/logo baru.svg"
+                  alt="PT CHUNETSU INDONESIA"
+                  class="sidebar-logo"
+                />
+                <div class="ht-sidebar-brand">
+                  <span class="brand-sub">Heat Treatment of</span>
+                  <span class="brand-name">PT CHUNETSU INDONESIA</span>
+                </div>
               </div>
               <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
-          <a href="index.html" class="ht-nav-link"
-            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
-          >
-          <div class="pt-2">
-            <p class="ht-nav-section-title">Master Data</p>
+          <div class="nav-section">
+            <a href="index.html" class="ht-nav-link">
+              <img
+                src="assets/icons/dashboard.svg"
+                alt="Dashboard"
+                class="sidebar-menu-icon"
+              />
+              Dashboard
+            </a>
           </div>
-          <a href="customer.html" class="ht-nav-link"
-            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
-          >
-          <a href="part.html" class="ht-nav-link"
-            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
-          >
-          <a href="incoming.html" class="ht-nav-link"
-            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
-          >
-          <div class="pt-2">
-            <p class="ht-nav-section-title">Produksi</p>
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Master Data</p>
+            <a href="customer.html" class="ht-nav-link">
+              <img
+                src="assets/icons/customer.svg"
+                alt="Customer"
+                class="sidebar-menu-icon"
+              />
+              Customer
+            </a>
+            <a href="part.html" class="ht-nav-link">
+              <img src="assets/icons/part.svg" alt="Part" class="sidebar-menu-icon" /> Part
+            </a>
+            <a href="incoming.html" class="ht-nav-link">
+              <img
+                src="assets/icons/incoming.svg"
+                alt="Incoming"
+                class="sidebar-menu-icon"
+              />
+              Incoming
+            </a>
           </div>
-          <a href="heat-treatment.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production.svg" alt="Heat Treatment" class="icon"> Heat Treatment</a
-          >
-          <a href="shotblast.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
-          >
-          <a href="anti-rust.html" class="ht-nav-link sub"
-            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
-          >
-          <a href="qc.html" class="ht-nav-link"
-            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
-          >
-          <a href="delivery.html" class="ht-nav-link active"
-            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
-          >
-          <a href="tracking.html" class="ht-nav-link"
-            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
-          >
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Produksi</p>
+            <a href="heat-treatment.html" class="ht-nav-link sub">
+              <img
+                src="assets/icons/production.svg"
+                alt="Heat Treatment"
+                class="sidebar-menu-icon"
+              />
+              Heat Treatment
+            </a>
+            <a href="shotblast.html" class="ht-nav-link sub">
+              <img
+                src="assets/icons/production.svg"
+                alt="Shotblast"
+                class="sidebar-menu-icon"
+              />
+              Shotblast
+            </a>
+            <a href="anti-rust.html" class="ht-nav-link sub">
+              <img
+                src="assets/icons/process.svg"
+                alt="Anti Rust"
+                class="sidebar-menu-icon"
+              />
+              Anti Rust
+            </a>
+            <a href="qc.html" class="ht-nav-link">
+              <img
+                src="assets/icons/quality-control.svg"
+                alt="Quality Control"
+                class="sidebar-menu-icon"
+              />
+              Quality Control
+            </a>
+            <a href="delivery.html" class="ht-nav-link active">
+              <img
+                src="assets/icons/delivery.svg"
+                alt="Delivery"
+                class="sidebar-menu-icon"
+              />
+              Delivery
+            </a>
+            <a href="tracking.html" class="ht-nav-link">
+              <img
+                src="assets/icons/tracking.svg"
+                alt="Tracking"
+                class="sidebar-menu-icon"
+              />
+              Tracking
+            </a>
+          </div>
         </nav>
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-              <div class="ht-user-avatar" id="sidebarInitial">
-                A
-              </div>
+              <div class="ht-user-avatar" id="sidebarInitial">A</div>
               <div class="ht-user-details">
                 <p class="ht-user-name" id="sidebarName">Admin User</p>
                 <p class="ht-user-role" id="sidebarRole">Administrator</p>
               </div>
             </div>
             <button
-              onclick="Auth.logout(); window.location.href='login.html';"
+              onclick="
+                Auth.logout();
+                window.location.href = 'login.html';
+              "
               class="ht-sidebar-logout"
               title="Logout"
               aria-label="Logout"
             >
-              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
+              <img src="assets/icons/logout.svg" alt="Logout" class="sidebar-menu-icon" />
             </button>
           </div>
         </div>
@@ -94,10 +149,13 @@
             <h1>Modul Delivery</h1>
             <p>Pencatatan pengiriman part yang selesai.</p>
           </div>
+          <div class="ht-header-right">
+            <span class="ht-header-date" id="currentDate"></span>
+          </div>
         </header>
         <div class="ht-content">
           <div class="ht-content-max">
-            <!-- Scan -->
+            <!-- Pemindaian -->
             <div class="ht-card fade-in">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Scan QR Code Material</h3>
@@ -116,18 +174,23 @@
                   <div class="flex gap-2">
                     <input
                       type="text"
-                      id="manualId" aria-label="Nomor kode material"
+                      id="manualId"
+                      aria-label="Nomor kode material"
                       placeholder="Kode (contoh: 20260004I)"
                       class="ht-form-input flex-1"
                       oninput="clearManualError()"
-                      onkeydown="if(event.key==='Enter') loadMaterialById()"
+                      onkeydown="if (event.key === 'Enter') loadMaterialById();"
                     />
                     <button
                       onclick="loadMaterialById()"
                       class="ht-btn ht-btn-primary ht-btn-sm"
                       aria-label="Cari material"
                     >
-                      <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1">Cari
+                      <img
+                        src="assets/icons/search.svg"
+                        alt="Cari"
+                        class="icon mr-1"
+                      />Cari
                     </button>
                   </div>
                   <p id="manualError" class="hidden ht-error-text"></p>
@@ -135,7 +198,7 @@
               </div>
             </div>
 
-            <!-- Delivery form -->
+            <!-- Formulir pengiriman -->
             <div id="deliveryForm" class="hidden ht-card fade-in">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Input Data Pengiriman</h3>
@@ -165,27 +228,54 @@
                 <input type="hidden" id="delId" />
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="delTanggal">Tanggal Kirim</label>
-                    <input type="date" id="delTanggal" required class="ht-form-input" />
+                    <label class="ht-form-label" for="delTanggal"
+                      >Tanggal Kirim</label
+                    >
+                    <input
+                      type="date"
+                      id="delTanggal"
+                      required
+                      class="ht-form-input"
+                    />
                   </div>
                   <div class="ht-form-group">
                     <label class="ht-form-label" for="delQty">Qty Kirim</label>
-                    <input type="number" id="delQty" required min="1" class="ht-form-input" placeholder="Jumlah dikirim" />
+                    <input
+                      type="number"
+                      id="delQty"
+                      required
+                      min="1"
+                      class="ht-form-input"
+                      placeholder="Jumlah dikirim"
+                    />
                   </div>
                 </div>
                 <div class="ht-form-group">
                   <label class="ht-form-label" for="delCatatan">Catatan</label>
-                  <textarea id="delCatatan" rows="2" class="ht-form-input ht-form-textarea" placeholder="Opsional"></textarea>
+                  <textarea
+                    id="delCatatan"
+                    rows="2"
+                    class="ht-form-input ht-form-textarea"
+                    placeholder="Opsional"
+                  ></textarea>
                 </div>
                 <div class="ht-form-actions">
-                  <button type="submit" class="ht-btn ht-btn-success" aria-label="Update status delivered">
-                    <img src="assets/icons/paper-plane.svg" alt="Delivered" class="icon mr-2">Update Status Delivered
+                  <button
+                    type="submit"
+                    class="ht-btn ht-btn-success"
+                    aria-label="Update status delivered"
+                  >
+                    <img
+                      src="assets/icons/paper-plane.svg"
+                      alt="Delivered"
+                      class="icon mr-2"
+                    />Update Status Delivered
                   </button>
                 </div>
               </form>
             </div>
 
-            <!-- History -->
+            <!-- Riwayat -->
             <div class="ht-card fade-in">
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Riwayat Pengiriman</h3>
@@ -211,21 +301,23 @@
       </main>
     </div>
 
-    <!-- Scan Modal -->
+    <!-- Modal Pemindaian -->
     <div id="scanModal" class="ht-modal-overlay">
       <div class="ht-modal">
         <div class="ht-modal-header">
           <h3 class="ht-modal-title">Scan QR Code</h3>
-          <button onclick="closeScanModal()" class="ht-modal-close" aria-label="Close">
-            <img src="assets/icons/close.svg" alt="Close" class="icon">
+          <button
+            onclick="closeScanModal()"
+            class="ht-modal-close"
+            aria-label="Close"
+          >
+            <img src="assets/icons/close.svg" alt="Close" class="icon" />
           </button>
         </div>
         <div class="ht-modal-body">
           <div class="ht-qr-scanner-wrapper">
             <div id="qr-reader-modal" class="ht-qr-frame"></div>
-            <p class="ht-hint text-center mt-3">
-              Arahkan kamera ke QR Code
-            </p>
+            <p class="ht-hint text-center mt-3">Arahkan kamera ke QR Code</p>
           </div>
         </div>
       </div>
@@ -234,6 +326,7 @@
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/date-format.js"></script>
     <script>
       if (!HTUI.requireAuth()) {
         throw new Error("redirecting");
@@ -256,7 +349,9 @@
           HTUI.toast("Material tidak ditemukan!", "error");
           return;
         }
-        const production = DB.get("productions").find((p) => p.material_id == material.id);
+        const production = DB.get("productions").find(
+          (p) => p.material_id == material.id,
+        );
         if (!production) {
           HTUI.toast("Material ini belum memiliki data produksi.", "error");
           return;
@@ -266,17 +361,37 @@
           HTUI.toast(gate.reason + ". Tidak dapat dikirim.", "error");
           return;
         }
-        const qcs = DB.get("qcs").filter((q) => String(q.material_id) === String(material.id));
-        const qc = qcs.length > 0 ? qcs.reduce((latest, q) => (!latest || (q.id || 0) > (latest.id || 0) ? q : latest), null) : null;
+        const qcs = DB.get("qcs").filter(
+          (q) => String(q.material_id) === String(material.id),
+        );
+        const qc =
+          qcs.length > 0
+            ? qcs.reduce(
+                (latest, q) =>
+                  !latest || (q.id || 0) > (latest.id || 0) ? q : latest,
+                null,
+              )
+            : null;
         const part = DB.findPartById(material.part_id);
         const cust = DB.findCustomerById(material.customer_id);
-        document.getElementById("infoNoPart").textContent = part ? part.nomor_part : "-";
-        document.getElementById("infoNamaPart").textContent = part ? part.nama_part : "-";
-        document.getElementById("infoCustomer").textContent = cust ? cust.nama_customer : "-";
-        document.getElementById("infoQc").innerHTML = '<span class="ht-badge ht-badge-ok">' + (qc ? qc.hasil : "-") + "</span>";
+        document.getElementById("infoNoPart").textContent = part
+          ? part.nomor_part
+          : "-";
+        document.getElementById("infoNamaPart").textContent = part
+          ? part.nama_part
+          : "-";
+        document.getElementById("infoCustomer").textContent = cust
+          ? cust.nama_customer
+          : "-";
+        document.getElementById("infoQc").innerHTML =
+          '<span class="ht-badge ht-badge-ok">' +
+          (qc ? qc.hasil : "-") +
+          "</span>";
         document.getElementById("delProductionId").value = production.id;
         document.getElementById("delMaterialId").value = material.id;
-        const existing = DB.get("deliveries").find((d) => String(d.material_id) === String(material.id));
+        const existing = DB.get("deliveries").find(
+          (d) => String(d.material_id) === String(material.id),
+        );
         if (existing) {
           document.getElementById("delId").value = existing.id;
           document.getElementById("delTanggal").value = existing.tanggal_kirim;
@@ -284,20 +399,27 @@
           document.getElementById("delCatatan").value = existing.catatan || "";
         } else {
           document.getElementById("delId").value = "";
-          document.getElementById("delTanggal").value = new Date().toISOString().split("T")[0];
+          document.getElementById("delTanggal").value = new Date()
+            .toISOString()
+            .split("T")[0];
           document.getElementById("delQty").value = material.qty;
           document.getElementById("delCatatan").value = "";
         }
         document.getElementById("deliveryForm").classList.remove("hidden");
-        document.getElementById("deliveryForm").scrollIntoView({ behavior: "smooth" });
+        document
+          .getElementById("deliveryForm")
+          .scrollIntoView({ behavior: "smooth" });
       }
       function clearManualError() {
         const err = document.getElementById("manualError");
-        if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
+        if (err && !err.classList.contains("hidden"))
+          err.classList.add("hidden");
       }
       document.getElementById("deliverForm").addEventListener("submit", (e) => {
         e.preventDefault();
-        const productionId = parseInt(document.getElementById("delProductionId").value);
+        const productionId = parseInt(
+          document.getElementById("delProductionId").value,
+        );
         const delId = document.getElementById("delId").value;
         const data = {
           production_id: productionId,
@@ -308,7 +430,10 @@
         };
         if (delId) DB.update("deliveries", delId, data);
         else DB.insert("deliveries", data);
-        HTUI.toast("Status delivery berhasil diupdate menjadi Delivered!", "success");
+        HTUI.toast(
+          "Status delivery berhasil diupdate menjadi Delivered!",
+          "success",
+        );
         loadDeliveries();
       });
       function loadDeliveries() {
@@ -317,7 +442,10 @@
         const materials = DB.get("materials");
         const html = deliveries
           .map((d) => {
-            const m = materials.find((mat) => String(mat.id) === String(d.material_id)) || {};
+            const m =
+              materials.find(
+                (mat) => String(mat.id) === String(d.material_id),
+              ) || {};
             const part = DB.findPartById(m.part_id);
             const customer = DB.findCustomerById(m.customer_id);
             return `<tr class="ht-table-row">
@@ -325,7 +453,7 @@
             <td>${part ? part.nama_part : "-"}</td>
             <td class="text-secondary">${(customer && customer.nama_customer) || "-"}</td>
             <td>${d.qty_kirim ?? "-"}</td>
-            <td class="text-secondary">${d.tanggal_kirim || "-"}</td>
+            <td class="text-secondary">${formatDateLong(d.tanggal_kirim)}</td>
             <td><span class="ht-badge ht-badge-delivered">Delivered</span></td>
           </tr>`;
           })
@@ -352,9 +480,11 @@
       window.addEventListener("DOMContentLoaded", () => {
         DB.init();
         DB.migrate();
+        HTDateFormat.init();
         startScanner();
         loadDeliveries();
       });
     </script>
   </body>
 </html>
+

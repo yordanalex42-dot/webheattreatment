@@ -1,22 +1,23 @@
 /* ============================================================
-   SIDEBAR — Navigation, user panel
-   Industrial dark theme: Deadly Depths foundation + Deep Space Royal
-   structural accents, Habanero for active/highlight.
+   SIDEBAR — Navigasi Modern Manufaktur
+   Dasar navy gelap, status aktif biru dengan kartu membulat.
    ============================================================ */
 
 .ht-sidebar {
-  width: 250px;
-  min-width: 250px;
+  width: 260px;
+  min-width: 260px;
   background: var(--sidebar);
-  color: #e5e7eb;
+  color: #e2e8f0;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-xl);
   overflow: hidden;
+  border-right: 1px solid var(--sidebar-border);
+  transition: transform var(--transition-md);
 }
 
 /* ============================================================
-   LOGO AREA
+   AREA LOGO
    ============================================================ */
 
 .ht-sidebar-header {
@@ -26,46 +27,27 @@
 
 .ht-sidebar-brand {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #f8fafc;
-  font-weight: 700;
-  font-size: 17px;
-  letter-spacing: -0.01em;
-}
-
-.ht-sidebar-brand .icon {
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  flex-shrink: 0;
-  color: #ffffff;
-}
-
-.ht-sidebar-header .icon.icon-xl {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  flex-shrink: 0;
-  color: #ffffff;
-}
-
-.ht-sidebar-brand .brand-text {
-  display: flex;
   flex-direction: column;
   line-height: 1.2;
 }
 
+.ht-sidebar-brand .brand-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
 .ht-sidebar-brand .brand-name {
-  color: #f8fafc;
+  font-size: 18px;
   font-weight: 700;
-  font-size: 17px;
+  color: #f8fafc;
   letter-spacing: -0.01em;
 }
 
 .brand-subtitle {
   font-size: 10px;
-  color: #9bacd8;
+  color: #94a3b8;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -73,49 +55,56 @@
 }
 
 /* ============================================================
-   NAVIGATION
+   NAVIGASI
    ============================================================ */
 
 .ht-sidebar-nav {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 12px 12px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  padding: 12px 12px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 189, 0.3) transparent;
 }
 
 .ht-sidebar-nav::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
+  width: 6px;
 }
 
-/* Section group wrapper */
-.nav-section {
-  margin-bottom: 4px;
+.ht-sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.nav-section-title,
-.ht-nav-section-title {
+.ht-sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 189, 0.2);
+  border-radius: var(--radius-pill);
+}
+
+/* Pembungkus kelompok — wadah visual untuk item navigasi terkelompok */
+.ht-sidebar-nav .nav-section {
+  margin-bottom: 8px;
+}
+
+.ht-sidebar-nav .nav-section_title {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #9bacd8;
+  color: #94a3b8;
   padding: 12px 16px 6px;
-  margin-top: 8px;
+  margin: 0;
+  display: block;
 }
 
-/* Nav link — fixed height so every menu row has the same spacing */
+/* Tautan nav — membulat, status aktif dengan latar belakang biru muda */
 .ht-nav-link {
   display: flex;
   align-items: center;
   gap: 12px;
   min-height: 40px;
-  padding: 0 14px;
-  margin: 2px 6px;
+  padding: 10px 16px;
+  margin: 2px 4px;
   border-radius: var(--radius-md);
-  color: #e5e7eb;
+  color: #e2e8f0;
   text-decoration: none;
   font-size: 13px;
   font-weight: 500;
@@ -123,59 +112,68 @@
   transition: all var(--transition-sm);
   position: relative;
   opacity: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Icon sizing — icons.css recolors the masked SVG with currentColor,
-   here we only guarantee size and alignment inside the row. */
-.ht-nav-link .icon {
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
+.ht-nav-link .sidebar-menu-icon {
+  min-width: 22px;
   flex-shrink: 0;
-  color: #ffffff;
 }
 
-/* Hover — lighter background + white icon/text */
+.ht-sidebar-header:hover .sidebar-logo,
+.ht-sidebar-header:active .sidebar-logo {
+  color: #2563eb;
+  filter: invert(36%) sepia(100%) saturate(5000%) hue-rotate(195deg);
+}
+
 .ht-nav-link:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--primary-light);
 }
 
-.ht-nav-link:hover .icon {
-  color: #ffffff;
+.ht-nav-link:hover .sidebar-menu-icon {
+  filter: invert(36%) sepia(100%) saturate(5000%) hue-rotate(195deg);
 }
 
-/* Active state — Habanero gradient accent bar + white text + icon */
+/* Status aktif — latar belakang biru muda, teks/ikon biru, membulat */
 .ht-nav-link.active {
-  background: rgba(249, 133, 19, 0.10);
-  color: #ffffff;
+  background: var(--primary-light);
+  color: var(--primary-hover);
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(17, 17, 68, 0.15);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
 }
 
 .ht-nav-link.active::before {
   content: "";
   position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 3px;
-  background: var(--gradient-primary);
-  border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
+  height: 20px;
+  background: var(--primary);
+  border-radius: var(--radius-xs);
 }
 
-.ht-nav-link.active .icon {
-  color: #ffffff;
-  filter: brightness(1.1);
+.ht-nav-link.active .sidebar-menu-icon {
+  filter: invert(36%) sepia(100%) saturate(5000%) hue-rotate(195deg);
 }
 
-/* Indent sub-items */
+/* Indentasi item sub */
 .ht-nav-link.sub {
   padding-left: 32px;
 }
 
+.ht-nav-link.sub .sidebar-menu-icon {
+  width: 18px;
+  height: 18px;
+}
+
 /* ============================================================
-   USER PANEL (footer)
+   PANEL PENGGUNA (footer)
    ============================================================ */
 
 .ht-sidebar-footer {
@@ -199,9 +197,9 @@
 }
 
 .ht-user-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-lg);
   background: var(--gradient-primary);
   display: flex;
   align-items: center;
@@ -220,7 +218,7 @@
 }
 
 .ht-user-name {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #f1f5f9;
   white-space: nowrap;
@@ -229,18 +227,18 @@
 }
 
 .ht-user-role {
-  font-size: 10px;
-  color: #9bacd8;
+  font-size: 11px;
+  color: #94a3b8;
   font-weight: 500;
 }
 
 .ht-sidebar-logout {
   color: #94a3b8;
   font-size: 12px;
-  padding: 7px;
-  border-radius: var(--radius-sm);
+  padding: 8px;
+  border-radius: var(--radius-md);
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
   transition: all var(--transition-sm);
   display: inline-flex;
@@ -249,40 +247,40 @@
   flex-shrink: 0;
 }
 
-.ht-sidebar-logout .icon {
+.ht-sidebar-logout .sidebar-menu-icon {
   width: 18px;
   height: 18px;
   min-width: 18px;
-  color: #94a3b8;
 }
 
 .ht-sidebar-logout:hover {
-  color: #ffffff;
-  background: rgba(249, 133, 19, 0.08);
+  color: var(--primary);
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.2);
 }
 
-.ht-sidebar-logout:hover .icon {
-  color: var(--habanero);
+.ht-sidebar-logout:hover .sidebar-menu-icon {
+  filter: invert(36%) sepia(100%) saturate(5000%) hue-rotate(195deg);
 }
 
 /* ============================================================
-   RESPONSIVE
+   RESPONSIF
    ============================================================ */
 
 @media (max-width: 1024px) {
   .ht-sidebar {
-    width: 230px;
-    min-width: 230px;
+    width: 240px;
+    min-width: 240px;
   }
 
   .ht-nav-link {
     min-height: 36px;
-    padding: 0 12px;
+    padding: 8px 14px;
     margin: 1px 4px;
     font-size: 12px;
   }
 
-  .ht-nav-link .icon {
+  .ht-nav-link .sidebar-menu-icon {
     width: 18px;
     height: 18px;
   }
@@ -298,5 +296,12 @@
 
   .ht-sidebar.active {
     transform: translateX(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .ht-sidebar {
+    width: 260px;
+    min-width: 260px;
   }
 }

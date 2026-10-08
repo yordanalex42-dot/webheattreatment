@@ -1,8 +1,8 @@
 /* ============================================================
-  ICON SYSTEM — Heat Treatment Information System
-  Local SVG icons with consistent sizing and styling.
-  All icons are stroke-based (fill="none", stroke="currentColor")
-  so they inherit color from CSS and remain visible on any background.
+  SISTEM IKON — Sistem Informasi Heat Treatment
+  Ikon SVG lokal dengan ukuran dan gaya yang konsisten.
+  Semua ikon berbasis stroke (fill="none", stroke="currentColor")
+  sehingga mewarisi warna dari CSS dan tetap terlihat di latar belakang apa saja.
   ============================================================ */
 
 :root {
@@ -15,7 +15,7 @@
   --icon-3xl: 48px;
 }
 
-/* Base icon class - container for icon images and SVGs */
+/* Kelas ikon dasar — kontainer untuk gambar ikon dan SVG */
 .icon,
 .ht-icon {
   display: inline-flex;
@@ -28,7 +28,7 @@
   height: var(--icon-md);
 }
 
-/* icon image/sizing - prevent 100% sizing that breaks layout */
+/* Gambar/sizing ikon — cegah penggunaan 100% yang merusak tata letak */
 .icon img,
 .ht-icon img,
 .icon svg,
@@ -39,33 +39,56 @@
   object-fit: contain;
 }
 
-/* Size variants for the container */
-.icon-xs { width: var(--icon-xs); height: var(--icon-xs); }
-.icon-sm { width: var(--icon-sm); height: var(--icon-sm); }
-.icon-md { width: var(--icon-md); height: var(--icon-md); }
-.icon-lg { width: var(--icon-lg); height: var(--icon-lg); }
-.icon-xl { width: var(--icon-xl); height: var(--icon-xl); }
-.icon-2xl { width: var(--icon-2xl); height: var(--icon-2xl); }
-.icon-3xl { width: var(--icon-3xl); height: var(--icon-3xl); }
+/* Varian ukuran untuk kontainer */
+.icon-xs {
+  width: var(--icon-xs);
+  height: var(--icon-xs);
+}
+.icon-sm {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+}
+.icon-md {
+  width: var(--icon-md);
+  height: var(--icon-md);
+}
+.icon-lg {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+}
+.icon-xl {
+  width: var(--icon-xl);
+  height: var(--icon-xl);
+}
+.icon-2xl {
+  width: var(--icon-2xl);
+  height: var(--icon-2xl);
+}
+.icon-3xl {
+  width: var(--icon-3xl);
+  height: var(--icon-3xl);
+}
 
 /* ============================================================
-   COLOR INHERITANCE — MASK MAP (every context)
-   An SVG loaded through <img> is isolated from the document, so
-   stroke="currentColor" inside the file resolves to that file's own
-   color, never the parent's. Result: every icon outside a mask would
-   paint a fixed dark stroke and ignore the design tokens
+   WARISAN WARNA — PETA MASK (setiap konteks)
+   SVG yang dimuat melalui <img> terisolasi dari dokumen, sehingga
+   stroke="currentColor" di dalam berkas akan merujuk ke warna sendiri,
+   bukan warna induk. Akibatnya: setiap ikon di luar mask akan
+   melukis stroke gelap tetap dan mengabaikan token desain
    (--primary / --success / --danger / --text-tertiary ...).
-   Fix (same technique the sidebar already uses): use the SVG as a CSS
-   mask and paint the silhouette with `currentColor`. A mask uses the
-   alpha channel only, so the icon's own color is irrelevant and the
-   icon then follows the token color of whatever contains it:
-     .ht-btn-success        -> white
-     .ht-action-btn.delete  -> --danger, and --primary on :hover
-     .ht-step.active .icon  -> white
+   Perbaikan (teknik yang sama yang sudah dipakai sidebar): gunakan
+   SVG sebagai mask CSS dan cat hitam pusat dengan `currentColor`.
+   Mask hanya menggunakan saluran alpha, sehingga warna asli ikon
+   tidak relevan dan ikon pun akan mengikuti token warna tempat ia
+   berada:
+     .ht-btn-success        -> putih
+     .ht-action-btn.delete  -> --danger, dan --primary pada :hover
+     .ht-step.active .icon  -> putih
      .ht-table-empty .icon  -> --text-tertiary
-     sidebar .icon          -> the sidebar's own per-state colors
-   The rules below are attribute-selected, so no HTML or JS changes
-   are needed and the file names stay the single source of truth. */
+     sidebar .icon          -> warna per-status sidebar
+   Aturan di bawah bersifat attribute-selected, jadi tidak perlu
+   perubahan HTML atau JS dan nama berkas tetap menjadi satu sumber
+   kebenaran. */
 .icon {
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
@@ -76,20 +99,21 @@
 }
 
 /* ============================================================
-   SIDEBAR ICONS
-   Sidebar icons are external SVG files rendered with <img>.
-   An SVG loaded through <img> is isolated from the document, so
-   its stroke="currentColor" never resolves to the parent color
-   and paints BLACK on the dark navy sidebar.
-   Fix: use each SVG file as a CSS mask and paint the mask with
-   the current color. This gives exact per-state colors, leaves
-   every asset file untouched, and is scoped to .ht-sidebar only.
+   IKON SIDEBAR
+   Ikon sidebar adalah berkas SVG eksternal yang dirender dengan <img>.
+   SVG yang dimuat melalui <img> terisolasi dari dokumen, sehingga
+   stroke="currentColor"-nya tidak pernah merujuk ke warna induk
+   dan akan melukis abu abu tajam di sidebar lautan navy.
+   Perbaikan: gunakan setiap berkas SVG sebagai mask CSS dan cat
+   mask dengan warna saat ini. Ini memberikan warna per-status yang
+   akurat, menyentuh setiap berkas aset, dan dikelompokkan di
+   kelas .sidebar-logo dan .sidebar-menu-icon.
    ============================================================ */
 
-/* Shared mask behaviour for every sidebar icon */
-.ht-sidebar .icon {
-  width: 20px;
-  height: 20px;
+/* Logo sidebar - ukuran tetap 36px, putih secara default */
+.sidebar-logo {
+  width: 50px;
+  height: 50px;
   color: #ffffff;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
@@ -99,111 +123,120 @@
   mask-size: contain;
 }
 
-/* Paint the masked silhouette with the current color */
-.ht-sidebar .ht-nav-link .icon,
-.ht-sidebar .ht-sidebar-logout .icon,
-.ht-sidebar-header [data-sidebar-toggle] .icon,
-.ht-sidebar-header .icon.icon-xl,
-.ht-sidebar-brand .icon {
+/* Ikon menu sidebar - ukuran tetap 22px, mewarisi warna teks induk */
+.sidebar-menu-icon {
+  width: 22px;
+  height: 22px;
+  color: inherit;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* Cat hitam pusat siluet yang di-mask dengan warna saat ini */
+.sidebar-logo,
+.sidebar-menu-icon {
   background-color: currentColor;
   filter: brightness(0) invert(1);
 }
 
-/* ---- Icon assets used by the sidebar (mask map) ---- */
-.ht-sidebar .icon[src$="logo.svg"] {
-  -webkit-mask-image: url("../assets/logo/logo.svg");
-  mask-image: url("../assets/logo/logo.svg");
+/* ---- Aset logo dan ikon menu sidebar (peta mask) ---- */
+.sidebar-logo[src$="logo baru.svg"] {
+  -webkit-mask-image: url("../assets/logo/logo baru.svg");
+  mask-image: url("../assets/logo/logo baru.svg");
 }
-.ht-sidebar .icon[src$="dashboard.svg"] {
+.sidebar-menu-icon[src$="dashboard.svg"] {
   -webkit-mask-image: url("../assets/icons/dashboard.svg");
   mask-image: url("../assets/icons/dashboard.svg");
 }
-.ht-sidebar .icon[src$="customer.svg"] {
+.sidebar-menu-icon[src$="customer.svg"] {
   -webkit-mask-image: url("../assets/icons/customer.svg");
   mask-image: url("../assets/icons/customer.svg");
 }
-.ht-sidebar .icon[src$="part.svg"] {
+.sidebar-menu-icon[src$="part.svg"] {
   -webkit-mask-image: url("../assets/icons/part.svg");
   mask-image: url("../assets/icons/part.svg");
 }
-.ht-sidebar .icon[src$="incoming.svg"] {
+.sidebar-menu-icon[src$="incoming.svg"] {
   -webkit-mask-image: url("../assets/icons/incoming.svg");
   mask-image: url("../assets/icons/incoming.svg");
 }
-.ht-sidebar .icon[src$="production-start.svg"] {
-  -webkit-mask-image: url("../assets/icons/production-start.svg");
-  mask-image: url("../assets/icons/production-start.svg");
+.sidebar-menu-icon[src$="production.svg"] {
+  -webkit-mask-image: url("../assets/icons/production.svg");
+  mask-image: url("../assets/icons/production.svg");
 }
-.ht-sidebar .icon[src$="production-finish.svg"] {
-  -webkit-mask-image: url("../assets/icons/production-finish.svg");
-  mask-image: url("../assets/icons/production-finish.svg");
+.sidebar-menu-icon[src$="process.svg"] {
+  -webkit-mask-image: url("../assets/icons/process.svg");
+  mask-image: url("../assets/icons/process.svg");
 }
-.ht-sidebar .icon[src$="quality-control.svg"] {
+.sidebar-menu-icon[src$="quality-control.svg"] {
   -webkit-mask-image: url("../assets/icons/quality-control.svg");
   mask-image: url("../assets/icons/quality-control.svg");
 }
-.ht-sidebar .icon[src$="delivery.svg"] {
+.sidebar-menu-icon[src$="delivery.svg"] {
   -webkit-mask-image: url("../assets/icons/delivery.svg");
   mask-image: url("../assets/icons/delivery.svg");
 }
-.ht-sidebar .icon[src$="tracking.svg"] {
+.sidebar-menu-icon[src$="tracking.svg"] {
   -webkit-mask-image: url("../assets/icons/tracking.svg");
   mask-image: url("../assets/icons/tracking.svg");
 }
-.ht-sidebar .icon[src$="close.svg"] {
+.sidebar-menu-icon[src$="close.svg"] {
   -webkit-mask-image: url("../assets/icons/close.svg");
   mask-image: url("../assets/icons/close.svg");
 }
-.ht-sidebar .icon[src$="logout.svg"] {
+.sidebar-menu-icon[src$="logout.svg"] {
   -webkit-mask-image: url("../assets/icons/logout.svg");
   mask-image: url("../assets/icons/logout.svg");
 }
 
-/* ---- Per-state colors ----
-   MOVED TO sidebar.css (single source of truth for visual styling)
-   Kept only base mask behavior and mask-map in this file.
+/* ---- Warna per-status ----
+   DIPINDAH KE sidebar.css (satu sumber kebenaran untuk gaya visual)
+   Tersisa hanya perilaku mask dasar dan peta mask di berkas ini.
    ============================================================ */
 
-/* ---- Legacy fallback (browsers without CSS mask support) ----
-   NOTE: in this project .icon IS the <img> element itself
-   (e.g. <img src="...svg" class="icon">), so the filter must be applied
-   to .icon — a ".icon img" selector never matches. */
-@supports not ((mask-image: url("../assets/icons/dashboard.svg")) or
-  (-webkit-mask-image: url("../assets/icons/dashboard.svg"))) {
-  .ht-sidebar .ht-nav-link .icon,
-  .ht-sidebar .ht-sidebar-logout .icon,
-  .ht-sidebar-header [data-sidebar-toggle] .icon,
-  .ht-sidebar-header .icon.icon-xl,
-  .ht-sidebar-brand .icon {
+/* ---- Fallback warisan (browser tanpa dukungan CSS mask) ----
+   CATATAN: di proyek ini .icon justru ADALAH elemen <img> itu sendiri
+   (misalnya <img src="...svg" class="icon">), sehingga filter harus
+   diterapkan ke .icon — selektor ".icon img" tidak pernah cocok. */
+@supports not (
+  (mask-image: url("../assets/icons/dashboard.svg")) or
+    (-webkit-mask-image: url("../assets/icons/dashboard.svg"))
+) {
+  .sidebar-logo,
+  .sidebar-menu-icon {
     background-color: transparent;
     filter: brightness(0) invert(1);
   }
 }
 
-/* ---- file:// fallback ------------------------------------------------
-   When the app is opened directly from disk (no web server) the browser
-   treats every file as an opaque origin, so an external SVG used as a CSS
-   mask is blocked by CORS — and a mask that cannot load hides the element
-   completely, which would make every icon disappear.
-   js/ui.js adds .ht-file-protocol on <html> only for location.protocol
-   "file:", so this block is inert when the app is served over http(s),
-   where the mask above keeps the exact per-state colors.
-   Global reset first: drop the mask everywhere, so each icon falls back to
-   the neutral stroke baked into its own file (assets use color="#475569",
-   a --text-secondary tone) — visible everywhere, on any background. */
+/* ---- Fallback file:// ------------------------------------------------
+   Saat aplikasi dibuka langsung dari disk (tanpa server web) peramban
+   memperlakukan setiap berkas sebagai origin opak, sehingga SVG eksternal
+   yang dipakai sebagai mask CSS diblokir oleh CORS — dan mask yang tidak
+   bisa dimuat menyembunyikan elemen sepenuhnya, yang akan membuat semua
+   ikon menghilang.
+   js/ui.js menambahkan .ht-file-protocol pada <html> hanya untuk
+   location.protocol "file:", sehingga blok ini tidak aktif saat aplikasi
+   disajikan melalui http(s), di mana mask di atas tetap mempertahankan
+   warna per-status yang akurat.
+   Reset global terlebih dahulu: hapus mask di segala tempat, sehingga
+   setiap ikon beralih ke stroke netral yang sudah tersedia di berkasnya
+   (aset menggunakan color="#475569", nada --text-secondary) — terlihat
+   di mana saja, di latar belakang apa saja. */
 .ht-file-protocol .icon {
   -webkit-mask-image: none !important;
   mask-image: none !important;
   background-color: transparent !important;
 }
 
-/* On the dark sidebar and on a solid button the icon must stay light, so
-   those contexts invert the baked stroke to white. */
-.ht-file-protocol .ht-sidebar .ht-nav-link .icon,
-.ht-file-protocol .ht-sidebar .ht-sidebar-logout .icon,
-.ht-file-protocol .ht-sidebar-header [data-sidebar-toggle] .icon,
-.ht-file-protocol .ht-sidebar-header .icon.icon-xl,
-.ht-file-protocol .ht-sidebar-brand .icon,
+/* Di sidebar gelap dan pada tombol berwarna, ikon harus tetap terang,
+   jadi kontext-konteks ini membalik stroke yang sudah tersedia ke putih. */
+.ht-file-protocol .sidebar-logo,
+.ht-file-protocol .sidebar-menu-icon,
 .ht-file-protocol .ht-login-actions .ht-btn .icon,
 .ht-file-protocol .ht-btn-primary .icon,
 .ht-file-protocol .ht-btn-success .icon,
@@ -215,14 +248,14 @@
   filter: brightness(0) invert(1);
 }
 
-/* Inactive nav icon: softened to light gray (active / hover stay white) */
-.ht-file-protocol .ht-sidebar .ht-nav-link:not(.active):not(:hover) .icon {
+/* Ikon nav tidak aktif: dilunakkan ke abu abu muda (aktif/hover tetap putih) */
+.ht-sidebar .ht-nav-link:not(.active):not(:hover) .sidebar-menu-icon {
   opacity: 0.82;
 }
 
 /* ============================================================
-   ICON ASSET MAP (one rule per asset)
-   Keep in sync with assets/icons/*.svg and assets/logo/logo.svg.
+   PETA ASET IKON (satu aturan per aset)
+   Jaga sinkrondengan dengan assets/icons/*.svg dan assets/logo/logo baru.svg.
    ============================================================ */
 
 .icon[src$="add.svg"] {
@@ -396,13 +429,13 @@
   background-color: currentColor;
 }
 .icon[src$="production-finish.svg"] {
-  -webkit-mask-image: url("../assets/icons/production-finish.svg");
-  mask-image: url("../assets/icons/production-finish.svg");
+  -webkit-mask-image: url("../assets/icons/process.svg");
+  mask-image: url("../assets/icons/process.svg");
   background-color: currentColor;
 }
 .icon[src$="production-start.svg"] {
-  -webkit-mask-image: url("../assets/icons/production-start.svg");
-  mask-image: url("../assets/icons/production-start.svg");
+  -webkit-mask-image: url("../assets/icons/production.svg");
+  mask-image: url("../assets/icons/production.svg");
   background-color: currentColor;
 }
 .icon[src$="qr.svg"] {
@@ -455,15 +488,15 @@
   mask-image: url("../assets/icons/weight.svg");
   background-color: currentColor;
 }
-.icon[src$="logo.svg"] {
-  -webkit-mask-image: url("../assets/logo/logo.svg");
-  mask-image: url("../assets/logo/logo.svg");
+.icon[src$="logo baru.svg"] {
+  -webkit-mask-image: url("../assets/logo/logo baru.svg");
+  mask-image: url("../assets/logo/logo baru.svg");
   background-color: currentColor;
 }
 
 /* ============================================================
-   LOGIN PAGE LOGO
-   Larger, dark on light background.
+   LOGO HALAMAN LOGIN
+   Lebih besar, gelap di latar belakang terang.
    ============================================================ */
 .ht-login-logo .icon,
 .ht-login-logo img {
@@ -474,8 +507,8 @@
 }
 
 /* ============================================================
-   BUTTON ICONS
-   Inherit button color automatically.
+   IKON TOMBOL
+   Warna tombol diturunkan otomatis.
    ============================================================ */
 .ht-btn .icon {
   width: 16px;
@@ -483,26 +516,37 @@
   color: inherit;
   filter: none;
 }
-.ht-btn-sm .icon { width: 14px; height: 14px; color: inherit; filter: none; }
-.ht-btn-lg .icon { width: 18px; height: 18px; color: inherit; filter: none; }
+.ht-btn-sm .icon {
+  width: 14px;
+  height: 14px;
+  color: inherit;
+  filter: none;
+}
+.ht-btn-lg .icon {
+  width: 18px;
+  height: 18px;
+  color: inherit;
+  filter: none;
+}
 
-/* Solid color buttons (white icons): fix native SVG rendering through mask */
+/* Tombol berwarna penuh (ikon putih): perbaiki rendering SVG bawaan melalui mask */
 .ht-btn-primary .icon,
 .ht-btn-success .icon,
 .ht-btn-danger .icon {
   filter: brightness(0) invert(1);
 }
 
-/* Icon on a solid (colored) button: the global mask map above already
-   recolors it with the button color, so `color: inherit` is enough. */
+/* Ikon pada tombol berwarna penuh: peta mask di atas sudah
+   mewarnai ikon dengan warna tombol, jadi `color: inherit` sudah cukup. */
 
 /* ============================================================
-   TABLE ACTION BUTTON ICONS
-   The mask makes the icon follow the button's own color, including
-   the per-variant :hover colors declared in css/tables.css.
-   No filter needed here because action buttons have transparent
-   backgrounds (normal) or light colored backgrounds (hover) where
-   the mask paints with currentColor directly.
+   IKON TOMBOL AKSI TABEL
+   Mask membuat ikon mengikuti warna tombol sendiri, termasuk
+   warna :hover per-varian yang dideklarasikan di css/tables.css.
+   Tidak perlu filter di sini karena tombol aksi memiliki
+   latar belakang transparan (normal) atau latar belakang
+   berwarna terang (hover) di mana mask melukis dengan
+   currentColor langsung.
    ============================================================ */
 .ht-action-btn .icon {
   width: 14px;
@@ -511,7 +555,7 @@
 }
 
 /* ============================================================
-   KPI CARD ICONS - dashboard
+   IKON KARTU KPI - dashboard
    ============================================================ */
 .ht-kpi-icon {
   width: 20px;
@@ -521,38 +565,54 @@
 }
 
 /* ============================================================
-   MODAL CLOSE ICONS
+   IKON TUTUP MODAL
    ============================================================ */
 .ht-modal-close .icon {
   width: 16px;
   height: 16px;
 }
-.ht-header-btn .icon { width: 14px; height: 14px; }
+.ht-header-btn .icon {
+  width: 14px;
+  height: 14px;
+}
 
 /* ============================================================
-   STEP INDICATOR ICONS
+   IKON INDIKATOR LANGKAH
    ============================================================ */
-.ht-step .step-icon .icon { width: 14px; height: 14px; }
-.step-icon .icon { width: 16px; height: 16px; color: var(--primary); }
+.ht-step .step-icon .icon {
+  width: 14px;
+  height: 14px;
+}
+.step-icon .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+}
 
 /* ============================================================
-   TABLE EMPTY / NO DATA STATES
+   STATUS KOSONG / TANPA DATA TABEL
    ============================================================ */
 .ht-table-empty .icon {
   width: 28px;
   height: 28px;
 }
-.ht-empty-state .icon { width: 32px; height: 32px; }
-.ht-error-state .icon { width: 48px; height: 48px; }
+.ht-empty-state .icon {
+  width: 32px;
+  height: 32px;
+}
+.ht-error-state .icon {
+  width: 48px;
+  height: 48px;
+}
 
 /* ============================================================
-   FOLDER/TREE ICONS IN PART PAGE
-   Fixed size, not 100%.
+   IKON FOLDER/POHON di HALAMAN PART
+   Ukuran tetap, bukan 100%.
    ============================================================ */
 .ht-tree-node .icon {
   width: 16px;
   height: 16px;
-  color: var(--accent-orange);
+  color: var(--accent-blue);
 }
 .customer-folder-icon,
 .folder-icon {
@@ -568,23 +628,40 @@
 }
 
 /* ============================================================
-   ICON COLOR STATES USING CURRENTCOLOR
+   STATUS WARNA IKON MENGGUNAKAN CURRENTCOLOR
    ============================================================ */
-.icon-muted { opacity: 0.5; }
-.icon-primary { color: var(--primary); }
-.icon-success { color: var(--success); }
-.icon-warning { color: var(--warning); }
-.icon-danger { color: var(--danger); }
-.icon-info { color: var(--info); }
-.icon-white { color: var(--text-inverse); }
-.icon-dark { color: var(--text-primary); }
+.icon-muted {
+  opacity: 0.5;
+}
+.icon-primary {
+  color: var(--primary);
+}
+.icon-success {
+  color: var(--success);
+}
+.icon-warning {
+  color: var(--warning);
+}
+.icon-danger {
+  color: var(--danger);
+}
+.icon-info {
+  color: var(--info);
+}
+.icon-white {
+  color: var(--text-inverse);
+}
+.icon-dark {
+  color: var(--text-primary);
+}
 
 /* ============================================================
-   COLOR HIERARCHY PER CONTEXT
-   The mask map makes every icon follow `color`, so each context only
-   has to name the token it wants. Neutral for supporting chrome,
-   the semantic color for state-bearing icons, inherit for anything
-   that already sits on a colored surface. */
+   HIERARSI WARNA PER KONTEX
+   Peta mask membuat setiap ikon mengikuti `color`, sehingga
+   setiap konteks hanya perlu menyebutkan token yang diinginkan.
+   Netral untuk elemen pendukung, warna semantik untuk ikon
+   yang membawa status, inherit untuk apapun yang sudah berada
+   di permukaan berwarna. */
 .ht-search-bar .icon {
   color: var(--text-tertiary);
 }
@@ -600,7 +677,7 @@
   color: var(--danger);
 }
 
-/* Process step markers: primary while pending, white once reached. */
+/* Penanda langkah proses: primer saat menunggu, putih saat sudah tercapai. */
 .ht-step .step-icon .icon,
 .step-icon .icon {
   color: var(--primary);
@@ -611,32 +688,34 @@
   filter: brightness(0) invert(1);
 }
 
-/* The part explorer colour already comes from Tailwind's text-blue-500;
-   the mask is what makes that class finally visible. */
+/* Warna eksplorer bagian sudah termasuk dari Tailwind text-blue-500;
+   mask inilah yang membuat kelas itu akhirnya terlihat. */
 .folder-open-icon {
   color: var(--info);
 }
 
-/* Expand/collapse chevron: Tailwind's text-slate-400 is only 2.45:1 on the
-   explorer surface, so the affordance is promoted to text-secondary. */
+/* Panah perbentangan/Collapse: Tailwind text-slate-400 hanya memiliki
+   kontras 2.45:1 pada permukaan eksplorer, sehingga elemen interaktif
+   dinaikkan ke text-secondary. */
 #partExplorer [id^="folder-arrow-"] {
   color: var(--text-secondary);
 }
 
-/* Icons that only need to follow their control need no rule at all:
-   .ht-modal-close, .ht-sidebar-logout and .ht-action-btn already declare
-   `color` (and a :hover color) on the control itself, and the mask paints
-   the icon with exactly that value — so the hover state is inherited
-   rather than duplicated here. */
+/* Ikon yang hanya perlu mengikuti kontrolnya tidak perlu aturan apa pun:
+   .ht-modal-close, .ht-sidebar-logout dan .ht-action-btn sudah mendeklarasikan
+   `color` (dan warna :hover) pada kontrol itu sendiri, dan mask akan
+   melukis ikon dengan nilai yang tepat — sehingga status hover diturunkan
+   dan tidak diduplikat di sini. */
 
 /* ============================================================
-   HOVER / INTERACTION
-   A single short transition on color only: the mask repaint is the
-   only thing that changes, so nothing moves and nothing is clipped. */
+   HOVER / INTERAKSI
+   Transisi pendek tunggal hanya pada warna: repaint mask adalah
+   satu-satunya hal yang berubah, sehingga tidak ada yang bergerak
+   dan tidak ada yang terpotong. */
 .ht-btn .icon,
 .ht-action-btn .icon,
-.ht-nav-link .icon,
-.ht-sidebar-logout .icon,
+.ht-nav-link .sidebar-menu-icon,
+.ht-sidebar-logout .sidebar-menu-icon,
 .ht-modal-close .icon,
 .step-icon .icon {
   transition: color 180ms ease;
@@ -645,8 +724,8 @@
 @media (prefers-reduced-motion: reduce) {
   .ht-btn .icon,
   .ht-action-btn .icon,
-  .ht-nav-link .icon,
-  .ht-sidebar-logout .icon,
+  .ht-nav-link .sidebar-menu-icon,
+  .ht-sidebar-logout .sidebar-menu-icon,
   .ht-modal-close .icon,
   .step-icon .icon {
     transition: none;
@@ -654,9 +733,9 @@
 }
 
 /* ============================================================
-   SVG FILL/STROKE INHERITANCE
-   All project icons are stroke-based: fill="none", stroke="currentColor".
-   This ensures they always inherit the container color.
+   WARISAN SVG FILL/STROKE
+   Semua ikon proyek berbasis stroke: fill="none", stroke="currentColor".
+   Ini memastikan ikon selalu mewarisi warna kontainer.
    ============================================================ */
 .icon svg,
 .ht-icon svg {
@@ -675,21 +754,25 @@
 }
 
 /* ============================================================
-   SPINNER ANIMATION
+   ANIMASI SPINNER
    ============================================================ */
 .icon-spin {
   animation: spin 1s linear infinite;
 }
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ============================================================
-   RESPONSIVE ICON SIZES
+   UKURAN IKON RESPONSIF
    ============================================================ */
 @media (max-width: 768px) {
-  .ht-sidebar .icon {
+  .sidebar-menu-icon {
     width: 20px;
     height: 20px;
   }
@@ -697,11 +780,23 @@
     width: 18px;
     height: 18px;
   }
-  .icon-2xl { width: 32px; height: 32px; }
-  .icon-3xl { width: 40px; height: 40px; }
+  .icon-2xl {
+    width: 32px;
+    height: 32px;
+  }
+  .icon-3xl {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 @media (max-width: 480px) {
-  .icon-lg { width: 20px; height: 20px; }
-  .icon-xl { width: 24px; height: 24px; }
+  .icon-lg {
+    width: 20px;
+    height: 20px;
+  }
+  .icon-xl {
+    width: 24px;
+    height: 24px;
+  }
 }

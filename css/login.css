@@ -1,16 +1,13 @@
 /* ============================================================
-   LOGIN PAGE — Modern Industrial Premium Redesign
-   Scoped to the login page only (body.ht-login-page).
+   HALAMAN LOGIN — Dashboard Produksi Manufaktur Modern
+   Tata letak split-screen dengan branding industri pada panel kiri
+   dan kartu login pada panel kanan.
 
-   Visual language:
-     Habanero (#F98513)  — signature accent, CTA highlight
-     Deadly Depths (#111144) — foundation dark for text/logo
-     Deep Space Royal (#223382) — structural dark
-     Luster White (#F4F1EC) — surface
+    Bahasa desain biru modern + putih dengan branding navy dalam.
    ============================================================ */
 
 /* ============================================================
-   PAGE WRAPPER — True horizontal + vertical centering
+   PEMBUNGKUS HALAMAN — Split-screen
    ============================================================ */
 
 .ht-login-page {
@@ -19,13 +16,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  background: var(--background);
-  background-image:
-    radial-gradient(ellipse 800px 400px at 50% -20%, rgba(249, 133, 19, 0.06), transparent 60%),
-    radial-gradient(ellipse 600px 300px at 80% 120%, rgba(34, 51, 130, 0.04), transparent 50%),
-    radial-gradient(ellipse 500px 250px at 10% 80%, rgba(249, 133, 19, 0.03), transparent 40%),
-    linear-gradient(180deg, #f7f9fc 0%, var(--surface-muted) 100%);
+  padding: 0;
+  background: var(--surface);
   overflow-x: hidden;
   position: relative;
 }
@@ -34,34 +26,169 @@
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23223382' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23223382' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 0;
 }
 
-.ht-login-page .ht-overlay {
-  display: none;
+/* Kontainer split-screen */
+.ht-login-split {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1280px;
+  min-height: 700px;
+  margin: 0 auto;
+  padding: 40px;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
 }
 
 /* ============================================================
-   CARD — Premium Industrial, Centered
+   PANEL KIRI — Branding Industri
+   ============================================================ */
+
+.ht-login-brand {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 40px 0;
+}
+
+.ht-login-brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ht-login-brand-logo-icon {
+  width: 70px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.ht-login-brand-logo h1 {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.ht-login-brand-logo .brand-sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.ht-login-brand-logo .brand-name {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.ht-login-brand-tagline {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-normal);
+  color: var(--text-secondary);
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+.ht-login-brand-tagline .highlight {
+  color: var(--primary);
+  font-weight: var(--font-weight-semi);
+}
+
+.ht-login-illustration {
+  width: 100%;
+  max-width: 320px;
+  height: 220px;
+  background: linear-gradient(
+    135deg,
+    rgba(37, 99, 235, 0.12),
+    rgba(37, 99, 235, 0.06)
+  );
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-inner);
+}
+
+.ht-login-illustration::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 60px;
+  background: var(--gradient-primary);
+  border-radius: 30px;
+  opacity: 0.3;
+}
+
+.ht-login-illustration .illustration-icon {
+  width: 64px;
+  height: 64px;
+  position: relative;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+/* Fitur brand */
+.ht-login-features {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ht-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ht-feature-item .icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--primary);
+}
+
+.ht-feature-item .feature-text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ============================================================
+   PANEL KANAN — Kartu Login
    ============================================================ */
 
 .ht-login-card {
+  flex: 1;
+  min-width: 0;
   width: 100%;
-  max-width: 420px;
-  margin: auto;
-  padding: 40px 36px;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 44px 38px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-2xl);
-  box-shadow:
-    var(--shadow-lg),
-    0 0 0 1px rgba(249, 133, 19, 0.08) inset;
+  box-shadow: var(--shadow-lg);
   animation: cardEntrance 500ms cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-  z-index: 1;
-  backdrop-filter: blur(4px);
+  z-index: 2;
 }
 
 @keyframes cardEntrance {
@@ -81,22 +208,7 @@
   }
 }
 
-/* Subtle top accent line — Habanero → Deep Space Royal gradient */
-.ht-login-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 64px;
-  height: 3px;
-  background: var(--gradient-primary);
-  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-  opacity: 0.85;
-}
-
-/* Brand block */
-.ht-login-head {
+.ht-login-card-head {
   text-align: center;
   margin-bottom: 32px;
   animation: fadeInUp 500ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both;
@@ -113,56 +225,23 @@
   }
 }
 
-.ht-login-logo {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 18px;
-  border-radius: var(--radius-xl);
-  background: var(--gradient-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(249, 133, 19, 0.25);
-  box-shadow: 0 4px 16px rgba(249, 133, 19, 0.20);
-  position: relative;
-  overflow: hidden;
-}
-
-.ht-login-logo::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-xl);
-  background: var(--gradient-primary);
-  opacity: 0.15;
-}
-
-.ht-login-logo .icon {
-  width: 40px;
-  height: 40px;
-  position: relative;
-  z-index: 1;
-  color: var(--text-inverse);
-  filter: brightness(0) invert(1);
-}
-
-.ht-login-head h1 {
+.ht-login-card-head h1 {
   font-size: var(--text-2xl);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
   color: var(--text-primary);
   letter-spacing: -0.02em;
+  margin-bottom: 6px;
 }
 
-.ht-login-head p {
-  margin-top: 6px;
+.ht-login-card-head p {
   font-size: var(--text-sm);
   color: var(--text-secondary);
   font-weight: var(--font-weight-normal);
 }
 
 /* ============================================================
-   FORM — Modern Inputs with Focus States
+   FORMULIR — Input modern dengan status fokus
    ============================================================ */
 
 .ht-login-form {
@@ -184,7 +263,6 @@
   color: var(--text-secondary);
 }
 
-/* Password wrapper for show/hide toggle */
 .ht-password-wrapper {
   position: relative;
 }
@@ -206,8 +284,8 @@
 }
 
 .ht-login-form .ht-form-input::placeholder {
-  color: #9bacd8;
-  opacity: 0.5;
+  color: var(--text-tertiary);
+  opacity: 0.4;
 }
 
 .ht-login-form .ht-form-input:hover:not(:focus):not(:disabled) {
@@ -215,9 +293,9 @@
 }
 
 .ht-login-form .ht-form-input:focus {
-  border-color: var(--habanero);
+  border-color: var(--primary);
   background: var(--surface);
-  box-shadow: 0 0 0 4px rgba(249, 133, 19, 0.12);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .ht-login-form .ht-form-input:disabled {
@@ -226,7 +304,7 @@
   cursor: not-allowed;
 }
 
-/* Password toggle button */
+/* Tombol toggle sandi */
 .ht-password-toggle {
   position: absolute;
   right: 12px;
@@ -254,13 +332,15 @@
 .ht-password-toggle:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
-  color: var(--habanero);
+  color: var(--primary);
 }
 
 .ht-password-toggle .icon {
   width: 20px;
   height: 20px;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .ht-password-toggle .ht-eye-close {
@@ -279,7 +359,7 @@
   transform: scale(0.8);
 }
 
-/* Error message */
+/* Pesan kesalahan */
 .ht-login-error {
   padding: 12px 14px;
   font-size: var(--text-sm);
@@ -306,11 +386,23 @@
 }
 
 @keyframes shakeIn {
-  0% { opacity: 0; transform: translateX(-8px); }
-  20% { transform: translateX(4px); }
-  40% { transform: translateX(-2px); }
-  60% { transform: translateX(1px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  20% {
+    transform: translateX(4px);
+  }
+  40% {
+    transform: translateX(-2px);
+  }
+  60% {
+    transform: translateX(1px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .ht-login-page .hidden {
@@ -318,7 +410,7 @@
 }
 
 /* ============================================================
-   SUBMIT BUTTON — Primary CTA (Habanero gradient)
+   TOMBOL KIRIM — CTA Primer (gradien biru)
    ============================================================ */
 
 .ht-login-actions {
@@ -333,7 +425,7 @@
   font-weight: var(--font-weight-semi);
   border-radius: var(--radius-lg);
   background: var(--gradient-primary);
-  border: 1.5px solid var(--habanero);
+  border: 1.5px solid var(--primary);
   color: var(--text-inverse);
   display: inline-flex;
   align-items: center;
@@ -353,15 +445,15 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), transparent);
   opacity: 0;
   transition: opacity var(--transition-sm);
 }
 
 .ht-login-actions .ht-btn:hover {
   filter: brightness(1.03);
-  border-color: var(--habanero-hover);
-  box-shadow: 0 8px 24px rgba(249, 133, 19, 0.30);
+  border-color: var(--primary-hover);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
 }
 
 .ht-login-actions .ht-btn:hover::before {
@@ -370,12 +462,12 @@
 
 .ht-login-actions .ht-btn:active {
   transform: scale(0.98);
-  box-shadow: 0 2px 8px rgba(249, 133, 19, 0.20);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
 }
 
 .ht-login-actions .ht-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(249, 133, 19, 0.3);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3);
 }
 
 .ht-login-actions .ht-btn:disabled {
@@ -392,31 +484,14 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  -webkit-mask-image: url("../assets/icons/arrow-right.svg");
-  mask-image: url("../assets/icons/arrow-right.svg");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  background-color: currentColor;
-  filter: brightness(0) invert(1);
-}
-
-.ht-file-protocol .ht-login-actions .ht-btn .icon {
-  -webkit-mask-image: none;
-  mask-image: none;
-  background-color: transparent;
-  filter: brightness(0) invert(1);
 }
 
 /* ============================================================
-   DEFAULT CREDENTIAL HINT
+   PETUNJUK KRITERIAL DEFAULT
    ============================================================ */
 
 .ht-login-hint {
-  margin-top: 24px;
+  margin-top: 28px;
   text-align: center;
   font-size: var(--text-xs);
   color: var(--text-tertiary);
@@ -424,70 +499,81 @@
 }
 
 .ht-login-hint .font-mono {
-  font-family: inherit;
+  font-family: var(--font-mono);
   font-weight: var(--font-weight-medium);
   color: var(--text-secondary);
 }
 
 /* ============================================================
-   RESPONSIVE
+   RESPONSIF
    ============================================================ */
 
 /* Tablet */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
+  .ht-login-split {
+    flex-direction: column;
+    max-width: 560px;
+    padding: 32px 20px;
+    gap: 32px;
+  }
+
+  .ht-login-brand {
+    gap: 24px;
+    text-align: center;
+  }
+
+  .ht-login-brand-tagline {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
   .ht-login-card {
-    max-width: 400px;
-    padding: 36px 32px;
+    max-width: 100%;
+    padding: 38px 32px;
+  }
+}
+
+/* Tablet kecil / mobile besar */
+@media (max-width: 768px) {
+  .ht-login-split {
+    padding: 24px 16px;
   }
 
-  .ht-login-logo {
-    width: 60px;
-    height: 60px;
+  .ht-login-brand-logo .brand-name {
+    font-size: var(--text-2xl);
   }
 
-  .ht-login-logo .icon {
-    width: 34px;
-    height: 34px;
+  .ht-login-card {
+    padding: 32px 26px;
+  }
+
+  .ht-login-card-head h1 {
+    font-size: var(--text-xl);
   }
 }
 
 /* Mobile */
 @media (max-width: 480px) {
-  .ht-login-page {
+  .ht-login-split {
+    max-width: 100%;
     padding: 16px;
-    align-items: flex-start;
-    padding-top: 40px;
+  }
+
+  .ht-login-brand {
+    gap: 16px;
+  }
+
+  .ht-login-brand-logo {
+    gap: 12px;
+  }
+
+  .ht-login-brand-logo .icon {
+    width: 48px;
+    height: 48px;
   }
 
   .ht-login-card {
-    max-width: 100%;
-    padding: 32px 24px;
-    border-radius: var(--radius-xl);
-    margin: 0;
-    box-shadow: var(--shadow-xl);
-  }
-
-  .ht-login-logo {
-    width: 56px;
-    height: 56px;
-    margin-bottom: 14px;
-  }
-
-  .ht-login-logo .icon {
-    width: 32px;
-    height: 32px;
-  }
-
-  .ht-login-head {
-    margin-bottom: 28px;
-  }
-
-  .ht-login-head h1 {
-    font-size: var(--text-xl);
-  }
-
-  .ht-login-head p {
-    font-size: var(--text-sm);
+    padding: 30px 22px;
   }
 
   .ht-login-form {
@@ -504,63 +590,42 @@
   }
 
   .ht-login-hint {
-    margin-top: 20px;
+    margin-top: 22px;
   }
 }
 
-/* Very short screens (landscape phone) */
-@media (max-height: 520px) and (orientation: landscape) {
-  .ht-login-page {
-    padding: 20px 16px;
-    align-items: center;
-  }
-
-  .ht-login-card {
-    padding: 28px 24px;
-  }
-
-  .ht-login-head {
-    margin-bottom: 20px;
-  }
-
-  .ht-login-logo {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 10px;
-  }
-
-  .ht-login-logo .icon {
-    width: 28px;
-    height: 28px;
-  }
-
-  .ht-login-form {
-    gap: 14px;
-  }
-
-  .ht-login-hint {
-    margin-top: 16px;
-  }
-}
-
-/* Large desktop */
+/* Desktop besar */
 @media (min-width: 1440px) {
+  .ht-login-split {
+    max-width: 1400px;
+    padding: 56px;
+    gap: 56px;
+  }
+
+  .ht-login-brand-logo .icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .ht-login-brand-logo .brand-name {
+    font-size: var(--text-4xl);
+  }
+
+  .ht-login-brand-tagline {
+    font-size: var(--text-xl);
+  }
+
+  .ht-login-illustration {
+    max-width: 360px;
+    height: 260px;
+  }
+
+  .ht-login-illustration .illustration-icon {
+    width: 80px;
+    height: 80px;
+  }
+
   .ht-login-card {
-    max-width: 440px;
-    padding: 44px 40px;
-  }
-
-  .ht-login-logo {
-    width: 72px;
-    height: 72px;
-  }
-
-  .ht-login-logo .icon {
-    width: 40px;
-    height: 40px;
-  }
-
-  .ht-login-head h1 {
-    font-size: var(--text-3xl);
+    padding: 48px 42px;
   }
 }

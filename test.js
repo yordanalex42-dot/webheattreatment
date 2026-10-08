@@ -121,10 +121,10 @@ assert(
   "",
 );
 assert(
-  prodAfter[0].status === "Finish" ||
-    prodAfter[0].status === "Process" ||
-    prodAfter[0].status === "Waiting",
-  "T13: migrate preserves existing status",
+  prodAfter[0].status === "FINISH" ||
+    prodAfter[0].status === "PROCESS" ||
+    prodAfter[0].status === "WAITING",
+  "T13: migrate normalizes status to canonical value",
   "status=" + prodAfter[0].status,
 );
 assert(
@@ -232,8 +232,8 @@ assert(
 );
 const prod1 = DB.get("productions").find((p) => p.material_id == mat.id);
 assert(
-  prod1 !== undefined && prod1.status === "Finish",
-  "T30: Existing production record found",
+  prod1 !== undefined && prod1.status === "FINISH",
+  "T30: Existing production record found (FINISH)",
   "Status: " + prod1.status,
 );
 assert(
@@ -248,7 +248,7 @@ assert(
 );
 assert(
   mat.status_proses === "WAITING",
-  "T33: Material status_proses is Waiting",
+  "T33: Material status_proses is WAITING",
   "Status: " + mat.status_proses,
 );
 
@@ -262,8 +262,8 @@ assert(
 );
 const prod2 = DB.get("productions").find((p) => p.material_id == mat2.id);
 assert(
-  prod2 !== undefined && prod2.status === "Process",
-  "T35: Production in Process state",
+  prod2 !== undefined && prod2.status === "PROCESS",
+  "T35: Production in PROCESS state",
   "Status: " + prod2.status,
 );
 assert(
@@ -284,8 +284,8 @@ assert(
 const mat3 = DB.findByKode("20260007I");
 const prod3 = DB.get("productions").find((p) => p.material_id == mat3.id);
 assert(
-  prod3 !== undefined && prod3.status === "Waiting",
-  "T39: Production in Waiting state",
+  prod3 !== undefined && prod3.status === "WAITING",
+  "T39: Production in WAITING state",
   "Status: " + prod3.status,
 );
 
@@ -347,8 +347,118 @@ assert(
   "",
 );
 
+console.log("\n=== GROUP 8: VALIDATE & ID GENERATION (Tests 45-55) ===");
+setupFresh();
+const validation = DB.validate();
+assert(
+  validation.errors.length === 0,
+  "T45: validate() reports no errors for clean seed data",
+  "errors=" + JSON.stringify(validation.errors),
+);
+assert(
+  validation.warnings.length === 0,
+  "T46: validate() reports no warnings for clean seed data",
+  "warnings=" + JSON.stringify(validation.warnings),
+);
+const idsBefore = [];
+const r = DB.insert("customers", {
+  kode_customer: "CUST-TEST",
+  nama_customer: "Test Customer",
+  alamat: "Test",
+  pic: "Test",
+  phone: "0",
+  email: "test@test.com",
+  status: DB.STATUSES.ACTIVE,
+});
+const r2 = DB.insert("customers", {
+  kode_customer: "CUST-TEST2",
+  nama_customer: "Test Customer 2",
+  alamat: "Test",
+  pic: "Test",
+  phone: "0",
+  email: "test2@test.com",
+  status: DB.STATUSES.ACTIVE,
+});
+assert(r.id !== r2.id && typeof r.id === "number", "T47: _nextId() generates unique IDs", "ids=" + r.id + "," + r2.id);
+assert(
+  DB.find("customers", "kode_customer", "CUST-TEST") !== undefined,
+  "T48: INSERT creates a findable record",
+  "",
+);
+DB.update("customers", r.id, { nama_customer: "Updated Name" });
+const updated = DB.find("customers", "id", r.id);
+assert(updated.nama_customer === "Updated Name", "T49: UPDATE modifies record", "name=" + updated.nama_customer);
+DB.delete("customers", r.id);
+DB.delete("customers", r2.id);
+assert(
+  DB.find("customers", "kode_customer", "CUST-TEST") === undefined &&
+    DB.find("customers", "kode_customer", "CUST-TEST2") === undefined,
+  "T50: DELETE removes records",
+  "",
+);
+const validationAfter = DB.validate();
+assert(
+  validationAfter.errors.length === 0,
+  "T51: validate() still clean after CRUD operations",
+  "errors=" + JSON.stringify(validationAfter.errors),
+);
+
+console.log("\n=== GROUP 9: STATUS NORMALIZATION (Tests 56-61) ===");
+setupFresh();
+DB.migrate();
+const matsAfterMigrate = DB.get("materials");
+assert(
+  matsAfterMigrate.every(m => ["WAITING", "PROCESS", "FINISH"].includes(m.status_proses)),
+  "T56: All material status_proses are canonical after migrate",
+  "values=" + JSON.stringify([...new Set(matsAfterMigrate.map(m => m.status_proses))]),
+);
+const prodsAfterMigrate = DB.get("productions");
+assert(
+  prodsAfterMigrate.every(p => p.status === p.production_status),
+  "T57: production status and production_status are in sync",
+  "",
+);
+assert(
+  prodsAfterMigrate.every(p => ["WAITING", "PROCESS", "FINISH", "FINISH_NG"].includes(p.status)),
+  "T58: All production statuses are canonical after migrate",
+  "values=" + JSON.stringify([...new Set(prodsAfterMigrate.map(p => p.status))]),
+);
+const qcsAfterMigrate = DB.get("qcs");
+assert(
+  qcsAfterMigrate.every(q => q.hasil === "OK" || q.hasil === "NG"),
+  "T59: All QC hasil are canonical (OK/NG) after migrate",
+  "values=" + JSON.stringify([...new Set(qcsAfterMigrate.map(q => q.hasil))]),
+);
+const delsAfterMigrate = DB.get("deliveries");
+assert(
+  delsAfterMigrate.every(d => d.status === "Delivered"),
+  "T60: All delivery statuses are canonical after migrate",
+  "values=" + JSON.stringify([...new Set(delsAfterMigrate.map(d => d.status))]),
+);
+
+console.log("\n=== GROUP 10: REFERENTIAL INTEGRITY (Tests 62-64) ===");
+setupFresh();
+const refCheck = DB.validate();
+const orphanCheck = refCheck.errors.filter(e => e.includes("Orphan"));
+assert(
+  orphanCheck.length === 0,
+  "T62: No orphan foreign key references in seed data",
+  "orphans=" + JSON.stringify(orphanCheck),
+);
+const dupCheck = refCheck.errors.filter(e => e.includes("Duplicate"));
+assert(
+  dupCheck.length === 0,
+  "T63: No duplicate IDs in seed data",
+  "dups=" + JSON.stringify(dupCheck),
+);
+const dupKodeCheck = refCheck.errors.filter(e => e.includes("Duplicate material kode"));
+assert(
+  dupKodeCheck.length === 0,
+  "T64: No duplicate material kodes in seed data",
+  "dups=" + JSON.stringify(dupKodeCheck),
+);
+
 console.log("\n==========================================");
-console.log("  TEST RESULTS");
 console.log("==========================================");
 for (const r of results) {
   const icon = r.pass ? "PASS" : "FAIL";

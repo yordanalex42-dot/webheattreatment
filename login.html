@@ -14,58 +14,125 @@
     <link rel="stylesheet" href="css/login.css" />
   </head>
   <body class="ht-login-page">
-    <div class="ht-login-card">
-      <div class="ht-login-head">
-        <div class="ht-login-logo">
-          <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-2xl">
+    <div class="ht-login-split">
+      <!-- Panel Kiri: Branding Industri -->
+      <div class="ht-login-brand">
+        <div class="ht-login-brand-logo">
+          <img
+            src="assets/logo/logo baru.svg"
+            alt="PT CHUNETSU INDONESIA"
+            class="icon icon-xl"
+          />
+          <h1>
+            <span class="brand-sub">Heat Treatment of</span>
+            <span class="brand-name">PT CHUNETSU INDONESIA</span>
+          </h1>
         </div>
-        <h1>Heat Treatment</h1>
-        <p>Sistem Informasi Produksi</p>
-      </div>
-      <form id="loginForm" class="ht-login-form">
-        <div class="ht-form-group">
-          <label class="ht-form-label" for="username">Username</label>
-          <input
-            id="username"
-            type="text"
-            required
-            autofocus
-            class="ht-form-input"
-            placeholder="admin"
+        <p class="ht-login-brand-tagline">
+          Sistem Informasi Produksi
+          <span class="highlight">Heat Treatment</span>. Kelola seluruh alur
+          produksi dari incoming hingga delivery dengan
+          <span class="highlight">precise tracking</span> dan
+          <span class="highlight">real-time monitoring</span>.
+        </p>
+        <div class="ht-login-illustration">
+          <img
+            src="assets/icons/factory.svg"
+            alt=""
+            class="icon illustration-icon"
           />
         </div>
-        <div class="ht-form-group">
-          <label class="ht-form-label" for="password">Password</label>
-          <div class="ht-password-wrapper">
-            <input
-              id="password"
-              type="password"
-              required
-              class="ht-form-input"
-              placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+        <div class="ht-login-features">
+          <div class="ht-feature-item">
+            <img
+              src="assets/icons/check-circle.svg"
+              alt=""
+              class="icon icon-sm"
             />
-            <button
-              type="button"
-              class="ht-password-toggle"
-              aria-label="Tampilkan password"
-              tabindex="-1"
-            >
-              <img src="assets/icons/eye.svg" alt="" class="icon icon-sm ht-eye-open">
-              <img src="assets/icons/eye-slash.svg" alt="" class="icon icon-sm ht-eye-close hidden">
-            </button>
+            <span class="feature-text">Real-time production monitoring</span>
+          </div>
+          <div class="ht-feature-item">
+            <img
+              src="assets/icons/check-circle.svg"
+              alt=""
+              class="icon icon-sm"
+            />
+            <span class="feature-text">Quality control integration</span>
+          </div>
+          <div class="ht-feature-item">
+            <img
+              src="assets/icons/check-circle.svg"
+              alt=""
+              class="icon icon-sm"
+            />
+            <span class="feature-text">End-to-end traceability</span>
           </div>
         </div>
-        <div id="loginError" class="ht-login-error hidden"></div>
-        <div class="ht-login-actions">
-          <button type="submit" class="ht-btn ht-btn-primary">
-            <img src="assets/icons/arrow-right.svg" alt="Masuk" class="icon">Masuk
-          </button>
+      </div>
+
+      <!-- Panel Kanan: Kartu Login -->
+      <div class="ht-login-card">
+        <div class="ht-login-card-head">
+          <h1>Selamat Datang</h1>
+          <p>Masukkan kredensial untuk mengakses sistem</p>
         </div>
-      </form>
-      <p class="ht-login-hint">
-        Default: <span class="font-mono">admin</span> /
-        <span class="font-mono">admin123</span>
-      </p>
+        <form id="loginForm" class="ht-login-form">
+          <div class="ht-form-group">
+            <label class="ht-form-label" for="username">Username</label>
+            <input
+              id="username"
+              type="text"
+              required
+              autofocus
+              class="ht-form-input"
+              placeholder="admin"
+            />
+          </div>
+          <div class="ht-form-group">
+            <label class="ht-form-label" for="password">Password</label>
+            <div class="ht-password-wrapper">
+              <input
+                id="password"
+                type="password"
+                required
+                class="ht-form-input"
+                placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+              />
+              <button
+                type="button"
+                class="ht-password-toggle"
+                aria-label="Tampilkan password"
+                tabindex="-1"
+              >
+                <img
+                  src="assets/icons/eye.svg"
+                  alt=""
+                  class="icon icon-sm ht-eye-open"
+                />
+                <img
+                  src="assets/icons/eye-slash.svg"
+                  alt=""
+                  class="icon icon-sm ht-eye-close hidden"
+                />
+              </button>
+            </div>
+          </div>
+          <div id="loginError" class="ht-login-error hidden"></div>
+          <div class="ht-login-actions">
+            <button type="submit" class="ht-btn ht-btn-primary">
+              <img
+                src="assets/icons/arrow-right.svg"
+                alt="Masuk"
+                class="icon"
+              />Masuk
+            </button>
+          </div>
+        </form>
+        <p class="ht-login-hint">
+          Default: <span class="font-mono">admin</span> /
+          <span class="font-mono">admin123</span>
+        </p>
+      </div>
     </div>
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
@@ -87,7 +154,10 @@
         passwordInput.type = isPassword ? "text" : "password";
         eyeOpen.classList.toggle("hidden", isPassword);
         eyeClose.classList.toggle("hidden", !isPassword);
-        toggleBtn.setAttribute("aria-label", isPassword ? "Sembunyikan password" : "Tampilkan password");
+        toggleBtn.setAttribute(
+          "aria-label",
+          isPassword ? "Sembunyikan password" : "Tampilkan password",
+        );
       });
 
       loginForm.addEventListener("submit", (e) => {

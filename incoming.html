@@ -22,57 +22,109 @@
           <div class="flex items-center justify-between">
             <div>
               <div class="flex items-center gap-2">
-                <img src="assets/logo/logo.svg" alt="Heat Treatment" class="icon icon-xl">
-                <h1 class="ht-sidebar-brand">Heat Treatment</h1>
+                <img
+                  src="assets/logo/logo baru.svg"
+                  alt="PT CHUNETSU INDONESIA"
+                  class="sidebar-logo"
+                />
+                <div class="ht-sidebar-brand">
+                  <span class="brand-sub">Heat Treatment of</span>
+                  <span class="brand-name">PT CHUNETSU INDONESIA</span>
+                </div>
               </div>
               <p class="brand-subtitle">Sistem Informasi Produksi</p>
             </div>
           </div>
         </div>
         <nav class="ht-sidebar-nav">
-          <a href="index.html" class="ht-nav-link"
-            ><img src="assets/icons/dashboard.svg" alt="Dashboard" class="icon"> Dashboard</a
-          >
-          <div class="pt-2">
-            <p class="ht-nav-section-title">Master Data</p>
+          <div class="nav-section">
+            <a href="index.html" class="ht-nav-link">
+              <img
+                src="assets/icons/dashboard.svg"
+                alt="Dashboard"
+                class="sidebar-menu-icon"
+              />
+              Dashboard
+            </a>
           </div>
-          <a href="customer.html" class="ht-nav-link"
-            ><img src="assets/icons/customer.svg" alt="Customer" class="icon"> Customer</a
-          >
-          <a href="part.html" class="ht-nav-link"
-            ><img src="assets/icons/part.svg" alt="Part" class="icon"> Part</a
-          >
-          <a href="incoming.html" class="ht-nav-link active"
-            ><img src="assets/icons/incoming.svg" alt="Incoming" class="icon"> Incoming</a
-          >
-          <div class="pt-2">
-            <p class="ht-nav-section-title">Produksi</p>
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Master Data</p>
+            <a href="customer.html" class="ht-nav-link">
+              <img
+                src="assets/icons/customer.svg"
+                alt="Customer"
+                class="sidebar-menu-icon"
+              />
+              Customer
+            </a>
+            <a href="part.html" class="ht-nav-link">
+              <img src="assets/icons/part.svg" alt="Part" class="sidebar-menu-icon" /> Part
+            </a>
+            <a href="incoming.html" class="ht-nav-link active">
+              <img
+                src="assets/icons/incoming.svg"
+                alt="Incoming"
+                class="sidebar-menu-icon"
+              />
+              Incoming
+            </a>
           </div>
-          <a href="heat-treatment.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production.svg" alt="Heat Treatment" class="icon"> Heat Treatment</a
-          >
-          <a href="shotblast.html" class="ht-nav-link sub"
-            ><img src="assets/icons/production.svg" alt="Shotblast" class="icon"> Shotblast</a
-          >
-          <a href="anti-rust.html" class="ht-nav-link sub"
-            ><img src="assets/icons/process.svg" alt="Anti Rust" class="icon"> Anti Rust</a
-          >
-          <a href="qc.html" class="ht-nav-link"
-            ><img src="assets/icons/quality-control.svg" alt="Quality Control" class="icon"> Quality Control</a
-          >
-          <a href="delivery.html" class="ht-nav-link"
-            ><img src="assets/icons/delivery.svg" alt="Delivery" class="icon"> Delivery</a
-          >
-          <a href="tracking.html" class="ht-nav-link"
-            ><img src="assets/icons/tracking.svg" alt="Tracking" class="icon"> Tracking</a
-          >
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Produksi</p>
+            <a href="heat-treatment.html" class="ht-nav-link sub">
+              <img
+                src="assets/icons/production.svg"
+                alt="Heat Treatment"
+                class="sidebar-menu-icon"
+              />
+              Heat Treatment
+            </a>
+            <a href="shotblast.html" class="ht-nav-link sub">
+              <img
+                src="assets/icons/production.svg"
+                alt="Shotblast"
+                class="sidebar-menu-icon"
+              />
+              Shotblast
+            </a>
+            <a href="anti-rust.html" class="ht-nav-link sub">
+              <img
+                src="assets/icons/process.svg"
+                alt="Anti Rust"
+                class="sidebar-menu-icon"
+              />
+              Anti Rust
+            </a>
+            <a href="qc.html" class="ht-nav-link">
+              <img
+                src="assets/icons/quality-control.svg"
+                alt="Quality Control"
+                class="sidebar-menu-icon"
+              />
+              Quality Control
+            </a>
+            <a href="delivery.html" class="ht-nav-link">
+              <img
+                src="assets/icons/delivery.svg"
+                alt="Delivery"
+                class="sidebar-menu-icon"
+              />
+              Delivery
+            </a>
+            <a href="tracking.html" class="ht-nav-link">
+              <img
+                src="assets/icons/tracking.svg"
+                alt="Tracking"
+                class="sidebar-menu-icon"
+              />
+              Tracking
+            </a>
+          </div>
         </nav>
         <div class="ht-sidebar-footer">
           <div class="ht-user-panel">
             <div class="ht-user-info">
-            <div class="ht-user-avatar" id="sidebarInitial">
-                A
-              </div>
+              <div class="ht-user-avatar" id="sidebarInitial">A</div>
               <div class="ht-user-details">
                 <p class="ht-user-name" id="sidebarName">Admin User</p>
                 <p class="ht-user-role" id="sidebarRole">Administrator</p>
@@ -87,7 +139,7 @@
               title="Logout"
               aria-label="Logout"
             >
-              <img src="assets/icons/logout.svg" alt="Logout" class="icon">
+              <img src="assets/icons/logout.svg" alt="Logout" class="sidebar-menu-icon" />
             </button>
           </div>
         </div>
@@ -98,15 +150,25 @@
             <h1>Data Incoming</h1>
             <p>Pencatatan material masuk.</p>
           </div>
-          <div class="ht-header-actions">
-            <button
-              id="refreshBtn"
-              onclick="refreshData()"
-              class="ht-btn ht-btn-secondary ht-btn-sm"
-              aria-label="Refresh"
-            >
-              <img src="assets/icons/refresh.svg" alt="Refresh" class="icon mr-1" id="refreshIcon"> <span id="refreshText">Refresh</span>
-            </button>
+          <div class="ht-header-right">
+            <span class="ht-header-date" id="currentDate"></span>
+
+            <div class="ht-header-actions">
+              <button
+                id="refreshBtn"
+                onclick="refreshData()"
+                class="ht-btn ht-btn-secondary ht-btn-sm"
+                aria-label="Refresh"
+              >
+                <img
+                  src="assets/icons/refresh.svg"
+                  alt="Refresh"
+                  class="icon mr-1"
+                  id="refreshIcon"
+                />
+                <span id="refreshText">Refresh</span>
+              </button>
+            </div>
           </div>
         </header>
         <div class="ht-content">
@@ -119,7 +181,9 @@
                 <input type="hidden" id="incId" />
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="incCustomer">Customer</label>
+                    <label class="ht-form-label" for="incCustomer"
+                      >Customer</label
+                    >
                     <select
                       id="incCustomer"
                       required
@@ -128,7 +192,9 @@
                     ></select>
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="incPart">Nomor Part</label>
+                    <label class="ht-form-label" for="incPart"
+                      >Nomor Part</label
+                    >
                     <select
                       id="incPart"
                       required
@@ -139,7 +205,9 @@
                 </div>
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="incNamaPart">Nama Part</label>
+                    <label class="ht-form-label" for="incNamaPart"
+                      >Nama Part</label
+                    >
                     <input
                       type="text"
                       id="incNamaPart"
@@ -148,7 +216,9 @@
                     />
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="incBeratPart">Berat Part</label>
+                    <label class="ht-form-label" for="incBeratPart"
+                      >Berat Part</label
+                    >
                     <input
                       type="text"
                       id="incBeratPart"
@@ -202,7 +272,9 @@
                     />
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="incStatusPart">Status Part</label>
+                    <label class="ht-form-label" for="incStatusPart"
+                      >Status Part</label
+                    >
                     <select id="incStatusPart" required class="ht-form-select">
                       <option value="">Pilih Status</option>
                       <option value="Masspro">Masspro</option>
@@ -217,7 +289,9 @@
                 </div>
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="incProcessType">Jenis Proses</label>
+                    <label class="ht-form-label" for="incProcessType"
+                      >Jenis Proses</label
+                    >
                     <select
                       id="incProcessType"
                       required
@@ -236,8 +310,7 @@
                   </div>
                   <div class="ht-form-group">
                     <label class="ht-form-label" for="incQty"
-                      >Qty Part
-                      <span class="ht-required">(Manual)</span></label
+                      >Qty Part <span class="ht-required">(Manual)</span></label
                     >
                     <input
                       type="number"
@@ -265,7 +338,9 @@
                 </div>
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="incBeratTotal">Berat Total Part</label>
+                    <label class="ht-form-label" for="incBeratTotal"
+                      >Berat Total Part</label
+                    >
                     <input
                       type="text"
                       id="incBeratTotal"
@@ -289,7 +364,9 @@
                   </div>
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label" for="incTanggal">Tanggal Incoming</label>
+                  <label class="ht-form-label" for="incTanggal"
+                    >Tanggal Incoming</label
+                  >
                   <input
                     type="date"
                     id="incTanggal"
@@ -298,7 +375,9 @@
                   />
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label" for="incKeterangan">Keterangan</label>
+                  <label class="ht-form-label" for="incKeterangan"
+                    >Keterangan</label
+                  >
                   <textarea
                     id="incKeterangan"
                     rows="2"
@@ -317,7 +396,11 @@
                       class="ht-btn ht-btn-success ht-btn-sm"
                       aria-label="Simpan incoming"
                     >
-                      <img src="assets/icons/save.svg" alt="Simpan" class="icon mr-2">Simpan Incoming
+                      <img
+                        src="assets/icons/save.svg"
+                        alt="Simpan"
+                        class="icon mr-2"
+                      />Simpan Incoming
                     </button>
                     <button
                       type="button"
@@ -335,7 +418,8 @@
               <div class="ht-search-bar">
                 <input
                   type="text"
-                  id="searchIncoming" aria-label="Search Incoming"
+                  id="searchIncoming"
+                  aria-label="Search Incoming"
                   placeholder="Search Incoming..."
                   oninput="renderTable()"
                   class="ht-form-input"
@@ -359,9 +443,9 @@
                       <th>Status Part</th>
                       <th>Qty</th>
                       <th>Berat Total</th>
-                       <th>Jenis Proses</th>
-                       <th>Rute Proses</th>
-                       <th>Diinput Oleh</th>
+                      <th>Jenis Proses</th>
+                      <th>Rute Proses</th>
+                      <th>Diinput Oleh</th>
                       <th>Tanggal Incoming</th>
                       <th>Aksi</th>
                     </tr>
@@ -375,7 +459,7 @@
       </main>
     </div>
 
-    <!-- Save Result Modal -->
+    <!-- Modal Simpan Hasil -->
     <div id="saveResultModal" class="ht-modal-overlay">
       <div class="ht-modal">
         <div class="ht-modal-header">
@@ -385,7 +469,7 @@
             class="ht-modal-close"
             aria-label="Close"
           >
-            <img src="assets/icons/close.svg" alt="Close" class="icon">
+            <img src="assets/icons/close.svg" alt="Close" class="icon" />
           </button>
         </div>
         <div class="ht-modal-body">
@@ -400,13 +484,21 @@
             onclick="downloadSaveQR()"
             class="ht-btn ht-btn-secondary ht-btn-sm"
           >
-            <img src="assets/icons/download.svg" alt="Download QR" class="icon mr-1">Download QR
+            <img
+              src="assets/icons/download.svg"
+              alt="Download QR"
+              class="icon mr-1"
+            />Download QR
           </button>
           <button
             onclick="printSaveQR()"
             class="ht-btn ht-btn-secondary ht-btn-sm"
           >
-            <img src="assets/icons/print.svg" alt="Print" class="icon mr-1">Print
+            <img
+              src="assets/icons/print.svg"
+              alt="Print"
+              class="icon mr-1"
+            />Print
           </button>
           <button
             onclick="closeSaveResult()"
@@ -418,13 +510,13 @@
       </div>
     </div>
 
-    <!-- QR Modal -->
+    <!-- Modal QR -->
     <div id="qrModal" class="ht-modal-overlay">
       <div class="ht-modal">
         <div class="ht-modal-header">
           <h3 class="ht-modal-title">QR Code</h3>
           <button onclick="closeQR()" class="ht-modal-close" aria-label="Close">
-            <img src="assets/icons/close.svg" alt="Close" class="icon">
+            <img src="assets/icons/close.svg" alt="Close" class="icon" />
           </button>
         </div>
         <div class="ht-modal-body">
@@ -438,10 +530,18 @@
             onclick="downloadQR()"
             class="ht-btn ht-btn-secondary ht-btn-sm"
           >
-            <img src="assets/icons/download.svg" alt="Download" class="icon mr-1">Download
+            <img
+              src="assets/icons/download.svg"
+              alt="Download"
+              class="icon mr-1"
+            />Download
           </button>
           <button onclick="printQR()" class="ht-btn ht-btn-secondary ht-btn-sm">
-            <img src="assets/icons/print.svg" alt="Print" class="icon mr-1">Print
+            <img
+              src="assets/icons/print.svg"
+              alt="Print"
+              class="icon mr-1"
+            />Print
           </button>
           <button onclick="closeQR()" class="ht-btn ht-btn-secondary ht-btn-sm">
             Tutup
@@ -453,6 +553,7 @@
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/date-format.js"></script>
     <script>
       if (!HTUI.requireAuth()) {
         throw new Error("redirecting");
@@ -567,7 +668,12 @@
       }
       function renderProcessRoute(route) {
         if (!route || typeof route !== "object") {
-          route = { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false };
+          route = {
+            heat_treatment: true,
+            qc_check: true,
+            shotblast: false,
+            anti_rust: false,
+          };
         }
         const steps = [
           { key: "heat_treatment", label: "Heat Treatment" },
@@ -612,9 +718,15 @@
           const processTypeFinal =
             processType === "Lainnya" ? processNote || "Lainnya" : processType;
           const selectedPart = DB.findPartById(pid);
-          const partRoute = selectedPart && selectedPart.standard_process_route
-            ? selectedPart.standard_process_route
-            : { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false };
+          const partRoute =
+            selectedPart && selectedPart.standard_process_route
+              ? selectedPart.standard_process_route
+              : {
+                  heat_treatment: true,
+                  qc_check: true,
+                  shotblast: false,
+                  anti_rust: false,
+                };
           const processRoute = {
             heat_treatment: true,
             qc_check: true,
@@ -643,7 +755,7 @@
               .value.trim(),
             tracking_id: "",
             qr_code: kode,
-            status_proses: "Waiting",
+            status_proses: DB.STATUSES.PROSES_WAITING,
             process_route: processRoute,
           };
           if (document.getElementById("incId").value) {
@@ -700,7 +812,7 @@
             <td class="">${m.process_type || "-"}</td>
             <td class="text-secondary">${renderProcessRoute(m.process_route)}</td>
             <td class="">${m.diinput_oleh || "-"}</td>
-            <td class="">${m.tanggal_masuk || "-"}</td>
+            <td class="">${formatDateLong(m.tanggal_masuk)}</td>
             <td class="">
               <div class="ht-action-group">
                 <button onclick="editMaterial(${m.id})" class="ht-action-btn edit" title="Edit" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>
@@ -714,12 +826,15 @@
           .join("");
         document.getElementById("incomingTable").innerHTML =
           html ||
-            '<tr><td colspan="16" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Tidak ada data ditemukan.</p></td></tr>';
+          '<tr><td colspan="16" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Tidak ada data ditemukan.</p></td></tr>';
       }
       function getProcessColor(s) {
-        if (s === "Process") return "ht-badge-process";
-        if (s === "Finish") return "ht-badge-finish";
-        if (s === "Waiting") return "ht-badge-waiting";
+        if (s === DB.STATUSES.PROSES_PROCESS || s === DB.STATUSES.PROD_PROCESS)
+          return "ht-badge-process";
+        if (s === DB.STATUSES.PROSES_FINISH || s === DB.STATUSES.PROD_FINISH)
+          return "ht-badge-finish";
+        if (s === DB.STATUSES.PROSES_WAITING || s === DB.STATUSES.PROD_WAITING)
+          return "ht-badge-waiting";
         return "ht-badge-waiting";
       }
       function editMaterial(id) {
@@ -828,6 +943,7 @@
       window.addEventListener("DOMContentLoaded", () => {
         DB.init();
         DB.migrate();
+        HTDateFormat.init();
         loadCustomerDropdown();
         loadPartDropdown(null);
         renderTable();
@@ -835,3 +951,4 @@
     </script>
   </body>
 </html>
+

@@ -1,11 +1,11 @@
 /* ============================================================
-   HT-UI — Shared UI utilities for Heat Treatment system.
-   Provides: auth guard, modal open/close, toast notifications,
-   QR scanner lifecycle, and form helper utilities.
+   HT-UI — Utilitas UI bersama untuk sistem Heat Treatment.
+   Menyediakan: guard otentikasi, buka/tutup modal, notifikasi toast,
+   siklus hidup pemindai QR, dan utilitas formulir.
    ============================================================ */
 
 const HTUI = {
-  /* ---- Auth guard ---- */
+  /* ---- Guard otentikasi ---- */
   requireAuth() {
     if (typeof Auth === "undefined") return false;
     Auth.initDefaultUser();
@@ -21,29 +21,16 @@ const HTUI = {
       if (initial) initial.textContent = Auth.getInitials(session.name);
       if (name) name.textContent = session.name;
       if (role) role.textContent = session.role;
+      const welcomeEl = document.getElementById("userNameDisplay");
+      if (welcomeEl) welcomeEl.textContent = session.name;
     }
     return true;
   },
 
-  /* ---- Date ---- */
-  initDate() {
-    const el = document.getElementById("currentDate");
-    if (!el) return;
-    const render = () => {
-      const now = new Date();
-      const options = {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      };
-      el.textContent = now.toLocaleDateString("id-ID", options);
-    };
-    render();
-    setInterval(render, 60000);
-  },
+  /* ---- Tanggal ---- */
+  /* initDate() dihapus — gunakan HTDateFormat.init() dari date-format.js. */
 
-  /* ---- Modals ---- */
+  /* ---- Modal ---- */
   openModal(modalId) {
     const modal =
       typeof modalId === "string"
@@ -100,7 +87,7 @@ const HTUI = {
     }, duration);
   },
 
-  /* ---- QR Scanner lifecycle ---- */
+  /* ---- Siklus hidup pemindai QR ---- */
   createScanner(elementId) {
     if (!window.Html5Qrcode) {
       this.toast("Kamera tidak tersedia di browser ini.", "error");
@@ -149,7 +136,7 @@ const HTUI = {
     }
   },
 
-  /* ---- Utility ---- */
+  /* ---- Utilitas ---- */
   parseScanId(text) {
     if (text && text.includes("id=")) {
       return text.split("id=")[1].split("&")[0];
@@ -164,11 +151,12 @@ const HTUI = {
   },
 };
 
-/* ---- Global bootstrap ---- */
+/* ---- Bootstrap global ---- */
 (function () {
-  /* Opened straight from disk (no web server): external SVGs used as CSS
-     masks are blocked by CORS, which hides masked icons. This class lets
-     css/icons.css fall back to a scoped filter. Inert over http(s). */
+  /* Dibuka langsung dari disk (tanpa server web): SVG eksternal yang dipakai
+     sebagai mask CSS diblokir oleh CORS, yang menyembunyikan ikon yang
+     di-mask. Kelas ini memungkinkan css/icons.css beralih ke filter
+     yang termasuk cakupannya. Tidak aktif saat HTTP(S). */
   if (location.protocol === "file:") {
     document.documentElement.classList.add("ht-file-protocol");
   }

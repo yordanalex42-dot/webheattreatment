@@ -1,16 +1,16 @@
 /* ============================================================
-   COMPONENTS — Card, KPI, modal, toast, step, QR, empty,
-   timeline, folder tree, stepper, header button, login,
-   info grid, search bar, badge, button, form, tooltip,
-   skeleton, loading overlay, error state.
+   KOMPONEN — Kartu, KPI, modal, toast, langkah, QR, kosong,
+   linimasa, pohon folder, stepper, tombol header, login,
+   grid info, bilah pencarian, lencana, tombol, formulir,
+   k tooltips, keleton, overlay pemuatan, status kesalahan.
 
-   Industrial Premium design language:
-   Habanero as signature accent, Deep Space Royal as structural
-   primary, Deadly Depths for text, gradients used elegantly.
+    Bahasa desain modern:
+    Biru (#2563eb) sebagai primer, permukaan putih bersih,
+    bayangan samar, aksen biru-harul.
    ============================================================ */
 
 /* ============================================================
-   CARD
+   KARTU
    ============================================================ */
 
 .ht-card {
@@ -60,24 +60,8 @@
 }
 
 /* ============================================================
-   KPI CARD
+   KARTU KPI
    ============================================================ */
-
-.ht-kpi-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 20px 22px;
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-sm);
-  border-left: 4px solid var(--primary);
-  min-height: 100px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  animation: kpiEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
 
 .kpiEntranceDelay1 { animation-delay: 0.05s; }
 .kpiEntranceDelay2 { animation-delay: 0.10s; }
@@ -90,34 +74,11 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.ht-kpi-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-.ht-kpi-card:focus-within {
-  box-shadow: var(--focus-ring-blue);
-}
-
-.ht-kpi-card.primary { border-left-color: var(--primary); }
-.ht-kpi-card.success { border-left-color: var(--success); }
-.ht-kpi-card.warning { border-left-color: var(--warning); }
-.ht-kpi-card.danger { border-left-color: var(--danger); }
-.ht-kpi-card.info { border-left-color: var(--info); }
-.ht-kpi-card.habanero { border-left-color: var(--habanero); }
-
-.ht-kpi-card.habanero .ht-kpi-value {
-  color: var(--habanero-hover);
-}
-
 .ht-kpi-label {
   font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 500;
   color: var(--text-secondary);
-  font-weight: 600;
-  margin-bottom: 8px;
-  line-height: 1.3;
+  margin-bottom: 6px;
 }
 
 .ht-kpi-value {
@@ -149,83 +110,8 @@
   position: relative;
 }
 
-/* Icon tile for KPI — positioned in bottom-right */
-.ht-kpi-card::before {
-  content: "";
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-lg);
-  background: var(--primary-soft);
-  border: 1px solid rgba(34, 51, 130, 0.15);
-  opacity: 0.8;
-}
-
-.ht-kpi-card.primary::before { background: rgba(34, 51, 130, 0.08); }
-.ht-kpi-card.info::before { background: rgba(154, 172, 216, 0.12); }
-.ht-kpi-card.warning::before { background: rgba(245, 158, 11, 0.10); }
-.ht-kpi-card.success::before { background: rgba(16, 185, 129, 0.10); }
-.ht-kpi-card.danger::before { background: rgba(239, 68, 68, 0.10); }
-.ht-kpi-card.habanero::before { background: rgba(249, 133, 19, 0.12); }
-
-.ht-kpi-card .ht-kpi-icon {
-  position: absolute;
-  right: 27px;
-  bottom: 27px;
-  z-index: 1;
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-  flex-shrink: 0;
-  opacity: 0.9;
-  color: var(--primary);
-  transition: color var(--transition-sm);
-}
-
-.ht-kpi-card.primary .ht-kpi-icon { color: var(--primary); }
-.ht-kpi-card.info .ht-kpi-icon { color: var(--info-text); }
-.ht-kpi-card.warning .ht-kpi-icon { color: var(--warning-text); }
-.ht-kpi-card.success .ht-kpi-icon { color: var(--success-text); }
-.ht-kpi-card.danger .ht-kpi-icon { color: var(--danger-text); }
-.ht-kpi-card.habanero .ht-kpi-icon { color: var(--habanero); }
-
-.ht-kpi-card:hover .ht-kpi-icon { filter: brightness(1.15); }
-
-/* KPI text container */
-.ht-kpi-card .ht-kpi-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-width: 0;
-}
-
-.ht-kpi-card .ht-kpi-label {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-}
-
-.ht-kpi-card .ht-kpi-value {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.1;
-  color: var(--text-primary);
-}
-
-.ht-kpi-card .ht-kpi-unit {
-  display: block;
-  margin-top: 3px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  letter-spacing: 0.02em;
-}
-
 /* ============================================================
-   DASHBOARD GRID
+   GRID DASHBOARD
    ============================================================ */
 
 .ht-dashboard-grid {
@@ -240,7 +126,7 @@
 }
 
 /* ============================================================
-   INFO GRID (read-only)
+   GRID INFO (hanya-baca)
    ============================================================ */
 
 .ht-info-grid {
@@ -296,12 +182,12 @@
 }
 
 .ht-info-value.hardness {
-  color: var(--habanero);
+  color: var(--primary);
   font-size: 14px;
 }
 
 /* ============================================================
-   FOLDER TREES (Part)
+   POHON FOLDER (Part)
    ============================================================ */
 
 .ht-folder-tree {
@@ -330,12 +216,12 @@
 }
 
 .ht-tree-node.active {
-  background: rgba(249, 133, 19, 0.08);
-  color: var(--habanero);
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary);
 }
 
 .ht-tree-node.active .icon {
-  color: var(--habanero);
+  color: var(--primary);
 }
 
 .ht-tree-node i,
@@ -353,7 +239,7 @@
 }
 
 /* ============================================================
-   TIMELINE (Tracking)
+   LINIMASANA (Tracking)
    ============================================================ */
 
 .ht-timeline {
@@ -369,14 +255,14 @@
   margin-bottom: 8px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--habanero);
+  border-left: 3px solid var(--primary);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-sm);
 }
 
 .ht-timeline-item.completed { border-left-color: var(--success); }
-.ht-timeline-item.active { border-left-color: var(--habanero); }
+.ht-timeline-item.active { border-left-color: var(--primary); }
 .ht-timeline-item.ng { border-left-color: var(--danger); }
 
 .ht-timeline-item:hover {
@@ -418,8 +304,8 @@
 }
 
 .ht-timeline-dot.active {
-  background: var(--habanero);
-  box-shadow: 0 0 0 2px var(--habanero-soft);
+  background: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-soft);
   color: #ffffff;
 }
 
@@ -506,7 +392,7 @@
 .ht-step-card.warning { border-left-color: var(--warning); }
 .ht-step-card.success { border-left-color: var(--success); }
 .ht-step-card.danger { border-left-color: var(--danger); }
-.ht-step-card.info { border-left-color: var(--habanero); }
+.ht-step-card.info { border-left-color: var(--primary); }
 
 .ht-step-indicator {
   display: flex;
@@ -558,7 +444,7 @@
 
 .ht-step.active:not(:last-child)::after,
 .ht-step.completed:not(:last-child)::after {
-  background: var(--habanero);
+  background: var(--primary);
 }
 
 .ht-step .step-icon {
@@ -584,7 +470,7 @@
 
 .ht-step.active .step-icon,
 .ht-step.completed .step-icon {
-  border-color: var(--habanero);
+  border-color: var(--primary);
   background: var(--gradient-primary);
   color: #ffffff;
 }
@@ -680,7 +566,7 @@
 }
 
 /* ============================================================
-   EMPTY STATE / ERROR STATE
+   STATUS KOSONG / STATUS KESALAHAN
    ============================================================ */
 
 .ht-empty-state {
@@ -722,7 +608,7 @@
 }
 
 /* ============================================================
-   TOOLTIP
+   KRITIKUM (TOOLTIP)
    ============================================================ */
 
 [data-tooltip] {
@@ -771,7 +657,7 @@
 }
 
 /* ============================================================
-   TOAST / NOTIFICATION
+   TOAST / NOTIFIKASI
    ============================================================ */
 
 .ht-toast-container {
@@ -857,11 +743,11 @@
 
 .ht-toast.info {
   background: var(--gradient-primary);
-  border-color: rgba(249, 133, 19, 0.3);
+  border-color: rgba(37, 99, 235, 0.3);
 }
 
 /* ============================================================
-   BUTTONS
+   TOMBOL
    ============================================================ */
 
 .ht-btn {
@@ -894,23 +780,23 @@
   pointer-events: none;
 }
 
-/* Primary — gradient Habanero → Deep Space Royal */
+/* Primer — gradien Navy dalam */
 .ht-btn-primary {
   background: var(--gradient-primary);
   color: var(--text-inverse);
-  border-color: var(--habanero);
-  box-shadow: 0 2px 8px rgba(249, 133, 19, 0.25);
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 .ht-btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(249, 133, 19, 0.30);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.30);
   filter: brightness(1.03);
 }
 
 .ht-btn-primary:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 6px rgba(249, 133, 19, 0.20);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.20);
 }
 
 .ht-btn-primary:focus-visible {
@@ -918,18 +804,18 @@
   box-shadow: var(--focus-ring);
 }
 
-/* Secondary — Deep Space Royal solid */
+/* Sekunder — biru penuh */
 .ht-btn-secondary {
   background: var(--primary);
   color: var(--text-inverse);
   border-color: var(--primary);
-  box-shadow: 0 2px 8px rgba(34, 51, 130, 0.15);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
 }
 
 .ht-btn-secondary:hover {
   background: var(--primary-hover);
   border-color: var(--primary-hover);
-  box-shadow: 0 4px 16px rgba(34, 51, 130, 0.20);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.20);
   transform: translateY(-1px);
 }
 
@@ -937,7 +823,7 @@
   transform: translateY(0) scale(0.98);
 }
 
-/* Secondary outline variant — transparent with border */
+/* Varian outline sekunder — transparan dengan batas */
 .ht-btn-secondary-outlined {
   background: transparent;
   color: var(--primary);
@@ -949,7 +835,7 @@
   border-color: var(--primary);
 }
 
-/* Success — green gradient */
+/* Sukses — gradien hijau */
 .ht-btn-success {
   background: linear-gradient(135deg, #059669 0%, #10b981 100%);
   color: var(--text-inverse);
@@ -967,7 +853,7 @@
   transform: translateY(0) scale(0.98);
 }
 
-/* Danger — red gradient */
+/* Bahaya — gradien merah */
 .ht-btn-danger {
   background: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
   color: var(--text-inverse);
@@ -985,7 +871,7 @@
   transform: translateY(0) scale(0.98);
 }
 
-/* Warning — amber gradient */
+/* Peringatan — gradien amber */
 .ht-btn-warning {
   background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);
   color: var(--text-primary);
@@ -1003,7 +889,7 @@
   transform: translateY(0) scale(0.98);
 }
 
-/* Ghost — transparent with subtle hover */
+/* Ghost — transparan dengan hover samar */
 .ht-btn-ghost {
   background: transparent;
   color: var(--text-secondary);
@@ -1021,7 +907,7 @@
   box-shadow: var(--focus-ring);
 }
 
-/* Size variants */
+/* Varian ukuran */
 .ht-btn-sm {
   padding: 5px 12px;
   font-size: 12px;
@@ -1043,7 +929,7 @@
   height: 18px;
 }
 
-/* Loading state */
+/* Status pemuatan */
 .ht-btn-loading {
   pointer-events: none;
   opacity: 0.85;
@@ -1056,7 +942,7 @@
 .ht-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(17, 17, 68, 0.55);
+   background: rgba(37, 99, 235, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1175,7 +1061,7 @@
 }
 
 /* ============================================================
-   ALERT
+   PEMBERITAHUAN (ALERT)
    ============================================================ */
 
 .ht-alert {
@@ -1217,11 +1103,11 @@
 .ht-alert-info {
   background: var(--info-bg);
   color: var(--info-text);
-  border-color: rgba(154, 172, 216, 0.3);
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 /* ============================================================
-   HEADER ACTION BUTTONS
+   TOMBOL AKSI HEADER
    ============================================================ */
 
 .ht-header-btn {
@@ -1251,7 +1137,7 @@
 }
 
 /* ============================================================
-   LOADING OVERLAY
+   OVERLAY PEMBATUAN
    ============================================================ */
 
 .ht-loading-overlay {
@@ -1271,13 +1157,13 @@
   width: 40px;
   height: 40px;
   border: 3px solid var(--border);
-  border-top-color: var(--habanero);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 /* ============================================================
-   CARD HEADER WITH ACTIONS
+   HEADER KARTU DENGAN AKSI
    ============================================================ */
 
 .ht-card-header-with-actions {
@@ -1289,7 +1175,7 @@
 }
 
 /* ============================================================
-   SEARCH / FILTER BAR
+   BILAH PENCARIAN / FILTER
    ============================================================ */
 
 .ht-search-bar {
@@ -1307,16 +1193,16 @@
 }
 
 /* ============================================================
-   DETAIL PART COMPONENT
+   KOMPONEN DETAIL PART
    ============================================================ */
 
-/* Override ht-alert's flex display — detail content needs block layout */
+/* Ganti tampilan flex ht-alert — konten detail butuh tata letak blok */
 #partDetail.ht-alert {
   display: block;
   padding: 16px;
 }
 
-/* Detail header — title + action buttons */
+/* Header detail — judul + tombol aksi */
 .ht-detail-header {
   display: flex;
   align-items: center;
@@ -1331,7 +1217,7 @@
   color: var(--text-primary);
 }
 
-/* Detail grid — 2-column label/value pairs */
+/* Grid detail — pasangan label/nilai 2-kolom */
 .ht-detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1362,7 +1248,7 @@
   font-family: inherit;
 }
 
-/* Detail section — process route */
+/* Bagian detail — rute proses */
 .ht-detail-section {
   margin-top: 12px;
 }
@@ -1376,7 +1262,7 @@
   margin: 0 0 8px;
 }
 
-/* Process route display */
+/* Tampilan rute proses */
 .ht-process-route {
   display: flex;
   flex-wrap: wrap;
@@ -1395,7 +1281,7 @@
   font-size: 14px;
 }
 
-/* ===== Responsive: stack to single column on mobile ===== */
+/* ===== Responasif: susun menjadi kolom tunggal pada mobile ===== */
 @media (max-width: 768px) {
   .ht-detail-grid {
     grid-template-columns: 1fr;
@@ -1404,9 +1290,201 @@
 }
 
 /* ============================================================
-   REDUCED MOTION
+   TEKS KESALAHAN — kesalahan validasi inline
    ============================================================ */
 
+.ht-error-text {
+  color: var(--danger-text);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   RINGKASAN INFO — kartu status proses (HT, Shotblast, Anti-Rust)
+   ============================================================ */
+
+.ht-info-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  animation: cardEntrance 200ms ease-out both;
+}
+
+.ht-info-summary .font-semibold {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.ht-info-summary + .ht-info-summary {
+  margin-top: 16px;
+}
+
+/* ============================================================
+   GRID RIWAYAT — item riwayat proses
+   ============================================================ */
+
+.ht-history-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.ht-history-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  transition: all var(--transition-sm);
+}
+
+.ht-history-item:hover {
+  background: var(--surface-hover);
+}
+
+.ht-history-item .ht-badge {
+  font-size: 9px;
+  padding: 3px 8px;
+}
+
+/* ============================================================
+   KOMPONEN KARTU LANGKAH
+   ============================================================ */
+
+.ht-step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ht-step-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ht-step-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ht-step-form .ht-form-row {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* ============================================================
+   POHON FOLDER — penjelajah part
+   ============================================================ */
+
+.ht-tree-folder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ht-tree-folder:hover {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.ht-tree-folder .icon {
+  color: var(--primary);
+}
+
+.ht-folder-count {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--surface-muted);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.ht-folder-arrow {
+  transition: transform var(--transition-sm);
+}
+
+/* ============================================================
+   KODE BAR — kode display + action buttons
+   ============================================================ */
+
+.ht-kode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.ht-kode-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.ht-kode-display {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.025em;
+  word-break: break-all;
+}
+
+/* ============================================================
+   QR DISPLAY — QR code output container
+   ============================================================ */
+
+.ht-qr-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.ht-qr-display .qrcode canvas,
+.ht-qr-display canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================================
+   GERAKAN REDUCED
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .ht-card,
   .ht-kpi-card,
