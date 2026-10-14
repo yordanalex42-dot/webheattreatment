@@ -1013,7 +1013,7 @@ const HTDashboard = {
 
       return `<tr class="hover:bg-slate-50 transition">
         <td class="px-3 py-2">${start + idx + 1}</td>
-        <td class="px-3 py-2 font-mono" style="color: var(--primary); font-weight: 600;"${title(nomorKode)}>${nomorKode}</td>
+        <td class="px-3 py-2 font-mono" style="color: var(--primary);"${title(nomorKode)}>${nomorKode}</td>
         <td class="px-3 py-2"${title(customerName)}>${customerName}</td>
         <td class="px-3 py-2 font-mono"${title(nomorPart)}>${nomorPart}</td>
         <td class="px-3 py-2"${title(namaPart)}>${namaPart}</td>

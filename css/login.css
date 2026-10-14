@@ -65,8 +65,8 @@
   gap: 16px;
 }
 
-.ht-login-brand-logo-icon {
-  width: 70px;
+.ht-login-brand-logo .icon {
+  width: 56px;
   height: 56px;
   flex-shrink: 0;
 }

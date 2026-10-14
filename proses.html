@@ -822,7 +822,7 @@
 
         var scanTime = new Date().toISOString().slice(0, 19);
         var data = {
-          status: DB.STATUSES.PROD_FINISH,
+          status: rOK ? DB.STATUSES.PROD_FINISH : DB.STATUSES.PROD_FINISH_NG,
           production_status: rOK
             ? DB.STATUSES.PROD_FINISH
             : DB.STATUSES.PROD_FINISH_NG,

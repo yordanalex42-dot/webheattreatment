@@ -256,7 +256,7 @@
 
 .ht-kpi-card .ht-kpi-value {
   font-size: 32px;
-  font-weight: 800;
+  font-weight: var(--font-weight-bold);
   line-height: 1.1;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
@@ -416,7 +416,7 @@
 .ht-donut-value {
   display: block;
   font-size: 42px;
-  font-weight: 800;
+  font-weight: var(--font-weight-bold);
   line-height: 1;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;

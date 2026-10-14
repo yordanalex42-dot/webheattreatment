@@ -110,17 +110,18 @@
    kelas .sidebar-logo dan .sidebar-menu-icon.
    ============================================================ */
 
-/* Logo sidebar - ukuran tetap 36px, putih secara default */
+/* Logo sidebar - logo resmi berwarna asli, dirender sebagai <img> native.
+   Logo "logo baru.svg" berwarna biru-merah-putih (latar rect putih + path
+   biru #07306B + merah #E51B2B), sehingga tidak boleh dipaksa jadi mask
+   (mask luminance akan jadi "kotak putih"). Pintar warna aslinya dipertahankan. */
 .sidebar-logo {
   width: 50px;
   height: 50px;
-  color: #ffffff;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
+  color: inherit;
+  background-color: transparent;
+  -webkit-mask-image: none;
+  mask-image: none;
+  filter: none;
 }
 
 /* Ikon menu sidebar - ukuran tetap 22px, mewarisi warna teks induk */
@@ -136,17 +137,21 @@
   mask-size: contain;
 }
 
-/* Cat hitam pusat siluet yang di-mask dengan warna saat ini */
-.sidebar-logo,
+/* Cat latar belakang dengan warna saat ini untuk ikon menu mono warna saja
+   (logo resmi berwarna tidak menggunakan mask) */
 .sidebar-menu-icon {
   background-color: currentColor;
   filter: brightness(0) invert(1);
 }
 
-/* ---- Aset logo dan ikon menu sidebar (peta mask) ---- */
+/* ---- Aset logo dan ikon menu sidebar (peta mask) ----
+   Logo resmi: mask dimatikan agar warna biru-merah-putihnya tampil asli
+   (jika dipaksa mask, rect putih latar_logo akan tertampil sebagai kotak putih). */
 .sidebar-logo[src$="logo baru.svg"] {
-  -webkit-mask-image: url("../assets/logo/logo baru.svg");
-  mask-image: url("../assets/logo/logo baru.svg");
+  -webkit-mask-image: none;
+  mask-image: none;
+  background-color: transparent;
+  filter: none;
 }
 .sidebar-menu-icon[src$="dashboard.svg"] {
   -webkit-mask-image: url("../assets/icons/dashboard.svg");
@@ -206,8 +211,7 @@
   (mask-image: url("../assets/icons/dashboard.svg")) or
     (-webkit-mask-image: url("../assets/icons/dashboard.svg"))
 ) {
-  .sidebar-logo,
-  .sidebar-menu-icon {
+   .sidebar-menu-icon {
     background-color: transparent;
     filter: brightness(0) invert(1);
   }
@@ -233,9 +237,9 @@
   background-color: transparent !important;
 }
 
-/* Di sidebar gelap dan pada tombol berwarna, ikon harus tetap terang,
-   jadi kontext-konteks ini membalik stroke yang sudah tersedia ke putih. */
-.ht-file-protocol .sidebar-logo,
+/* Di sidebar gelap dan pada tombol berwarna, ikon menu harus tetap terang,
+   jadi ikon menu mono yang di-mask dibalik ke putih. Logo resmi tidak termasuk
+   (logo berwarna tetap asli, termasuk pada protokol file:). */
 .ht-file-protocol .sidebar-menu-icon,
 .ht-file-protocol .ht-login-actions .ht-btn .icon,
 .ht-file-protocol .ht-btn-primary .icon,

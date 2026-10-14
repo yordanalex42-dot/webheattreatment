@@ -14,6 +14,157 @@
     <link rel="stylesheet" href="css/forms.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
+    <style>
+      /* ===== Searchable dropdown (combobox) — Incoming form ===== */
+      .ht-search-select {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+      }
+      .ht-search-select .ht-search-input {
+        padding-right: 36px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 12px;
+      }
+      .ht-search-select .ht-search-listbox {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        max-height: 224px;
+        overflow-y: auto;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-top: none;
+        border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+        box-shadow: var(--shadow-md);
+        margin-top: -1px;
+      }
+      .ht-search-select .ht-search-listbox .ht-search-item {
+        padding: 8px 12px;
+        font-size: 13px;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .ht-search-select .ht-search-listbox .ht-search-item:hover,
+      .ht-search-select .ht-search-listbox .ht-search-item.ht-search-active {
+        background: var(--primary-light);
+        color: var(--primary-hover);
+        font-weight: 600;
+      }
+      .ht-search-select .ht-search-listbox .ht-search-item.ht-search-disabled {
+        color: var(--text-tertiary);
+        font-style: italic;
+        cursor: default;
+      }
+
+      /* ===== Incoming page: centered add button ===== */
+      .ht-add-btn-center {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+      }
+      .ht-btn-add-incoming {
+        background: #2563eb;
+        color: #ffffff;
+        font-weight: 600;
+        padding: 12px 32px;
+        font-size: 15px;
+        border-radius: var(--radius-md);
+        border: none;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+        transition:
+          background-color 0.15s ease,
+          transform 0.02s ease;
+      }
+      .ht-btn-add-incoming:hover {
+        background: #1d4ed8;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+      }
+      .ht-btn-add-incoming:active {
+        transform: translateY(0) scale(0.98);
+      }
+      .ht-btn-add-incoming:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+      }
+      .ht-btn-add-incoming .icon {
+        width: 20px;
+        height: 20px;
+        color: #ffffff;
+        filter: brightness(0) invert(1);
+      }
+
+      /* ===== Incoming form modal ===== */
+      .incoming-modal-width {
+        max-width: 800px;
+        max-height: 88vh;
+      }
+
+      /* Ikon putih pada tombol sekunder di modal QR Code */
+      #qrModal .ht-btn-secondary .icon,
+      #saveResultModal .ht-btn-secondary .icon {
+        filter: brightness(0) invert(1);
+      }
+
+      /* Alignment: Nomor Kode di kiri, tombol di kanan, same row */
+      #formModalOverlay .ht-modal-footer .ht-kode-bar {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 0;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+      }
+      #formModalOverlay .ht-modal-footer .ht-kode-bar .ht-kode-info {
+        flex: 0 0 auto;
+      }
+
+      /* ===== Incoming table: scroll + spacing + sticky header ===== */
+      .incoming-table-wrapper {
+        max-height: 60vh;
+        overflow: auto;
+        border-radius: var(--radius-lg);
+      }
+      .incoming-table-wrapper .ht-table {
+        font-size: 13px;
+        min-width: max-content;
+      }
+      .incoming-table-wrapper .ht-table th {
+        padding: 12px 16px;
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        background: var(--surface-hover);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        white-space: nowrap;
+      }
+      .incoming-table-wrapper .ht-table td {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+      }
+      .incoming-table-wrapper .ht-table tbody tr:nth-child(even) {
+        background: var(--surface);
+      }
+      .incoming-table-wrapper .ht-table tbody tr:hover {
+        background: var(--surface-hover);
+      }
+      .incoming-table-wrapper .ht-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+    </style>
   </head>
   <body>
     <div class="ht-app-shell">
@@ -58,7 +209,12 @@
               Customer
             </a>
             <a href="part.html" class="ht-nav-link">
-              <img src="assets/icons/part.svg" alt="Part" class="sidebar-menu-icon" /> Part
+              <img
+                src="assets/icons/part.svg"
+                alt="Part"
+                class="sidebar-menu-icon"
+              />
+              Part
             </a>
             <a href="incoming.html" class="ht-nav-link active">
               <img
@@ -139,7 +295,11 @@
               title="Logout"
               aria-label="Logout"
             >
-              <img src="assets/icons/logout.svg" alt="Logout" class="sidebar-menu-icon" />
+              <img
+                src="assets/icons/logout.svg"
+                alt="Logout"
+                class="sidebar-menu-icon"
+              />
             </button>
           </div>
         </div>
@@ -171,264 +331,328 @@
             </div>
           </div>
         </header>
+        <div class="ht-add-btn-center">
+          <button
+            id="toggleFormBtn"
+            onclick="toggleForm()"
+            class="ht-btn-add-incoming"
+            aria-label="Tambah Incoming"
+          >
+            <img
+              src="assets/icons/add.svg"
+              alt="+"
+              class="icon mr-1"
+              id="formBtnIcon"
+            />
+            <span id="formBtnText">Tambah Incoming</span>
+          </button>
+        </div>
         <div class="ht-content">
           <div class="ht-content-max">
-            <div id="formSection" class="ht-card fade-in">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title" id="formTitle">Tambah Incoming</h3>
-              </div>
-              <form id="incomingForm" class="ht-form">
-                <input type="hidden" id="incId" />
-                <div class="ht-form-row">
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incCustomer"
-                      >Customer</label
-                    >
-                    <select
-                      id="incCustomer"
-                      required
-                      class="ht-form-select"
-                      onchange="onCustomerChange()"
-                    ></select>
-                  </div>
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incPart"
-                      >Nomor Part</label
-                    >
-                    <select
-                      id="incPart"
-                      required
-                      class="ht-form-select"
-                      onchange="onPartChange()"
-                    ></select>
-                  </div>
-                </div>
-                <div class="ht-form-row">
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incNamaPart"
-                      >Nama Part</label
-                    >
-                    <input
-                      type="text"
-                      id="incNamaPart"
-                      readonly
-                      class="ht-form-input"
-                    />
-                  </div>
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incBeratPart"
-                      >Berat Part</label
-                    >
-                    <input
-                      type="text"
-                      id="incBeratPart"
-                      readonly
-                      class="ht-form-input"
-                    />
-                  </div>
-                </div>
-                <div class="ht-form-row">
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incSJ"
-                      >Nomor Surat Jalan
-                      <span class="ht-required">(Manual)</span></label
-                    >
-                    <input
-                      type="text"
-                      id="incSJ"
-                      required
-                      maxlength="100"
-                      class="ht-form-input"
-                      placeholder="SJ/ABC/2026/00125"
-                    />
-                  </div>
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incLot"
-                      >Lot No <span class="ht-required">(Manual)</span></label
-                    >
-                    <input
-                      type="text"
-                      id="incLot"
-                      required
-                      maxlength="100"
-                      class="ht-form-input"
-                      placeholder="LOT-A001"
-                    />
-                  </div>
-                </div>
-                <div class="ht-form-row">
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incCharge"
-                      >Material Charge
-                      <span class="ht-required">(Manual)</span></label
-                    >
-                    <input
-                      type="text"
-                      id="incCharge"
-                      required
-                      maxlength="100"
-                      class="ht-form-input"
-                      placeholder="CH001"
-                    />
-                  </div>
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incStatusPart"
-                      >Status Part</label
-                    >
-                    <select id="incStatusPart" required class="ht-form-select">
-                      <option value="">Pilih Status</option>
-                      <option value="Masspro">Masspro</option>
-                      <option value="Trial">Trial</option>
-                      <option value="Part Awal 1">Part Awal 1</option>
-                      <option value="Part Awal 2">Part Awal 2</option>
-                      <option value="Part Awal 3">Part Awal 3</option>
-                      <option value="Part Awal 4">Part Awal 4</option>
-                      <option value="Part Awal 5">Part Awal 5</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="ht-form-row">
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incProcessType"
-                      >Jenis Proses</label
-                    >
-                    <select
-                      id="incProcessType"
-                      required
-                      class="ht-form-select"
-                      onchange="toggleProcessNote()"
-                    >
-                      <option value="">Pilih Jenis Proses</option>
-                      <option value="Heat Treatment">Heat Treatment</option>
-                      <option value="Annealing">Annealing</option>
-                      <option value="Hardening">Hardening</option>
-                      <option value="Tempering">Tempering</option>
-                      <option value="Carburizing">Carburizing</option>
-                      <option value="Normalizing">Normalizing</option>
-                      <option value="Lainnya">Lainnya</option>
-                    </select>
-                  </div>
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incQty"
-                      >Qty Part <span class="ht-required">(Manual)</span></label
-                    >
-                    <input
-                      type="number"
-                      id="incQty"
-                      required
-                      min="1"
-                      class="ht-form-input"
-                      placeholder="Jumlah"
-                      oninput="calcBeratTotal()"
-                    />
-                  </div>
-                </div>
-                <div id="processNoteGroup" class="hidden ht-form-group">
-                  <label class="ht-form-label" for="incProcessNote"
-                    >Keterangan Jenis Proses
-                    <span class="ht-required">(Manual)</span></label
+            <div
+              id="formModalOverlay"
+              class="ht-modal-overlay"
+              aria-hidden="true"
+            >
+              <div class="ht-modal incoming-modal-width">
+                <div class="ht-modal-header">
+                  <h3 class="ht-modal-title" id="formTitle">Tambah Incoming</h3>
+                  <button
+                    type="button"
+                    onclick="hideForm()"
+                    class="ht-modal-close"
+                    aria-label="Close"
                   >
-                  <input
-                    type="text"
-                    id="incProcessNote"
-                    maxlength="200"
-                    class="ht-form-input"
-                    placeholder="Jelaskan jenis proses"
-                  />
-                </div>
-                <div class="ht-form-row">
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incBeratTotal"
-                      >Berat Total Part</label
-                    >
-                    <input
-                      type="text"
-                      id="incBeratTotal"
-                      readonly
-                      class="ht-form-input"
+                    <img
+                      src="assets/icons/close.svg"
+                      alt="Close"
+                      class="icon"
                     />
-                  </div>
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="incDiinputOleh"
-                      >Diinput Oleh
-                      <span class="ht-required">(Manual)</span></label
-                    >
-                    <input
-                      type="text"
-                      id="incDiinputOleh"
-                      required
-                      maxlength="100"
-                      class="ht-form-input"
-                      placeholder="Nama operator"
-                    />
+                  </button>
+                </div>
+                <div class="ht-modal-body">
+                  <form id="incomingForm" class="ht-form">
+                    <input type="hidden" id="incId" />
+                    <div class="ht-form-row">
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incCustomerInput"
+                          >Customer</label
+                        >
+                        <div class="ht-search-select" id="incCustomerWrap">
+                          <input type="hidden" id="incCustomer" value="" />
+                          <input
+                            type="text"
+                            id="incCustomerInput"
+                            class="ht-form-input ht-search-input"
+                            placeholder="Cari Customer..."
+                            autocomplete="off"
+                          />
+                          <div class="ht-search-listbox hidden"></div>
+                        </div>
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incPartInput"
+                          >PART NAME &amp; PART NO</label
+                        >
+                        <div class="ht-search-select" id="incPartWrap">
+                          <input type="hidden" id="incPart" value="" />
+                          <input
+                            type="text"
+                            id="incPartInput"
+                            class="ht-form-input ht-search-input"
+                            placeholder="Pilih Customer terlebih dahulu"
+                            autocomplete="off"
+                          />
+                          <div class="ht-search-listbox hidden"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="ht-form-row">
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incBeratPart"
+                          >Berat Part</label
+                        >
+                        <input
+                          type="text"
+                          id="incBeratPart"
+                          readonly
+                          class="ht-form-input"
+                        />
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incQty"
+                          >Qty Part
+                          <span class="ht-required">(Manual)</span></label
+                        >
+                        <input
+                          type="number"
+                          id="incQty"
+                          required
+                          min="1"
+                          class="ht-form-input"
+                          placeholder="Jumlah"
+                          oninput="calcBeratTotal()"
+                        />
+                      </div>
+                    </div>
+                    <div class="ht-form-row">
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incSJ"
+                          >Nomor Surat Jalan
+                          <span class="ht-required">(Manual)</span></label
+                        >
+                        <input
+                          type="text"
+                          id="incSJ"
+                          required
+                          maxlength="100"
+                          class="ht-form-input"
+                          placeholder="SJ/ABC/2026/00125"
+                        />
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incLot"
+                          >Lot No
+                          <span class="ht-required">(Manual)</span></label
+                        >
+                        <input
+                          type="text"
+                          id="incLot"
+                          required
+                          maxlength="100"
+                          class="ht-form-input"
+                          placeholder="LOT-A001"
+                        />
+                      </div>
+                    </div>
+                    <div class="ht-form-row">
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incCharge"
+                          >Material Charge
+                          <span class="ht-required">(Manual)</span></label
+                        >
+                        <input
+                          type="text"
+                          id="incCharge"
+                          required
+                          maxlength="100"
+                          class="ht-form-input"
+                          placeholder="CH001"
+                        />
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incStatusPart"
+                          >Status Part</label
+                        >
+                        <select
+                          id="incStatusPart"
+                          required
+                          class="ht-form-select"
+                        >
+                          <option value="">Pilih Status</option>
+                          <option value="Masspro">Masspro</option>
+                          <option value="Trial">Trial</option>
+                          <option value="Part Awal 1">Part Awal 1</option>
+                          <option value="Part Awal 2">Part Awal 2</option>
+                          <option value="Part Awal 3">Part Awal 3</option>
+                          <option value="Part Awal 4">Part Awal 4</option>
+                          <option value="Part Awal 5">Part Awal 5</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="ht-form-row">
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incProcessType"
+                          >Jenis Proses</label
+                        >
+                        <select
+                          id="incProcessType"
+                          disabled
+                          class="ht-form-select"
+                        >
+                          <option value="">Diisi otomatis dari Part</option>
+                          <option value="Quenching &amp; Tempering">
+                            Quenching &amp; Tempering
+                          </option>
+                          <option value="Annealing">Annealing</option>
+                          <option value="Carburizing">Carburizing</option>
+                          <option value="Normalizing">Normalizing</option>
+                          <option value="Full Annealing">Full Annealing</option>
+                          <option value="Stress Relief Annealing">
+                            Stress Relief Annealing
+                          </option>
+                          <option value="Spheroidizing Annealing">
+                            Spheroidizing Annealing
+                          </option>
+                        </select>
+                        <span id="incProcessTypeHint" class="ht-hint"></span>
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incBeratTotal"
+                          >Berat Total Part</label
+                        >
+                        <input
+                          type="text"
+                          id="incBeratTotal"
+                          readonly
+                          class="ht-form-input"
+                        />
+                      </div>
+                    </div>
+                    <div id="processNoteGroup" class="hidden ht-form-group">
+                      <label class="ht-form-label" for="incProcessNote"
+                        >Keterangan Jenis Proses
+                        <span class="ht-required">(Manual)</span></label
+                      >
+                      <input
+                        type="text"
+                        id="incProcessNote"
+                        maxlength="200"
+                        class="ht-form-input"
+                        placeholder="Jelaskan jenis proses"
+                      />
+                    </div>
+                    <div class="ht-form-row">
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incDiinputOleh"
+                          >Diinput Oleh
+                          <span class="ht-required">(Manual)</span></label
+                        >
+                        <input
+                          type="text"
+                          id="incDiinputOleh"
+                          required
+                          maxlength="100"
+                          class="ht-form-input"
+                          placeholder="Nama operator"
+                        />
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="incTanggal"
+                          >Tanggal Incoming</label
+                        >
+                        <input
+                          type="date"
+                          id="incTanggal"
+                          required
+                          class="ht-form-input"
+                          onchange="updateKodePreview()"
+                        />
+                      </div>
+                    </div>
+                    <div class="ht-form-group">
+                      <label class="ht-form-label" for="incKeterangan"
+                        >Keterangan</label
+                      >
+                      <textarea
+                        id="incKeterangan"
+                        rows="2"
+                        class="ht-form-input ht-form-textarea"
+                        placeholder="Optional"
+                      ></textarea>
+                    </div>
+                  </form>
+                </div>
+                <div class="ht-modal-footer">
+                  <div class="ht-kode-bar">
+                    <div class="ht-kode-info">
+                      <p class="ht-info-label">Nomor Kode</p>
+                      <p class="ht-kode-display" id="incKodeDisplay">-</p>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        type="submit"
+                        form="incomingForm"
+                        class="ht-btn ht-btn-success ht-btn-sm"
+                        aria-label="Simpan incoming"
+                      >
+                        <img
+                          src="assets/icons/save.svg"
+                          alt="Simpan"
+                          class="icon mr-2"
+                        />Simpan Incoming
+                      </button>
+                      <button
+                        type="button"
+                        onclick="hideForm()"
+                        class="ht-btn ht-btn-secondary ht-btn-sm"
+                      >
+                        Batal
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="incTanggal"
-                    >Tanggal Incoming</label
-                  >
-                  <input
-                    type="date"
-                    id="incTanggal"
-                    required
-                    class="ht-form-input"
-                  />
-                </div>
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="incKeterangan"
-                    >Keterangan</label
-                  >
-                  <textarea
-                    id="incKeterangan"
-                    rows="2"
-                    class="ht-form-input ht-form-textarea"
-                    placeholder="Optional"
-                  ></textarea>
-                </div>
-                <div class="ht-kode-bar">
-                  <div class="ht-kode-info">
-                    <p class="ht-info-label">Nomor Kode</p>
-                    <p class="ht-kode-display" id="incKodeDisplay">-</p>
-                  </div>
-                  <div class="flex gap-2">
-                    <button
-                      type="submit"
-                      class="ht-btn ht-btn-success ht-btn-sm"
-                      aria-label="Simpan incoming"
-                    >
-                      <img
-                        src="assets/icons/save.svg"
-                        alt="Simpan"
-                        class="icon mr-2"
-                      />Simpan Incoming
-                    </button>
-                    <button
-                      type="button"
-                      onclick="resetForm()"
-                      class="ht-btn ht-btn-secondary ht-btn-sm"
-                    >
-                      Reset
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-
-            <div id="searchSection" class="ht-card fade-in">
-              <div class="ht-search-bar">
-                <input
-                  type="text"
-                  id="searchIncoming"
-                  aria-label="Search Incoming"
-                  placeholder="Search Incoming..."
-                  oninput="renderTable()"
-                  class="ht-form-input"
-                />
               </div>
             </div>
 
             <div class="ht-card fade-in">
-              <div class="ht-table-wrapper">
+              <div class="ht-card-header ht-card-header-with-actions">
+                <h3 class="ht-card-title">Data Incoming</h3>
+                <div class="flex items-center gap-2">
+                  <span class="ht-info-label">Per halaman:</span>
+                  <select
+                    id="pageSizeSelect"
+                    class="ht-form-select ht-form-select-sm w-auto"
+                    aria-label="Item per halaman"
+                  >
+                    <option value="14" selected>14</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                    <option value="all">Semua</option>
+                  </select>
+                </div>
+              </div>
+              <div class="ht-search-bar mb-3">
+                <input
+                  type="text"
+                  id="searchIncoming"
+                  aria-label="Search Incoming"
+                  placeholder="Cari: Nomor Kode, Customer, Nama Part, Nomor Part, Jenis Proses, Status..."
+                  oninput="onIncomingSearch()"
+                  class="ht-form-input"
+                />
+              </div>
+              <div class="ht-table-wrapper incoming-table-wrapper">
                 <table class="ht-table">
                   <thead>
                     <tr>
@@ -444,7 +668,6 @@
                       <th>Qty</th>
                       <th>Berat Total</th>
                       <th>Jenis Proses</th>
-                      <th>Rute Proses</th>
                       <th>Diinput Oleh</th>
                       <th>Tanggal Incoming</th>
                       <th>Aksi</th>
@@ -452,6 +675,50 @@
                   </thead>
                   <tbody id="incomingTable"></tbody>
                 </table>
+              </div>
+              <div
+                class="ht-pagination"
+                id="pagination"
+                role="navigation"
+                aria-label="Pagination"
+              >
+                <div class="ht-pagination-info">
+                  Menampilkan <span id="pageInfo">0-0</span> dari
+                  <span id="totalItems">0</span> data
+                </div>
+                <div class="ht-pagination-controls">
+                  <button
+                    id="prevPage"
+                    class="ht-btn ht-btn-ghost ht-btn-sm"
+                    aria-label="Halaman sebelumnya"
+                    disabled
+                  >
+                    <img
+                      src="assets/icons/chevron-left.svg"
+                      alt="Sebelumnya"
+                      class="icon mr-1"
+                    />
+                    Sebelumnya
+                  </button>
+                  <div
+                    id="pageNumbers"
+                    class="flex gap-1"
+                    aria-label="Nomor halaman"
+                  ></div>
+                  <button
+                    id="nextPage"
+                    class="ht-btn ht-btn-ghost ht-btn-sm"
+                    aria-label="Halaman selanjutnya"
+                    disabled
+                  >
+                    Selanjutnya
+                    <img
+                      src="assets/icons/chevron-right.svg"
+                      alt="Selanjutnya"
+                      class="icon ml-1"
+                    />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -560,29 +827,125 @@
       }
       let currentQRId = null;
       let html5QrCode = null;
-      function generateKode(tanggalMasuk) {
-        const date = new Date(tanggalMasuk);
-        const year = date.getFullYear();
-        const monthLetters = [
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "F",
-          "G",
-          "H",
-          "I",
-          "J",
-          "K",
-          "L",
-        ];
-        const monthLetter = monthLetters[date.getMonth()];
-        const sameYear = DB.get("materials").filter(
-          (m) => new Date(m.tanggal_masuk).getFullYear() === year,
-        );
-        const seq = String(sameYear.length + 1).padStart(4, "0");
-        return year + seq + monthLetter;
+
+      const incomingPageState = {
+        currentPage: 1,
+        pageSize: 14,
+      };
+
+      function getFilteredIncoming() {
+        const search = document
+          .getElementById("searchIncoming")
+          .value.toLowerCase();
+        let data = DB.get("materials");
+        if (search) {
+          data = data.filter((m) => {
+            const c = DB.findCustomerById(m.customer_id);
+            const p = DB.findPartById(m.part_id);
+            return (
+              (m.kode && m.kode.toLowerCase().includes(search)) ||
+              (c &&
+                c.nama_customer &&
+                c.nama_customer.toLowerCase().includes(search)) ||
+              (p &&
+                p.nomor_part &&
+                p.nomor_part.toLowerCase().includes(search)) ||
+              (p &&
+                p.nama_part &&
+                p.nama_part.toLowerCase().includes(search)) ||
+              (m.process_type &&
+                m.process_type.toLowerCase().includes(search)) ||
+              (m.status_part && m.status_part.toLowerCase().includes(search)) ||
+              (m.nomor_surat_jalan &&
+                m.nomor_surat_jalan.toLowerCase().includes(search)) ||
+              (m.lot_no && m.lot_no.toLowerCase().includes(search)) ||
+              (m.material_charge &&
+                m.material_charge.toLowerCase().includes(search))
+            );
+          });
+        }
+        return data.slice().reverse();
+      }
+
+      function onIncomingSearch() {
+        incomingPageState.currentPage = 1;
+        renderTable();
+      }
+
+      function onPageSizeChange() {
+        incomingPageState.pageSize =
+          document.getElementById("pageSizeSelect").value;
+        incomingPageState.currentPage = 1;
+        renderTable();
+      }
+
+      let bodyOverflowCache = "";
+
+      function toggleForm() {
+        const overlay = document.getElementById("formModalOverlay");
+        if (overlay && overlay.classList.contains("active")) {
+          hideForm();
+        } else {
+          openForm();
+        }
+      }
+
+      function showForm() {
+        const overlay = document.getElementById("formModalOverlay");
+        if (overlay) {
+          overlay.classList.add("active");
+          overlay.setAttribute("aria-hidden", "false");
+        }
+        bodyOverflowCache = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        const btn = document.getElementById("toggleFormBtn");
+        const icon = document.getElementById("formBtnIcon");
+        const text = document.getElementById("formBtnText");
+        if (btn) {
+          btn.setAttribute("aria-label", "Tutup form");
+          if (icon) {
+            icon.src = "assets/icons/close.svg";
+            icon.alt = "Tutup";
+          }
+          if (text) text.textContent = "Tutup Form";
+        }
+      }
+
+      function hideForm() {
+        const overlay = document.getElementById("formModalOverlay");
+        if (overlay) {
+          overlay.classList.remove("active");
+          overlay.setAttribute("aria-hidden", "true");
+        }
+        document.body.style.overflow = bodyOverflowCache;
+        bodyOverflowCache = "";
+        const btn = document.getElementById("toggleFormBtn");
+        const icon = document.getElementById("formBtnIcon");
+        const text = document.getElementById("formBtnText");
+        if (btn) {
+          btn.setAttribute("aria-label", "Tambah Incoming");
+          if (icon) {
+            icon.src = "assets/icons/add.svg";
+            icon.alt = "Tambah";
+          }
+          if (text) text.textContent = "Tambah Incoming";
+        }
+      }
+      function updateKodePreview() {
+        const display = document.getElementById("incKodeDisplay");
+        if (!display) return;
+        const isEdit = !!document.getElementById("incId").value;
+        const tanggal = document.getElementById("incTanggal").value;
+        if (isEdit || !tanggal) {
+          display.textContent = "-";
+          return;
+        }
+        try {
+          display.textContent = "Pratinjau: " + DB.peekIncomingKode(tanggal);
+        } catch (e) {
+          display.textContent = "-";
+          HTUI.toast(e.message, "warning");
+        }
       }
       function refreshData() {
         const btn = document.getElementById("refreshBtn");
@@ -604,55 +967,365 @@
           HTUI.toast("Dashboard diperbaharui", "success");
         }, 200);
       }
+      /* ===== Searchable dropdown (combobox) — vanilla JS ===== */
+      let customerSelect = null;
+      let partSelect = null;
+      const OPEN_SEARCH_SELECTS = [];
+
+      class HTSearchSelect {
+        constructor(input, hidden, listbox, opts) {
+          this.input = input;
+          this.hidden = hidden;
+          this.listbox = listbox;
+          this.placeholder = opts.placeholder || "";
+          this.notFoundText = opts.notFoundText || "Tidak ditemukan";
+          this.items = [];
+          this.selected = null;
+          this.selectedIndex = -1;
+          this.open = false;
+          this.onSelect = opts.onSelect || null;
+          this.onClear = opts.onClear || null;
+          this.disabled = false;
+          this._filter = "";
+          this._bind();
+        }
+
+        _bind() {
+          const self = this;
+          this.input.addEventListener("focus", () => {
+            self._open();
+          });
+          this.input.addEventListener("input", () => {
+            const current = self.input.value;
+            if (self.selected && current !== self.selected.label) {
+              self.selected = null;
+              self.hidden.value = "";
+              if (self.onClear) self.onClear();
+            }
+            self._filter = current;
+            self.selectedIndex = -1;
+            self._renderList();
+          });
+          this.input.addEventListener("keydown", (e) => self._onKey(e));
+          this.input.addEventListener("blur", () => {
+            setTimeout(() => self._close(), 150);
+          });
+          this.hidden.value = "";
+        }
+
+        _match(item) {
+          return (
+            (item.label || "")
+              .toLowerCase()
+              .indexOf(this._filter.toLowerCase()) !== -1
+          );
+        }
+
+        _renderList() {
+          this.listbox.innerHTML = "";
+          const matches = this.items.filter((it) => this._match(it));
+          if (matches.length === 0) {
+            const no = document.createElement("div");
+            no.className = "ht-search-item ht-search-disabled";
+            no.textContent = this.notFoundText;
+            this.listbox.appendChild(no);
+            this.selectedIndex = -1;
+            return;
+          }
+          matches.forEach((it) => {
+            const div = document.createElement("div");
+            div.className = "ht-search-item";
+            div.textContent = it.label;
+            div.dataset.value = it.value;
+            div.addEventListener("mousedown", (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              this._choose(it);
+            });
+            this.listbox.appendChild(div);
+          });
+          this._highlight();
+        }
+
+        _highlight() {
+          const items = Array.from(this.listbox.children);
+          items.forEach((it, i) => {
+            it.classList.toggle("ht-search-active", i === this.selectedIndex);
+          });
+        }
+
+        _choose(it) {
+          this.selected = it;
+          this.hidden.value = it.value;
+          this.input.value = it.label;
+          this._close();
+          if (this.onSelect) this.onSelect(it);
+        }
+
+        _open() {
+          if (this.disabled) {
+            this.input.blur();
+            return;
+          }
+          OPEN_SEARCH_SELECTS.forEach((o) => {
+            if (o !== this) o._close();
+          });
+          this._filter = this.input.value;
+          this._renderList();
+          const items = Array.from(this.listbox.children).filter(
+            (c) =>
+              c.classList.contains("ht-search-item") &&
+              !c.classList.contains("ht-search-disabled"),
+          );
+          this.selectedIndex = items.length ? 0 : -1;
+          this._highlight();
+          this.listbox.classList.remove("hidden");
+          this.open = true;
+        }
+
+        _close() {
+          this.listbox.classList.add("hidden");
+          this.open = false;
+          this.selectedIndex = -1;
+        }
+
+        _onKey(e) {
+          if (this.disabled) return;
+          const items = Array.from(this.listbox.children).filter(
+            (c) =>
+              c.classList.contains("ht-search-item") &&
+              !c.classList.contains("ht-search-disabled"),
+          );
+          if (!this.open) {
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+              e.preventDefault();
+              this._open();
+            }
+            return;
+          }
+          const len = Math.max(items.length, 1);
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            this.selectedIndex = (this.selectedIndex + 1) % len;
+            this._highlight();
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            this.selectedIndex = (this.selectedIndex - 1 + len) % len;
+            this._highlight();
+          } else if (e.key === "Enter") {
+            e.preventDefault();
+            const it = items[this.selectedIndex];
+            if (it) {
+              const chosen = this.items.find(
+                (x) => String(x.value) === String(it.dataset.value),
+              );
+              if (chosen) this._choose(chosen);
+            }
+          } else if (e.key === "Escape") {
+            this._close();
+            this.input.blur();
+          }
+        }
+
+        setItems(arr) {
+          this.items = arr || [];
+          if (this.open) this._renderList();
+        }
+
+        setValue(id) {
+          const it = this.items.find((x) => String(x.value) === String(id));
+          if (it) {
+            this._choose(it);
+          } else {
+            this.selected = null;
+            this.hidden.value = id != null ? id : "";
+            this.input.value = "";
+          }
+        }
+
+        getValue() {
+          return this.hidden.value;
+        }
+
+        getSelected() {
+          return this.selected || null;
+        }
+
+        clear() {
+          this.selected = null;
+          this.hidden.value = "";
+          this.input.value = "";
+          this._close();
+        }
+
+        close() {
+          this._close();
+        }
+
+        disable() {
+          this.disabled = true;
+          this.input.disabled = true;
+        }
+
+        enable() {
+          this.disabled = false;
+          this.input.disabled = false;
+        }
+      }
+
+      function initSearchSelects() {
+        const cuWrap = document.getElementById("incCustomerWrap");
+        const puWrap = document.getElementById("incPartWrap");
+        if (cuWrap) {
+          customerSelect = new HTSearchSelect(
+            cuWrap.querySelector("input[type='text']"),
+            cuWrap.querySelector("input[type='hidden']"),
+            cuWrap.querySelector(".ht-search-listbox"),
+            {
+              placeholder: "Cari Customer...",
+              notFoundText: "Customer tidak ditemukan",
+              onSelect: onCustomerChange,
+              onClear: onCustomerClear,
+            },
+          );
+          OPEN_SEARCH_SELECTS.push(customerSelect);
+        }
+        if (puWrap) {
+          partSelect = new HTSearchSelect(
+            puWrap.querySelector("input[type='text']"),
+            puWrap.querySelector("input[type='hidden']"),
+            puWrap.querySelector(".ht-search-listbox"),
+            {
+              placeholder: "Cari Part...",
+              notFoundText: "Part tidak ditemukan",
+              onSelect: onPartChange,
+              onClear: onPartClear,
+            },
+          );
+          OPEN_SEARCH_SELECTS.push(partSelect);
+        }
+        document.addEventListener("click", closeSearchOnOutsideClick);
+      }
+
+      function closeSearchOnOutsideClick(e) {
+        const target = e.target;
+        if (
+          !target ||
+          !target.closest ||
+          !target.closest(".ht-search-select")
+        ) {
+          OPEN_SEARCH_SELECTS.forEach((s) => s._close());
+        }
+      }
+
       function loadCustomerDropdown() {
-        const sel = document.getElementById("incCustomer");
-        sel.innerHTML =
-          '<option value="">Pilih Customer</option>' +
-          DB.get("customers")
-            .map(
-              (c) =>
-                `<option value="${c.id}">${c.kode_customer} - ${c.nama_customer}</option>`,
-            )
-            .join("");
+        const items = DB.get("customers").map((c) => ({
+          value: c.id,
+          label: c.nama_customer,
+          data: c,
+        }));
+        if (customerSelect) customerSelect.setItems(items);
       }
       function loadPartDropdown(cid) {
-        const sel = document.getElementById("incPart");
         const parts = cid ? DB.getPartsByCustomer(cid) : [];
-        sel.innerHTML =
-          '<option value="">Pilih Part</option>' +
-          parts
-            .map(
-              (p) =>
-                `<option value="${p.id}" data-nama="${p.nama_part}" data-berat="${p.berat_part}" data-satuan="${p.satuan_berat}">${p.nomor_part} - ${p.nama_part}</option>`,
-            )
-            .join("");
+        const items = parts.map((p) => ({
+          value: p.id,
+          label: (p.nama_part || "") + " / " + (p.nomor_part || ""),
+          data: p,
+        }));
+        if (partSelect) {
+          partSelect.setItems(items);
+          if (cid) {
+            partSelect.enable();
+            partSelect.input.placeholder = "Cari Part...";
+          } else {
+            partSelect.clear();
+            partSelect.disable();
+            partSelect.input.placeholder = "Pilih Customer terlebih dahulu";
+          }
+        }
       }
-      function onCustomerChange() {
-        const cid = document.getElementById("incCustomer").value;
-        loadPartDropdown(cid || null);
-        document.getElementById("incNamaPart").value = "";
+      function resetPart() {
+        if (partSelect) partSelect.clear();
+        const cid = customerSelect ? customerSelect.getValue() : "";
+        const cidNum = cid ? parseInt(cid, 10) : null;
+        loadPartDropdown(cidNum);
+      }
+      function clearPartDependent() {
         document.getElementById("incBeratPart").value = "";
         document.getElementById("incBeratTotal").value = "";
+        setProcessTypeDisplay("");
+      }
+      function onCustomerClear() {
+        resetPart();
+        clearPartDependent();
+      }
+      function onCustomerChange() {
+        resetPart();
+        clearPartDependent();
+      }
+      function onPartClear() {
+        clearPartDependent();
+      }
+
+      function setProcessTypeDisplay(value) {
+        const sel = document.getElementById("incProcessType");
+        const hint = document.getElementById("incProcessTypeHint");
+        const canonical = DB.PROCESS_TYPE_OPTIONS || [];
+        let options = '<option value="">Diisi otomatis dari Part</option>';
+        canonical.forEach(function (v) {
+          options += `<option value="${v}">${v}</option>`;
+        });
+        if (value && canonical.indexOf(value) === -1) {
+          options += `<option value="${value}">${value}</option>`;
+        }
+        sel.innerHTML = options;
+        if (value && canonical.indexOf(value) !== -1) {
+          sel.value = value;
+        } else if (value) {
+          sel.value = value;
+        } else {
+          sel.value = "";
+        }
+        if (!value) {
+          hint.textContent = "Pilih Part terlebih dahulu.";
+          hint.className = "ht-hint";
+        } else {
+          hint.textContent = DB.isProcessTypeLegacy(value)
+            ? "Jenis Proses lama (" +
+              value +
+              ") belum termasuk daftar baru. Perbarui Master Part."
+            : "Diambil dari master Part.";
+          hint.className = "ht-hint";
+        }
       }
       function onPartChange() {
-        const sel = document.getElementById("incPart");
-        const opt = sel.options[sel.selectedIndex];
-        if (opt && opt.value) {
-          document.getElementById("incNamaPart").value = opt.dataset.nama || "";
+        const isEdit = !!document.getElementById("incId").value;
+        const item = partSelect ? partSelect.getSelected() : null;
+        if (item && item.value) {
+          const d = item.data;
           document.getElementById("incBeratPart").value =
-            (opt.dataset.berat || 0) + " " + (opt.dataset.satuan || "KG/PCS");
+            (d.berat_part || 0) + " " + (d.satuan_berat || "KG/PCS");
+          // Pada Incoming BARU, jenis proses diisi otomatis dari master Part.
+          // Pada EDIT, proses tetap menampilkan nilai histori yang tersimpan
+          // (tidak otomatis berubah meski master Part berubah).
+          if (!isEdit) {
+            setProcessTypeDisplay(d.process_type || "");
+          }
         } else {
-          document.getElementById("incNamaPart").value = "";
           document.getElementById("incBeratPart").value = "";
+          if (!isEdit) {
+            setProcessTypeDisplay("");
+          }
         }
         calcBeratTotal();
       }
       function calcBeratTotal() {
         const qty = parseFloat(document.getElementById("incQty").value) || 0;
-        const sel = document.getElementById("incPart");
-        const opt = sel.options[sel.selectedIndex];
-        const berat = opt && opt.value ? parseFloat(opt.dataset.berat) || 0 : 0;
-        const satuan = opt && opt.value ? opt.dataset.satuan : "KG/PCS";
+        const item = partSelect ? partSelect.getSelected() : null;
+        const d = item && item.value ? item.data : null;
+        const berat = d ? parseFloat(d.berat_part) || 0 : 0;
+        const satuan = d ? d.satuan_berat || "KG/PCS" : "KG/PCS";
         document.getElementById("incBeratTotal").value =
           (qty * berat).toLocaleString("id-ID") + " " + satuan;
       }
@@ -689,11 +1362,16 @@
         document.getElementById("formTitle").textContent = "Tambah Incoming";
         document.getElementById("incomingForm").reset();
         document.getElementById("incId").value = "";
-        document.getElementById("incKodeDisplay").textContent = "-";
         document.getElementById("incTanggal").valueAsDate = new Date();
+        updateKodePreview();
+        if (customerSelect) customerSelect.clear();
         loadCustomerDropdown();
         loadPartDropdown(null);
+        setProcessTypeDisplay("");
+        document.getElementById("incBeratPart").value = "";
+        document.getElementById("incBeratTotal").value = "";
         document.getElementById("processNoteGroup").classList.add("hidden");
+        showForm();
       }
       function resetForm() {
         openForm();
@@ -704,29 +1382,72 @@
           e.preventDefault();
           const cid = parseInt(document.getElementById("incCustomer").value);
           const pid = parseInt(document.getElementById("incPart").value);
-          if (!cid || !pid) {
-            HTUI.toast("Customer dan Part harus dipilih.", "error");
+          const selectedCustomer =
+            cid && customerSelect ? customerSelect.getSelected() : null;
+          const selectedPart =
+            pid && partSelect ? partSelect.getSelected() : null;
+          if (!selectedCustomer || !selectedPart) {
+            HTUI.toast(
+              "Customer dan Part harus dipilih dari daftar (bukan teks bebas).",
+              "error",
+            );
+            return;
+          }
+          const cidNum = parseInt(selectedCustomer.value, 10);
+          const pidNum = parseInt(selectedPart.value, 10);
+          const partRecord = DB.findPartById(pidNum);
+          if (!partRecord) {
+            HTUI.toast("Part yang dipilih tidak ditemukan.", "error");
+            return;
+          }
+          if (parseInt(partRecord.customer_id, 10) !== cidNum) {
+            HTUI.toast(
+              "Part yang dipilih tidak termasuk milik Customer yang dipilih.",
+              "error",
+            );
             return;
           }
           const qty = parseInt(document.getElementById("incQty").value);
           const tanggal = document.getElementById("incTanggal").value;
-          const kode = generateKode(tanggal);
-          const processType = document.getElementById("incProcessType").value;
-          const processNote = document
-            .getElementById("incProcessNote")
-            .value.trim();
-          const processTypeFinal =
-            processType === "Lainnya" ? processNote || "Lainnya" : processType;
-          const selectedPart = DB.findPartById(pid);
-          const partRoute =
-            selectedPart && selectedPart.standard_process_route
-              ? selectedPart.standard_process_route
-              : {
-                  heat_treatment: true,
-                  qc_check: true,
-                  shotblast: false,
-                  anti_rust: false,
-                };
+          const existingId = document.getElementById("incId").value;
+          const isEdit = !!existingId;
+          let kode;
+          let existingMat = null;
+          if (isEdit) {
+            existingMat = DB.find("materials", "id", existingId);
+            kode = existingMat && existingMat.kode ? existingMat.kode : "";
+          } else {
+            try {
+              kode = DB.nextIncomingKode(tanggal);
+            } catch (e) {
+              HTUI.toast(e.message, "error");
+              return;
+            }
+          }
+          let processTypeFinal = "";
+          if (isEdit) {
+            processTypeFinal = (existingMat && existingMat.process_type) || "";
+          } else {
+            processTypeFinal = DB.getPartProcessType(pidNum) || "";
+          }
+          if (!processTypeFinal) {
+            const partNum = partRecord.nomor_part || pidNum;
+            HTUI.toast(
+              "Part '" +
+                partNum +
+                "' belum memiliki Jenis Proses. Lengkapi Jenis Proses pada master Part terlebih dahulu.",
+              "error",
+            );
+            return;
+          }
+          const partRoute = partRecord.standard_process_route
+            ? partRecord.standard_process_route
+            : {
+                heat_treatment: true,
+                qc_check: true,
+                shotblast: false,
+                anti_rust: false,
+              };
           const processRoute = {
             heat_treatment: true,
             qc_check: true,
@@ -735,8 +1456,8 @@
           };
           const data = {
             kode,
-            customer_id: cid,
-            part_id: pid,
+            customer_id: cidNum,
+            part_id: pidNum,
             nomor_surat_jalan: document.getElementById("incSJ").value.trim(),
             lot_no: document.getElementById("incLot").value.trim(),
             material_charge: document.getElementById("incCharge").value.trim(),
@@ -770,35 +1491,29 @@
           showSaveResult(kode);
         });
       function renderTable() {
-        const search = document
-          .getElementById("searchIncoming")
-          .value.toLowerCase();
-        let data = DB.get("materials");
-        if (search) {
-          data = data.filter((m) => {
-            const c = DB.findCustomerById(m.customer_id);
-            const p = DB.findPartById(m.part_id);
-            return (
-              (m.nomor_surat_jalan &&
-                m.nomor_surat_jalan.toLowerCase().includes(search)) ||
-              (m.lot_no && m.lot_no.toLowerCase().includes(search)) ||
-              (m.material_charge &&
-                m.material_charge.toLowerCase().includes(search)) ||
-              (p && p.nomor_part.toLowerCase().includes(search)) ||
-              (p && p.nama_part.toLowerCase().includes(search)) ||
-              (c && c.nama_customer.toLowerCase().includes(search)) ||
-              (m.kode && m.kode.toLowerCase().includes(search))
-            );
-          });
+        const data = getFilteredIncoming();
+        const totalItems = data.length;
+
+        const pageSizeValue = incomingPageState.pageSize;
+        const isAll = pageSizeValue === "all";
+        const pageSize = isAll ? totalItems : parseInt(pageSizeValue, 10);
+        const totalPages =
+          pageSize === 0 ? 1 : Math.ceil(totalItems / pageSize);
+
+        if (incomingPageState.currentPage > totalPages) {
+          incomingPageState.currentPage = 1;
         }
-        const html = data
-          .slice()
-          .reverse()
+
+        const start = (incomingPageState.currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        const pageData = isAll ? data : data.slice(start, end);
+
+        const html = pageData
           .map((m, idx) => {
             const c = DB.findCustomerById(m.customer_id);
             const p = DB.findPartById(m.part_id);
             return `<tr class="ht-table-row">
-            <td class="">${idx + 1}</td>
+            <td class="">${start + idx + 1}</td>
             <td class=" font-mono">${m.kode || "-"}</td>
             <td class="">${(c && c.nama_customer) || "-"}</td>
             <td class="">${p ? p.nomor_part : "-"}</td>
@@ -810,7 +1525,6 @@
             <td class="">${m.qty || 0}</td>
             <td class="">${m.berat_total_part ? m.berat_total_part.toLocaleString("id-ID") : "-"}</td>
             <td class="">${m.process_type || "-"}</td>
-            <td class="text-secondary">${renderProcessRoute(m.process_route)}</td>
             <td class="">${m.diinput_oleh || "-"}</td>
             <td class="">${formatDateLong(m.tanggal_masuk)}</td>
             <td class="">
@@ -824,9 +1538,67 @@
           </tr>`;
           })
           .join("");
+
+        const search = document
+          .getElementById("searchIncoming")
+          .value.toLowerCase();
+        const emptyMsg = search
+          ? "Data Incoming tidak ditemukan."
+          : "Tidak ada data ditemukan.";
         document.getElementById("incomingTable").innerHTML =
           html ||
-          '<tr><td colspan="16" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Tidak ada data ditemukan.</p></td></tr>';
+          '<tr><td colspan="15" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>' +
+            emptyMsg +
+            "</p></td></tr>";
+
+        const totalItemsEl = document.getElementById("totalItems");
+        const pageInfoEl = document.getElementById("pageInfo");
+        if (totalItemsEl) totalItemsEl.textContent = totalItems;
+        const showingStart = totalItems > 0 ? start + 1 : 0;
+        const showingEnd = Math.min(end, totalItems);
+        if (pageInfoEl)
+          pageInfoEl.textContent = `${showingStart}-${showingEnd}`;
+
+        const pageNumbersEl = document.getElementById("pageNumbers");
+        if (pageNumbersEl) {
+          let pagesHtml = "";
+          const maxVisible = 5;
+          let startPage = Math.max(
+            1,
+            incomingPageState.currentPage - Math.floor(maxVisible / 2),
+          );
+          let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+          if (endPage - startPage + 1 < maxVisible) {
+            startPage = Math.max(1, endPage - maxVisible + 1);
+          }
+
+          for (let i = startPage; i <= endPage; i++) {
+            pagesHtml +=
+              '<button class="ht-btn ht-btn-sm ' +
+              (i === incomingPageState.currentPage
+                ? "ht-btn-primary"
+                : "ht-btn-ghost") +
+              '" data-page="' +
+              i +
+              '">' +
+              i +
+              "</button>";
+          }
+          pageNumbersEl.innerHTML = pagesHtml;
+          pageNumbersEl.querySelectorAll("button").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              incomingPageState.currentPage = parseInt(btn.dataset.page, 10);
+              renderTable();
+            });
+          });
+        }
+
+        const prevBtn = document.getElementById("prevPage");
+        const nextBtn = document.getElementById("nextPage");
+        if (prevBtn) prevBtn.disabled = incomingPageState.currentPage === 1;
+        if (nextBtn)
+          nextBtn.disabled = incomingPageState.currentPage >= totalPages;
       }
       function getProcessColor(s) {
         if (s === DB.STATUSES.PROSES_PROCESS || s === DB.STATUSES.PROD_PROCESS)
@@ -843,31 +1615,23 @@
         document.getElementById("formTitle").textContent = "Edit Incoming";
         document.getElementById("incId").value = m.id;
         loadCustomerDropdown();
-        document.getElementById("incCustomer").value = m.customer_id;
-        onCustomerChange();
-        setTimeout(() => {
-          document.getElementById("incPart").value = m.part_id;
-          onPartChange();
-          document.getElementById("incSJ").value = m.nomor_surat_jalan || "";
-          document.getElementById("incLot").value = m.lot_no || "";
-          document.getElementById("incCharge").value = m.material_charge || "";
-          document.getElementById("incStatusPart").value = m.status_part || "";
-          document.getElementById("incProcessType").value =
-            m.process_type || "";
-          document.getElementById("incDiinputOleh").value =
-            m.diinput_oleh || "";
-          document.getElementById("incQty").value = m.qty || 1;
-          calcBeratTotal();
-          document.getElementById("incTanggal").value = m.tanggal_masuk || "";
-          document.getElementById("incKeterangan").value = m.keterangan || "";
-          document.getElementById("incKodeDisplay").textContent =
-            "Kode: " + (m.kode || "");
-          if (m.process_type === "Lainnya") {
-            document
-              .getElementById("processNoteGroup")
-              .classList.remove("hidden");
-          }
-        }, 50);
+        // setValue memicu onCustomerChange -> memuat Part milik customer ini (sync)
+        if (customerSelect) customerSelect.setValue(m.customer_id);
+        // Part customer sudah termuat secara sinkron; pilih Part histori
+        if (partSelect) partSelect.setValue(m.part_id);
+        document.getElementById("incSJ").value = m.nomor_surat_jalan || "";
+        document.getElementById("incLot").value = m.lot_no || "";
+        document.getElementById("incCharge").value = m.material_charge || "";
+        document.getElementById("incStatusPart").value = m.status_part || "";
+        setProcessTypeDisplay(m.process_type || "");
+        document.getElementById("incDiinputOleh").value = m.diinput_oleh || "";
+        document.getElementById("incQty").value = m.qty || 1;
+        calcBeratTotal();
+        document.getElementById("incTanggal").value = m.tanggal_masuk || "";
+        document.getElementById("incKeterangan").value = m.keterangan || "";
+        document.getElementById("incKodeDisplay").textContent =
+          "Kode: " + (m.kode || "");
+        showForm();
       }
       function deleteMaterial(id) {
         if (confirm("Hapus data ini?")) {
@@ -923,6 +1687,7 @@
         });
         HTUI.openModal("saveResultModal");
         renderTable();
+        hideForm();
       }
       function closeSaveResult() {
         HTUI.closeModal("saveResultModal");
@@ -944,11 +1709,62 @@
         DB.init();
         DB.migrate();
         HTDateFormat.init();
+        initSearchSelects();
         loadCustomerDropdown();
         loadPartDropdown(null);
         renderTable();
+
+        const pageSizeSelect = document.getElementById("pageSizeSelect");
+        if (pageSizeSelect) {
+          pageSizeSelect.addEventListener("change", onPageSizeChange);
+        }
+
+        const prevBtn = document.getElementById("prevPage");
+        if (prevBtn) {
+          prevBtn.addEventListener("click", () => {
+            if (incomingPageState.currentPage > 1) {
+              incomingPageState.currentPage--;
+              renderTable();
+            }
+          });
+        }
+
+        const nextBtn = document.getElementById("nextPage");
+        if (nextBtn) {
+          nextBtn.addEventListener("click", () => {
+            const data = getFilteredIncoming();
+            const totalItems = data.length;
+            const pageSizeValue = incomingPageState.pageSize;
+            const isAll = pageSizeValue === "all";
+            const pageSize = isAll ? totalItems : parseInt(pageSizeValue, 10);
+            const totalPages =
+              pageSize === 0 ? 1 : Math.ceil(totalItems / pageSize);
+            if (incomingPageState.currentPage < totalPages) {
+              incomingPageState.currentPage++;
+              renderTable();
+            }
+          });
+        }
+
+        const formOverlay = document.getElementById("formModalOverlay");
+        if (formOverlay) {
+          formOverlay.addEventListener("click", (e) => {
+            if (e.target === formOverlay) {
+              hideForm();
+            }
+          });
+        }
+
+        document.addEventListener("keydown", (e) => {
+          if (
+            e.key === "Escape" &&
+            formOverlay &&
+            formOverlay.classList.contains("active")
+          ) {
+            hideForm();
+          }
+        });
       });
     </script>
   </body>
 </html>
-

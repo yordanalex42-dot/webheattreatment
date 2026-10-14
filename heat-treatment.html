@@ -157,51 +157,11 @@
         </header>
         <div class="ht-content">
           <div class="ht-content-max">
-            <!-- Stepper -->
-            <div class="ht-stepper" role="status" aria-label="Progress step">
-              <div class="ht-step">
-                <div class="step-icon">
-                  <img src="assets/icons/qr.svg" alt="Scan Kode" class="icon" />
-                </div>
-                <span class="step-label">Scan Kode</span>
-              </div>
-              <div class="ht-step">
-                <div class="step-icon">
-                  <img
-                    src="assets/icons/file.svg"
-                    alt="Data Part"
-                    class="icon"
-                  />
-                </div>
-                <span class="step-label">Data Part</span>
-              </div>
-              <div class="ht-step">
-                <div class="step-icon">
-                  <img
-                    src="assets/icons/factory.svg"
-                    alt="Proses"
-                    class="icon"
-                  />
-                </div>
-                <span class="step-label">Proses</span>
-              </div>
-              <div class="ht-step">
-                <div class="step-icon">
-                  <img
-                    src="assets/icons/check.svg"
-                    alt="Selesai"
-                    class="icon"
-                  />
-                </div>
-                <span class="step-label">Selesai</span>
-              </div>
-            </div>
-
             <!-- Pemindaian / Input -->
-            <div class="ht-card fade-in">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title">Scan QR / Input Kode</h3>
-              </div>
+             <div class="ht-card fade-in">
+               <div class="ht-card-header">
+                 <h3 class="ht-card-title">Scan QR / Input Kode</h3>
+               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="flex-1">
                   <div id="qr-reader" class="ht-qr-frame"></div>
@@ -239,309 +199,319 @@
                   ></p>
                 </div>
               </div>
-            </div>
+             </div>
 
-            <!-- Info Material & Status -->
-            <div id="materialSection" class="hidden ht-card fade-in mb-6">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title">Informasi Material</h3>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div class="ht-info-grid">
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Customer</span>
-                    <span class="ht-info-value" id="matCust">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Nomor Part</span>
-                    <span class="ht-info-value mono" id="matNoPart">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Nama Part</span>
-                    <span class="ht-info-value" id="matNamaPart">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Kode</span>
-                    <span class="ht-info-value mono" id="matKode">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Nomor SJ</span>
-                    <span class="ht-info-value mono" id="matSJ">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Lot No</span>
-                    <span class="ht-info-value mono" id="matLot">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Material Charge</span>
-                    <span class="ht-info-value mono" id="matCharge">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Qty</span>
-                    <span class="ht-info-value" id="matQty">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Berat Total</span>
-                    <span class="ht-info-value" id="matBeratTotal">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Status Part</span>
-                    <span class="ht-info-value" id="matStatusPart">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Jenis Proses</span>
-                    <span class="ht-info-value" id="matProcessType">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Jenis Treatment</span>
-                    <span class="ht-info-value" id="matTreatment">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Target Hardness</span>
-                    <span
-                      class="ht-info-value mono hardness"
-                      id="matTargetHardness"
-                      >-</span
-                    >
-                  </div>
-                </div>
-              </div>
+             <p class="ht-hint text-center mt-4">
+               Masukkan Nomor Kode material atau scan QR Code untuk melihat
+               detail proses Heat Treatment.
+             </p>
 
-              <!-- Status proses -->
-              <div class="ht-info-summary">
-                <h4 class="font-semibold">STATUS PROSES Heat Treatment</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">Status Produksi</span>
-                    <span class="font-medium" id="processStatus">-</span>
+             <!-- Modal: Stepper + Informasi Material & Status -->
+              <div id="htProcessModal" class="ht-modal-overlay" aria-hidden="true">
+                <div class="ht-modal ht-modal-width">
+                  <div class="ht-modal-header">
+                    <div class="ht-modal-header-title">
+                      <h3 class="ht-modal-title">Detail Proses Heat Treatment</h3>
+                      <p class="ht-modal-subtitle">Informasi material dan status proses</p>
+                    </div>
+                    <button
+                     type="button"
+                     onclick="closeHtModal()"
+                     class="ht-modal-close"
+                     aria-label="Close"
+                   >
+                     <img src="assets/icons/close.svg" alt="Close" class="icon" />
+                   </button>
                   </div>
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">Hasil Proses</span>
-                    <span class="font-medium" id="processResult">-</span>
-                  </div>
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">Operator Masuk</span>
-                    <span class="font-medium" id="processOperator">-</span>
-                  </div>
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">Waktu Masuk</span>
-                    <span class="font-medium mono" id="processStartTime"
-                      >-</span
-                    >
-                  </div>
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">Mesin</span>
-                    <span class="font-medium" id="processMachine">-</span>
-                  </div>
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">QC Status</span>
-                    <span class="font-medium" id="qcStatus">-</span>
-                  </div>
-                </div>
-                <p class="ht-hint mt-2" id="processNote"></p>
-              </div>
+                    <div class="ht-modal-body">
+                     <!-- Stepper -->
+                     <div class="ht-stepper" role="status" aria-label="Progress step">
+                       <div class="ht-step">
+                         <div class="step-icon">
+                           <img src="assets/icons/qr.svg" alt="Scan Kode" class="icon" />
+                         </div>
+                         <span class="step-label">Scan Kode</span>
+                       </div>
+                       <div class="ht-step">
+                         <div class="step-icon">
+                           <img src="assets/icons/file.svg" alt="Data Part" class="icon" />
+                         </div>
+                         <span class="step-label">Data Part</span>
+                       </div>
+                       <div class="ht-step">
+                         <div class="step-icon">
+                           <img src="assets/icons/factory.svg" alt="Proses" class="icon" />
+                         </div>
+                         <span class="step-label">Proses</span>
+                       </div>
+                       <div class="ht-step">
+                         <div class="step-icon">
+                           <img src="assets/icons/check.svg" alt="Selesai" class="icon" />
+                         </div>
+                         <span class="step-label">Selesai</span>
+                       </div>
+                     </div>
+                    <!-- Row 1: Informasi Material & Status Proses -->
+                    <div class="ht-modal-info-grid">
+                    <!-- Card kiri: Informasi Material -->
+                     <div id="materialSection" class="ht-card ht-card-info fade-in">
+                      <div class="ht-card-header">
+                        <h3 class="ht-card-title">Informasi Material</h3>
+                      </div>
+                      <div class="ht-info-grid ht-info-grid-cols-2">
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Kode</span>
+                          <span class="ht-info-value mono" id="matKode">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Customer</span>
+                          <span class="ht-info-value" id="matCust">-</span>
+                        </div>
+                        <div class="ht-info-item ht-info-item-wide">
+                          <span class="ht-info-label">Part Name &amp; Part No</span>
+                          <span class="ht-info-value" id="matPartInfo">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Lot No.</span>
+                          <span class="ht-info-value mono" id="matLot">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Material Charge</span>
+                          <span class="ht-info-value mono" id="matCharge">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Qty</span>
+                          <span class="ht-info-value" id="matQty">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Berat Total</span>
+                          <span class="ht-info-value" id="matBeratTotal">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Status</span>
+                          <span class="ht-info-value" id="matStatusPart">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Jenis Proses</span>
+                          <span class="ht-info-value" id="matProcessType">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Target Suhu</span>
+                          <span class="ht-info-value ht-info-value-big mono" id="matTargetTempBig">-</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Card kanan: Status Proses Heat Treatment -->
+                     <div class="ht-info-summary ht-card ht-card-info fade-in">
+                      <div class="ht-card-header">
+                        <h3 class="ht-card-title">Status Proses Heat Treatment</h3>
+                      </div>
+                      <div class="ht-info-grid ht-info-grid-cols-1">
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Nama Operator Proses</span>
+                          <span class="ht-info-value" id="processOperatorName">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Waktu Masuk Proses</span>
+                          <span class="ht-info-value mono" id="processStartTime">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Waktu Keluar Proses</span>
+                          <span class="ht-info-value mono" id="processEndTime">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Aktual Suhu</span>
+                          <span class="ht-info-value mono" id="processTemperature">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Hasil Visual</span>
+                          <span class="ht-info-value" id="processVisualResult">-</span>
+                        </div>
+                        <div class="ht-info-item ht-info-item-wide">
+                          <span class="ht-info-label">Keterangan</span>
+                          <span class="ht-info-value" id="processVisualNote">-</span>
+                        </div>
+                      </div>
+                    </div>
+                   </div>
 
-              <!-- Proses berikutnya -->
-              <div id="nextProcessCard" class="ht-alert ht-alert-info hidden">
-                <h4 class="font-semibold">Proses Berikutnya</h4>
-                <p class="text-sm">
-                  SET hasil:
-                  <span class="font-medium text-primary" id="nextProcessLabel"
-                    >-</span
-                  >
-                </p>
-              </div>
+                   <!-- Proses berikutnya -->
+                   <div id="nextProcessCard" class="ht-alert ht-alert-info hidden mb-4">
+                     <h4 class="font-semibold">Proses Berikutnya</h4>
+                     <p class="text-sm">
+                       SET hasil:
+                       <span class="font-medium text-primary" id="nextProcessLabel"
+                         >-</span
+                       >
+                     </p>
+                   </div>
 
-              <!-- Riwayat proses -->
-              <div class="ht-card-body">
-                <h4 class="font-semibold">Riwayat Proses</h4>
-                <div class="ht-history-grid" id="historyGrid">
-                  <span class="ht-hint">Memuat...</span>
-                </div>
-              </div>
-            </div>
+                    <!-- Row 2: Siap Masuk Proses & Pelaksanaan Proses -->
+                    <div class="ht-modal-action-grid">
+                    <!-- Siap Masuk Proses -->
+                     <div id="entrySection" class="ht-card ht-card-entry fade-in">
+                      <div class="ht-card-header">
+                        <h3 class="ht-card-title">SIAP MASUK PROSES</h3>
+                        <span class="ht-card-status">
+                          <span class="ht-step-indicator">
+                            <span class="dot dot-pending"></span>Belum diproses
+                          </span>
+                        </span>
+                        <span class="entry-lock-status hidden"></span>
+                      </div>
 
-            <!-- Formulir entri (Scan 1) -->
-            <div id="entrySection" class="hidden ht-step-card warning fade-in">
-              <div class="ht-step-header">
-                <h3 class="ht-step-title">SIAP MASUK PROSES</h3>
-                <span class="ht-step-indicator">
-                  <span class="dot dot-pending"></span>
-                  <span>Belum diproses</span>
-                </span>
-              </div>
+                     <div class="ht-step-form">
+                       <h4 class="ht-step-form-title">CHECK VISUAL SEBELUM PROSES</h4>
+                       <div class="ht-form-row ht-form-row--inline">
+                         <label class="ht-radio-label">
+                           <input type="radio" name="visualCheck" id="visualOK" value="OK" class="ht-radio" onchange="updateVisualNoteVisibility()" />
+                           <span class="ht-radio-text ht-radio-text--ok">OK</span>
+                         </label>
+                         <label class="ht-radio-label">
+                           <input type="radio" name="visualCheck" id="visualNG" value="NG" class="ht-radio" onchange="updateVisualNoteVisibility()" />
+                           <span class="ht-radio-text ht-radio-text--ng">NG</span>
+                         </label>
+                       </div>
+                       <div id="visualNGNote" class="hidden">
+                         <label class="ht-form-label">
+                           Keterangan NG
+                           <span class="ht-required">(Wajib)</span>
+                         </label>
+                         <input type="text" id="visualNote" maxlength="200" class="ht-form-input" placeholder="Contoh: Part dent, Karat, Retak, Permukaan abnormal, Salah part, Kontaminasi, Lainnya" />
+                       </div>
+                       <div class="ht-form-row">
+                         <label class="ht-form-label" for="visualOperator">
+                           Nama Operator Proses
+                           <span class="ht-required">(Wajib)</span>
+                         </label>
+                         <input type="text" id="visualOperator" maxlength="100" class="ht-form-input" placeholder="Masukkan nama operator proses" />
+                       </div>
+                     </div>
 
-              <div class="ht-step-form">
-                <h4 class="font-bold">CHECK VISUAL SEBELUM PROSES</h4>
-                <div class="ht-form-row">
-                  <label class="ht-checkbox-label">
-                    <input
-                      type="radio"
-                      name="visualCheck"
-                      id="visualOK"
-                      value="OK"
-                      class="ht-checkbox"
-                      onchange="updateVisualNoteVisibility()"
-                    />
-                    <span class="text-success">( ) OK</span>
-                  </label>
-                  <label class="ht-checkbox-label">
-                    <input
-                      type="radio"
-                      name="visualCheck"
-                      id="visualNG"
-                      value="NG"
-                      class="ht-checkbox"
-                      onchange="updateVisualNoteVisibility()"
-                    />
-                    <span class="text-danger">( ) NG</span>
-                  </label>
-                </div>
-                <div id="visualNGNote" class="hidden">
-                  <label class="ht-form-label">
-                    Keterangan NG
-                    <span class="ht-required">(Wajib)</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="visualNote"
-                    maxlength="200"
-                    class="ht-form-input"
-                    placeholder="Contoh: Part dent, Karat, Retak, Permukaan abnormal, Salah part, Kontaminasi, Lainnya"
-                  />
-                </div>
-              </div>
+                     <div class="ht-flex-end">
+                       <button id="btnEntry" onclick="confirmMasukProses()" class="ht-btn ht-btn-warning ht-btn-lg" aria-label="Konfirmasi masuk proses">
+                         <img src="assets/icons/factory.svg" alt="Masuk" class="icon mr-2" />KONFIRMASI MASUK PROSES
+                      </button>
+                      </div>
+                      <div class="card-lock-overlay hidden">
+                        <svg class="lock-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <span class="lock-text">Dikunci</span>
+                      </div>
+                    </div>
+                     <div id="finishSection" class="ht-card ht-card-finish fade-in">
+                      <div class="ht-card-header">
+                        <h3 class="ht-card-title">PENYELAKSANAAN PROSES</h3>
+                        <span class="ht-card-status">
+                          <span class="ht-step-indicator">
+                            <span class="dot dot-warning"></span>Produksi Aktif
+                          </span>
+                        </span>
+                        <span class="finish-lock-status hidden"></span>
+                      </div>
 
-              <div class="ht-flex-end">
-                <button
-                  id="btnEntry"
-                  onclick="confirmMasukProses()"
-                  class="ht-btn ht-btn-warning ht-btn-lg"
-                  aria-label="Konfirmasi masuk proses"
-                >
-                  <img
-                    src="assets/icons/factory.svg"
-                    alt="Masuk"
-                    class="icon mr-2"
-                  />KONFIRMASI MASUK PROSES
-                </button>
-              </div>
-            </div>
+                     <div class="ht-step-form">
+                        <h4 class="ht-step-form-title">HASIL PROSES</h4>
+                        <div class="ht-form-row">
+                          <span class="ht-info-label">Hasil Otomatis</span>
+                          <span class="ht-info-value">
+                            <span id="processResultBadge" class="ht-badge ht-badge-waiting">Menunggu input suhu</span>
+                          </span>
+                        </div>
+                        <div id="temperatureNoteSection" class="hidden">
+                          <label class="ht-form-label" for="temperatureNGNote">
+                            Keterangan Penyebab Suhu Tidak Sesuai
+                            <span class="ht-required">(Wajib)</span>
+                          </label>
+                          <textarea id="temperatureNGNote" maxlength="300" class="ht-form-textarea" rows="3" placeholder="Jelaskan penyebab suhu aktual di luar standar..."></textarea>
+                        </div>
+                       <div id="temperatureFormSection">
+                         <h4 class="ht-step-form-title">SUHU PROSES</h4>
+                         <div class="ht-form-row ht-form-row--inline">
+                           <div class="ht-info-item ht-info-item--inline">
+                             <span class="ht-info-label">Standar Suhu</span>
+                             <span class="ht-info-value mono" id="tempStandard">-</span>
+                           </div>
+                           <div class="ht-form-group-inline">
+                             <label class="ht-form-label" for="tempActual">Suhu Aktual (°C)</label>
+                             <input type="number" id="tempActual" class="ht-form-input" inputmode="numeric" placeholder="Masukkan suhu aktual" onchange="recalcTemperature()" />
+                           </div>
+                         </div>
+                         <div class="ht-form-row ht-form-row--inline">
+                           <div class="ht-info-item ht-info-item--inline">
+                             <span class="ht-info-label">Batas Min</span>
+                             <span class="ht-info-value mono" id="tempMin">-</span>
+                           </div>
+                           <div class="ht-info-item ht-info-item--inline">
+                             <span class="ht-info-label">Batas Max</span>
+                             <span class="ht-info-value mono" id="tempMax">-</span>
+                           </div>
+                           <div class="ht-info-item ht-info-item--inline">
+                             <span class="ht-info-label">Selisih</span>
+                             <span class="ht-info-value mono" id="tempDeviation">-</span>
+                           </div>
+                           <div class="ht-info-item ht-info-item--inline">
+                             <span class="ht-info-label">Hasil</span>
+                             <span class="ht-info-value mono" id="tempResult">-</span>
+                           </div>
+                         </div>
+                         <p class="ht-hint" id="tempHint"></p>
+                       </div>
+                     </div>
 
-            <!-- Formulir penyelesaian (Scan 2) -->
-            <div id="finishSection" class="hidden ht-step-card success fade-in">
-              <div class="ht-step-header">
-                <h3 class="ht-step-title">PENYELAKSANAAN PROSES</h3>
-                <span class="ht-step-indicator">
-                  <span class="dot dot-warning"></span>
-                  <span>Produksi Aktif</span>
-                </span>
-              </div>
+                     <div class="ht-flex-end">
+                       <button id="btnFinish" onclick="confirmSelesaiProses()" class="ht-btn ht-btn-success ht-btn-lg" aria-label="Konfirmasi selesai proses">
+                         <img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2" />KONFIRMASI SELESAI
+                      </button>
+                      </div>
+                      <div class="card-lock-overlay hidden">
+                        <svg class="lock-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <span class="lock-text">Dikunci</span>
+                      </div>
+                    </div>
+                   </div>
 
-              <div class="ht-step-form">
-                <h4 class="font-bold">HASIL PROSES</h4>
-                <div class="ht-form-row">
-                  <label class="ht-checkbox-label">
-                    <input
-                      type="radio"
-                      name="processResult"
-                      id="resultOK"
-                      value="OK"
-                      class="ht-checkbox"
-                      onchange="updateNGNoteVisibility()"
-                    />
-                    <span class="text-success">( ) OK</span>
-                  </label>
-                  <label class="ht-checkbox-label">
-                    <input
-                      type="radio"
-                      name="processResult"
-                      id="resultNG"
-                      value="NG"
-                      class="ht-checkbox"
-                      onchange="updateNGNoteVisibility()"
-                    />
-                    <span class="text-danger">( ) NG</span>
-                  </label>
-                </div>
-                <div id="resultNGNote" class="hidden">
-                  <label class="ht-form-label">
-                    Keterangan Penyebab NG
-                    <span class="ht-required">(Wajib)</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="processNGNote"
-                    maxlength="200"
-                    class="ht-form-input"
-                    placeholder="Jelaskan penyebab NG"
-                  />
-                </div>
-              </div>
+                   <!-- Selesai OK -->
+                    <div id="completedOkSection" class="ht-card ht-card-finish ht-card-finish-ok hidden fade-in">
+                     <div class="ht-card-header">
+                       <h3 class="ht-card-title">SELESAI</h3>
+                       <span class="ht-card-status">
+                         <span class="ht-step-indicator">
+                           <span class="dot dot-success"></span>Proses selesai
+                         </span>
+                       </span>
+                     </div>
+                     <p class="ht-hint">Part selesai proses Heat Treatment dengan hasil OK.</p>
+                    <div class="ht-flex-gap">
+                        <span class="ht-badge ht-badge-ok">SELESAI</span>
+                        <span class="ht-info-value">HASIL: OK</span>
+                      </div>
+                      <p class="ht-hint"></p>
+                   </div>
 
-              <div class="ht-flex-end">
-                <button
-                  id="btnFinish"
-                  onclick="confirmSelesaiProses()"
-                  class="ht-btn ht-btn-success ht-btn-lg"
-                  aria-label="Konfirmasi selesai proses"
-                >
-                  <img
-                    src="assets/icons/check.svg"
-                    alt="Selesai"
-                    class="icon mr-2"
-                  />KONFIRMASI SELESAI
-                </button>
-              </div>
-            </div>
-
-            <!-- Selesai OK -->
-            <div
-              id="completedOkSection"
-              class="hidden ht-step-card success fade-in"
-            >
-              <div class="ht-step-header">
-                <h3 class="ht-step-title">SELESAI</h3>
-                <span class="ht-step-indicator">
-                  <span class="dot dot-success"></span>
-                  <span>Proses selesai</span>
-                </span>
-              </div>
-              <p class="text-sm text-secondary mb-2">
-                Part selesai proses Heat Treatment dengan hasil OK.
-              </p>
-              <div class="flex items-center gap-2">
-                <span class="ht-badge ht-badge-ok">SELESAI</span>
-                <span class="text-sm">HASIL: OK</span>
-              </div>
-            </div>
-
-            <!-- Selesai NG -->
-            <div
-              id="completedNgSection"
-              class="hidden ht-step-card danger fade-in"
-            >
-              <div class="ht-step-header">
-                <h3 class="ht-step-title">SELESAI (NG)</h3>
-                <span class="ht-step-indicator">
-                  <span class="dot dot-danger"></span>
-                  <span>Proses selesai NG</span>
-                </span>
-              </div>
-              <p class="text-sm text-secondary mb-2">
-                Part selesai proses Heat Treatment dengan hasil NG. Hubungi QC /
-                supervisor.
-              </p>
-              <div class="flex items-center gap-2">
-                <span class="ht-badge ht-badge-ng">SELESAI</span>
-                <span class="text-sm">HASIL: NG</span>
-              </div>
-              <p class="ht-hint mt-2" id="ngNoteDisplay"></p>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+                   <!-- Selesai NG -->
+                   <div id="completedNgSection" class="ht-card ht-card-finish ht-card-finish-ng hidden fade-in">
+                     <div class="ht-card-header">
+                       <h3 class="ht-card-title">SELESAI (NG)</h3>
+                       <span class="ht-card-status">
+                         <span class="ht-step-indicator">
+                           <span class="dot dot-danger"></span>Proses selesai NG
+                         </span>
+                       </span>
+                     </div>
+                     <p class="ht-hint">Part selesai proses Heat Treatment dengan hasil NG. Hubungi QC / supervisor.</p>
+                     <div class="ht-flex-gap">
+                       <span class="ht-badge ht-badge-ng">SELESAI</span>
+                       <span class="ht-info-value">HASIL: NG</span>
+                     </div>
+                     <p class="ht-hint" id="ngNoteDisplay"></p>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+                    </div>
+        </main>
+      </div>
 
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
@@ -565,11 +535,119 @@
         });
       }
 
-      function clearManualError() {
-        const err = document.getElementById("manualError");
-        if (err && !err.classList.contains("hidden"))
-          err.classList.add("hidden");
-      }
+       function clearManualError() {
+         const err = document.getElementById("manualError");
+         if (err && !err.classList.contains("hidden"))
+           err.classList.add("hidden");
+       }
+
+       function temperatureResultClass(record) {
+         if (!record || !record.temperature_result) {
+           return "text-secondary";
+         }
+         return record.temperature_result === "OK"
+           ? "text-success"
+           : "text-danger";
+       }
+
+        function formatTemperatureSummary(record) {
+          if (!record || !record.temperature_result) return "-";
+          const actual = record.actual_temperature;
+          const result = record.temperature_result;
+          const actualStr =
+            actual === null || actual === undefined || actual === ""
+              ? "-"
+              : actual + " \u00B0C";
+          return actualStr + " (" + result + ")";
+        }
+
+       function recalcTemperature() {
+          const standard =
+            currentMaterial && currentMaterial.part_id
+              ? DB.getPartStandardTemperature(currentMaterial.part_id)
+              : null;
+          const stdEl = document.getElementById("tempStandard");
+          if (stdEl) {
+            stdEl.textContent =
+              standard !== null ? standard + " \u00B0C" : "-";
+          }
+         const actualEl = document.getElementById("tempActual");
+         const actualVal = actualEl ? actualEl.value.trim() : "";
+         const r = DB.validateTemperature(
+           actualVal,
+           standard,
+           DB.TEMPERATURE_DEFAULT_TOLERANCE,
+         );
+         const minEl = document.getElementById("tempMin");
+         const maxEl = document.getElementById("tempMax");
+         const devEl = document.getElementById("tempDeviation");
+         const resEl = document.getElementById("tempResult");
+         const hintEl = document.getElementById("tempHint");
+          if (minEl)
+            minEl.textContent = r.min !== null ? r.min + " \u00B0C" : "-";
+          if (maxEl)
+            maxEl.textContent = r.max !== null ? r.max + " \u00B0C" : "-";
+          if (devEl) {
+            if (r.deviation !== null) {
+              devEl.textContent =
+                (r.deviation >= 0 ? "+" : "") + r.deviation + " \u00B0C";
+             devEl.className =
+               "ht-info-value mono " +
+               (r.result === "OK" ? "text-success" : "text-danger");
+           } else {
+             devEl.textContent = "-";
+             devEl.className = "ht-info-value mono";
+           }
+         }
+         if (resEl) {
+           if (r.result === "OK") {
+             resEl.textContent = "OK";
+             resEl.className = "ht-info-value mono text-success";
+           } else if (r.result === "NG") {
+             resEl.textContent = "NG";
+             resEl.className = "ht-info-value mono text-danger";
+           } else {
+             resEl.textContent = "-";
+             resEl.className = "ht-info-value mono";
+           }
+         }
+          if (hintEl) {
+            if (standard === null) {
+              hintEl.textContent =
+                "Standar suhu belum di-set pada master Part. Hasil akan ditandai NG.";
+            } else if (actualVal === "") {
+              hintEl.textContent = "Masukkan suhu aktual yang terukur.";
+            } else {
+              hintEl.textContent =
+                 "Batas OK: " + r.min + "\u00B0C .. " + r.max + "\u00B0C";
+            }
+          }
+          // Update result badge and temperature NG note visibility
+          var badge = document.getElementById("processResultBadge");
+          if (badge) {
+            if (r.result === "OK") {
+              badge.textContent = "OK";
+              badge.className = "ht-badge ht-badge-ok";
+            } else if (r.result === "NG") {
+              badge.textContent = "NG";
+              badge.className = "ht-badge ht-badge-ng";
+            } else {
+              badge.textContent = "Menunggu input suhu";
+              badge.className = "ht-badge ht-badge-waiting";
+            }
+          }
+          var noteSection = document.getElementById("temperatureNoteSection");
+          if (noteSection) {
+            if (r.result === "NG") {
+              noteSection.classList.remove("hidden");
+            } else {
+              noteSection.classList.add("hidden");
+              var tempNote = document.getElementById("temperatureNGNote");
+              if (tempNote) tempNote.value = "";
+            }
+          }
+        }
+
 
       function resetInput() {
         document.getElementById("manualId").value = "";
@@ -580,123 +658,240 @@
         const part = DB.findPartById(material.part_id);
         const cust = DB.findCustomerById(material.customer_id);
 
+        document.getElementById("matKode").textContent = material.kode || "-";
         document.getElementById("matCust").textContent = cust
           ? cust.nama_customer
           : "-";
-        document.getElementById("matNoPart").textContent = part
-          ? part.nomor_part
-          : "-";
-        document.getElementById("matNamaPart").textContent = part
-          ? part.nama_part
-          : "-";
-        document.getElementById("matKode").textContent = material.kode || "-";
-        document.getElementById("matSJ").textContent =
-          material.nomor_surat_jalan || "-";
+
+        var namaPart = part ? part.nama_part : "-";
+        var nomorPart = part ? part.nomor_part : "-";
+        var combined = namaPart !== "-" && nomorPart !== "-"
+          ? namaPart + " / " + nomorPart
+          : (namaPart !== "-" ? namaPart : nomorPart);
+        document.getElementById("matPartInfo").textContent = combined;
+
         document.getElementById("matLot").textContent = material.lot_no || "-";
         document.getElementById("matCharge").textContent =
           material.material_charge || "-";
-        document.getElementById("matQty").textContent = material.qty || "-";
+
+        var qty = material.qty || "-";
+        document.getElementById("matQty").textContent = qty !== "-" ? qty + " PCS" : "-";
+
         document.getElementById("matBeratTotal").textContent =
           material.berat_total_part
             ? material.berat_total_part.toLocaleString("id-ID") + " KG"
             : "-";
+
         document.getElementById("matStatusPart").textContent =
           material.status_part || "-";
         document.getElementById("matProcessType").textContent =
           material.process_type || "-";
-        document.getElementById("matTreatment").textContent =
-          material.process_type || "-";
-        document.getElementById("matTargetHardness").textContent = part
-          ? part.target_hardness || "-"
-          : "-";
+
+        var standardTemp = part
+          ? DB.getPartStandardTemperature(part.id)
+          : null;
+        const tempBig = document.getElementById("matTargetTempBig");
+        if (standardTemp !== null) {
+          tempBig.textContent = standardTemp + " \u00B0C";
+        } else {
+          tempBig.textContent = "-";
+        }
       }
 
       function displayProcessInfo(material, production) {
+        var operatorNameEl = document.getElementById("processOperatorName");
+        var tempEl = document.getElementById("processTemperature");
+        var timeInEl = document.getElementById("processStartTime");
+        var timeOutEl = document.getElementById("processEndTime");
+        var visualResultEl = document.getElementById("processVisualResult");
+        var visualNoteEl = document.getElementById("processVisualNote");
+
         if (production) {
-          document.getElementById("processStatus").textContent =
-            production.production_status || "-";
-          document.getElementById("processResult").textContent =
-            production.process_result || "-";
-          document.getElementById("processOperator").textContent =
-            production.start_scan_by || "-";
-          document.getElementById("processStartTime").textContent =
-            production.start_scan_at || "-";
-          document.getElementById("processMachine").textContent =
-            production.machine_start_by || "-";
+          var operatorName = production.visual_check_operator || production.start_scan_by;
+          operatorNameEl.textContent = operatorName
+            ? operatorName
+            : "Belum ada data";
 
-          if (production.process_ng_note) {
-            document.getElementById("processNote").textContent =
-              "Catatan NG: " + production.process_ng_note;
-            document.getElementById("ngNoteDisplay").textContent =
-              production.process_ng_note;
+          var actualTemp = production.actual_temperature;
+          if (actualTemp !== null && actualTemp !== undefined && actualTemp !== "") {
+            tempEl.textContent = actualTemp + " \u00B0C";
           } else {
-            document.getElementById("processNote").textContent = "";
-            document.getElementById("ngNoteDisplay").textContent = "";
+            tempEl.textContent = "Belum ada data";
           }
-        } else {
-          document.getElementById("processStatus").textContent =
-            "BELUM DIMULAI";
-          document.getElementById("processResult").textContent = "-";
-          document.getElementById("processOperator").textContent = "-";
-          document.getElementById("processStartTime").textContent = "-";
-          document.getElementById("processMachine").textContent = "-";
-          document.getElementById("processNote").textContent = "";
-          document.getElementById("ngNoteDisplay").textContent = "";
-        }
 
-        const qc = DB.checkQualityGate(material);
-        document.getElementById("qcStatus").textContent = qc.qcStatus || "-";
+          timeInEl.textContent = production.start_scan_at
+            ? formatDateLongWithTime(production.start_scan_at)
+            : "Belum ada data";
+
+          timeOutEl.textContent = production.finish_scan_at
+            ? formatDateLongWithTime(production.finish_scan_at)
+            : "Belum ada data";
+
+          var visualResult = production.visual_check_result;
+          visualResultEl.textContent = visualResult
+            ? visualResult
+            : "—";
+
+          var visualNote = production.visual_check_note;
+          visualNoteEl.textContent = visualNote
+            ? visualNote
+            : "—";
+        } else {
+          operatorNameEl.textContent = "Belum ada data";
+          tempEl.textContent = "Belum ada data";
+          timeInEl.textContent = "Belum ada data";
+          timeOutEl.textContent = "Belum ada data";
+          visualResultEl.textContent = "—";
+          visualNoteEl.textContent = "—";
+        }
       }
 
-      function renderSections(material, production) {
-        const entrySection = document.getElementById("entrySection");
-        const finishSection = document.getElementById("finishSection");
-        const completedOkSection =
-          document.getElementById("completedOkSection");
-        const completedNgSection =
-          document.getElementById("completedNgSection");
-        const nextProcessCard = document.getElementById("nextProcessCard");
+       function renderSections(material, production) {
+          const finishSection = document.getElementById("finishSection");
+          const completedOkSection =
+            document.getElementById("completedOkSection");
+          const completedNgSection =
+            document.getElementById("completedNgSection");
+          const nextProcessCard = document.getElementById("nextProcessCard");
 
-        resetAllSections(
-          entrySection,
-          finishSection,
-          completedOkSection,
-          completedNgSection,
-        );
-        nextProcessCard.classList.add("hidden");
-
-        resetFormFields();
-
-        if (!production) {
-          entrySection.classList.remove("hidden");
-          updateStepper(null);
-          return;
-        }
-
-        const status = production.production_status;
-        const result = production.process_result;
-
-        if (status === "PROCESS") {
           finishSection.classList.remove("hidden");
-          updateStepper(production);
-        } else if (status === "FINISH" && result === "OK") {
-          completedOkSection.classList.remove("hidden");
-          updateStepper(production);
-          showNextProcess(material);
-        } else if (status === "FINISH_NG" || result === "NG") {
-          completedNgSection.classList.remove("hidden");
-          updateStepper(production);
-          showNextProcess(material);
-        } else if (status === "WAITING") {
-          entrySection.classList.remove("hidden");
-          updateStepper(production);
-        } else {
-          entrySection.classList.remove("hidden");
-          updateStepper(production);
-        }
-      }
+          completedOkSection.classList.add("hidden");
+          completedNgSection.classList.add("hidden");
+          nextProcessCard.classList.add("hidden");
 
-      function resetAllSections() {
+          resetFormFields();
+
+          setCardLockStates(production);
+
+          if (!production) {
+            updateStepper(null);
+            return;
+          }
+
+          const status = production.production_status;
+          const result = production.process_result;
+
+          if (status === "PROCESS") {
+             recalcTemperature();
+             updateStepper(production);
+          } else if (status === "FINISH" && result === "OK") {
+            completedOkSection.classList.remove("hidden");
+            updateStepper(production);
+            showNextProcess(material);
+          } else if (status === "FINISH_NG" || result === "NG") {
+            completedNgSection.classList.remove("hidden");
+            updateStepper(production);
+            showNextProcess(material);
+          } else if (status === "WAITING") {
+            updateStepper(production);
+          } else {
+            updateStepper(production);
+          }
+        }
+
+        function populateEntryFromProduction(production) {
+          if (!production) return;
+          var vOK = document.getElementById("visualOK");
+          var vNG = document.getElementById("visualNG");
+          var visualResult = production.visual_check_result;
+          if (visualResult === "OK") {
+            if (vOK) vOK.checked = true;
+          } else if (visualResult === "NG") {
+            if (vNG) vNG.checked = true;
+            var note = document.getElementById("visualNGNote");
+            if (note) note.classList.remove("hidden");
+          }
+          var visualOperator = document.getElementById("visualOperator");
+          var operatorName = production.visual_check_operator || production.start_scan_by;
+          if (visualOperator && operatorName) visualOperator.value = operatorName;
+          var noteEl = document.getElementById("visualNote");
+          if (noteEl && production.visual_check_note) noteEl.value = production.visual_check_note;
+          updateVisualNoteVisibility();
+        }
+
+        function setCardLock(cardEl, locked, lockText) {
+          if (!cardEl) return;
+          var formEls = cardEl.querySelectorAll("input, select, textarea, button");
+          var lockOverlay = cardEl.querySelector(".card-lock-overlay");
+          var lockStatusEl = null;
+
+          if (cardEl.id === "entrySection") {
+            lockStatusEl = document.querySelector(".entry-lock-status");
+          } else if (cardEl.id === "finishSection") {
+            lockStatusEl = document.querySelector(".finish-lock-status");
+          }
+
+          if (locked) {
+            cardEl.classList.add("ht-card-locked");
+            cardEl.setAttribute("aria-disabled", "true");
+            if (lockOverlay) lockOverlay.classList.remove("hidden");
+            if (lockStatusEl) {
+              lockStatusEl.innerHTML =
+                '<svg class="lock-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> ' +
+                (lockText || "Dikunci");
+              lockStatusEl.classList.remove("hidden");
+            }
+            formEls.forEach(function (el) {
+              el.disabled = true;
+            });
+          } else {
+            cardEl.classList.remove("ht-card-locked");
+            cardEl.setAttribute("aria-disabled", "false");
+            if (lockOverlay) lockOverlay.classList.add("hidden");
+            if (lockStatusEl) lockStatusEl.classList.add("hidden");
+            formEls.forEach(function (el) {
+              el.disabled = false;
+            });
+          }
+        }
+
+        function setCardLockStates(production) {
+          var entrySection = document.getElementById("entrySection");
+          var finishSection = document.getElementById("finishSection");
+
+          if (!entrySection || !finishSection) return;
+
+          entrySection.classList.remove("hidden");
+          finishSection.classList.remove("hidden");
+
+          var entryLocked = true;
+          var finishLocked = true;
+          var entryLockText = "Proses sudah dimulai";
+          var finishLockText = "Menunggu konfirmasi masuk proses";
+
+          if (!production) {
+            entryLocked = false;
+            finishLocked = true;
+            finishLockText = "Menunggu konfirmasi masuk proses";
+          } else {
+            var status = production.production_status;
+            if (status === "WAITING") {
+              entryLocked = false;
+              finishLocked = true;
+              finishLockText = "Menunggu konfirmasi masuk proses";
+            } else if (status === "PROCESS") {
+              entryLocked = true;
+              finishLocked = false;
+              entryLockText = "Proses sudah dimulai";
+              finishLockText = "";
+              populateEntryFromProduction(production);
+            } else if (status === "FINISH" || status === "FINISH_NG") {
+              entryLocked = true;
+              finishLocked = true;
+              entryLockText = "Proses sudah selesai";
+              finishLockText = "Proses sudah selesai";
+            } else {
+              entryLocked = false;
+              finishLocked = true;
+              finishLockText = "Menunggu konfirmasi masuk proses";
+            }
+          }
+
+          setCardLock(entrySection, entryLocked, entryLockText);
+          setCardLock(finishSection, finishLocked, finishLockText);
+        }
+
+       function resetAllSections() {
         var sections = [];
         for (var i = 0; i < arguments.length; i++) {
           sections.push(arguments[i]);
@@ -707,35 +902,29 @@
       }
 
       function resetFormFields() {
-        var rOK = document.getElementById("resultOK");
-        var rNG = document.getElementById("resultNG");
-        if (rOK) rOK.checked = false;
-        if (rNG) rNG.checked = false;
         var vOK = document.getElementById("visualOK");
         var vNG = document.getElementById("visualNG");
         if (vOK) vOK.checked = false;
         if (vNG) vNG.checked = false;
-        var ngNote = document.getElementById("processNGNote");
+        var ngNote = document.getElementById("temperatureNGNote");
         if (ngNote) ngNote.value = "";
         var visualNote = document.getElementById("visualNote");
         if (visualNote) visualNote.value = "";
-        document.getElementById("resultNGNote").classList.add("hidden");
+        var visualOperator = document.getElementById("visualOperator");
+        if (visualOperator) visualOperator.value = "";
+        var tempActual = document.getElementById("tempActual");
+        if (tempActual) tempActual.value = "";
+        var noteSection = document.getElementById("temperatureNoteSection");
+        if (noteSection) noteSection.classList.add("hidden");
+        var badge = document.getElementById("processResultBadge");
+        if (badge) {
+          badge.textContent = "Menunggu input suhu";
+          badge.className = "ht-badge ht-badge-waiting";
+        }
         document.getElementById("visualNGNote").classList.add("hidden");
+        recalcTemperature();
       }
 
-      function updateNGNoteVisibility() {
-        var rOK = document.getElementById("resultOK");
-        var rNG = document.getElementById("resultNG");
-        var ngNote = document.getElementById("processNGNote");
-        if (rNG.checked) {
-          document.getElementById("resultNGNote").classList.remove("hidden");
-          ngNote.required = true;
-        } else {
-          document.getElementById("resultNGNote").classList.add("hidden");
-          ngNote.required = false;
-          ngNote.value = "";
-        }
-      }
 
       function updateVisualNoteVisibility() {
         var vNG = document.getElementById("visualNG");
@@ -800,8 +989,9 @@
 
       function renderProcessHistory(material) {
         var history = DB.getProcessHistory(material);
-        var grid = document.getElementById("historyGrid");
-        if (!history || history.length === 0) {
+         var grid = document.getElementById("historyGrid");
+         if (!grid) return;
+         if (!history || history.length === 0) {
           grid.innerHTML =
             '<span class="ht-hint">Belum ada riwayat proses.</span>';
           return;
@@ -840,6 +1030,25 @@
         });
       }
 
+      let htBodyOverflowCache = "";
+
+      function openHtModal() {
+         var modal = document.getElementById("htProcessModal");
+         if (!modal) return;
+         modal.classList.add("active");
+         modal.setAttribute("aria-hidden", "false");
+         htBodyOverflowCache = document.body.style.overflow;
+         document.body.style.overflow = "hidden";
+       }
+
+      function closeHtModal() {
+         var modal = document.getElementById("htProcessModal");
+         if (!modal) return;
+         modal.classList.remove("active");
+         modal.setAttribute("aria-hidden", "true");
+         document.body.style.overflow = htBodyOverflowCache;
+       }
+
       function loadMaterialById(manualId) {
         var id = manualId || document.getElementById("manualId").value;
         if (!id) return;
@@ -856,13 +1065,9 @@
         currentProduction = DB.getProcessProduction(material, "HT");
         displayMaterialInfo(material);
         displayProcessInfo(material, currentProduction);
-        renderProcessHistory(material);
         renderSections(material, currentProduction);
-        document.getElementById("materialSection").classList.remove("hidden");
-        document
-          .getElementById("materialSection")
-          .scrollIntoView({ behavior: "smooth" });
-      }
+         openHtModal();
+       }
 
       function confirmMasukProses() {
         if (!currentMaterial) {
@@ -878,6 +1083,12 @@
         }
         if (visualNG && !document.getElementById("visualNote").value.trim()) {
           HTUI.toast("Keterangan NG wajib diisi!", "error");
+          return;
+        }
+        var visualOperator = document.getElementById("visualOperator");
+        var visualOperatorName = visualOperator ? visualOperator.value.trim() : "";
+        if (!visualOperatorName) {
+          HTUI.toast("Nama Operator Proses wajib diisi!", "error");
           return;
         }
 
@@ -913,8 +1124,9 @@
           status: DB.STATUSES.PROD_PROCESS,
           production_status: DB.STATUSES.PROD_PROCESS,
           start_scan_at: now,
-          start_scan_by: session ? session.name : "Operator",
+          start_scan_by: visualOperatorName,
           visual_check_result: visualOK ? "OK" : "NG",
+          visual_check_operator: visualOperatorName,
           visual_check_note: document.getElementById("visualNote").value.trim(),
           machine_start_at: scanTime,
           machine_start_by: session ? session.name : "Operator",
@@ -922,7 +1134,7 @@
           jenis_treatment: currentMaterial.process_type || "",
         };
 
-        try {
+         try {
           if (existing) {
             DB.update("productions", existing.id, data);
           } else {
@@ -932,6 +1144,8 @@
           DB.update("materials", currentMaterial.id, {
             status_proses: DB.STATUSES.PROSES_PROCESS,
           });
+          currentProduction = DB.getProcessProduction(currentMaterial, "HT");
+          setCardLockStates(currentProduction);
           btn.innerHTML =
             '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
           setTimeout(function () {
@@ -961,64 +1175,110 @@
           return;
         }
 
-        var rOK = document.getElementById("resultOK").checked;
-        var rNG = document.getElementById("resultNG").checked;
-        if (!rOK && !rNG) {
-          HTUI.toast("Pilih Hasil Proses OK atau NG!", "error");
-          return;
-        }
-        if (rNG && !document.getElementById("processNGNote").value.trim()) {
-          HTUI.toast("Keterangan wajib diisi jika hasil proses NG.", "error");
-          return;
-        }
+          var actualInput = document.getElementById("tempActual");
+           var actualRaw = actualInput ? actualInput.value.trim() : "";
+           var standardTemp =
+             currentMaterial && currentMaterial.part_id
+               ? DB.getPartStandardTemperature(currentMaterial.part_id)
+               : null;
+           var tolerance = DB.TEMPERATURE_DEFAULT_TOLERANCE;
 
-        if (
-          currentProduction.production_status === "FINISH" ||
-          currentProduction.production_status === "FINISH_NG"
-        ) {
-          HTUI.toast("Part sudah selesai diproses.", "error");
-          return;
-        }
-        if (currentProduction.production_status !== "PROCESS") {
-          HTUI.toast(
-            "Status produksi tidak valid untuk konfirmasi keluar.",
-            "error",
-          );
-          return;
-        }
+           if (standardTemp === null || standardTemp === undefined) {
+             HTUI.toast("Suhu standar part tidak tersedia. Proses tidak dapat diselesaikan.", "error");
+             return;
+           }
 
-        var btn = document.getElementById("btnFinish");
-        btn.disabled = true;
-        btn.classList.add("is-loading");
-        btn.innerHTML =
-          '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Memproses...';
+           if (actualRaw === "" || !/^-?\d+(\.\d+)?$/.test(actualRaw)) {
+             HTUI.toast(
+               "Suhu aktual wajib diisi dan harus angka yang valid!",
+               "error",
+             );
+             return;
+           }
+           var tempValidation = DB.validateTemperature(
+             actualRaw,
+             standardTemp,
+             tolerance,
+           );
+           var isNG = tempValidation.result === "NG";
+           if (isNG) {
+             var tempNoteInput = document.getElementById("temperatureNGNote");
+             if (!tempNoteInput || !tempNoteInput.value.trim()) {
+               HTUI.toast("Keterangan penyebab suhu tidak sesuai wajib diisi!", "error");
+               return;
+             }
+             HTUI.toast(
+               "Suhu aktual di luar toleransi (Standar: " +
+                 standardTemp +
+                 " °C ±" +
+                 tolerance +
+                 "). Hasil proses: NG.",
+               "warning",
+             );
+           }
 
-        var scanTime = new Date().toISOString().slice(0, 19);
-        var data = {
-          status: DB.STATUSES.PROD_FINISH,
-          production_status: rOK
-            ? DB.STATUSES.PROD_FINISH
-            : DB.STATUSES.PROD_FINISH_NG,
-          finish_scan_at: new Date().toISOString(),
-          finish_scan_by: session ? session.name : "Operator",
-          process_result: rOK ? "OK" : "NG",
-          process_ng_note: document
-            .getElementById("processNGNote")
-            .value.trim(),
-          machine_finish_at: scanTime,
-          machine_finish_by: session ? session.name : "Operator",
-        };
 
-        try {
+          if (
+            currentProduction.production_status === "FINISH" ||
+            currentProduction.production_status === "FINISH_NG"
+          ) {
+            HTUI.toast("Part sudah selesai diproses.", "error");
+            return;
+          }
+          if (currentProduction.production_status !== "PROCESS") {
+            HTUI.toast(
+              "Status produksi tidak valid untuk konfirmasi keluar.",
+              "error",
+            );
+            return;
+          }
+
+          var btn = document.getElementById("btnFinish");
+          btn.disabled = true;
+          btn.classList.add("is-loading");
+          btn.innerHTML =
+            '<img src="assets/icons/refresh.svg" alt="Loading" class="icon icon-spin mr-2">Memproses...';
+
+          var scanTime = new Date().toISOString().slice(0, 19);
+
+          var processResult = isNG ? "NG" : "OK";
+          var ngNote = isNG
+            ? (document.getElementById("temperatureNGNote").value.trim() ||
+               "Suhu aktual di luar toleransi (Standar: " + standardTemp + " °C ±" + tolerance + ")")
+            : "";
+
+         var data = {
+           status: isNG ? DB.STATUSES.PROD_FINISH_NG : DB.STATUSES.PROD_FINISH,
+           production_status: isNG
+             ? DB.STATUSES.PROD_FINISH_NG
+             : DB.STATUSES.PROD_FINISH,
+           finish_scan_at: new Date().toISOString(),
+           finish_scan_by: session ? session.name : "Operator",
+           process_result: processResult,
+           process_ng_note: ngNote,
+           machine_finish_at: scanTime,
+           machine_finish_by: session ? session.name : "Operator",
+           standard_temperature_snapshot: standardTemp,
+           temperature_tolerance_snapshot: tolerance,
+           actual_temperature: Number(actualRaw),
+           temperature_min: tempValidation.min,
+           temperature_max: tempValidation.max,
+           temperature_deviation: tempValidation.deviation,
+           temperature_result: tempValidation.result,
+           temperature_recorded_at: new Date().toISOString(),
+           temperature_recorded_by: session ? session.name : "Operator",
+         };
+
+          try {
           DB.update("productions", currentProduction.id, data);
-          currentMaterial.status_proses = rOK
-            ? DB.STATUSES.PROSES_FINISH
-            : DB.STATUSES.PROSES_FINISH_NG;
+          currentMaterial.status_proses = isNG
+            ? DB.STATUSES.PROSES_FINISH_NG
+            : DB.STATUSES.PROSES_FINISH;
           DB.update("materials", currentMaterial.id, {
-            status_proses: rOK
-              ? DB.STATUSES.PROSES_FINISH
-              : DB.STATUSES.PROSES_FINISH_NG,
+            status_proses: currentMaterial.status_proses,
           });
+          currentProduction = DB.getProcessProduction(currentMaterial, "HT");
+          setCardLockStates(currentProduction);
           btn.innerHTML =
             '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
           setTimeout(function () {
@@ -1026,13 +1286,18 @@
               '<img src="assets/icons/check.svg" alt="Selesai" class="icon mr-2">KONFIRMASI SELESAI';
             btn.classList.remove("is-loading");
             btn.disabled = false;
-            HTUI.toast(
-              "Process selesai. Status: " +
-                data.production_status +
-                " / HASIL: " +
-                data.process_result,
-              "success",
-            );
+             HTUI.toast(
+               "Process selesai. Status: " +
+                 data.production_status +
+                 " / HASIL: " +
+                 data.process_result +
+                 " / SUHU: " +
+                 (data.actual_temperature || "-") +
+                 "°C (" +
+                 data.temperature_result +
+                 ")",
+               "success",
+             );
             loadMaterialById(currentMaterial.kode);
             resetInput();
           }, 1500);
@@ -1055,6 +1320,25 @@
         } catch (e) {
           console.warn("[heat-treatment] scanner unavailable:", e);
         }
+
+        var htProcessOverlay = document.getElementById("htProcessModal");
+        if (htProcessOverlay) {
+          htProcessOverlay.addEventListener("click", function (e) {
+            if (e.target === htProcessOverlay) {
+              closeHtModal();
+            }
+          });
+        }
+
+        document.addEventListener("keydown", function (e) {
+          if (
+            e.key === "Escape" &&
+            htProcessOverlay &&
+            htProcessOverlay.classList.contains("active")
+          ) {
+            closeHtModal();
+          }
+        });
       });
     </script>
   </body>

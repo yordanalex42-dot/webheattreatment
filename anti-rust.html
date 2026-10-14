@@ -239,13 +239,59 @@
               </div>
             </div>
 
-            <!-- Info Material & Status -->
-            <div id="materialSection" class="hidden ht-card fade-in">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title">Informasi Material</h3>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                <div class="ht-info-grid">
+            <!-- Modal: Stepper + Informasi Material & Status -->
+            <div id="arProcessModal" class="ht-modal-overlay" aria-hidden="true">
+              <div class="ht-modal ht-modal-width">
+                <div class="ht-modal-header">
+                  <div class="ht-modal-header-title">
+                    <h3 class="ht-modal-title">Detail Proses Anti Rust</h3>
+                    <p class="ht-modal-subtitle">Informasi material dan status proses</p>
+                  </div>
+                  <button
+                    type="button"
+                    onclick="closeArModal()"
+                    class="ht-modal-close"
+                    aria-label="Close"
+                  >
+                    <img src="assets/icons/close.svg" alt="Close" class="icon" />
+                  </button>
+                </div>
+                <div class="ht-modal-body">
+                  <!-- Stepper -->
+                  <div class="ht-stepper" role="status" aria-label="Progress step">
+                    <div class="ht-step">
+                      <div class="step-icon">
+                        <img src="assets/icons/qr.svg" alt="Scan Kode" class="icon" />
+                      </div>
+                      <span class="step-label">Scan Kode</span>
+                    </div>
+                    <div class="ht-step">
+                      <div class="step-icon">
+                        <img src="assets/icons/file.svg" alt="Data Part" class="icon" />
+                      </div>
+                      <span class="step-label">Data Part</span>
+                    </div>
+                    <div class="ht-step">
+                      <div class="step-icon">
+                        <img src="assets/icons/factory.svg" alt="Proses" class="icon" />
+                      </div>
+                      <span class="step-label">Proses</span>
+                    </div>
+                    <div class="ht-step">
+                      <div class="step-icon">
+                        <img src="assets/icons/check.svg" alt="Selesai" class="icon" />
+                      </div>
+                      <span class="step-label">Selesai</span>
+                    </div>
+                  </div>
+                  <!-- Row 1: Informasi Material & Status Proses -->
+                  <div class="ht-modal-info-grid">
+                    <!-- Card kiri: Informasi Material -->
+                    <div id="materialSection" class="ht-card ht-card-info fade-in">
+                      <div class="ht-card-header">
+                        <h3 class="ht-card-title">Informasi Material</h3>
+                      </div>
+                      <div class="ht-info-grid ht-info-grid-cols-2">
                   <div class="ht-info-item">
                     <span class="ht-info-label">Customer</span>
                     <span class="ht-info-value" id="matCust">-</span>
@@ -305,62 +351,62 @@
                 </div>
               </div>
 
-              <!-- Status proses -->
-              <div class="ht-info-summary">
-                <h4 class="font-semibold">STATUS PROSES</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">Route</span>
-                    <span class="font-medium mono" id="routeInfo">-</span>
+                    <!-- Card kanan: Status Proses Anti Rust -->
+                    <div class="ht-info-summary ht-card ht-card-info fade-in">
+                      <div class="ht-card-header">
+                        <h3 class="ht-card-title">Status Proses Anti Rust</h3>
+                      </div>
+                      <div class="ht-info-grid ht-info-grid-cols-1">
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Route</span>
+                          <span class="ht-info-value mono" id="routeInfo">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Status Heat Treatment</span>
+                          <span class="ht-info-value" id="htStatus">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Status QC</span>
+                          <span class="ht-info-value" id="qcStatus">-</span>
+                        </div>
+                        <div class="ht-info-item" id="shotblastStatusRow">
+                          <span class="ht-info-label">Status Shotblast</span>
+                          <span class="ht-info-value" id="shotblastStatus">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Status Anti Rust</span>
+                          <span class="ht-info-value" id="antiRustStatus">-</span>
+                        </div>
+                      </div>
+                      <p class="ht-hint mt-2" id="gateReason"></p>
+
+                      <!-- Proses berikutnya -->
+                      <div id="nextProcessCard" class="ht-alert ht-alert-info hidden">
+                        <h4 class="font-semibold">Proses Berikutnya</h4>
+                        <p class="text-sm">
+                          Setelah Anti Rust selesai OK, lanjutkan ke:
+                          <span class="font-medium text-primary" id="nextProcessLabel"
+                            >-</span
+                          >
+                        </p>
+                      </div>
+
+                      <!-- Riwayat proses -->
+                      <div class="ht-info-summary mt-4">
+                        <h4 class="font-semibold">Riwayat Proses</h4>
+                        <div class="ht-history-grid" id="historyGrid">
+                          <span class="ht-hint">Memuat...</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">Status Heat Treatment</span>
-                    <span class="font-medium" id="htStatus">-</span>
                   </div>
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">Status QC</span>
-                    <span class="font-medium" id="qcStatus">-</span>
-                  </div>
+
+                  <!-- Pemberitahuan terblokir -->
                   <div
-                    class="flex items-center justify-between py-1"
-                    id="shotblastStatusRow"
+                    id="blockedNotice"
+                    class="hidden ht-alert ht-alert-danger fade-in"
                   >
-                    <span class="ht-hint">Status Shotblast</span>
-                    <span class="font-medium" id="shotblastStatus">-</span>
-                  </div>
-                  <div class="flex items-center justify-between py-1">
-                    <span class="ht-hint">Status Anti Rust</span>
-                    <span class="font-medium" id="antiRustStatus">-</span>
-                  </div>
-                </div>
-                <p class="ht-hint mt-2" id="gateReason"></p>
-              </div>
-
-              <!-- Proses berikutnya -->
-              <div id="nextProcessCard" class="ht-alert ht-alert-info hidden">
-                <h4 class="font-semibold">Proses Berikutnya</h4>
-                <p class="text-sm">
-                  Setelah Anti Rust selesai OK, lanjutkan ke:
-                  <span class="font-medium text-primary" id="nextProcessLabel"
-                    >-</span
-                  >
-                </p>
-              </div>
-
-              <!-- Riwayat proses -->
-              <div class="ht-info-summary">
-                <h4 class="font-semibold">Riwayat Proses</h4>
-                <div class="ht-history-grid" id="historyGrid">
-                  <span class="ht-hint">Memuat...</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Pemberitahuan terblokir -->
-            <div
-              id="blockedNotice"
-              class="hidden ht-alert ht-alert-danger fade-in"
-            >
               <div class="flex items-start gap-3">
                 <img
                   src="assets/icons/error.svg"
@@ -376,40 +422,44 @@
               </div>
             </div>
 
-            <!-- Formulir entri (Scan 1) -->
-            <div id="entrySection" class="hidden ht-step-card warning fade-in">
-              <div class="ht-step-header">
-                <h3 class="ht-step-title">SIAP MASUK PROSES</h3>
-                <span class="ht-step-indicator">
-                  <span class="dot dot-pending"></span>
-                  <span>Belum diproses</span>
+                  <!-- Row 2: Siap Masuk Proses & Pelaksanaan Proses -->
+                  <div class="ht-modal-action-grid">
+
+            <!-- Siap Masuk Proses -->
+            <div id="entrySection" class="ht-card ht-card-entry fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">SIAP MASUK PROSES</h3>
+                <span class="ht-card-status">
+                  <span class="ht-step-indicator">
+                    <span class="dot dot-pending"></span>Belum diproses
+                  </span>
                 </span>
               </div>
 
               <div class="ht-step-form">
-                <h4 class="font-bold">CHECK VISUAL SEBELUM PROSES</h4>
-                <div class="ht-form-row">
-                  <label class="ht-checkbox-label">
+                <h4 class="ht-step-form-title">CHECK VISUAL SEBELUM PROSES</h4>
+                <div class="ht-form-row ht-form-row--inline">
+                  <label class="ht-radio-label">
                     <input
                       type="radio"
                       name="visualCheck"
                       id="visualOK"
                       value="OK"
-                      class="ht-checkbox"
+                      class="ht-radio"
                       onchange="updateVisualNoteVisibility()"
                     />
-                    <span class="text-success">( ) OK</span>
+                    <span class="ht-radio-text ht-radio-text--ok">OK</span>
                   </label>
-                  <label class="ht-checkbox-label">
+                  <label class="ht-radio-label">
                     <input
                       type="radio"
                       name="visualCheck"
                       id="visualNG"
                       value="NG"
-                      class="ht-checkbox"
+                      class="ht-radio"
                       onchange="updateVisualNoteVisibility()"
                     />
-                    <span class="text-danger">( ) NG</span>
+                    <span class="ht-radio-text ht-radio-text--ng">NG</span>
                   </label>
                 </div>
                 <div id="visualNGNote" class="hidden">
@@ -443,40 +493,41 @@
               </div>
             </div>
 
-            <!-- Formulir penyelesaian (Scan 2) -->
-            <div id="finishSection" class="hidden ht-step-card success fade-in">
-              <div class="ht-step-header">
-                <h3 class="ht-step-title">PENYELAKSANAAN PROSES</h3>
-                <span class="ht-step-indicator">
-                  <span class="dot dot-warning"></span>
-                  <span>Produksi Aktif</span>
+            <!-- Penyelesaian Proses -->
+            <div id="finishSection" class="ht-card ht-card-finish fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">PENYELAKSANAAN PROSES</h3>
+                <span class="ht-card-status">
+                  <span class="ht-step-indicator">
+                    <span class="dot dot-warning"></span>Produksi Aktif
+                  </span>
                 </span>
               </div>
 
               <div class="ht-step-form">
-                <h4 class="font-bold">HASIL PROSES</h4>
-                <div class="ht-form-row">
-                  <label class="ht-checkbox-label">
+                <h4 class="ht-step-form-title">HASIL PROSES</h4>
+                <div class="ht-form-row ht-form-row--inline">
+                  <label class="ht-radio-label">
                     <input
                       type="radio"
                       name="processResult"
                       id="resultOK"
                       value="OK"
-                      class="ht-checkbox"
+                      class="ht-radio"
                       onchange="updateNGNoteVisibility()"
                     />
-                    <span class="text-success">( ) OK</span>
+                    <span class="ht-radio-text ht-radio-text--ok">OK</span>
                   </label>
-                  <label class="ht-checkbox-label">
+                  <label class="ht-radio-label">
                     <input
                       type="radio"
                       name="processResult"
                       id="resultNG"
                       value="NG"
-                      class="ht-checkbox"
+                      class="ht-radio"
                       onchange="updateNGNoteVisibility()"
                     />
-                    <span class="text-danger">( ) NG</span>
+                    <span class="ht-radio-text ht-radio-text--ng">NG</span>
                   </label>
                 </div>
                 <div id="resultNGNote" class="hidden">
@@ -513,21 +564,20 @@
             <!-- Selesai OK -->
             <div
               id="completedOkSection"
-              class="hidden ht-step-card success fade-in"
+              class="ht-card ht-card-finish ht-card-finish-ok hidden fade-in"
             >
-              <div class="ht-step-header">
-                <h3 class="ht-step-title">SELESAI</h3>
-                <span class="ht-step-indicator">
-                  <span class="dot dot-success"></span>
-                  <span>Proses selesai</span>
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">SELESAI</h3>
+                <span class="ht-card-status">
+                  <span class="ht-step-indicator">
+                    <span class="dot dot-success"></span>Proses selesai
+                  </span>
                 </span>
               </div>
-              <p class="text-secondary">
-                Part selesai proses Anti Rust dengan hasil OK.
-              </p>
-              <div class="flex items-center gap-2">
+              <p class="ht-hint">Part selesai proses Anti Rust dengan hasil OK.</p>
+              <div class="ht-flex-gap">
                 <span class="ht-badge ht-badge-ok">SELESAI</span>
-                <p class="text-sm">HASIL: OK</p>
+                <span class="ht-info-value">HASIL: OK</span>
               </div>
               <p class="ht-hint mt-2" id="okNoteDisplay"></p>
             </div>
@@ -535,27 +585,28 @@
             <!-- Selesai NG -->
             <div
               id="completedNgSection"
-              class="hidden ht-step-card danger fade-in"
+              class="ht-card ht-card-finish ht-card-finish-ng hidden fade-in"
             >
-              <div class="ht-step-header">
-                <h3 class="ht-step-title">SELESAI (NG)</h3>
-                <span class="ht-step-indicator">
-                  <span class="dot dot-danger"></span>
-                  <span>Proses selesai NG</span>
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">SELESAI (NG)</h3>
+                <span class="ht-card-status">
+                  <span class="ht-step-indicator">
+                    <span class="dot dot-danger"></span>Proses selesai NG
+                  </span>
                 </span>
               </div>
-              <p class="text-secondary">
-                Part selesai proses Anti Rust dengan hasil NG. Hubungi QC /
-                supervisor.
-              </p>
-              <div class="flex items-center gap-2">
+              <p class="ht-hint">Part selesai proses Anti Rust dengan hasil NG. Hubungi QC / supervisor.</p>
+              <div class="ht-flex-gap">
                 <span class="ht-badge ht-badge-ng">SELESAI</span>
-                <p class="text-sm">HASIL: NG</p>
+                <span class="ht-info-value">HASIL: NG</span>
               </div>
               <p class="ht-hint mt-2" id="ngNoteDisplay"></p>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
       </main>
     </div>
 
@@ -573,6 +624,25 @@
       const session = Auth.getSession();
       const PROCESS_KEY = "ANTI_RUST";
       const JENIS_TREATMENT = "Anti Rust";
+
+       let arBodyOverflowCache = "";
+
+      function openArModal() {
+        var modal = document.getElementById("arProcessModal");
+        if (!modal) return;
+        modal.classList.add("active");
+        modal.setAttribute("aria-hidden", "false");
+        arBodyOverflowCache = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeArModal() {
+        var modal = document.getElementById("arProcessModal");
+        if (!modal) return;
+        modal.classList.remove("active");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = arBodyOverflowCache;
+      }
 
       function startScanner() {
         if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
@@ -949,11 +1019,9 @@
         displayProcessStatus(material);
         renderProcessHistory(material);
         renderSections(material, currentProduction);
-        document.getElementById("materialSection").classList.remove("hidden");
-        document.getElementById("blockedNotice").classList.add("hidden");
-        document
-          .getElementById("materialSection")
-          .scrollIntoView({ behavior: "smooth" });
+        openArModal();
+        var manualInput = document.getElementById("manualId");
+        if (manualInput) manualInput.focus();
       }
 
       function renderSections(material, production) {
@@ -1145,7 +1213,7 @@
 
         var scanTime = new Date().toISOString().slice(0, 19);
         var data = {
-          status: DB.STATUSES.PROD_FINISH,
+          status: rOK ? DB.STATUSES.PROD_FINISH : DB.STATUSES.PROD_FINISH_NG,
           production_status: rOK
             ? DB.STATUSES.PROD_FINISH
             : DB.STATUSES.PROD_FINISH_NG,
@@ -1204,6 +1272,25 @@
         } catch (e) {
           console.warn("[anti-rust] scanner unavailable:", e);
         }
+
+        var arModalOverlay = document.getElementById("arProcessModal");
+        if (arModalOverlay) {
+          arModalOverlay.addEventListener("click", function (e) {
+            if (e.target === arModalOverlay) {
+              closeArModal();
+            }
+          });
+        }
+
+        document.addEventListener("keydown", function (e) {
+          if (
+            e.key === "Escape" &&
+            arModalOverlay &&
+            arModalOverlay.classList.contains("active")
+          ) {
+            closeArModal();
+          }
+        });
       });
     </script>
   </body>

@@ -216,10 +216,14 @@
                   <span class="ht-info-label">Customer</span>
                   <span class="ht-info-value" id="infoCustomer">-</span>
                 </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Hasil QC</span>
-                  <span class="ht-info-value" id="infoQc">-</span>
-                </div>
+                 <div class="ht-info-item">
+                   <span class="ht-info-label">Hasil QC</span>
+                   <span class="ht-info-value" id="infoQc">-</span>
+                 </div>
+                 <div class="ht-info-item">
+                   <span class="ht-info-label">Suhu Proses</span>
+                   <span class="ht-info-value" id="infoTemperature">-</span>
+                 </div>
               </div>
 
               <form id="deliverForm" class="ht-form">
@@ -383,10 +387,20 @@
         document.getElementById("infoCustomer").textContent = cust
           ? cust.nama_customer
           : "-";
-        document.getElementById("infoQc").innerHTML =
-          '<span class="ht-badge ht-badge-ok">' +
-          (qc ? qc.hasil : "-") +
-          "</span>";
+         document.getElementById("infoQc").innerHTML =
+           '<span class="ht-badge ht-badge-ok">' +
+           (qc ? qc.hasil : "-") +
+           "</span>";
+         var tempRes = production ? production.temperature_result : "";
+         var tempActual = production ? production.actual_temperature : "";
+         if (tempActual === null || tempActual === undefined || tempActual === "") {
+           document.getElementById("infoTemperature").innerHTML =
+             '<span class="text-secondary">-</span>';
+         } else {
+           var tempCls = tempRes === "OK" ? "ht-badge-ok" : "ht-badge-ng";
+           document.getElementById("infoTemperature").innerHTML =
+             '<span class="ht-badge ' + tempCls + '">' + tempActual + " \u00B0C (" + (tempRes || "-") + ")</span>";
+         }
         document.getElementById("delProductionId").value = production.id;
         document.getElementById("delMaterialId").value = material.id;
         const existing = DB.get("deliveries").find(

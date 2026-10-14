@@ -41,22 +41,31 @@
 }
 
 .ht-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  gap: 12px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 16px;
+   gap: 12px;
 }
 
 .ht-card-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-primary);
+   font-size: 14px;
+   font-weight: 700;
+   color: var(--text-primary);
 }
 
 .ht-card-subtitle {
+   font-size: 12px;
+   color: var(--text-secondary);
+}
+
+.ht-card-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
   color: var(--text-secondary);
+  font-weight: 600;
 }
 
 /* ============================================================
@@ -132,16 +141,29 @@
 .ht-info-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 14px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 18px;
+}
+
+.ht-info-grid.ht-info-grid-cols-1 {
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.ht-info-grid.ht-info-grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
 }
 
 @media (max-width: 1024px) {
   .ht-info-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+  .ht-info-grid.ht-info-grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -160,14 +182,23 @@
 .ht-info-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+}
+
+.ht-info-item.ht-info-item--inline {
+  display: flex;
+  flex-direction: column;
+}
+
+.ht-info-item.ht-info-item-wide {
+  grid-column: 1 / -1;
 }
 
 .ht-info-label {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   font-weight: 600;
 }
 
@@ -175,10 +206,17 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
+  word-break: break-word;
+}
+
+.ht-info-value.ht-info-value-big {
+  font-size: 20px;
+  color: var(--primary);
+  font-weight: 700;
 }
 
 .ht-info-value.mono {
-  font-family: inherit;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 }
 
 .ht-info-value.hardness {
@@ -379,20 +417,348 @@
   }
 }
 
+/* ============================================================
+   TIMELINE HORIZONTAL (Tracking Redesign)
+   Horizontal card-based timeline with process icons,
+   connecting line, status badges, and date/time.
+   ============================================================ */
+
+.ht-timeline-horizontal {
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 6px 0;
+  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 189, 0.3) transparent;
+}
+
+.ht-timeline-horizontal::-webkit-scrollbar {
+  height: 6px;
+}
+
+.ht-timeline-horizontal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ht-timeline-horizontal::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 189, 0.2);
+  border-radius: var(--radius-pill);
+}
+
+.ht-timeline-horizontal::-webkit-scrollbar {
+  -ms-overflow-style: none;
+}
+
+.ht-timeline-horizontal::-webkit-scrollbar {
+  display: none;
+}
+
+.ht-timeline-track {
+  display: flex;
+  align-items: flex-start;
+  min-width: max-content;
+  gap: 0;
+  padding: 4px 2px;
+}
+
+/* Connector line between steps */
+.ht-timeline-connector {
+  flex: 0 0 28px;
+  height: 2px;
+  margin-top: 22px;
+  background: var(--border);
+  z-index: 1;
+  transition: background-color var(--transition-sm);
+}
+
+.ht-timeline-connector.completed {
+  background: var(--primary);
+}
+
+.ht-timeline-connector.active {
+  background: var(--primary);
+}
+
+.ht-timeline-connector.ng {
+  background: var(--danger);
+}
+
+.ht-timeline-connector.pending {
+  background: var(--border);
+}
+
+/* Each step wrapper */
+.ht-timeline-step {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 96px;
+  position: relative;
+  z-index: 2;
+  padding: 0 4px;
+}
+
+/* Icon node circle */
+.ht-timeline-node {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  z-index: 3;
+  transition: all var(--transition-sm);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.ht-timeline-node .icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+/* Completed: blue fill, white icon */
+.ht-timeline-node.completed {
+  background: var(--gradient-primary);
+  border-color: var(--primary);
+  color: var(--text-inverse);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.ht-timeline-node.completed .icon {
+  color: var(--text-inverse);
+}
+
+/* Active: blue fill with pulse, white icon */
+.ht-timeline-node.active {
+  background: var(--gradient-primary);
+  border-color: var(--primary);
+  color: var(--text-inverse);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+  animation: htPulse 2s infinite;
+}
+
+.ht-timeline-node.active .icon {
+  color: var(--text-inverse);
+}
+
+/* Pending: surface with gray border, gray icon */
+.ht-timeline-node.pending {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-tertiary);
+}
+
+.ht-timeline-node.pending .icon {
+  color: var(--text-tertiary);
+}
+
+/* NG: red fill, white icon */
+.ht-timeline-node.ng {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--text-inverse);
+  box-shadow: 0 0 0 3px var(--danger-bg);
+}
+
+.ht-timeline-node.ng .icon {
+  color: var(--text-inverse);
+}
+
+@keyframes htPulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--primary-soft); }
+  50% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.08); }
+}
+
+/* Step name label */
+.ht-timeline-step-name {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.ht-timeline-step.completed .ht-timeline-step-name,
+.ht-timeline-step.active .ht-timeline-step-name {
+  color: var(--text-primary);
+}
+
+.ht-timeline-step.ng .ht-timeline-step-name {
+  color: var(--danger);
+}
+
+/* Status badge container */
+.ht-timeline-badge {
+  margin-bottom: 2px;
+}
+
+.ht-timeline-badge .ht-badge {
+  font-size: 8px;
+  padding: 2px 6px;
+}
+
+/* Date/time text */
+.ht-timeline-step-date {
+  font-size: 9px;
+  color: var(--text-tertiary);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ===== Responsive Timeline ===== */
+@media (max-width: 768px) {
+  .ht-timeline-step {
+    min-width: 84px;
+  }
+
+  .ht-timeline-node {
+    width: 36px;
+    height: 36px;
+  }
+
+  .ht-timeline-step-name {
+    font-size: 9px;
+  }
+
+  .ht-timeline-step-date {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ht-timeline-step {
+    min-width: 76px;
+  }
+
+  .ht-timeline-node {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ht-timeline-node .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ht-timeline-step-name {
+    font-size: 8px;
+  }
+}
+
+/* ===== File protocol fallback (icon inversion on colored nodes) ===== */
+.ht-file-protocol .ht-timeline-node.completed .icon,
+.ht-file-protocol .ht-timeline-node.active .icon,
+.ht-file-protocol .ht-timeline-node.ng .icon {
+  filter: brightness(0) invert(1);
+}
+
+/* ============================================================
+   PROSES KARTU (Data Hasil Proses Produksi cards)
+   ============================================================ */
+
+.ht-process-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  animation: cardEntrance 200ms ease-out both;
+}
+
+.ht-process-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.ht-process-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ht-process-card-title .icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.ht-file-protocol .ht-process-card-title .icon {
+  filter: brightness(0) invert(1);
+}
+
+.ht-process-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+}
+
+@media (max-width: 768px) {
+  .ht-process-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.ht-process-not-applicable {
+  background: var(--surface-muted);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+}
+
+.ht-process-not-applicable .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.ht-process-not-applicable .ht-detail-label {
+  color: var(--text-secondary);
+}
+
+/* ===== File protocol: process card icons ===== */
+.ht-file-protocol .ht-process-card-title .icon,
+.ht-file-protocol .ht-process-not-applicable .icon {
+  filter: brightness(0) invert(1);
+}
+
 .ht-step-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-left: 4px solid var(--primary);
   border-radius: var(--radius-lg);
   padding: 20px;
   box-shadow: var(--shadow-sm);
   animation: cardEntrance 200ms ease-out both;
 }
 
-.ht-step-card.warning { border-left-color: var(--warning); }
-.ht-step-card.success { border-left-color: var(--success); }
-.ht-step-card.danger { border-left-color: var(--danger); }
-.ht-step-card.info { border-left-color: var(--primary); }
+.ht-step-card.warning {
+  border-left: 4px solid var(--warning);
+}
+.ht-step-card.success {
+  border-left: 4px solid var(--success);
+}
+.ht-step-card.danger {
+  border-left: 4px solid var(--danger);
+}
+.ht-step-card.info {
+  border-left: 4px solid var(--primary);
+}
 
 .ht-step-indicator {
   display: flex;
@@ -410,16 +776,39 @@
   background: var(--warning);
 }
 
+/* Heat Treatment modal card types — neutral borders */
+.ht-card-info,
+.ht-card-entry,
+.ht-card-finish,
+.ht-card-finish.ht-card-finish-ok,
+.ht-card-finish.ht-card-finish-ng {
+  border: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+
+.ht-card-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.ht-card-status .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
 /* ============================================================
    STEPPER
    ============================================================ */
 
 .ht-stepper {
   display: flex;
-  align-items: flex-start;
   gap: 8px;
-  padding: 20px 0;
-  overflow-x: auto;
+  padding: 0;
 }
 
 .ht-step {
@@ -757,7 +1146,7 @@
   gap: 6px;
   padding: 8px 16px;
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   border: 1.5px solid transparent;
   cursor: pointer;
@@ -992,16 +1381,27 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 18px 24px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
-  background: var(--surface-hover);
+  background: var(--surface);
+}
+
+.ht-modal-header-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .ht-modal-title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--text-primary);
+}
+
+.ht-modal-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
 }
 
 .ht-modal-close {
@@ -1009,7 +1409,7 @@
   border: none;
   cursor: pointer;
   color: var(--text-secondary);
-  padding: 6px;
+  padding: 8px;
   border-radius: var(--radius-sm);
   transition: all var(--transition-sm);
   display: inline-flex;
@@ -1019,20 +1419,26 @@
 }
 
 .ht-modal-close .icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .ht-modal-close:hover {
-  background: var(--surface);
+  background: var(--primary-soft);
   color: var(--primary);
   border: 1px solid var(--border);
 }
 
 .ht-modal-body {
-  padding: 20px;
+  padding: 24px;
   overflow-y: auto;
   flex: 1;
+}
+
+@media (max-width: 768px) {
+  .ht-modal-body {
+    padding: 16px;
+  }
 }
 
 .ht-modal-footer {
@@ -1060,9 +1466,145 @@
   }
 }
 
+.ht-modal-width {
+  width: 92vw;
+  max-width: 1450px;
+  max-height: 92vh;
+}
+
+@media (max-width: 768px) {
+  .ht-modal-width {
+    width: 95vw;
+    max-width: calc(100vw - 32px);
+  }
+  .ht-modal-body {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ht-modal-width {
+    width: 100vw;
+    max-width: calc(100vw - 24px);
+  }
+}
+
 /* ============================================================
-   PEMBERITAHUAN (ALERT)
+   END MODAL
    ============================================================ */
+
+/* Heat Treatment modal content grid layout */
+.ht-modal-info-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.ht-modal-info-grid > #materialSection {
+  grid-column: 1;
+}
+
+.ht-modal-info-grid > .ht-info-summary,
+.ht-modal-info-grid > .ht-process-status-card {
+  grid-column: 2;
+}
+
+.ht-modal-info-grid > #entrySection,
+.ht-modal-info-grid > #finishSection,
+.ht-modal-info-grid > #completedOkSection,
+.ht-modal-info-grid > #completedNgSection,
+.ht-modal-info-grid > #nextProcessCard {
+  grid-column: 1 / -1;
+}
+
+.ht-modal-action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  margin-top: 18px;
+}
+
+.ht-modal-action-grid > #entrySection,
+.ht-modal-action-grid > #finishSection {
+  grid-column: 1;
+}
+
+.ht-modal-action-grid > #finishSection {
+  grid-column: 2;
+}
+
+/* Card lock visual state */
+.ht-card-locked {
+  position: relative;
+  opacity: 0.65;
+  background: var(--surface-hover);
+  pointer-events: none;
+}
+
+.ht-card-locked .card-lock-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(249, 250, 251, 0.85);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.ht-card-locked .card-lock-overlay .lock-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.card-lock-overlay.hidden {
+  display: none !important;
+}
+
+.ht-card-locked .ht-step-indicator .dot {
+  background: var(--text-secondary);
+}
+
+.ht-locked-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.ht-locked-badge .lock-icon {
+  width: 12px;
+  height: 12px;
+}
+
+@media (max-width: 768px) {
+  .ht-modal-info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .ht-modal-info-grid > #materialSection,
+  .ht-modal-info-grid > .ht-info-summary,
+  .ht-modal-info-grid > .ht-process-status-card {
+    grid-column: 1 / -1;
+  }
+  .ht-modal-action-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .ht-modal-action-grid > #entrySection,
+  .ht-modal-action-grid > #finishSection {
+    grid-column: 1 / -1;
+  }
+}
 
 .ht-alert {
   display: flex;
@@ -1100,15 +1642,23 @@
   border-color: rgba(239, 68, 68, 0.3);
 }
 
-.ht-alert-info {
-  background: var(--info-bg);
-  color: var(--info-text);
-  border-color: rgba(59, 130, 246, 0.3);
-}
+ .ht-alert-info {
+   background: var(--info-bg);
+   color: var(--info-text);
+   border-color: rgba(59, 130, 246, 0.3);
+ }
 
-/* ============================================================
-   TOMBOL AKSI HEADER
-   ============================================================ */
+ /* File protocol: invert icons on colored alert backgrounds */
+ .ht-file-protocol .ht-alert-warning .icon,
+ .ht-file-protocol .ht-alert-info .icon,
+ .ht-file-protocol .ht-alert-danger .icon,
+ .ht-file-protocol .ht-alert-success .icon {
+   filter: brightness(0) invert(1);
+ }
+
+ /* ============================================================
+    TOMBOL AKSI HEADER
+    ============================================================ */
 
 .ht-header-btn {
   display: inline-flex;
@@ -1308,7 +1858,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 20px;
   box-shadow: var(--shadow-sm);
   animation: cardEntrance 200ms ease-out both;
 }
@@ -1367,7 +1917,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .ht-step-title {
@@ -1379,7 +1929,7 @@
 .ht-step-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .ht-step-form .ht-form-row {

@@ -122,12 +122,6 @@
   flex-shrink: 0;
 }
 
-.ht-sidebar-header:hover .sidebar-logo,
-.ht-sidebar-header:active .sidebar-logo {
-  color: #2563eb;
-  filter: invert(36%) sepia(100%) saturate(5000%) hue-rotate(195deg);
-}
-
 .ht-nav-link:hover {
   background: rgba(37, 99, 235, 0.12);
   color: var(--primary-light);

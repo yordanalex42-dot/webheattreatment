@@ -16,6 +16,7 @@ const DB = {
     PROSES_WAITING: "WAITING",
     PROSES_PROCESS: "PROCESS",
     PROSES_FINISH: "FINISH",
+    PROSES_FINISH_NG: "FINISH_NG",
     /* Status produksi (alias) */
     PROD_WAITING: "WAITING",
     PROD_PROCESS: "PROCESS",
@@ -33,13 +34,111 @@ const DB = {
   /* Definisi skema per-tabel untuk validasi */
   SCHEMAS: {
     customers: ["id", "kode_customer", "nama_customer", "alamat", "pic", "phone", "email", "status", "created_at", "updated_at"],
-    parts: ["id", "customer_id", "nomor_part", "nama_part", "berat_part", "satuan_berat", "target_hardness", "standard_process_route", "status", "created_at", "updated_at"],
+    parts: ["id", "customer_id", "nomor_part", "nama_part", "berat_part", "satuan_berat", "target_hardness", "standard_temperature", "process_type", "standard_process_route", "status", "created_at", "updated_at"],
     materials: ["id", "kode", "customer_id", "part_id", "nomor_surat_jalan", "lot_no", "material_charge", "status_part", "qty", "berat_part_snapshot", "berat_total_part", "tanggal_masuk", "keterangan", "remarks", "process_type", "diinput_oleh", "qr_code", "status_proses", "process_route", "created_at", "updated_at"],
-    productions: ["id", "material_id", "incoming_id", "tracking_id", "status", "production_status", "kode", "process_result", "visual_check_result", "visual_check_note", "start_scan_at", "start_scan_by", "machine_start_at", "machine_start_by", "finish_scan_at", "finish_scan_by", "process_ng_note", "machine_finish_at", "machine_finish_by", "tanggal_proses", "jenis_treatment", "remarks", "created_at", "updated_at"],
+    productions: ["id", "material_id", "incoming_id", "tracking_id", "status", "production_status", "kode", "process_result", "visual_check_result", "visual_check_note", "visual_check_operator", "start_scan_at", "start_scan_by", "machine_start_at", "machine_start_by", "finish_scan_at", "finish_scan_by", "process_ng_note", "machine_finish_at", "machine_finish_by", "tanggal_proses", "jenis_treatment", "remarks", "created_at", "updated_at", "standard_temperature_snapshot", "temperature_tolerance_snapshot", "actual_temperature", "temperature_min", "temperature_max", "temperature_deviation", "temperature_result", "temperature_recorded_at", "temperature_recorded_by"],
     qcs: ["id", "production_id", "material_id", "hardness", "satuan_hardness", "hasil", "microstructure", "remarks", "inspector", "tanggal_inspector", "catatan", "user_id", "created_at", "updated_at"],
     deliveries: ["id", "production_id", "material_id", "customer_id", "tanggal_kirim", "qty_kirim", "status", "catatan", "user_id", "remarks", "created_at", "updated_at"],
     tracking: ["id", "material_id", "production_id", "delivery_id", "remarks", "created_at", "updated_at"],
-    targets: ["id", "year", "month", "target_berat_output", "created_at", "updated_at"],
+     targets: ["id", "year", "month", "target_berat_output", "created_at", "updated_at"],
+   },
+
+  /* ---- Daftar Jenis Proses (single source of truth) ----
+     Daftar kanonis yang ditawarkan pada formulir (Master Part, Incoming).
+     Nilai lama seperti "Heat Treatment", "Quenching", "Hardening",
+     "Tempering" yang tidak ada di daftar ini dianggap LEGACY: tidak
+     dikonversi otomatis, tetap disimpan, dan ditandai untuk ditinjau. */
+  PROCESS_TYPE_OPTIONS: [
+    "Quenching & Tempering",
+    "Annealing",
+    "Carburizing",
+    "Normalizing",
+    "Full Annealing",
+    "Stress Relief Annealing",
+    "Spheroidizing Annealing",
+  ],
+
+  isProcessTypeValid(v) {
+    return this.PROCESS_TYPE_OPTIONS.indexOf(v) !== -1;
+  },
+  /* Legacy = nilai tak kosong yang tidak termasuk dalam daftar kanonis.
+     Digunakan UI untuk menampilkan peringatan agar admin memperbarui master. */
+   isProcessTypeLegacy(v) {
+     if (!v) return false;
+     return !this.isProcessTypeValid(v);
+   },
+
+   /* ---- Validasi Suhu Proses Heat Treatment ----
+      Nilai default toleransi ±15°C. ID Part = sumber standar suhu.
+      Hasil OK inklusif pada batas min/max (actual >= min && actual <= max). */
+   TEMPERATURE_DEFAULT_TOLERANCE: 15,
+
+   /* ---- Resolusi Standar Suhu dari master Part ----
+      Mengembalikan nilai standard_temperature (number) atau null bila
+      Part tidak ditemukan / belum di-set. */
+   getPartStandardTemperature(partId) {
+     const p = this.findPartById(partId);
+     if (!p) return null;
+     const v = p.standard_temperature;
+     const n = Number(v);
+     return (v !== null && v !== undefined && String(v).trim() !== "" && isFinite(n)) ? n : null;
+   },
+
+   /* Mengembalikan { result, min, max, deviation, standard, tolerance }.
+      - standard null/undefined/"" -> result "NG" (standar belum di-set),
+        min/max/deviation null.
+      - actual kosong / bukan angka -> result "NG", deviation null
+        (min/max tetap dihitung bila standard tersedia).
+      - result "OK" bila actual dalam [min, max] inklusif; "NG" bila di luar.
+        Toleransi default DB.TEMPERATURE_DEFAULT_TOLERANCE (±15). */
+   validateTemperature(actual, standard, tolerance) {
+     const tol = (typeof tolerance === "number" && isFinite(tolerance)) ? tolerance : this.TEMPERATURE_DEFAULT_TOLERANCE;
+     const rawStandard = standard;
+     const hasStandard = rawStandard !== null && rawStandard !== undefined && String(rawStandard).trim() !== "";
+     let min = null, max = null, deviation = null, result = "NG";
+     if (hasStandard) {
+       const s = Number(rawStandard);
+       min = s - tol;
+       max = s + tol;
+       const rawActual = actual;
+       const actualStr = String(rawActual === null || rawActual === undefined ? "" : rawActual).trim();
+       const a = Number(rawActual);
+       if (actualStr !== "" && isFinite(a)) {
+         deviation = a - s;
+         result = (a >= min && a <= max) ? "OK" : "NG";
+       }
+     }
+     return {
+       result: result,
+       min: min,
+       max: max,
+       deviation: deviation,
+       standard: hasStandard ? Number(rawStandard) : null,
+       tolerance: tol,
+     };
+   },
+
+  /* Audit ringan: himpunan data dengan process_type / jenis_treatment
+     legacy (tidak termasuk daftar baru). Dipakai untuk laporan "perlu
+     ditinjau". Tidak mengubah data apa pun. */
+  getLegacyProcessTypeReport() {
+    const report = [];
+    this.get("parts").forEach((p) => {
+      if (this.isProcessTypeLegacy(p.process_type)) {
+        report.push({ table: "parts", id: p.id, item: p.nomor_part, value: p.process_type });
+      }
+    });
+    this.get("materials").forEach((m) => {
+      if (this.isProcessTypeLegacy(m.process_type)) {
+        report.push({ table: "materials", id: m.id, item: m.kode, value: m.process_type });
+      }
+    });
+    this.get("productions").forEach((p) => {
+      if (this.isProcessTypeLegacy(p.jenis_treatment)) {
+        report.push({ table: "productions", id: p.id, item: p.kode, value: p.jenis_treatment });
+      }
+    });
+    return report;
   },
 
   /* Referensi kunci asing: field → { tabel, kolomKunci } */
@@ -71,6 +170,100 @@ const DB = {
     this._seq += 1;
     return Date.now() + this._seq;
   },
+
+  KODE_YEAR_MAP: {
+    2026: "M",
+  },
+
+  _KEY_INCOMING_KODE_COUNTER: "ht_incoming_kode_counter",
+
+  _initIncomingKodeCounter() {
+    if (localStorage.getItem(this._KEY_INCOMING_KODE_COUNTER)) return;
+    const counter = {};
+    this.get("materials").forEach((m) => {
+      const parsed = this._parseIncomingKode(m.kode);
+      if (parsed) {
+        if (!counter[parsed.year] || parsed.seq > counter[parsed.year]) {
+          counter[parsed.year] = parsed.seq;
+        }
+      }
+    });
+    localStorage.setItem(this._KEY_INCOMING_KODE_COUNTER, JSON.stringify(counter));
+  },
+
+  _getIncomingKodeCounter() {
+    const raw = localStorage.getItem(this._KEY_INCOMING_KODE_COUNTER);
+    if (!raw) return {};
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch (e) {
+      return {};
+    }
+  },
+
+  _setIncomingKodeCounter(counter) {
+    localStorage.setItem(this._KEY_INCOMING_KODE_COUNTER, JSON.stringify(counter));
+  },
+
+  _parseIncomingKode(kode) {
+    if (!kode || typeof kode !== "string") return null;
+    const m = String(kode).trim().match(/^(\d+)([A-Za-z]+)$/);
+    if (!m) return null;
+    const yearCode = m[2];
+    const year = this._yearFromCode(yearCode);
+    if (year === null) return null;
+    return { seq: parseInt(m[1], 10), yearCode: yearCode, year: year };
+  },
+
+  _yearFromCode(code) {
+    const map = this.KODE_YEAR_MAP;
+    for (const y in map) {
+      if (map[y] === code) return parseInt(y, 10);
+    }
+    return null;
+  },
+
+  _peekNextIncomingSeq(year) {
+    const counter = this._getIncomingKodeCounter();
+    let seq = counter[year] || 0;
+    this.get("materials").forEach((m) => {
+      const parsed = this._parseIncomingKode(m.kode);
+      if (parsed && parsed.year === year && parsed.seq > seq) {
+        seq = parsed.seq;
+      }
+    });
+    return seq + 1;
+  },
+
+  nextIncomingKode(tanggalMasuk) {
+    const year = new Date(tanggalMasuk).getFullYear();
+    const yearCode = this.KODE_YEAR_MAP[year];
+    if (!yearCode) {
+      throw new Error(
+        "Kode tahun untuk " + year + " belum terdaftar di KODE_YEAR_MAP. " +
+          "Tambahkan peta kode tahun terlebih dahulu."
+      );
+    }
+    const seq = this._peekNextIncomingSeq(year);
+    const counter = this._getIncomingKodeCounter();
+    counter[year] = seq;
+    this._setIncomingKodeCounter(counter);
+    return seq + yearCode;
+  },
+
+  peekIncomingKode(tanggalMasuk) {
+    const year = new Date(tanggalMasuk).getFullYear();
+    const yearCode = this.KODE_YEAR_MAP[year];
+    if (!yearCode) {
+      throw new Error(
+        "Kode tahun untuk " + year + " belum terdaftar di KODE_YEAR_MAP. " +
+          "Tambahkan peta kode tahun terlebih dahulu."
+      );
+    }
+    return this._peekNextIncomingSeq(year) + yearCode;
+  },
+
   init() {
     const currentVersion = localStorage.getItem("ht_db_seed_version");
     if (currentVersion === this.SEED_VERSION) {
@@ -80,6 +273,7 @@ const DB = {
         }
       });
       this._initIdCounter();
+      this._initIncomingKodeCounter();
       this.migrate();
       return;
     }
@@ -89,6 +283,7 @@ const DB = {
     this.seedDemoData();
     localStorage.setItem("ht_db_seed_version", this.SEED_VERSION);
     this._initIdCounter();
+    this._initIncomingKodeCounter();
     this.migrate();
   },
   get(table) {
@@ -145,6 +340,21 @@ const DB = {
   },
   getMaterialsByCustomer(customerId) {
     return this.get("materials").filter((m) => m.customer_id == customerId);
+  },
+
+  /* ---- Resolusi Jenis Proses dari master Part ---- */
+  /* Sumber kebenaran jenis proses adalah master Part (diambil via part_id).
+     Mengembalikan string process_type (bisa kosong "") bila Part belum
+     dilengkapi, sehingga caller dapat memutuskan apakah boleh menyimpan
+     Incoming baru. */
+  getPartProcessType(partId) {
+    const p = this.findPartById(partId);
+    if (!p) return null;
+    return p.process_type || "";
+  },
+  canPartStartIncoming(partId) {
+    const pt = this.getPartProcessType(partId);
+    return !!pt;
   },
 
   /* ---- Validasi Data ---- */
@@ -729,7 +939,7 @@ const DB = {
     return { allowed: true, reason: null, qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: true };
   },
   migrate() {
-    const validPartFields = ["id","customer_id","nomor_part","nama_part","berat_part","satuan_berat","target_hardness","standard_process_route","status","created_at","updated_at"];
+    const validPartFields = ["id","customer_id","nomor_part","nama_part","berat_part","satuan_berat","target_hardness","standard_temperature","process_type","standard_process_route","status","created_at","updated_at"];
     const defaultProcessRoute = { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false };
     const parts = this.get("parts");
     let changed = false;
@@ -737,7 +947,9 @@ const DB = {
       const keys = Object.keys(p);
       for (const k of keys) { if (!validPartFields.includes(k)) { delete p[k]; changed = true; } }
        if (!("target_hardness" in p)) { p.target_hardness = null; changed = true; }
-      if (!("status" in p)) { p.status = this.STATUSES.ACTIVE; changed = true; }
+      if (!("process_type" in p)) { p.process_type = ""; changed = true; }
+       if (!("status" in p)) { p.status = this.STATUSES.ACTIVE; changed = true; }
+       if (!("standard_temperature" in p)) { p.standard_temperature = null; changed = true; }
       /* Normalisasi status ke nilai kanonis Active/Inactive */
       const ns = this._normalizeStatusValue(p.status);
       if (ns !== p.status) { p.status = ns; changed = true; }
@@ -784,7 +996,11 @@ const DB = {
       }
     }
     if (changed) localStorage.setItem("ht_materials", JSON.stringify(materials));
-    const validProductionFields = ["id","material_id","incoming_id","tracking_id","status","production_status","kode","process_result","visual_check_result","visual_check_note","start_scan_at","start_scan_by","machine_start_at","machine_start_by","finish_scan_at","finish_scan_by","process_ng_note","machine_finish_at","machine_finish_by","tanggal_proses","jenis_treatment","remarks","created_at","updated_at"];
+    const validProductionFields = ["id","material_id","incoming_id","tracking_id","status","production_status","kode","process_result","visual_check_result","visual_check_note","visual_check_operator","start_scan_at","start_scan_by","machine_start_at","machine_start_by","finish_scan_at","finish_scan_by","process_ng_note","machine_finish_at","machine_finish_by","tanggal_proses","jenis_treatment","remarks","created_at","updated_at","standard_temperature_snapshot","temperature_tolerance_snapshot","actual_temperature","temperature_min","temperature_max","temperature_deviation","temperature_result","temperature_recorded_at","temperature_recorded_by"];
+    /* Catatan: field suhu (temperature_*) disengaja TIDAK di-backfill pada
+       record produksi yang sudah ada. Snapshot suhu hanya dicatat ketika
+       operator menyelesaikan proses. Record lama dipertahankan apa adanya
+       (tidak dimodifikasi) agar histori tidak berubah. */
     const productions = this.get("productions");
     changed = false;
     for (const p of productions) {
@@ -806,6 +1022,7 @@ const DB = {
       }
       if (!("remarks" in p)) { p.remarks = ""; changed = true; }
       if (!("tracking_id" in p)) { p.tracking_id = ""; changed = true; }
+      if (!("visual_check_operator" in p)) { p.visual_check_operator = ""; changed = true; }
     }
     if (changed) localStorage.setItem("ht_productions", JSON.stringify(productions));
     const validQCFields = ["id","production_id","material_id","hardness","satuan_hardness","hasil","microstructure","remarks","inspector","tanggal_inspector","catatan","user_id","created_at","updated_at"];
@@ -859,6 +1076,20 @@ const DB = {
       for (const k of keys) { if (!validTargetFields.includes(k)) { delete t[k]; changed = true; } }
     }
     if (changed) localStorage.setItem("ht_targets", JSON.stringify(targets));
+
+    /* ---- Migrasi daftar Jenis Proses ke daftar kanonis v2 ----
+       Aturan bisnis:
+       - Heat Treatment / Quenching / Hardening / Tempering tidak
+         dikonversi otomatis (tidak ada padanan yang dapat dipastikan);
+         nilai lama DIRENTAHKAN dan ditandai legacy via isProcessTypeLegacy.
+       - Annealing / Carburizing / Normalizing sudah ada di daftar baru
+         → tidak perlu transformasi.
+       - Tidak ada data yang dihapus, dikosongkan, atau ditimpa.
+       Langkah ini idempotent: hanya menandai versi migrasi sekali
+       (flag ht_migration_process_types_v2) agar tidak berulang. */
+    if (!localStorage.getItem("ht_migration_process_types_v2")) {
+      localStorage.setItem("ht_migration_process_types_v2", "1");
+    }
   },
   seedDemoData() {
     if (this.get("customers").length > 0) return;
@@ -871,16 +1102,16 @@ const DB = {
     ];
     localStorage.setItem("ht_customers", JSON.stringify(customers));
     const parts = [
-      { id: 1, customer_id: 1, nomor_part: "HT-2026-001", nama_part: "Crankshaft A", berat_part: 2.5, satuan_berat: "KG", target_hardness: "58-62 HRC", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: true, anti_rust: true }, status: "Active", created_at: "2026-01-20T00:00:00Z", updated_at: "2026-01-20T00:00:00Z" },
-      { id: 2, customer_id: 1, nomor_part: "HT-2026-002", nama_part: "Gear Housing A", berat_part: 3.2, satuan_berat: "KG", target_hardness: "60-64 HRC", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: true, anti_rust: false }, status: "Active", created_at: "2026-01-22T00:00:00Z", updated_at: "2026-01-22T00:00:00Z" },
-      { id: 3, customer_id: 2, nomor_part: "HT-2026-003", nama_part: "Gear Shaft B", berat_part: 1.8, satuan_berat: "KG", target_hardness: "55-60 HRC", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: true }, status: "Active", created_at: "2026-01-25T00:00:00Z", updated_at: "2026-01-25T00:00:00Z" },
-      { id: 4, customer_id: 2, nomor_part: "HT-2026-004", nama_part: "Piston Ring B", berat_part: 0.5, satuan_berat: "KG", target_hardness: "700-750 HV", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-01-28T00:00:00Z", updated_at: "2026-01-28T00:00:00Z" },
-      { id: 5, customer_id: 3, nomor_part: "HT-2026-005", nama_part: "Camshaft Pro", berat_part: 4.0, satuan_berat: "KG", target_hardness: "45-50 HRC", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-05T00:00:00Z", updated_at: "2026-02-05T00:00:00Z" },
-      { id: 6, customer_id: 3, nomor_part: "HT-2026-006", nama_part: "Connecting Rod C", berat_part: 2.1, satuan_berat: "KG", target_hardness: "50-55 HRC", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-08T00:00:00Z", updated_at: "2026-02-08T00:00:00Z" },
-      { id: 7, customer_id: 4, nomor_part: "HT-2026-007", nama_part: "Piston Rod X", berat_part: 3.5, satuan_berat: "KG", target_hardness: "58-62 HRC", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-12T00:00:00Z", updated_at: "2026-02-12T00:00:00Z" },
-      { id: 8, customer_id: 4, nomor_part: "HT-2026-008", nama_part: "Gear Component X", berat_part: 2.8, satuan_berat: "KG", target_hardness: "55-60 HRC", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-15T00:00:00Z", updated_at: "2026-02-15T00:00:00Z" },
-      { id: 9, customer_id: 5, nomor_part: "HT-2026-009", nama_part: "Valve Stem Z", berat_part: 1.2, satuan_berat: "KG", target_hardness: "40-45 HRC", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-18T00:00:00Z", updated_at: "2026-02-18T00:00:00Z" },
-      { id: 10, customer_id: 5, nomor_part: "HT-2026-010", nama_part: "Housing Component Z", berat_part: 3.0, satuan_berat: "KG", target_hardness: "50-55 HRC", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-20T00:00:00Z", updated_at: "2026-02-20T00:00:00Z" },
+      { id: 1, customer_id: 1, nomor_part: "HT-2026-001", nama_part: "Crankshaft A", berat_part: 2.5, satuan_berat: "KG", target_hardness: "58-62 HRC", standard_temperature: 580, process_type: "Heat Treatment", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: true, anti_rust: true }, status: "Active", created_at: "2026-01-20T00:00:00Z", updated_at: "2026-01-20T00:00:00Z" },
+      { id: 2, customer_id: 1, nomor_part: "HT-2026-002", nama_part: "Gear Housing A", berat_part: 3.2, satuan_berat: "KG", target_hardness: "60-64 HRC", standard_temperature: 850, process_type: "Hardening", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: true, anti_rust: false }, status: "Active", created_at: "2026-01-22T00:00:00Z", updated_at: "2026-01-22T00:00:00Z" },
+      { id: 3, customer_id: 2, nomor_part: "HT-2026-003", nama_part: "Gear Shaft B", berat_part: 1.8, satuan_berat: "KG", target_hardness: "55-60 HRC", standard_temperature: 820, process_type: "Heat Treatment", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: true }, status: "Active", created_at: "2026-01-25T00:00:00Z", updated_at: "2026-01-25T00:00:00Z" },
+      { id: 4, customer_id: 2, nomor_part: "HT-2026-004", nama_part: "Piston Ring B", berat_part: 0.5, satuan_berat: "KG", target_hardness: "700-750 HV", standard_temperature: 650, process_type: "Annealing", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-01-28T00:00:00Z", updated_at: "2026-01-28T00:00:00Z" },
+      { id: 5, customer_id: 3, nomor_part: "HT-2026-005", nama_part: "Camshaft Pro", berat_part: 4.0, satuan_berat: "KG", target_hardness: "45-50 HRC", standard_temperature: 870, process_type: "Heat Treatment", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-05T00:00:00Z", updated_at: "2026-02-05T00:00:00Z" },
+      { id: 6, customer_id: 3, nomor_part: "HT-2026-006", nama_part: "Connecting Rod C", berat_part: 2.1, satuan_berat: "KG", target_hardness: "50-55 HRC", standard_temperature: 830, process_type: "Tempering", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-08T00:00:00Z", updated_at: "2026-02-08T00:00Z" },
+      { id: 7, customer_id: 4, nomor_part: "HT-2026-007", nama_part: "Piston Rod X", berat_part: 3.5, satuan_berat: "KG", target_hardness: "58-62 HRC", standard_temperature: 860, process_type: "Carburizing", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-12T00:00:00Z", updated_at: "2026-02-12T00:00:00Z" },
+      { id: 8, customer_id: 4, nomor_part: "HT-2026-008", nama_part: "Gear Component X", berat_part: 2.8, satuan_berat: "KG", target_hardness: "55-60 HRC", standard_temperature: 820, process_type: "Hardening", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-15T00:00:00Z", updated_at: "2026-02-15T00:00:00Z" },
+      { id: 9, customer_id: 5, nomor_part: "HT-2026-009", nama_part: "Valve Stem Z", berat_part: 1.2, satuan_berat: "KG", target_hardness: "40-45 HRC", standard_temperature: 750, process_type: "Normalizing", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-18T00:00:00Z", updated_at: "2026-02-18T00:00:00Z" },
+      { id: 10, customer_id: 5, nomor_part: "HT-2026-010", nama_part: "Housing Component Z", berat_part: 3.0, satuan_berat: "KG", target_hardness: "50-55 HRC", standard_temperature: 700, process_type: "Heat Treatment", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-02-20T00:00:00Z", updated_at: "2026-02-20T00:00:00Z" },
     ];
     localStorage.setItem("ht_parts", JSON.stringify(parts));
     const materials = [
@@ -897,14 +1128,14 @@ const DB = {
     ];
     localStorage.setItem("ht_materials", JSON.stringify(materials));
     const productions = [
-       { id: 2001, material_id: 1001, incoming_id: 1001, tracking_id: 5001, status: "FINISH", production_status: "FINISH", kode: "20260001I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-01T08:10:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-01T08:15:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "2026-09-01T10:30:00", finish_scan_by: "Operator Produksi 01", machine_finish_at: "2026-09-01T10:35:00", machine_finish_by: "Operator Mesin 01", process_ng_note: "", tanggal_proses: "2026-09-01", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", created_at: "2026-09-01T00:00:00Z", updated_at: "2026-09-01T00:00:00Z" },
-      { id: 2002, material_id: 1002, incoming_id: 1002, tracking_id: 5002, status: "FINISH", production_status: "FINISH", kode: "20260002I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-03T08:20:00", start_scan_by: "Operator Produksi 02", machine_start_at: "2026-09-03T08:25:00", machine_start_by: "Operator Mesin 02", finish_scan_at: "2026-09-03T11:00:00", finish_scan_by: "Operator Produksi 02", machine_finish_at: "2026-09-03T11:05:00", machine_finish_by: "Operator Mesin 02", process_ng_note: "", tanggal_proses: "2026-09-03", jenis_treatment: "Hardening", remarks: "Proses selesai normal", created_at: "2026-09-03T00:00:00Z", updated_at: "2026-09-03T00:00:00Z" },
-      { id: 2003, material_id: 1003, incoming_id: 1003, tracking_id: 5003, status: "FINISH", production_status: "FINISH", kode: "20260003I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-05T09:00:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-05T09:05:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "2026-09-05T12:00:00", finish_scan_by: "Operator Produksi 01", machine_finish_at: "2026-09-05T12:05:00", machine_finish_by: "Operator Mesin 01", process_ng_note: "", tanggal_proses: "2026-09-05", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", created_at: "2026-09-05T00:00:00Z", updated_at: "2026-09-05T00:00:00Z" },
-      { id: 2004, material_id: 1004, incoming_id: 1004, tracking_id: 5004, status: "FINISH_NG", production_status: "FINISH_NG", kode: "20260004I", process_result: "NG", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-08T08:30:00", start_scan_by: "Operator Produksi 02", machine_start_at: "2026-09-08T08:35:00", machine_start_by: "Operator Mesin 02", finish_scan_at: "2026-09-08T11:30:00", finish_scan_by: "Operator Produksi 02", machine_finish_at: "2026-09-08T11:35:00", machine_finish_by: "Operator Mesin 02", process_ng_note: "Hasil proses tidak memenuhi parameter yang ditetapkan", tanggal_proses: "2026-09-08", jenis_treatment: "Annealing", remarks: "Part NG setelah proses", created_at: "2026-09-08T00:00:00Z", updated_at: "2026-09-08T00:00:00Z" },
-      { id: 2005, material_id: 1005, incoming_id: 1005, tracking_id: 5005, status: "FINISH", production_status: "FINISH", kode: "20260005I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-10T08:15:00", start_scan_by: "Operator Produksi 03", machine_start_at: "2026-09-10T08:20:00", machine_start_by: "Operator Mesin 03", finish_scan_at: "2026-09-10T11:00:00", finish_scan_by: "Operator Produksi 03", machine_finish_at: "2026-09-10T11:05:00", machine_finish_by: "Operator Mesin 03", process_ng_note: "", tanggal_proses: "2026-09-10", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", created_at: "2026-09-10T00:00:00Z", updated_at: "2026-09-10T00:00:00Z" },
-      { id: 2006, material_id: 1006, incoming_id: 1006, tracking_id: 5006, status: "PROCESS", production_status: "PROCESS", kode: "20260006I", process_result: "", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-12T08:00:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-12T08:10:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "2026-09-12", jenis_treatment: "Tempering", remarks: "Sedang dalam proses produksi", created_at: "2026-09-12T00:00:00Z", updated_at: "2026-09-12T00:00:00Z" },
-      { id: 2007, material_id: 1007, incoming_id: 1007, tracking_id: 5007, status: "WAITING", production_status: "WAITING", kode: "20260007I", process_result: "", visual_check_result: "", visual_check_note: "", start_scan_at: "", start_scan_by: "", machine_start_at: "", machine_start_by: "", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "", jenis_treatment: "Carburizing", remarks: "Menunggu proses produksi", created_at: "2026-09-15T00:00:00Z", updated_at: "2026-09-15T00:00:00Z" },
-      { id: 2008, material_id: 1008, incoming_id: 1008, tracking_id: 5008, status: "PROCESS", production_status: "PROCESS", kode: "20260008I", process_result: "", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-18T08:20:00", start_scan_by: "Operator Produksi 04", machine_start_at: "2026-09-18T08:30:00", machine_start_by: "Operator Mesin 04", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "2026-09-18", jenis_treatment: "Hardening", remarks: "Sedang dalam proses produksi", created_at: "2026-09-18T00:00:00Z", updated_at: "2026-09-18T00:00:00Z" },
+       { id: 2001, material_id: 1001, incoming_id: 1001, tracking_id: 5001, status: "FINISH", production_status: "FINISH", kode: "20260001I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-01T08:10:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-01T08:15:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "2026-09-01T10:30:00", finish_scan_by: "Operator Produksi 01", machine_finish_at: "2026-09-01T10:35:00", machine_finish_by: "Operator Mesin 01", process_ng_note: "", tanggal_proses: "2026-09-01", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", standard_temperature_snapshot: 580, temperature_tolerance_snapshot: 15, actual_temperature: 580, temperature_min: 565, temperature_max: 595, temperature_deviation: 0, temperature_result: "OK", temperature_recorded_at: "2026-09-01T10:30:00", temperature_recorded_by: "Operator Mesin 01", created_at: "2026-09-01T00:00:00Z", updated_at: "2026-09-01T00:00:00Z" },
+      { id: 2002, material_id: 1002, incoming_id: 1002, tracking_id: 5002, status: "FINISH", production_status: "FINISH", kode: "20260002I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-03T08:20:00", start_scan_by: "Operator Produksi 02", machine_start_at: "2026-09-03T08:25:00", machine_start_by: "Operator Mesin 02", finish_scan_at: "2026-09-03T11:00:00", finish_scan_by: "Operator Produksi 02", machine_finish_at: "2026-09-03T11:05:00", machine_finish_by: "Operator Mesin 02", process_ng_note: "", tanggal_proses: "2026-09-03", jenis_treatment: "Hardening", remarks: "Proses selesai normal", standard_temperature_snapshot: 850, temperature_tolerance_snapshot: 15, actual_temperature: 850, temperature_min: 835, temperature_max: 865, temperature_deviation: 0, temperature_result: "OK", temperature_recorded_at: "2026-09-03T11:00:00", temperature_recorded_by: "Operator Mesin 02", created_at: "2026-09-03T00:00:00Z", updated_at: "2026-09-03T00:00:00Z" },
+      { id: 2003, material_id: 1003, incoming_id: 1003, tracking_id: 5003, status: "FINISH", production_status: "FINISH", kode: "20260003I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-05T09:00:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-05T09:05:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "2026-09-05T12:00:00", finish_scan_by: "Operator Produksi 01", machine_finish_at: "2026-09-05T12:05:00", machine_finish_by: "Operator Mesin 01", process_ng_note: "", tanggal_proses: "2026-09-05", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", standard_temperature_snapshot: 820, temperature_tolerance_snapshot: 15, actual_temperature: 820, temperature_min: 805, temperature_max: 835, temperature_deviation: 0, temperature_result: "OK", temperature_recorded_at: "2026-09-05T12:00:00", temperature_recorded_by: "Operator Mesin 01", created_at: "2026-09-05T00:00:00Z", updated_at: "2026-09-05T00:00:00Z" },
+      { id: 2004, material_id: 1004, incoming_id: 1004, tracking_id: 5004, status: "FINISH_NG", production_status: "FINISH_NG", kode: "20260004I", process_result: "NG", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-08T08:30:00", start_scan_by: "Operator Produksi 02", machine_start_at: "2026-09-08T08:35:00", machine_start_by: "Operator Mesin 02", finish_scan_at: "2026-09-08T11:30:00", finish_scan_by: "Operator Produksi 02", machine_finish_at: "2026-09-08T11:35:00", machine_finish_by: "Operator Mesin 02", process_ng_note: "Hasil proses tidak memenuhi parameter yang ditetapkan", tanggal_proses: "2026-09-08", jenis_treatment: "Annealing", remarks: "Part NG setelah proses", standard_temperature_snapshot: 650, temperature_tolerance_snapshot: 15, actual_temperature: 700, temperature_min: 635, temperature_max: 665, temperature_deviation: 50, temperature_result: "NG", temperature_recorded_at: "2026-09-08T11:30:00", temperature_recorded_by: "Operator Mesin 02", created_at: "2026-09-08T00:00:00Z", updated_at: "2026-09-08T00:00:00Z" },
+      { id: 2005, material_id: 1005, incoming_id: 1005, tracking_id: 5005, status: "FINISH", production_status: "FINISH", kode: "20260005I", process_result: "OK", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-10T08:15:00", start_scan_by: "Operator Produksi 03", machine_start_at: "2026-09-10T08:20:00", machine_start_by: "Operator Mesin 03", finish_scan_at: "2026-09-10T11:00:00", finish_scan_by: "Operator Produksi 03", machine_finish_at: "2026-09-10T11:05:00", machine_finish_by: "Operator Mesin 03", process_ng_note: "", tanggal_proses: "2026-09-10", jenis_treatment: "Heat Treatment", remarks: "Proses selesai normal", standard_temperature_snapshot: 870, temperature_tolerance_snapshot: 15, actual_temperature: 870, temperature_min: 855, temperature_max: 885, temperature_deviation: 0, temperature_result: "OK", temperature_recorded_at: "2026-09-10T11:00:00", temperature_recorded_by: "Operator Mesin 03", created_at: "2026-09-10T00:00:00Z", updated_at: "2026-09-10T00:00:00Z" },
+      { id: 2006, material_id: 1006, incoming_id: 1006, tracking_id: 5006, status: "PROCESS", production_status: "PROCESS", kode: "20260006I", process_result: "", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-12T08:00:00", start_scan_by: "Operator Produksi 01", machine_start_at: "2026-09-12T08:10:00", machine_start_by: "Operator Mesin 01", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "2026-09-12", jenis_treatment: "Tempering", remarks: "Sedang dalam proses produksi", standard_temperature_snapshot: null, temperature_tolerance_snapshot: null, actual_temperature: null, temperature_min: null, temperature_max: null, temperature_deviation: null, temperature_result: null, temperature_recorded_at: null, temperature_recorded_by: null, created_at: "2026-09-12T00:00:00Z", updated_at: "2026-09-12T00:00:00Z" },
+      { id: 2007, material_id: 1007, incoming_id: 1007, tracking_id: 5007, status: "WAITING", production_status: "WAITING", kode: "20260007I", process_result: "", visual_check_result: "", visual_check_note: "", start_scan_at: "", start_scan_by: "", machine_start_at: "", machine_start_by: "", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "", jenis_treatment: "Carburizing", remarks: "Menunggu proses produksi", standard_temperature_snapshot: null, temperature_tolerance_snapshot: null, actual_temperature: null, temperature_min: null, temperature_max: null, temperature_deviation: null, temperature_result: null, temperature_recorded_at: null, temperature_recorded_by: null, created_at: "2026-09-15T00:00:00Z", updated_at: "2026-09-15T00:00:00Z" },
+      { id: 2008, material_id: 1008, incoming_id: 1008, tracking_id: 5008, status: "PROCESS", production_status: "PROCESS", kode: "20260008I", process_result: "", visual_check_result: "OK", visual_check_note: "", start_scan_at: "2026-09-18T08:20:00", start_scan_by: "Operator Produksi 04", machine_start_at: "2026-09-18T08:30:00", machine_start_by: "Operator Mesin 04", finish_scan_at: "", finish_scan_by: "", machine_finish_at: "", machine_finish_by: "", process_ng_note: "", tanggal_proses: "2026-09-18", jenis_treatment: "Hardening", remarks: "Sedang dalam proses produksi", standard_temperature_snapshot: null, temperature_tolerance_snapshot: null, actual_temperature: null, temperature_min: null, temperature_max: null, temperature_deviation: null, temperature_result: null, temperature_recorded_at: null, temperature_recorded_by: null, created_at: "2026-09-18T00:00:00Z", updated_at: "2026-09-18T00:00:00Z" },
     ];
     localStorage.setItem("ht_productions", JSON.stringify(productions));
     const qcs = [

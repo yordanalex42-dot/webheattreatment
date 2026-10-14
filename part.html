@@ -288,11 +288,62 @@
                 type="text"
                 id="partTargetHardness"
                 class="ht-form-input"
-                placeholder="Contoh: 58-62 HRC"
-              />
-            </div>
-            <div class="ht-form-group">
-              <label class="ht-form-label">Rute Proses Standar</label>
+                 placeholder="Contoh: 58-62 HRC"
+               />
+              </div>
+              <div class="ht-form-group">
+                <label class="ht-form-label" for="partStandardTemperature"
+                  >Standar Suhu (<abbr title="Celcius">&#8451;</abbr>)</label
+                >
+                <input
+                  type="number"
+                  id="partStandardTemperature"
+                  class="ht-form-input"
+                  inputmode="numeric"
+                  placeholder="Contoh: 580"
+                />
+                <p class="ht-hint">
+                  Suhu proses standar untuk validasi OK/NG pada Heat Treatment.
+                  Toleransi default ±15&#8451;.
+                </p>
+              </div>
+              <div class="ht-form-group">
+               <label class="ht-form-label" for="partProcessType"
+                 >Jenis Proses</label
+               >
+               <select
+                 id="partProcessType"
+                 required
+                 class="ht-form-select"
+                 onchange="togglePartProcessNote()"
+               >
+                  <option value="">Pilih Jenis Proses</option>
+                  <option value="Quenching &amp; Tempering">Quenching &amp; Tempering</option>
+                  <option value="Annealing">Annealing</option>
+                  <option value="Carburizing">Carburizing</option>
+                  <option value="Normalizing">Normalizing</option>
+                  <option value="Full Annealing">Full Annealing</option>
+                  <option value="Stress Relief Annealing">Stress Relief Annealing</option>
+                  <option value="Spheroidizing Annealing">Spheroidizing Annealing</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+                <span id="partProcessTypeWarning" class="hidden ht-error-text"></span>
+             </div>
+             <div id="partProcessNoteGroup" class="hidden ht-form-group">
+               <label class="ht-form-label" for="partProcessNote"
+                 >Nama Jenis Proses
+                 <span class="ht-required">(Manual)</span></label
+               >
+               <input
+                 type="text"
+                 id="partProcessNote"
+                 maxlength="100"
+                 class="ht-form-input"
+                 placeholder="Masukkan nama jenis proses"
+               />
+             </div>
+             <div class="ht-form-group">
+               <label class="ht-form-label">Rute Proses Standar</label>
               <label class="ht-checkbox-label disabled">
                 <input
                   type="checkbox"
@@ -491,6 +542,8 @@
               <div><p class="ht-detail-label">Nama Part</p><p class="ht-detail-value">${p.nama_part}</p></div>
               <div><p class="ht-detail-label">Berat Part</p><p class="ht-detail-value">${p.berat_part} ${p.satuan_berat}</p></div>
               <div><p class="ht-detail-label">Target Hardness</p><p class="ht-detail-value font-mono">${p.target_hardness || "-"}</p></div>
+              <div><p class="ht-detail-label">Standar Suhu</p><p class="ht-detail-value font-mono">${(p.standard_temperature !== null && p.standard_temperature !== undefined && p.standard_temperature !== "") ? p.standard_temperature + " &#8451;" : "-"}</p></div>
+              <div><p class="ht-detail-label">Jenis Proses</p><p class="ht-detail-value font-mono">${p.process_type || "-"}</p></div>
               <div><p class="ht-detail-label">Status</p><p class="ht-detail-value"><span class="ht-badge ${p.status === "Active" ? "ht-badge-ok" : "ht-badge-inactive"}">${p.status || "-"}</span></p></div>
             </div>
             <div class="ht-detail-section">
@@ -500,11 +553,45 @@
           `;
         detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
       }
+       function togglePartProcessNote() {
+        const val = document.getElementById("partProcessType").value;
+        const group = document.getElementById("partProcessNoteGroup");
+        if (val === "Lainnya") {
+          group.classList.remove("hidden");
+        } else {
+          group.classList.add("hidden");
+          document.getElementById("partProcessNote").value = "";
+        }
+        updateProcessTypeWarning();
+      }
+      function updateProcessTypeWarning() {
+        const sel = document.getElementById("partProcessType");
+        const warn = document.getElementById("partProcessTypeWarning");
+        if (!sel || !warn) return;
+        const val = sel.value;
+        const note = (document.getElementById("partProcessNote").value || "").trim();
+        const effective = val === "Lainnya" ? note : val;
+        if (effective && DB.isProcessTypeLegacy(effective)) {
+          warn.textContent =
+            "Peringatan: \"" + effective + "\" bukan bagian dari daftar Jenis Proses baru. Harap pilih salah satu dari 7 jenis proses terbaru atau koreksi nilai ini.";
+          warn.classList.remove("hidden");
+        } else {
+          warn.textContent = "";
+          warn.classList.add("hidden");
+        }
+      }
       function openForm() {
         document.getElementById("formTitle").textContent = "Tambah Part";
         document.getElementById("partForm").reset();
         document.getElementById("partId").value = "";
-        document.getElementById("partNomorErr").classList.add("hidden");
+         document.getElementById("partNomorErr").classList.add("hidden");
+         document.getElementById("partProcessType").value = "";
+         document.getElementById("partProcessNoteGroup").classList.add("hidden");
+         document.getElementById("partTargetHardness").value = "";
+         document.getElementById("partStandardTemperature").value = "";
+         document.getElementById("partProcessNote").value = "";
+        document.getElementById("partProcessTypeWarning").textContent = "";
+        document.getElementById("partProcessTypeWarning").classList.add("hidden");
         document.getElementById("cbHeatTreatment").checked = true;
         document.getElementById("cbHeatTreatment").disabled = true;
         document.getElementById("cbQcCheck").checked = true;
@@ -532,8 +619,23 @@
         document.getElementById("partBerat").value = p.berat_part;
         document.getElementById("partSatuan").value = p.satuan_berat;
         document.getElementById("partStatus").value = p.status;
-        document.getElementById("partTargetHardness").value =
-          p.target_hardness || "";
+         document.getElementById("partTargetHardness").value =
+           p.target_hardness || "";
+         document.getElementById("partStandardTemperature").value =
+           p.standard_temperature !== null && p.standard_temperature !== undefined
+             ? p.standard_temperature
+             : "";
+        const standardTypes = DB.PROCESS_TYPE_OPTIONS;
+        const partType = p.process_type || "";
+        if (standardTypes.indexOf(partType) !== -1) {
+          document.getElementById("partProcessType").value = partType;
+        } else if (partType) {
+          document.getElementById("partProcessType").value = "Lainnya";
+          document.getElementById("partProcessNote").value = partType;
+        } else {
+          document.getElementById("partProcessType").value = "";
+        }
+        togglePartProcessNote();
         const route = p.standard_process_route
           ? p.standard_process_route
           : {
@@ -566,15 +668,27 @@
           document.getElementById("partNomorErr").classList.remove("hidden");
           return;
         }
+        const targetHardness = document
+          .getElementById("partTargetHardness")
+          .value.trim();
+        const processTypeSelect = document.getElementById("partProcessType").value;
+        let processTypeFinal = "";
+        if (processTypeSelect === "Lainnya") {
+          processTypeFinal = document.getElementById("partProcessNote").value.trim() || "Lainnya";
+        } else {
+          processTypeFinal = processTypeSelect || "";
+        }
+        const stdTempRaw = document.getElementById("partStandardTemperature").value.trim();
+        const standardTempValue = stdTempRaw === "" ? null : Number(stdTempRaw);
         const data = {
           customer_id: parseInt(cid),
           nomor_part: nomor,
           nama_part: document.getElementById("partNama").value.trim(),
           berat_part: parseFloat(document.getElementById("partBerat").value),
           satuan_berat: document.getElementById("partSatuan").value,
-          target_hardness: document
-            .getElementById("partTargetHardness")
-            .value.trim(),
+          target_hardness: targetHardness,
+          standard_temperature: standardTempValue,
+          process_type: processTypeFinal,
           standard_process_route: {
             heat_treatment: true,
             qc_check: true,

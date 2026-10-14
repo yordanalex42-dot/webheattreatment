@@ -196,12 +196,29 @@
               </div>
             </div>
 
-            <!-- Formulir -->
-            <div id="qcForm" class="hidden ht-card fade-in">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title">Data Part</h3>
-              </div>
-              <div class="ht-info-grid mb-4">
+            <!-- Modal Quality Control -->
+            <div id="qcModal" class="ht-modal-overlay" aria-hidden="true">
+              <div class="ht-modal ht-modal-width">
+                <div class="ht-modal-header">
+                  <div class="ht-modal-header-title">
+                    <h3 class="ht-modal-title">Pemeriksaan Quality Control</h3>
+                    <p class="ht-modal-subtitle">Input hasil pemeriksaan keras material</p>
+                  </div>
+                  <button
+                    type="button"
+                    onclick="closeQcModal()"
+                    class="ht-modal-close"
+                    aria-label="Close"
+                  >
+                    <img src="assets/icons/close.svg" alt="Close" class="icon" />
+                  </button>
+                </div>
+                <div class="ht-modal-body">
+                  <div id="qcForm" class="ht-card fade-in">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Data Part</h3>
+                    </div>
+                    <div class="ht-info-grid mb-4">
                 <div class="ht-info-item">
                   <span class="ht-info-label">Nomor Kode</span>
                   <span class="ht-info-value mono" id="infoKode">-</span>
@@ -244,105 +261,123 @@
                 </div>
               </div>
 
-              <h3 class="font-bold mb-3">Input Hasil QC</h3>
-              <div
-                class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 ht-form-group"
-              >
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcInspector"
-                    >Nama Inspector</label
-                  >
-                  <input
-                    type="text"
-                    id="qcInspector"
-                    required
-                    class="ht-form-input"
-                    placeholder="Nama Inspector"
-                  />
+              <div class="ht-card ht-card-input fade-in">
+                <div class="ht-card-header">
+                  <h3 class="ht-card-title">INPUT HASIL QC</h3>
                 </div>
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcTanggalInspector"
-                    >Tanggal Inspector</label
-                  >
-                  <input
-                    type="date"
-                    id="qcTanggalInspector"
-                    required
-                    class="ht-form-input"
-                  />
+                <div class="ht-step-form">
+                  <h4 class="ht-step-form-title">DATA INSPECTOR</h4>
+                  <div class="ht-form-row ht-form-row--inline">
+                    <div class="ht-form-group">
+                      <label class="ht-form-label" for="qcInspector"
+                        >Nama Inspector</label
+                      >
+                      <input
+                        type="text"
+                        id="qcInspector"
+                        required
+                        class="ht-form-input"
+                        placeholder="Nama Inspector"
+                      />
+                    </div>
+                    <div class="ht-form-group">
+                      <label class="ht-form-label" for="qcTanggalInspector"
+                        >Tanggal Inspector</label
+                      >
+                      <input
+                        type="date"
+                        id="qcTanggalInspector"
+                        required
+                        class="ht-form-input"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <form id="hasilForm" class="ht-form">
-                <input type="hidden" id="qcProductionId" />
-                <input type="hidden" id="qcId" />
-                <div class="ht-form-row">
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="qcHardness"
-                      >Nilai Hardness</label
-                    >
-                    <input
-                      type="text"
-                      id="qcHardness"
-                      required
-                      class="ht-form-input"
-                      placeholder="Contoh: 58-62 HRC"
-                    />
+              <div class="ht-card ht-card-input fade-in">
+                <div class="ht-card-header">
+                  <h3 class="ht-card-title">HASIL PEMERIKSAAN QC</h3>
+                </div>
+                <form id="hasilForm" class="ht-form">
+                  <input type="hidden" id="qcProductionId" />
+                  <input type="hidden" id="qcId" />
+                  <div class="ht-step-form">
+                    <h4 class="ht-step-form-title">PARAMETER PEMERIKSAAN</h4>
+                    <div class="ht-form-row ht-form-row--inline">
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="qcHardness"
+                          >Nilai Hardness</label
+                        >
+                        <input
+                          type="text"
+                          id="qcHardness"
+                          required
+                          class="ht-form-input"
+                          placeholder="Contoh: 58-62 HRC"
+                        />
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="qcSatuan">Satuan</label>
+                        <select id="qcSatuan" class="ht-form-select">
+                          <option value="HRC">HRC</option>
+                          <option value="HV">HV</option>
+                          <option value="HB">HB</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="ht-form-row ht-form-row--inline">
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="qcMicrostructure"
+                          >Microstructure</label
+                        >
+                        <select id="qcMicrostructure" required class="ht-form-select">
+                          <option value="">Pilih hasil microstructure</option>
+                          <option value="OK">OK</option>
+                          <option value="NG">NG</option>
+                        </select>
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="qcHasilDisplay"
+                          >Hasil QC</label
+                        >
+                        <input
+                          type="text"
+                          id="qcHasilDisplay"
+                          readonly
+                          class="ht-form-input"
+                          value="-"
+                        />
+                      </div>
+                    </div>
+                    <div class="ht-form-group">
+                      <label class="ht-form-label" for="qcCatatan">Catatan</label>
+                      <textarea
+                        id="qcCatatan"
+                        rows="2"
+                        class="ht-form-input ht-form-textarea"
+                        placeholder="Opsional"
+                      ></textarea>
+                    </div>
+                    <div class="ht-form-actions">
+                      <button
+                        type="submit"
+                        class="ht-btn ht-btn-success"
+                        aria-label="Simpan hasil QC"
+                      >
+                        <img
+                          src="assets/icons/save.svg"
+                          alt="Simpan"
+                          class="icon mr-2"
+                        />Simpan Hasil QC
+                      </button>
+                    </div>
                   </div>
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="qcSatuan">Satuan</label>
-                    <select id="qcSatuan" class="ht-form-select">
-                      <option value="HRC">HRC</option>
-                      <option value="HV">HV</option>
-                      <option value="HB">HB</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcMicrostructure"
-                    >Microstructure</label
-                  >
-                  <select id="qcMicrostructure" required class="ht-form-select">
-                    <option value="">Pilih hasil microstructure</option>
-                    <option value="OK">OK</option>
-                    <option value="NG">NG</option>
-                  </select>
-                </div>
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcHasilDisplay"
-                    >Hasil QC</label
-                  >
-                  <input
-                    type="text"
-                    id="qcHasilDisplay"
-                    readonly
-                    class="ht-form-input"
-                    value="-"
-                  />
-                </div>
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="qcCatatan">Catatan</label>
-                  <textarea
-                    id="qcCatatan"
-                    rows="2"
-                    class="ht-form-input ht-form-textarea"
-                    placeholder="Opsional"
-                  ></textarea>
-                </div>
-                <div class="ht-form-actions">
-                  <button
-                    type="submit"
-                    class="ht-btn ht-btn-success"
-                    aria-label="Simpan hasil QC"
-                  >
-                    <img
-                      src="assets/icons/save.svg"
-                      alt="Simpan"
-                      class="icon mr-2"
-                    />Simpan Hasil QC
-                  </button>
-                </div>
-              </form>
+                </form>
+              </div>
+            </div>
+            </div>
+            </div>
             </div>
 
             <!-- Tabel riwayat -->
@@ -354,14 +389,16 @@
                 <table class="ht-table">
                   <thead>
                     <tr>
-                      <th>Nomor Kode</th>
-                      <th>Customer</th>
-                      <th>Nama Part</th>
-                      <th>Treatment</th>
+                       <th>Nomor Kode</th>
+                       <th>Customer</th>
+                       <th>Nama Part</th>
+                       <th>Nomor Part</th>
+                       <th>Treatment</th>
                       <th>Hardness</th>
-                      <th>Microstructure</th>
-                      <th>Hasil</th>
-                      <th>Aksi</th>
+                       <th>Microstructure</th>
+                       <th>Hasil</th>
+                       <th>Suhu</th>
+                       <th>Aksi</th>
                     </tr>
                   </thead>
                   <tbody id="qcTable"></tbody>
@@ -374,10 +411,13 @@
     </div>
 
     <!-- Modal Pemindaian -->
-    <div id="scanModal" class="ht-modal-overlay">
-      <div class="ht-modal">
+    <div id="scanModal" class="ht-modal-overlay" aria-hidden="true">
+      <div class="ht-modal ht-modal-width">
         <div class="ht-modal-header">
-          <h3 class="ht-modal-title">Scan QR Code</h3>
+          <div class="ht-modal-header-title">
+            <h3 class="ht-modal-title">Scan QR Code</h3>
+            <p class="ht-modal-subtitle">Pindai QR Code material atau masukkan kode secara manual</p>
+          </div>
           <button
             onclick="closeScanModal()"
             class="ht-modal-close"
@@ -493,10 +533,7 @@
           document.getElementById("qcCatatan").value = "";
           hasilDisplay.value = "-";
         }
-        document.getElementById("qcForm").classList.remove("hidden");
-        document
-          .getElementById("qcForm")
-          .scrollIntoView({ behavior: "smooth" });
+        openQcModal();
       }
       function clearManualError() {
         const err = document.getElementById("manualError");
@@ -616,20 +653,33 @@
                 : q.hasil === "NG"
                   ? "ht-badge-ng"
                   : "ht-badge-waiting";
-            const microDisplay = q.microstructure
-              ? q.microstructure === "OK"
-                ? '<span class="ht-badge ht-badge-ok">OK</span>'
-                : '<span class="ht-badge ht-badge-ng">NG</span>'
-              : '<span class="text-secondary">-</span>';
+             const microDisplay = q.microstructure
+               ? q.microstructure === "OK"
+                 ? '<span class="ht-badge ht-badge-ok">OK</span>'
+                 : '<span class="ht-badge ht-badge-ng">NG</span>'
+               : '<span class="text-secondary">-</span>';
+             const tempBadge = (prod) => {
+               const actual = prod.actual_temperature;
+               const res = prod.temperature_result;
+               if (actual === null || actual === undefined || actual === "") {
+                 return '<span class="text-secondary">-</span>';
+               }
+               const cls = res === "OK" ? "ht-badge-ok" : "ht-badge-ng";
+               return '<span class="ht-badge ' + cls + '">' + actual + " \u00B0C (" + (res || "-") + ")</span>";
+             };
             return `<tr class="ht-table-row">
-            <td class="font-mono">${m.kode || "-"}</td>
-            <td>${(cust && cust.nama_customer) || "-"}</td>
-            <td>${part ? part.nomor_part : "-"}</td>
-            <td class="text-secondary">${prod.jenis_treatment || "-"}</td>
+             <td class="font-mono">${m.kode || "-"}</td>
+             <td>${(cust && cust.nama_customer) || "-"}</td>
+             <td>${part ? part.nama_part : "-"}</td>
+             <td class="font-mono">${part ? part.nomor_part : "-"}</td>
+             <td class="text-secondary">${prod.jenis_treatment || "-"}</td>
             <td class="font-mono">${q.hardness || "-"} ${q.satuan_hardness || ""}</td>
-            <td>${microDisplay}</td>
-            <td><span class="ht-badge ${hasilColor}">${q.hasil || "-"}</span></td>
-            <td>
+             <td>${microDisplay}</td>
+             <td><span class="ht-badge ${hasilColor}">${q.hasil || "-"}</span></td>
+             <td>
+               ${tempBadge(prod)}
+             </td>
+             <td>
               <div class="ht-action-group">
                 <button onclick="loadMaterialById('${m.kode || m.id}')" class="ht-action-btn edit" title="Edit" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>
                 <button onclick="deleteQC(${q.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><img src="assets/icons/delete.svg" alt="Delete" class="icon"></button>
@@ -640,7 +690,7 @@
           .join("");
         document.getElementById("qcTable").innerHTML =
           html ||
-          '<tr><td colspan="8" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data QC</p></td></tr>';
+          '<tr><td colspan="10" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data QC</p></td></tr>';
       }
       function deleteQC(id) {
         if (confirm("Hapus data QC ini?")) {
@@ -663,6 +713,49 @@
         html5QrCode = null;
         HTUI.closeModal("scanModal");
       }
+      var qcBodyOverflowCache = "";
+      function openQcModal() {
+        var modal = document.getElementById("qcModal");
+        if (!modal) return;
+        if (modal.classList.contains("active")) return;
+        modal.classList.add("active");
+        modal.setAttribute("aria-hidden", "false");
+        qcBodyOverflowCache = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        try {
+          HTUI.stopScanner(html5QrCode);
+        } catch (e) {}
+        html5QrCode = null;
+      }
+      function closeQcModal() {
+        var modal = document.getElementById("qcModal");
+        if (!modal) return;
+        modal.classList.remove("active");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = qcBodyOverflowCache;
+        restartScanner();
+        var manualInput = document.getElementById("manualId");
+        if (manualInput) manualInput.focus();
+      }
+      function restartScanner() {
+        try {
+          if (html5QrCode) {
+            try {
+              HTUI.stopScanner(html5QrCode);
+            } catch (e) {}
+            html5QrCode = null;
+          }
+          html5QrCode = HTUI.createScanner("qr-reader");
+          if (html5QrCode) {
+            HTUI.startScanner(html5QrCode, function (decodedText) {
+              var id = HTUI.parseScanId(decodedText);
+              loadMaterialById(id);
+            });
+          }
+        } catch (e) {
+          console.warn("[QC] restart scanner failed:", e);
+        }
+      }
       window.addEventListener("DOMContentLoaded", () => {
         DB.init();
         DB.migrate();
@@ -673,6 +766,24 @@
           console.warn("[QC] Scanner init failed:", e);
         }
         loadQCs();
+
+        var qcModalOverlay = document.getElementById("qcModal");
+        if (qcModalOverlay) {
+          qcModalOverlay.addEventListener("click", function (e) {
+            if (e.target === qcModalOverlay) {
+              closeQcModal();
+            }
+          });
+        }
+        document.addEventListener("keydown", function (e) {
+          if (
+            e.key === "Escape" &&
+            qcModalOverlay &&
+            qcModalOverlay.classList.contains("active")
+          ) {
+            closeQcModal();
+          }
+        });
       });
     </script>
   </body>

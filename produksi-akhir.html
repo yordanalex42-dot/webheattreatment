@@ -605,7 +605,7 @@
         try {
           const scanTime = new Date().toISOString().slice(0, 19);
           const data = {
-            status: DB.STATUSES.PROD_FINISH,
+            status: rOK ? DB.STATUSES.PROD_FINISH : DB.STATUSES.PROD_FINISH_NG,
             production_status: rOK
               ? DB.STATUSES.PROD_FINISH
               : DB.STATUSES.PROD_FINISH_NG,
@@ -619,9 +619,13 @@
             machine_finish_by: session ? session.name : "Operator",
           };
           DB.update("productions", currentProduction.id, data);
-          currentMaterial.status_proses = DB.STATUSES.PROSES_FINISH;
+          currentMaterial.status_proses = rOK
+            ? DB.STATUSES.PROSES_FINISH
+            : DB.STATUSES.PROSES_FINISH_NG;
           DB.update("materials", currentMaterial.id, {
-            status_proses: DB.STATUSES.PROSES_FINISH,
+            status_proses: rOK
+              ? DB.STATUSES.PROSES_FINISH
+              : DB.STATUSES.PROSES_FINISH_NG,
           });
           btn.innerHTML =
             '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';

@@ -28,7 +28,7 @@
 }
 
 .ht-form-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
   text-transform: uppercase;
@@ -282,4 +282,103 @@
   .ht-form-textarea {
     transition: none;
   }
+}
+
+/* ============================================================
+   HT MODAL FORM EXTENSIONS
+   ============================================================ */
+
+.ht-form-row--inline {
+  grid-template-columns: repeat(2, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.ht-form-row--inline .ht-form-label {
+  margin-bottom: 4px;
+}
+
+.ht-form-group-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ht-form-group-inline .ht-form-label {
+  margin-bottom: 0;
+}
+
+/* Radio button styling for HT modal */
+.ht-radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all var(--transition-sm);
+  user-select: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+}
+
+.ht-radio-label:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+}
+
+.ht-radio {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+.ht-radio-text {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ht-radio-text--ok {
+  color: var(--success);
+}
+
+.ht-radio-text--ng {
+  color: var(--danger);
+}
+
+.ht-radio-label:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+/* Step form title */
+.ht-step-form-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+
+/* Flex helpers */
+.ht-flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ht-flex-gap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* HT hint */
+.ht-hint {
+  color: var(--text-tertiary);
+  font-size: 12px;
 }
