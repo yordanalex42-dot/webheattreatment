@@ -73,12 +73,12 @@
   --accent-hover: #1d4ed8;
   --accent-soft: rgba(37, 99, 235, 0.08);
 
-  /* ===== SIDEBAR / NAVY ===== */
-  --sidebar: #0f172a;
-  --sidebar-elevated: #1e3a8a;
-  --sidebar-border: #33415a;
-  --sidebar-text: #cbd5e1;
-  --sidebar-text-active: #ffffff;
+  /* ===== SIDEBAR (tema putih modern) ===== */
+  --sidebar: #ffffff;
+  --sidebar-elevated: #ffffff;
+  --sidebar-border: rgba(0, 0, 0, 0.06);
+  --sidebar-text: #475569;
+  --sidebar-text-active: #2563eb;
 
   /* ===== LATAR BELAKANG & PERMUKAAN ===== */
   --background: #f8fafc;

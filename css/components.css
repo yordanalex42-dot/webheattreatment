@@ -2064,3 +2064,697 @@
     transform: none;
   }
 }
+
+/* ============================================================
+   AREA KERJA PERENCANAAN PRODUKSI
+   ============================================================ */
+.ht-workspace-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  animation: cardEntrance 200ms ease-out both;
+}
+
+.ht-workspace-root {
+  min-height: 120px;
+}
+
+.ht-workspace-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.ht-workspace-empty:before {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 12px;
+  background: var(--surface-muted);
+  border-radius: 50%;
+}
+
+.ht-workspace-temp-section {
+  margin-bottom: 16px;
+}
+
+.ht-workspace-temp-section:last-child {
+  margin-bottom: 0;
+}
+
+.ht-workspace-pending-section {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.ht-workspace-temp-divider {
+  display: flex;
+  align-items: center;
+  margin: 16px 0 8px;
+  gap: 8px;
+}
+
+.ht-workspace-temp-divider:before,
+.ht-workspace-temp-divider:after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.ht-workspace-process-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 4px;
+  background: var(--surface);
+}
+
+.ht-workspace-temp-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  padding: 0 4px;
+  background: var(--surface);
+}
+
+.ht-workspace-pending-divider .ht-workspace-process-label,
+.ht-workspace-pending-divider .ht-workspace-temp-label {
+  color: var(--warning-text);
+}
+
+.ht-workspace-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ht-workspace-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-sm);
+}
+
+.ht-workspace-item:hover {
+  border-color: var(--primary);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.08);
+}
+
+.ht-workspace-item-dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+}
+
+.ht-workspace-drag-handle {
+  cursor: grab;
+  cursor: -moz-grab;
+  font-size: 16px;
+  color: var(--text-tertiary);
+  user-select: none;
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+  transition: all var(--transition-sm);
+}
+
+.ht-workspace-drag-handle:hover {
+  color: var(--text-primary);
+  background: var(--surface-hover);
+}
+
+.ht-workspace-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ht-workspace-item-code {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-mono, monospace);
+}
+
+.ht-workspace-item-detail {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ht-workspace-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.ht-workspace-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ht-action-cell {
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-workspace-item {
+    transition: none;
+  }
+
+  .ht-workspace-item:hover {
+    transform: none;
+  }
+
+  .ht-workspace-item-dragging {
+    opacity: 0.5;
+    transform: none;
+  }
+}
+
+/* ============================================================
+   PLANNING PRODUKSI — vertical stacked layout, shared filter
+   ============================================================ */
+
+.ht-planning-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.ht-planning-filter-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.ht-planning-filter-bar .ht-form-group {
+  flex: none;
+  width: 240px;
+}
+
+.ht-summary-cards {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.ht-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  height: 32px;
+  min-width: 110px;
+}
+
+.ht-summary-icon {
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+}
+
+.ht-summary-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ht-summary-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .ht-planning-filter-bar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .ht-planning-filter-bar .ht-form-group {
+    flex: 1 1 100%;
+    width: auto;
+    min-width: 200px;
+  }
+  .ht-summary-cards {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .ht-summary-card {
+    min-width: 130px;
+  }
+}
+
+.ht-planning-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+}
+
+.ht-planning-panel {
+  width: 100%;
+  min-width: 0;
+  height: fit-content;
+}
+
+.ht-card-planning {
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.ht-card-body-planning {
+  padding: 12px 0 0;
+}
+
+.ht-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.ht-card-title-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ht-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ht-card-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+}
+
+.ht-card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ht-production-total {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.ht-production-total span {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ht-search-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+}
+
+.ht-search-wrapper::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  background-image: url("../assets/icons/search.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.ht-search-wrapper .ht-form-input {
+  padding-left: 32px;
+  border-width: 1px;
+}
+
+.ht-search-wrapper .ht-form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+/* ---- Scrollable table containers ---- */
+
+.ht-table-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.ht-table-scroll .ht-table-wrapper {
+  overflow: visible;
+}
+
+.ht-table-scroll .ht-table {
+  margin-bottom: 0;
+}
+
+.ht-table-scroll .ht-table-empty {
+  padding: 24px 16px;
+}
+
+/* ---- Classification table ---- */
+
+.ht-classification-process {
+  margin-bottom: 16px;
+}
+
+.ht-classification-process:last-child {
+  margin-bottom: 0;
+}
+
+.ht-classification-process-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  padding: 4px 12px;
+  background: var(--surface-hover);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+}
+
+.ht-classification-temp-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  padding: 2px 12px;
+}
+
+.ht-classification-warning {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: var(--warning-bg);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.ht-warning-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--warning-text);
+}
+
+.ht-action-cell {
+  white-space: nowrap;
+  text-align: center;
+  width: 56px;
+  min-width: 56px;
+}
+
+.ht-action-btn {
+  width: 28px;
+  height: 24px;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ht-action-delete {
+  color: var(--text-tertiary);
+  border: 1.5px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-sm);
+}
+
+.ht-action-delete:hover {
+  color: var(--danger-text);
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.ht-action-delete:focus-visible {
+  outline: 2px solid var(--danger-text);
+  outline-offset: 1px;
+}
+
+/* ---- Incoming table row drag states ---- */
+
+.ht-incoming-row {
+  cursor: grab;
+}
+
+.ht-incoming-row:hover {
+  background: var(--surface-hover);
+}
+
+.ht-incoming-row-dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.ht-incoming-row.ht-incoming-added {
+  opacity: 0.6;
+}
+
+.ht-add-btn {
+  width: 28px;
+  height: 24px;
+  padding: 2px;
+}
+
+/* ---- Classification table column widths ---- */
+
+.ht-classification-root .ht-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.ht-classification-root .ht-table th,
+.ht-classification-root .ht-table td {
+  padding: 6px 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ht-classification-root .ht-table th:nth-child(1),
+.ht-classification-root .ht-table td:nth-child(1) { width: 32px; min-width: 32px; text-align: center; }  /* No */
+.ht-classification-root .ht-table th:nth-child(2),
+.ht-classification-root .ht-table td:nth-child(2) { width: 120px; min-width: 100px; }  /* Nomor Kode */
+.ht-classification-root .ht-table th:nth-child(3),
+.ht-classification-root .ht-table td:nth-child(3) { min-width: 140px; }  /* Customer */
+.ht-classification-root .ht-table th:nth-child(4),
+.ht-classification-root .ht-table td:nth-child(4) { min-width: 200px; }  /* Part Name/No */
+.ht-classification-root .ht-table th:nth-child(5),
+.ht-classification-root .ht-table td:nth-child(5) { width: 65px; min-width: 65px; text-align: right; }  /* Qty */
+.ht-classification-root .ht-table th:nth-child(6),
+.ht-classification-root .ht-table td:nth-child(6) { width: 85px; min-width: 85px; text-align: right; }  /* Berat */
+.ht-classification-root .ht-table th:nth-child(7),
+.ht-classification-root .ht-table td:nth-child(7) { width: 85px; min-width: 85px; text-align: center; }  /* Suhu */
+.ht-classification-root .ht-table th:nth-child(8),
+.ht-classification-root .ht-table td:nth-child(8) { width: 56px; min-width: 56px; text-align: center; }  /* Aksi */
+
+/* ---- Production order table ---- */
+
+.ht-production-root {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 420px;
+}
+
+.ht-production-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.ht-production-table th,
+.ht-production-table td {
+  padding: 6px 8px;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.ht-production-table td.ht-part-name,
+.ht-production-table td.ht-part-name-cell {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.ht-production-table thead th {
+  background: var(--surface-hover);
+  font-weight: 600;
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 2px solid var(--border);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.ht-part-name {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.ht-part-name .ht-part-main {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ht-part-name .ht-part-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ht-part-name-cell {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.ht-part-name-cell .ht-part-main {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ht-part-name-cell .ht-part-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ht-classification-root .ht-table td.ht-part-name-cell {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.ht-jeda-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+  color: var(--warning-text, #856404);
+  flex-shrink: 0;
+}
+
+.ht-jeda-suhu {
+  background: var(--warning-soft, #fff3cd);
+  border-top: 2px solid var(--warning, #ffc107);
+  border-bottom: 1px solid var(--warning, #ffc107);
+}
+
+.ht-jeda-suhu td {
+  font-weight: 600;
+  color: var(--warning-text, #856404);
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.ht-pending-row {
+  background: var(--info-soft, #d1ecf1);
+}
+
+.ht-production-drop-target {
+  outline: 2px dashed var(--primary);
+  outline-offset: -2px;
+}
+
+.ht-production-row-dragging {
+  opacity: 0.4;
+}
+
+.ht-production-row-placeholder {
+  height: 2px;
+  background: var(--primary);
+}
+
+.ht-production-empty-row td {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.ht-text-center {
+  text-align: center;
+}
+
+.ht-btn-primary.ht-btn-sm {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.ht-btn-secondary.ht-btn-sm {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ---- Production order column widths (9 columns) ---- */
+.ht-production-table th:nth-child(1),
+.ht-production-table td:nth-child(1) { width: 32px; min-width: 32px; text-align: center; }  /* No. */
+.ht-production-table th:nth-child(2),
+.ht-production-table td:nth-child(2) { width: 120px; min-width: 100px; }  /* Nomor Kode */
+.ht-production-table th:nth-child(3),
+.ht-production-table td:nth-child(3) { min-width: 140px; }  /* Customer */
+.ht-production-table th:nth-child(4),
+.ht-production-table td:nth-child(4) { min-width: 200px; }  /* Part Name / No. */
+.ht-production-table th:nth-child(5),
+.ht-production-table td:nth-child(5) { width: 65px; min-width: 65px; text-align: right; }  /* Qty */
+.ht-production-table th:nth-child(6),
+.ht-production-table td:nth-child(6) { width: 85px; min-width: 85px; text-align: right; }  /* Berat */
+.ht-production-table th:nth-child(7),
+.ht-production-table td:nth-child(7) { width: 85px; min-width: 85px; text-align: center; }  /* Suhu */
+.ht-production-table th:nth-child(8),
+.ht-production-table td:nth-child(8) { min-width: 130px; }  /* Keterangan */
+.ht-production-table th:nth-child(9),
+.ht-production-table td:nth-child(9) { width: 56px; min-width: 56px; text-align: center; }  /* Aksi */

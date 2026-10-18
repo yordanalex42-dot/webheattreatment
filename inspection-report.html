@@ -1,0 +1,260 @@
+﻿<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inspection Report - Sistem Informasi Produksi Heat Treatment</title>
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
+  </head>
+  <body>
+    <div class="ht-app-shell">
+      <aside class="ht-sidebar" id="sidebar">
+        <div class="ht-sidebar-header">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <img
+                  src="assets/logo/logo baru.svg"
+                  alt="PT CHUNETSU INDONESIA"
+                  class="sidebar-logo"
+                />
+                <div class="ht-sidebar-brand">
+                  <span class="brand-sub">Heat Treatment of</span>
+                  <span class="brand-name">PT CHUNETSU INDONESIA</span>
+                </div>
+              </div>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
+            </div>
+          </div>
+        </div>
+        <nav class="ht-sidebar-nav">
+          <div class="nav-section">
+            <a href="index.html" class="ht-nav-link">
+              <img
+                src="assets/icons/dashboard.svg"
+                alt="Dashboard"
+                class="sidebar-menu-icon"
+              />
+              Dashboard
+            </a>
+          </div>
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Master Data</p>
+            <a href="customer.html" class="ht-nav-link">
+              <img
+                src="assets/icons/customer.svg"
+                alt="Data Customer"
+                class="sidebar-menu-icon"
+              />
+              Data Customer
+            </a>
+            <a href="part.html" class="ht-nav-link">
+              <img src="assets/icons/part.svg" alt="Data Part" class="sidebar-menu-icon" />
+              Data Part
+            </a>
+          </div>
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">PPIC Section</p>
+            <a href="incoming.html" class="ht-nav-link">
+              <img
+                src="assets/icons/incoming.svg"
+                alt="Incoming Part"
+                class="sidebar-menu-icon"
+              />
+              Incoming Part
+            </a>
+            <a href="planning-produksi.html" class="ht-nav-link">
+              <img src="assets/icons/factory.svg" alt="Planning Produksi" class="sidebar-menu-icon" />
+              Planning Produksi
+            </a>
+            <a href="delivery.html" class="ht-nav-link">
+              <img src="assets/icons/delivery.svg" alt="Delivery" class="sidebar-menu-icon" />
+              Delivery
+            </a>
+          </div>
+                      <div class="nav-section ht-nav-collapsible collapsed" data-nav-section="production">
+              <button type="button" class="ht-nav-section-header" onclick="HTUI.toggleNavSection(this)">
+                <span class="section-label">
+                  <img src="assets/icons/factory.svg" alt="Production" class="sidebar-menu-icon" />
+                  Production
+                </span>
+                <img src="assets/icons/chevron-down.svg" alt="" class="ht-nav-toggle-icon" />
+              </button>
+              <div class="ht-nav-items">
+                <a href="heat-treatment.html" class="ht-nav-link sub" id="navHeatTreatment">
+                  <img
+                    src="assets/icons/production.svg"
+                    alt="Heat Treatment"
+                    class="sidebar-menu-icon"
+                  />
+                  Heat Treatment
+                </a>
+                <a href="heat-treatment.html?process=Quenching%20%26%20Tempering" class="ht-nav-link sub" id="navQuenching">
+                  <img
+                    src="assets/icons/production.svg"
+                    alt="Quenching &amp; Tempering"
+                    class="sidebar-menu-icon"
+                  />
+                  Quenching &amp; Tempering
+                </a>
+                <a href="heat-treatment.html?process=Normalizing" class="ht-nav-link sub" id="navNormalizing">
+                  <img
+                    src="assets/icons/production.svg"
+                    alt="Normalizing"
+                    class="sidebar-menu-icon"
+                  />
+                  Normalizing
+                </a>
+                <a href="heat-treatment.html?process=Stress%20Relief%20Annealing" class="ht-nav-link sub" id="navStressRelief">
+                  <img
+                    src="assets/icons/production.svg"
+                    alt="Stress Relief Annealing"
+                    class="sidebar-menu-icon"
+                  />
+                  Stress Relief Annealing
+                </a>
+                <a href="heat-treatment.html?process=Annealing" class="ht-nav-link sub" id="navAnnealing">
+                  <img
+                    src="assets/icons/production.svg"
+                    alt="Annealing"
+                    class="sidebar-menu-icon"
+                  />
+                  Annealing
+                </a>
+                <a href="heat-treatment.html?process=Full%20Annealing" class="ht-nav-link sub" id="navFullAnnealing">
+                  <img
+                    src="assets/icons/production.svg"
+                    alt="Full Annealing"
+                    class="sidebar-menu-icon"
+                  />
+                  Full Annealing
+                </a>
+                <a href="heat-treatment.html?process=Spheroidizing%20Annealing" class="ht-nav-link sub" id="navSpheroidizing">
+                  <img
+                    src="assets/icons/production.svg"
+                    alt="Spheroidizing Annealing"
+                    class="sidebar-menu-icon"
+                  />
+                  Spheroidizing Annealing
+                </a>
+                <a href="heat-treatment.html?process=Carburizing" class="ht-nav-link sub" id="navCarburizing">
+                  <img
+                    src="assets/icons/production.svg"
+                    alt="Carburizing"
+                    class="sidebar-menu-icon"
+                  />
+                  Carburizing
+                </a>
+                <a href="shotblast.html" class="ht-nav-link sub" id="navShotblast">
+                  <img
+                    src="assets/icons/production.svg"
+                    alt="Shotblast"
+                    class="sidebar-menu-icon"
+                  />
+                  Shotblast
+                </a>
+                <a href="anti-rust.html" class="ht-nav-link sub" id="navAntiRust">
+                  <img
+                    src="assets/icons/process.svg"
+                    alt="Anti-Rust"
+                    class="sidebar-menu-icon"
+                  />
+                  Anti-Rust
+                </a>
+              </div>
+            </div>
+
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Quality Control</p>
+            <a href="qc.html" class="ht-nav-link">
+              <img
+                src="assets/icons/quality-control.svg"
+                alt="Input Data"
+                class="sidebar-menu-icon"
+              />
+              Input Data
+            </a>
+            <a href="inspection-report.html" class="ht-nav-link active">
+              <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
+              Inspection Report
+            </a>
+          </div>
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Tracking</p>
+            <a href="tracking.html" class="ht-nav-link">
+              <img src="assets/icons/tracking.svg" alt="Tracking" class="sidebar-menu-icon" />
+              Tracking
+            </a>
+          </div>
+        </nav>
+        <div class="ht-sidebar-footer">
+          <div class="ht-user-panel">
+            <div class="ht-user-info">
+              <div class="ht-user-avatar" id="sidebarInitial">A</div>
+              <div class="ht-user-details">
+                <p class="ht-user-name" id="sidebarName">Admin User</p>
+                <p class="ht-user-role" id="sidebarRole">Administrator</p>
+              </div>
+            </div>
+            <button
+              onclick="
+                Auth.logout();
+                window.location.href = 'login.html';
+              "
+              class="ht-sidebar-logout"
+              title="Logout"
+              aria-label="Logout"
+            >
+              <img src="assets/icons/logout.svg" alt="Logout" class="sidebar-menu-icon" />
+            </button>
+          </div>
+        </div>
+      </aside>
+      <main class="ht-main full-width">
+        <header class="ht-header">
+          <div class="ht-header-left">
+            <h1>Inspection Report</h1>
+            <p>Laporan hasil pemeriksaan kualitas.</p>
+          </div>
+          <div class="ht-header-right">
+            <span class="ht-header-date" id="currentDate"></span>
+          </div>
+        </header>
+        <div class="ht-content">
+          <div class="ht-content-max">
+            <div class="ht-card fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Laporan Inspeksi</h3>
+              </div>
+              <div class="ht-card-body">
+                <p class="ht-hint">
+                  Area ini akan dikembangkan pada tahap selanjutnya.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/date-format.js"></script>
+    <script>
+      if (!HTUI.requireAuth()) {
+        throw new Error("redirecting");
+      }
+      HTDateFormat.init();
+    </script>
+  </body>
+</html>
+
+

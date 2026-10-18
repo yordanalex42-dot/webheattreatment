@@ -149,6 +149,19 @@ const HTUI = {
     if (!query) return null;
     return DB.findByKode(query) || DB.findMaterial(query);
   },
+
+  /* ---- Sidebar collapsible nav section ---- */
+  toggleNavSection(button) {
+    const section = button.closest(".ht-nav-collapsible");
+    if (!section) return;
+    const isExpanded = section.classList.contains("expanded");
+    section.classList.toggle("collapsed", isExpanded);
+    section.classList.toggle("expanded", !isExpanded);
+    const chevron = section.querySelector(".ht-nav-toggle-icon");
+    if (chevron) {
+      chevron.style.transform = isExpanded ? "rotate(0deg)" : "rotate(180deg)";
+    }
+  },
 };
 
 /* ---- Bootstrap global ---- */

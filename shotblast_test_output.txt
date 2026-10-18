@@ -1,0 +1,112 @@
+==========================================
+  SHOTBLAST PAGE - BUG FIX VERIFICATION
+  2026-10-15T22:59:49.456Z
+==========================================
+
+=== TEST GROUP 1: Functions defined in shotblast.html source ===
+
+
+=== TEST GROUP 2: DB layer for Shotblast ===
+
+
+=== TEST GROUP 3: loadMaterialById logic ===
+
+
+=== TEST GROUP 4: Shotblast eligibility validation ===
+
+
+=== TEST GROUP 6: Confirm selesai proses ===
+
+
+=== TEST GROUP 7: Data integrity & localStorage keys ===
+
+
+=== TEST GROUP 8: Edge cases ===
+
+
+=== TEST GROUP 9: No console errors from missing functions ===
+
+
+=== TEST GROUP 10: Full eligibility flow ===
+
+
+=== TEST GROUP 11: localStorage key prefix ===
+
+
+==========================================
+
+=== RESULTS ===
+
+  [PASS] G1-T1: resetFormFields is defined in shotblast.html
+  [PASS] G1-T2: updateVisualNoteVisibility is defined in shotblast.html
+  [PASS] G1-T3: updateNGNoteVisibility is defined in shotblast.html
+  [PASS] G2-T1: Material 3M found by findByKode - kode=3M
+  [PASS] G2-T2: Material 3M has shotblast=true in route - route={"heat_treatment":true,"qc_check":true,"shotblast":true,"anti_rust":true}
+  [PASS] G2-T3: HT production found for 3M - status=FINISH
+  [PASS] G2-T4: HT production is FINISH+OK - status=FINISH result=OK
+  [PASS] G2-T5: Shotblast production is null (not yet started) for 3M - val=null
+  [PASS] G2-T6: QC status is PASS for 3M - qcStatus=PASS
+  [PASS] G2-T7: Material 14M found
+  [PASS] G2-T8: Material 14M has shotblast=false in route
+  [PASS] G2-T9: Material 14M HT is FINISH_NG - status=FINISH_NG
+  [PASS] G2-T10: Material 14M QC is NOT_CHECKED (no QC record) - qcStatus=NOT_CHECKED
+  [PASS] G3-T1: Material found by kode '3M'
+  [PASS] G3-T2: Material found by numeric id - found=3M
+  [PASS] G3-T3: Material found with spaces around kode (findByKode trims)
+  [PASS] G3-T4: findByKode finds clean kode
+  [PASS] G3-T5: Non-existent kode returns null
+  [PASS] G3-T6: Empty kode returns null/undefined
+  [PASS] G4-T1: Material 3M route has shotblast=true
+  [PASS] G4-T2: HT production is FINISH+OK (passes first gate)
+  [PASS] G4-T3: QC status is PASS (passes second gate)
+  [PASS] G4-T4: Material 14M route has shotblast != true (blocked by route)
+  [PASS] G4-T5: Material 14M HT is FINISH_NG (blocked by HT status) - status=FINISH_NG
+  [PASS] G4-T6: Material 2M HT is PROCESS (blocked by HT in progress)
+  [PASS] G5-T1: No existing Shotblast production before entry
+  [PASS] G5-T2: Shotblast production created with PROCESS status
+  [PASS] G5-T3: jenis_treatment is 'Shotblast' - val=Shotblast
+  [PASS] G5-T4: _normalizeProcessKey('Shotblast') = SHOTBLAST
+  [PASS] G5-T5: _normalizeProcessKey('SHOTBLAST') = SHOTBLAST
+  [PASS] G5-T6: Second scan finds existing PROCESS record (no duplicate created)
+  [PASS] G5-T7: Exactly 1 Shotblast production record (no duplicates) - count=1
+  [PASS] G5-T8: HT production unaffected by Shotblast entry
+  [PASS] G6-T1: Shotblast production is PROCESS before finish
+  [PASS] G6-T2: Shotblast production finished with FINISH+OK - status=FINISH
+  [PASS] G6-T3: isProcessCompleted(SHOTBLAST) returns true after finish+OK
+  [PASS] G6-T4: isProcessCompleted(HT) returns true (was already FINISH+OK)
+  [PASS] G6-T5: isProcessCompleted(QC) returns true (hasil=OK)
+  [PASS] G7-T1: ht_materials key exists
+  [PASS] G7-T2: ht_productions key exists
+  [PASS] G7-T3: ht_parts key exists
+  [PASS] G7-T4: ht_qcs key exists
+  [PASS] G7-T5: ht_customers key exists
+  [PASS] G7-T6: ht_deliveries key exists
+  [PASS] G7-T7: ht_tracking key exists
+  [PASS] G7-T8: ht_qcs key exists for QC validation
+  [PASS] G7-T9: HT production found for Shotblast validation - id=1792105189591
+  [PASS] G7-T10: 'HT' and 'Heat Treatment' both resolve to same production
+  [PASS] G7-T11: All 48 materials still present (no data reset) - count=48
+  [PASS] G7-T12: Production records preserved - count=45
+  [PASS] G8-T1: parseScanId returns clean kode when no id= or / - got=3M
+  [PASS] G8-T2: parseScanId extracts id from URL query - got=3M
+  [PASS] G8-T3: parseScanId returns last path segment - got=3M
+  [PASS] G8-T4: normalize 'Shotblast' -> 'SHOTBLAST'
+  [PASS] G8-T5: normalize 'SHOTBLAST' -> 'SHOTBLAST'
+  [PASS] G8-T6: normalize 'Heat Treatment' -> 'HT'
+  [PASS] G8-T7: normalize 'HT' -> 'HT'
+  [PASS] G8-T8: normalize 'heat treatment' -> 'HT' (case insens)
+  [PASS] G8-T9: Shotblast production found after insert with jenis_treatment='Shotblast'
+  [PASS] G9-T1: All 19 functions defined in script (19 found) - missing=[]
+  [PASS] G9-T2: resetFormFields now defined in source
+  [PASS] G9-T3: updateVisualNoteVisibility now defined in source
+  [PASS] G9-T4: updateNGNoteVisibility now defined in source
+  [PASS] G10-T1: Material 3M is ELIGIBLE for Shotblast - reason=
+  [PASS] G10-T2: Material 14M is NOT ELIGIBLE (no shotblast route) - reason=Part tidak memiliki proses Shotblast pada route ini.
+  [PASS] G10-T3: Material 2M is NOT ELIGIBLE (HT in PROCESS) - reason=Heat Treatment masih dalam proses.
+  [PASS] G10-T4: Material 8M IS ELIGIBLE for Shotblast - reason=
+  [PASS] G11-T1: localStorage has keys with ht_ prefix - count=14, keys=["ht_customers","ht_parts","ht_materials","ht_productions","ht_qcs","ht_deliveries","ht_tracking","ht_targets","ht_incoming_kode_counter","ht_db_seed_version","ht_id_counter","ht_migration_process_types_v2","ht_users","ht_session"]
+  [PASS] G11-T2: ht_db_seed_version key exists
+
+==========================================
+  Total: 69 | Passed: 69 | Failed: 0
+==========================================

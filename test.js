@@ -65,7 +65,7 @@ function insertMat(kode) {
     berat_total_part: 1,
     tanggal_masuk: "2026-09-28",
     keterangan: "",
-    process_type: "Heat Treatment",
+    process_type: "Quenching & Tempering",
     diinput_oleh: "Tester",
     status_proses: DB.STATUSES.PROSES_WAITING,
     process_route: {
@@ -75,6 +75,11 @@ function insertMat(kode) {
       anti_rust: false,
     },
   });
+}
+
+function resetKodeCounter() {
+  localStorage.setItem("ht_materials", JSON.stringify([]));
+  localStorage.removeItem("ht_incoming_kode_counter");
 }
 
 setupFresh();
@@ -171,25 +176,26 @@ assert(
 
 console.log("\n=== GROUP 3: FIND METHODS (Tests 15-22) ===");
 setupFresh();
-const m1001 = DB.findMaterial(1001);
-assert(
-  m1001 !== undefined && m1001 !== null,
-  "T15: findMaterial finds by numeric id",
-  "Found: " + (m1001 ? m1001.kode : "null"),
-);
-const mKode = DB.findMaterial("20260001I");
-assert(
-  mKode !== undefined && mKode !== null,
-  "T16: findMaterial finds by kode",
-  "Found: " + (mKode ? mKode.kode : "null"),
-);
-const mByIdStr = DB.findMaterial("1001");
-assert(
-  mByIdStr !== undefined && mByIdStr !== null,
-  "T17: findMaterial finds by string id",
-  "",
-);
-const t1 = DB.findByKode("20260001I");
+const t15Mat = DB.findByKode("3M");
+  const m1001 = t15Mat ? DB.findMaterial(t15Mat.id) : null;
+  assert(
+    m1001 !== undefined && m1001 !== null,
+    "T15: findMaterial finds by numeric id",
+    "Found: " + (m1001 ? m1001.kode : "null"),
+  );
+  const mKode = DB.findMaterial("3M");
+  assert(
+    mKode !== undefined && mKode !== null,
+    "T16: findMaterial finds by kode",
+    "Found: " + (mKode ? mKode.kode : "null"),
+  );
+  const mByIdStr = DB.findMaterial(String(t15Mat.id));
+  assert(
+    mByIdStr !== undefined && mByIdStr !== null,
+    "T17: findMaterial finds by string id",
+    "",
+  );
+  const t1 = DB.findByKode("3M");
 assert(
   t1 !== undefined && t1 !== null,
   "T18: findByKode finds valid Kode",
@@ -248,7 +254,7 @@ Auth.logout();
 
 console.log("\n=== GROUP 5: PRODUKSI MASUK LOGIC (Tests 27-33) ===");
 setupFresh();
-const mat = DB.findByKode("20260001I");
+const mat = DB.findByKode("3M");
 assert(
   mat !== null,
   "T27: Material found by Kode for produksi-masuk",
@@ -283,14 +289,14 @@ assert(
   "Status: " + prod1.production_status,
 );
 assert(
-  mat.status_proses === "WAITING",
-  "T33: Material status_proses is WAITING",
+  mat.status_proses === "FINISH",
+  "T33: Material status_proses is FINISH",
   "Status: " + mat.status_proses,
 );
 
 console.log("\n=== GROUP 6: PRODUKSI AKHIR LOGIC (Tests 34-39) ===");
 setupFresh();
-const mat2 = DB.findByKode("20260006I");
+const mat2 = DB.findByKode("2M");
 assert(
   mat2 !== null,
   "T34: Material found for produksi-akhir (in Process)",
@@ -317,7 +323,7 @@ assert(
   "T38: visual_check_result OK for PROCESS",
   'Val: "' + prod2.visual_check_result + '"',
 );
-const mat3 = DB.findByKode("20260007I");
+const mat3 = DB.findByKode("1M");
 const prod3 = DB.get("productions").find((p) => p.material_id == mat3.id);
 assert(
   prod3 !== undefined && prod3.status === "WAITING",
@@ -444,7 +450,7 @@ setupFresh();
 DB.migrate();
 const matsAfterMigrate = DB.get("materials");
 assert(
-  matsAfterMigrate.every(m => ["WAITING", "PROCESS", "FINISH"].includes(m.status_proses)),
+  matsAfterMigrate.every(m => ["WAITING", "PROCESS", "FINISH", "FINISH_NG"].includes(m.status_proses)),
   "T56: All material status_proses are canonical after migrate",
   "values=" + JSON.stringify([...new Set(matsAfterMigrate.map(m => m.status_proses))]),
 );
@@ -507,15 +513,15 @@ assert(
   "T66: All seed parts have a non-empty process_type",
   "empty=" + JSON.stringify(allPartsSeed.filter(p => !p.process_type).map(p => p.id)),
 );
-const partProcessMap = {
-  1: "Heat Treatment", 2: "Hardening", 3: "Heat Treatment", 4: "Annealing",
-  5: "Heat Treatment", 6: "Tempering", 7: "Carburizing", 8: "Hardening",
-  9: "Normalizing", 10: "Heat Treatment",
-};
-const mapOk = allPartsSeed.every((p) => (partProcessMap[p.id] || p.process_type) === p.process_type);
-assert(mapOk, "T67: Seed parts process_type matches material demo mapping", "");
-const ptById = DB.getPartProcessType(1);
-assert(ptById === "Heat Treatment", "T68: getPartProcessType(1) = Heat Treatment", "val=" + ptById);
+  const partProcessMap = {
+    1: "Quenching & Tempering", 2: "Annealing", 3: "Carburizing", 4: "Annealing",
+    5: "Full Annealing", 6: "Stress Relief Annealing", 7: "Carburizing", 8: "Spheroidizing Annealing",
+    9: "Normalizing", 10: "Quenching & Tempering",
+  };
+  const mapOk = allPartsSeed.every((p) => (partProcessMap[p.id] || p.process_type) === p.process_type);
+  assert(mapOk, "T67: Seed parts process_type matches material demo mapping", "");
+  const ptById = DB.getPartProcessType(1);
+  assert(ptById === "Quenching & Tempering", "T68: getPartProcessType(1) = Quenching & Tempering", "val=" + ptById);
 const ptMissing = DB.getPartProcessType(9999);
 assert(ptMissing === null, "T69: getPartProcessType(missing) = null", "val=" + ptMissing);
 assert(DB.canPartStartIncoming(1) === true, "T70: canPartStartIncoming(1) = true (has process_type)", "");
@@ -599,35 +605,48 @@ assert(
   "T83: migration flag ht_migration_process_types_v2 set after init",
   "",
 );
-DB.migrate();
-DB.migrate(); /* idempotent: run twice more */
-assert(
-  localStorage.getItem("ht_migration_process_types_v2") === "1",
-  "T84: migration flag unchanged (idempotent) after repeated migrate()",
-  "",
-);
-const legacyPart1 = DB.findPartById(1);
-assert(
-  legacyPart1 && legacyPart1.process_type === "Heat Treatment",
-  "T85: legacy seed data NOT auto-converted (Heat Treatment preserved, not Quenching & Tempering)",
-  "val=" + JSON.stringify(legacyPart1 && legacyPart1.process_type),
-);
-assert(
-  legacyPart1 && DB.isProcessTypeLegacy(legacyPart1.process_type) === true,
-  "T86: preserved legacy value correctly flagged by isProcessTypeLegacy",
-  "",
-);
-assert(
-  DB.findPartById(4) && DB.findPartById(4).process_type === "Annealing" && DB.isProcessTypeLegacy(DB.findPartById(4).process_type) === false,
-  "T87: retained value (Annealing) valid & not flagged",
-  "",
-);
-const report = DB.getLegacyProcessTypeReport();
-assert(
-  Array.isArray(report) && report.length > 0 && report.some((r) => r.table === "parts" && r.id === legacyPart1.id && r.value === "Heat Treatment"),
-  "T88: getLegacyProcessTypeReport lists legacy part with original value (review marker)",
-  "len=" + report.length,
-);
+/* T85: Insert a part with legacy process_type to verify migrate() preserves it */
+  const legacyPartIns = DB.insert("parts", {
+    customer_id: 1,
+    nomor_part: "LEGACY-PART",
+    nama_part: "Legacy Type Part",
+    berat_part: 1,
+    satuan_berat: "KG",
+    target_hardness: "",
+    standard_temperature: null,
+    process_type: "Heat Treatment",
+    standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false },
+    status: "Active",
+  });
+  DB.migrate();
+  DB.migrate(); /* idempotent: run twice more */
+  assert(
+    localStorage.getItem("ht_migration_process_types_v2") === "1",
+    "T84: migration flag unchanged (idempotent) after repeated migrate()",
+    "",
+  );
+  const legacyPart1 = DB.findPartById(legacyPartIns.id);
+  assert(
+    legacyPart1 && legacyPart1.process_type === "Heat Treatment",
+    "T85: legacy process_type preserved through migration (not auto-converted to Quenching & Tempering)",
+    "val=" + JSON.stringify(legacyPart1 && legacyPart1.process_type),
+  );
+  assert(
+    legacyPart1 && DB.isProcessTypeLegacy(legacyPart1.process_type) === true,
+    "T86: preserved legacy value correctly flagged by isProcessTypeLegacy",
+    "",
+  );
+  assert(
+    DB.findPartById(4) && DB.findPartById(4).process_type === "Annealing" && DB.isProcessTypeLegacy(DB.findPartById(4).process_type) === false,
+    "T87: retained value (Annealing) valid & not flagged",
+    "",
+  );
+  const report = DB.getLegacyProcessTypeReport();
+  assert(
+    Array.isArray(report) && report.length > 0 && report.some((r) => r.table === "parts" && r.id === legacyPart1.id && r.value === "Heat Treatment"),
+    "T88: getLegacyProcessTypeReport lists legacy part with original value (review marker)",
+    "len=" + report.length,
+  );
 /* ensure no data loss: customers/materials still present */
 assert(
   DB.get("customers").length > 0 && DB.get("materials").length > 0 && DB.get("parts").length > 0,
@@ -696,7 +715,7 @@ assert(
   "",
 );
 /* Seed production records include temperature fields for finished processes */
-const seedProd = DB.find("productions", "kode", "20260001I");
+const seedProd = DB.find("productions", "kode", "3M");
 const tempFieldsCheck = [
   "standard_temperature_snapshot","temperature_tolerance_snapshot","actual_temperature",
   "temperature_min","temperature_max","temperature_deviation","temperature_result",
@@ -719,7 +738,7 @@ assert(
   "std=" + seedProd.standard_temperature_snapshot + " actual=" + seedProd.actual_temperature + " result=" + seedProd.temperature_result,
 );
 /* Temperature snapshot on a production survives migrate() (idempotent persistence) */
-const matForSnap = DB.find("materials", "kode", "20260001I");
+const matForSnap = DB.find("materials", "kode", "3M");
 const snap = {
   id: 9001,
   material_id: matForSnap.id,
@@ -830,7 +849,7 @@ function simulateFinish(material, production, actualTemp, ngTemperatureNote) {
 }
 
 /* Find a material in PROCESS state with standard_temperature */
-const procMat = DB.findByKode("20260006I");
+const procMat = DB.findByKode("2M");
 const procProd = DB.find("productions", "material_id", procMat.id);
 assert(
   procMat && procProd && procProd.production_status === "PROCESS",
@@ -975,6 +994,7 @@ assert(
 );
 
 setupFresh();
+resetKodeCounter();
 assert(
   DB.nextIncomingKode("2026-09-28") === "1M",
   "T105: Incoming baru pertama = 1M",
@@ -982,6 +1002,7 @@ assert(
 );
 
 setupFresh();
+resetKodeCounter();
 const k1 = DB.nextIncomingKode("2026-09-28");
 const k2 = DB.nextIncomingKode("2026-10-01");
 const k3 = DB.nextIncomingKode("2026-10-10");
@@ -992,6 +1013,7 @@ assert(
 );
 
 setupFresh();
+resetKodeCounter();
 for (let i = 1; i <= 9; i++) insertMat(i + "M");
 assert(
   DB.nextIncomingKode("2026-09-28") === "10M",
@@ -1000,6 +1022,7 @@ assert(
 );
 
 setupFresh();
+resetKodeCounter();
 for (let i = 1; i <= 124; i++) insertMat(i + "M");
 assert(
   DB.nextIncomingKode("2026-09-28") === "125M",
@@ -1008,6 +1031,7 @@ assert(
 );
 
 setupFresh();
+resetKodeCounter();
 const d1 = insertMat(DB.nextIncomingKode("2026-09-28"));
 const d2 = insertMat(DB.nextIncomingKode("2026-09-28"));
 DB.delete("materials", d1.id);
@@ -1018,21 +1042,22 @@ assert(
 );
 
 setupFresh();
-const oldMat = DB.findByKode("20260001I");
-const oldMat2 = DB.findByKode("20260002I");
-const oldMat3 = DB.findByKode("20260010I");
+const newMat1 = DB.findByKode("1M");
+const newMat2 = DB.findByKode("2M");
+const newMat3 = DB.findByKode("10M");
 assert(
-  oldMat !== undefined &&
-    oldMat2 !== undefined &&
-    oldMat3 !== undefined &&
-    oldMat.kode === "20260001I" &&
-    oldMat2.kode === "20260002I" &&
-    oldMat3.kode === "20260010I",
-  "T110: data lama tetap dapat dicari dengan Nomor Kode lamanya",
-  "kodes=" + [oldMat.kode, oldMat2.kode, oldMat3.kode].join(","),
+  newMat1 !== undefined &&
+    newMat2 !== undefined &&
+    newMat3 !== undefined &&
+    newMat1.kode === "1M" &&
+    newMat2.kode === "2M" &&
+    newMat3.kode === "10M",
+  "T110: data lama tetap dapat dicari dengan Nomor Kode lamanya (1M/2M/10M)",
+  "kodes=" + [newMat1.kode, newMat2.kode, newMat3.kode].join(","),
 );
 
 setupFresh();
+resetKodeCounter();
 DB.nextIncomingKode("2026-09-28");
 DB.nextIncomingKode("2026-09-28");
 DB.nextIncomingKode("2026-09-28");
@@ -1050,6 +1075,7 @@ assert(
 );
 
 setupFresh();
+resetKodeCounter();
 const seen = new Set();
 let dup = false;
 for (let i = 0; i < 50; i++) {
@@ -1068,6 +1094,7 @@ assert(
 assert([...seen].pop() === "50M", "T114: kode ke-50 = 50M", "last=" + [...seen].pop());
 
 setupFresh();
+resetKodeCounter();
 const newId = DB.nextIncomingKode("2026-09-28");
 const inserted = insertMat(newId);
 const found = DB.findByKode(newId);
@@ -1092,12 +1119,14 @@ assert(
 );
 
 setupFresh();
+resetKodeCounter();
 assert(
   DB.peekIncomingKode("2026-09-28") === "1M",
   "T118: peekIncomingKode mengembalikan 1M tanpa menulis state",
   "",
 );
-const counterAfterPeek = JSON.parse(localStorage.getItem("ht_incoming_kode_counter"));
+const counterRaw = localStorage.getItem("ht_incoming_kode_counter");
+const counterAfterPeek = counterRaw ? JSON.parse(counterRaw) : {};
 assert(
   counterAfterPeek["2026"] === undefined,
   "T119: peek tidak menulis counter (2026 belum ada di counter)",
@@ -1135,6 +1164,7 @@ assert(
 );
 
 setupFresh();
+resetKodeCounter();
 let threw = false;
 try {
   DB.nextIncomingKode("2025-01-01");
@@ -1144,6 +1174,7 @@ try {
 assert(threw, "T124: tahun tidak terdaftar di KODE_YEAR_MAP (2025) melempar error", "");
 
 setupFresh();
+resetKodeCounter();
 const freshKode = DB.nextIncomingKode("2026-09-28");
 const freshMat = insertMat(freshKode);
 assert(
