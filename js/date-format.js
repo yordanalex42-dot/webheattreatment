@@ -21,7 +21,7 @@ HTDateFormat = {
   formatLongDateFromISO(dateStr) {
     if (!dateStr) return "-";
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return String(dateStr);
+    if (isNaN(d.getTime())) return "-";
     return this.formatLongDate(d);
   },
 
@@ -42,7 +42,7 @@ HTDateFormat = {
   formatLongDateTimeFromISO(dateStr) {
     if (!dateStr) return "-";
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return String(dateStr);
+    if (isNaN(d.getTime())) return "-";
     return this.formatLongDateTime(d);
   },
 

@@ -79,6 +79,7 @@
   --sidebar-border: rgba(0, 0, 0, 0.06);
   --sidebar-text: #475569;
   --sidebar-text-active: #2563eb;
+  --sidebar-icon: #64748b;
 
   /* ===== LATAR BELAKANG & PERMUKAAN ===== */
   --background: #f8fafc;
@@ -174,6 +175,30 @@
   --radius-2xl: 20px;
   --radius-3xl: 24px;
   --radius-pill: 999px;
+
+  /* ===== TOKEN TABEL GLOBAL (SATU SUMBER KEBAKUAN) =====
+     Digunakan oleh css/tables.css dan semua varian tabel
+     (monitor, classification, production-order, incoming).
+     Mengganti hard-coded warna sehingga seluruh tabel konsisten
+     dan dapat dipertemukan di satu tempat. */
+  --table-container-bg: var(--surface);
+  --table-container-border: var(--border);
+  --table-container-radius: var(--radius-lg);
+  --table-header-bg: #f1f5f9;
+  --table-header-text: #334155;
+  --table-header-border: var(--border);
+  --table-row-border: var(--border);
+  --table-row-hover-bg: #f1f5f9;
+  --table-row-stripe-bg: var(--surface);
+  --table-text: var(--text-primary);
+  --table-font-size: 13px;
+  --table-header-font-size: 12px;
+  --table-cell-padding: 12px 16px;
+  --table-header-padding: 10px 16px;
+  --table-empty-color: var(--text-tertiary);
+  /* Header khusus dashboard monitor (tetap berwarna biru muda untuk hierarki visual) */
+  --table-dashboard-header-bg: #eff6ff;
+
 
   /* ===== BENTUK TIANGA (lembut, biru-harul) ===== */
   --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);

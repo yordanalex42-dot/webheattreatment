@@ -277,288 +277,137 @@
 }
 
 /* ============================================================
-   LINIMASANA (Tracking)
+   LINIMASANA (Tracking) - Vertical Production Timeline
+   Layout dua kolom: kolom kiri = titik + nama tahap + garis
+   truk vertikal kontinu; kolom kanan = kartu data aktual tiap
+   tahap. Urutan: Incoming -> Heat Treatment -> Shotblast ->
+   Anti-Rust -> Quality Control -> Delivery. Status: hijau Selesai,
+   biru Aktif (berdenyut), abu Belum mulai, merah NG, abu netral
+   (na) untuk tahap di luar rute. Logika proses (DB) tidak diubah.
    ============================================================ */
 
 .ht-timeline {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-content: start;
+  gap: 0 18px;
   position: relative;
-  padding: 12px 0 12px 28px;
-  list-style: none;
   margin: 0;
+  padding: 6px 4px 6px 0;
 }
 
-.ht-timeline-item {
-  position: relative;
-  padding: 16px 20px;
-  margin-bottom: 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--primary);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-sm);
-}
-
-.ht-timeline-item.completed { border-left-color: var(--success); }
-.ht-timeline-item.active { border-left-color: var(--primary); }
-.ht-timeline-item.ng { border-left-color: var(--danger); }
-
-.ht-timeline-item:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.ht-timeline-item:not(:last-child)::after {
+/* Garis truk vertikal melewati tengah setiap node (tidak terputus) */
+.ht-timeline::before {
   content: "";
   position: absolute;
-  left: -22px;
-  top: 48px;
-  bottom: -8px;
+  left: 20px;
+  top: 8px;
+  bottom: 8px;
   width: 2px;
   background: var(--border);
   z-index: 0;
 }
 
-.ht-timeline-dot {
-  position: absolute;
-  left: -32px;
-  top: 16px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 3px solid var(--surface);
-  box-shadow: 0 0 0 2px var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  z-index: 1;
-  transition: all var(--transition-sm);
-}
-
-.ht-timeline-dot.completed {
-  background: var(--success);
-  box-shadow: 0 0 0 2px var(--success-bg);
-  color: #ffffff;
-}
-
-.ht-timeline-dot.active {
-  background: var(--primary);
-  box-shadow: 0 0 0 2px var(--primary-soft);
-  color: #ffffff;
-}
-
-.ht-timeline-dot.pending {
-  background: var(--text-tertiary);
-  box-shadow: 0 0 0 2px var(--surface-hover);
-  color: #ffffff;
-}
-
-.ht-timeline-dot.ng {
-  background: var(--danger);
-  box-shadow: 0 0 0 2px var(--danger-bg);
-  color: #ffffff;
-}
-
-.ht-timeline-content {
+/* Kolom kiri: node lingkaran + nama tahap + lencana status */
+.ht-timeline-stepcol {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  text-align: center;
+  padding-top: 6px;
 }
 
-.ht-timeline-step {
+.ht-timeline-step-name {
+  margin-top: 8px;
+  display: block;
   font-size: 11px;
   font-weight: 600;
-  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
 }
 
-.ht-timeline-desc {
-  font-size: 13px;
-  font-weight: 500;
+.ht-timeline-stepcol .ht-badge {
+  font-size: 9px;
+  padding: 2px 8px;
+  margin-top: 4px;
+}
+
+/* Warna badge status sesuai spesifikasi Timeline Status (cakupan timeline saja) */
+.ht-timeline-stepcol .ht-badge-ok {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-color: #86efac;
+}
+.ht-timeline-stepcol .ht-badge-process {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: rgba(37, 99, 235, 0.3);
+}
+.ht-timeline-stepcol .ht-badge-waiting {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: var(--border);
+}
+.ht-timeline-stepcol .ht-badge-ng {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-color: #fca5a5;
+}
+
+.ht-timeline-stepcol.completed .ht-timeline-step-name,
+.ht-timeline-stepcol.active .ht-timeline-step-name {
   color: var(--text-primary);
 }
 
-.ht-timeline-time {
-  font-size: 11px;
-  color: var(--text-tertiary);
-  margin-top: 2px;
+.ht-timeline-stepcol.ng .ht-timeline-step-name {
+  color: var(--danger-text);
 }
 
-@media (max-width: 768px) {
-  .ht-timeline {
-    padding-left: 20px;
-  }
-
-  .ht-timeline-item:not(:last-child)::after {
-    left: -16px;
-  }
-
-  .ht-timeline-dot {
-    left: -24px;
-    width: 16px;
-    height: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .ht-timeline {
-    padding-left: 16px;
-  }
-
-  .ht-timeline-item:not(:last-child)::after {
-    left: -12px;
-  }
-
-  .ht-timeline-dot {
-    left: -20px;
-    width: 14px;
-    height: 14px;
-  }
-}
-
-/* ============================================================
-   TIMELINE HORIZONTAL (Tracking Redesign)
-   Horizontal card-based timeline with process icons,
-   connecting line, status badges, and date/time.
-   ============================================================ */
-
-.ht-timeline-horizontal {
-  overflow-x: auto;
-  overflow-y: visible;
-  padding: 6px 0;
-  -ms-overflow-style: none;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 189, 0.3) transparent;
-}
-
-.ht-timeline-horizontal::-webkit-scrollbar {
-  height: 6px;
-}
-
-.ht-timeline-horizontal::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.ht-timeline-horizontal::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 189, 0.2);
-  border-radius: var(--radius-pill);
-}
-
-.ht-timeline-horizontal::-webkit-scrollbar {
-  -ms-overflow-style: none;
-}
-
-.ht-timeline-horizontal::-webkit-scrollbar {
-  display: none;
-}
-
-.ht-timeline-track {
-  display: flex;
-  align-items: flex-start;
-  min-width: max-content;
-  gap: 0;
-  padding: 4px 2px;
-}
-
-/* Connector line between steps */
-.ht-timeline-connector {
-  flex: 0 0 28px;
-  height: 2px;
-  margin-top: 22px;
-  background: var(--border);
-  z-index: 1;
-  transition: background-color var(--transition-sm);
-}
-
-.ht-timeline-connector.completed {
-  background: var(--primary);
-}
-
-.ht-timeline-connector.active {
-  background: var(--primary);
-}
-
-.ht-timeline-connector.ng {
-  background: var(--danger);
-}
-
-.ht-timeline-connector.pending {
-  background: var(--border);
-}
-
-/* Each step wrapper */
-.ht-timeline-step {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 96px;
-  position: relative;
-  z-index: 2;
-  padding: 0 4px;
-}
-
-/* Icon node circle */
 .ht-timeline-node {
   width: 40px;
   height: 40px;
+  flex-shrink: 0;
   border-radius: 50%;
   border: 2px solid var(--border);
   background: var(--surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
-  z-index: 3;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
   transition: all var(--transition-sm);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .ht-timeline-node .icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  color: var(--text-tertiary);
+  width: 20px;
+  height: 20px;
+  display: block;
+  color: inherit;
 }
 
-/* Completed: blue fill, white icon */
 .ht-timeline-node.completed {
-  background: var(--gradient-primary);
-  border-color: var(--primary);
+  background: var(--success);
+  border-color: var(--success);
   color: var(--text-inverse);
-  box-shadow: 0 0 0 3px var(--primary-soft);
+  box-shadow: 0 0 0 3px var(--success-bg);
 }
 
-.ht-timeline-node.completed .icon {
-  color: var(--text-inverse);
-}
-
-/* Active: blue fill with pulse, white icon */
 .ht-timeline-node.active {
-  background: var(--gradient-primary);
+  background: var(--primary);
   border-color: var(--primary);
   color: var(--text-inverse);
   box-shadow: 0 0 0 3px var(--primary-soft);
   animation: htPulse 2s infinite;
 }
 
-.ht-timeline-node.active .icon {
-  color: var(--text-inverse);
-}
-
-/* Pending: surface with gray border, gray icon */
 .ht-timeline-node.pending {
-  background: var(--surface);
+  background: var(--surface-hover);
   border-color: var(--border);
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
-.ht-timeline-node.pending .icon {
-  color: var(--text-tertiary);
-}
-
-/* NG: red fill, white icon */
 .ht-timeline-node.ng {
   background: var(--danger);
   border-color: var(--danger);
@@ -566,8 +415,11 @@
   box-shadow: 0 0 0 3px var(--danger-bg);
 }
 
-.ht-timeline-node.ng .icon {
-  color: var(--text-inverse);
+.ht-timeline-node.na {
+  background: var(--surface-hover);
+  border-color: var(--border);
+  color: var(--text-secondary);
+  opacity: 0.6;
 }
 
 @keyframes htPulse {
@@ -575,90 +427,135 @@
   50% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.08); }
 }
 
-/* Step name label */
-.ht-timeline-step-name {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-secondary);
-  text-align: center;
-  margin-bottom: 4px;
-  white-space: nowrap;
+/* Kolom kanan: kartu data aktual */
+.ht-timeline-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-sm), box-shadow var(--transition-sm);
+  align-self: start;
 }
 
-.ht-timeline-step.completed .ht-timeline-step-name,
-.ht-timeline-step.active .ht-timeline-step-name {
+.ht-timeline-card:hover { box-shadow: var(--shadow-md); }
+
+.ht-timeline-card.completed { border-left-color: var(--success); }
+.ht-timeline-card.active { border-left-color: var(--primary); }
+.ht-timeline-card.pending { border-left-color: var(--border); }
+.ht-timeline-card.ng { border-left-color: var(--danger); }
+.ht-timeline-card.na { border-left-color: var(--border); }
+
+.ht-timeline-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ht-timeline-card-header .icon {
+  width: 20px;
+  height: 20px;
+  color: var(--text-secondary);
+}
+
+.ht-timeline-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ht-timeline-card-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 18px;
+}
+
+.ht-timeline-card-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ht-timeline-card-notice .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--text-tertiary);
+}
+
+.ht-timeline-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 12px;
+}
+
+.ht-meta-item { display: flex; flex-direction: column; line-height: 1.4; }
+
+.ht-meta-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+}
+
+.ht-meta-value { color: var(--text-primary); font-weight: 500; }
+
+.ht-timeline-note {
+  margin-top: 8px;
+  font-size: 12px;
   color: var(--text-primary);
 }
 
-.ht-timeline-step.ng .ht-timeline-step-name {
-  color: var(--danger);
+.ht-timeline-card.ng .ht-timeline-note {
+  color: var(--danger-text);
+  border-top: 1px dashed var(--danger-bg);
+  padding-top: 6px;
 }
 
-/* Status badge container */
-.ht-timeline-badge {
-  margin-bottom: 2px;
-}
+/* Catatan: ikon lingkaran Timeline Status sudah putih (selesai/aktif/ng) atau
+   abu #475569 (pending/na) lewat currentColor yang diturunkan dari node — lihat
+   .ht-timeline-node.*. Warna disesuaikan via inline SVG (stroke="currentColor"),
+   bukan via filter brightness(0) invert(1) yang bersifat global dan dapat
+   membobot ikon kartu data / sidebar. */
 
-.ht-timeline-badge .ht-badge {
-  font-size: 8px;
-  padding: 2px 6px;
-}
-
-/* Date/time text */
-.ht-timeline-step-date {
-  font-size: 9px;
-  color: var(--text-tertiary);
-  text-align: center;
-  white-space: nowrap;
-}
-
-/* ===== Responsive Timeline ===== */
+/* Responsif: satu kolom, kartu di bawah nama proses */
 @media (max-width: 768px) {
-  .ht-timeline-step {
-    min-width: 84px;
+  .ht-timeline {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
-
-  .ht-timeline-node {
-    width: 36px;
-    height: 36px;
+  .ht-timeline::before { left: 21px; top: 0; bottom: 0; }
+  .ht-timeline-stepcol {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+    padding-top: 6px;
   }
-
-  .ht-timeline-step-name {
-    font-size: 9px;
-  }
-
-  .ht-timeline-step-date {
-    font-size: 8px;
-  }
+  .ht-timeline-node { width: 36px; height: 36px; margin-right: 10px; }
+  .ht-timeline-node .icon { width: 18px; height: 18px; }
+  .ht-timeline-step-name { font-size: 11px; margin-top: 0; }
+  .ht-timeline-card { padding: 14px 16px; }
+  .ht-timeline-card-body { grid-template-columns: 1fr; gap: 8px; }
 }
 
 @media (max-width: 480px) {
-  .ht-timeline-step {
-    min-width: 76px;
-  }
-
-  .ht-timeline-node {
-    width: 32px;
-    height: 32px;
-  }
-
-  .ht-timeline-node .icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  .ht-timeline-step-name {
-    font-size: 8px;
-  }
-}
-
-/* ===== File protocol fallback (icon inversion on colored nodes) ===== */
-.ht-file-protocol .ht-timeline-node.completed .icon,
-.ht-file-protocol .ht-timeline-node.active .icon,
-.ht-file-protocol .ht-timeline-node.ng .icon {
-  filter: brightness(0) invert(1);
+  .ht-timeline-node { width: 32px; height: 32px; }
+  .ht-timeline-node .icon { width: 16px; height: 16px; }
+  .ht-timeline-card { padding: 12px; }
+  .ht-timeline-step-name { font-size: 10px; }
+  .ht-timeline-card-body { gap: 6px; }
 }
 
 /* ============================================================
@@ -1838,6 +1735,41 @@
     gap: 8px;
   }
 }
+
+/* ===== Material info: kelompok Identitas / Status (CSS-only regroup) =====
+   .ht-material-info-grid menggantikan layout 2-kolom datar dengan dua
+   grup vertikal: Identitas dan Status. Hasil QC dan Delivery tetap
+   pada kartu terpisah (qcSection / deliverySection). =====
+.ht-material-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ht-material-info-grid .ht-info-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 24px;
+}
+
+.ht-material-info-grid .ht-group-title {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.ht-material-info-grid .ht-info-item { margin: 0; }
+
+@media (max-width: 768px) {
+  .ht-material-info-grid .ht-info-group {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
 
 /* ============================================================
    TEKS KESALAHAN — kesalahan validasi inline

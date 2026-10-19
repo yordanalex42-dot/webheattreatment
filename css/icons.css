@@ -124,24 +124,31 @@
   filter: none;
 }
 
-/* Ikon menu sidebar - ukuran tetap 22px, mewarisi warna teks induk */
+/* Ikon menu sidebar - ukuran tetap 22px.
+   Sidebar berwarna putih, sehingga ikon harus terlihat gelap pada normal dan
+   biru pada active/hover. Asli SVG dipanggil via <img> sehingga `stroke=
+   "currentColor"` tidak mewarisi color CSS; pewarnaan dilakukan dengan filter
+   CSS berupa feColorMatrix in-document (diinjeksikan oleh js/ui.js) yang
+   memetakan semua piksel opaque ke token warna secara tepat:
+     #64748b = ikon normal   (#sidebar-icon)
+     #2563eb = ikon active & hover (primary)
+   Hal ini menggantikan `filter: brightness(0) invert(1)` yang justru membuat
+   ikon putih dan tak terlihat pada background putih. Logo resmi (berwarna)
+   tidak ditintangani filter ini karena memakai kelas .sidebar-logo.
+   Fallback: bila def filter belum ada, ikon tetap native abu-abu (#475569)
+   yang sudah terlihat pada putih. */
 .sidebar-menu-icon {
   width: 22px;
   height: 22px;
-  color: inherit;
+  color: var(--sidebar-icon);
+  background-color: transparent;
+  filter: url(#ht-icon-gray);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
   mask-position: center;
   -webkit-mask-size: contain;
   mask-size: contain;
-}
-
-/* Cat latar belakang dengan warna saat ini untuk ikon menu mono warna saja
-   (logo resmi berwarna tidak menggunakan mask) */
-.sidebar-menu-icon {
-  background-color: currentColor;
-  filter: brightness(0) invert(1);
 }
 
 /* ---- Aset logo dan ikon menu sidebar (peta mask) ----
@@ -197,6 +204,12 @@
   -webkit-mask-image: url("../assets/icons/logout.svg");
   mask-image: url("../assets/icons/logout.svg");
 }
+/* Pewarnaan ikon sidebar (dashboard/customer/part/incoming/production/process/
+   quality-control/delivery/tracking/close/logout/factory/file) dan chevron
+   sudah ditangani oleh `filter: url(#ht-icon-gray)` pada .sidebar-menu-icon dan
+   .ht-nav-toggle-icon (warna biru untuk active/hover diatur di sidebar.css).
+   Peta mask di atas dipertahankan sebagai sumber bentuk aset, tidak wajib. */
+
 
 /* ---- Warna per-status ----
    DIPINDAH KE sidebar.css (satu sumber kebenaran untuk gaya visual)
@@ -207,15 +220,19 @@
    CATATAN: di proyek ini .icon justru ADALAH elemen <img> itu sendiri
    (misalnya <img src="...svg" class="icon">), sehingga filter harus
    diterapkan ke .icon — selektor ".icon img" tidak pernah cocok. */
-@supports not (
+ @supports not (
   (mask-image: url("../assets/icons/dashboard.svg")) or
     (-webkit-mask-image: url("../assets/icons/dashboard.svg"))
-) {
-   .sidebar-menu-icon {
-    background-color: transparent;
-    filter: brightness(0) invert(1);
-  }
-}
+ ) {
+   /* Tanpa dukungan mask: biarkan ikon sidebar tetap native (abu #475569)
+      yang sudah terlihat pada latar putih. Jangan dipaksa putih lewat filter
+      karena putih akan menghilang pada background putih. */
+    .sidebar-menu-icon,
+    .ht-nav-toggle-icon {
+      background-color: transparent;
+      filter: url(#ht-icon-gray);
+    }
+ }
 
 /* ---- Fallback file:// ------------------------------------------------
    Saat aplikasi dibuka langsung dari disk (tanpa server web) peramban
@@ -237,10 +254,18 @@
   background-color: transparent !important;
 }
 
-/* Di sidebar gelap dan pada tombol berwarna, ikon menu harus tetap terang,
-   jadi ikon menu mono yang di-mask dibalik ke putih. Logo resmi tidak termasuk
-   (logo berwarna tetap asli, termasuk pada protokol file:). */
+/* Pada latar belakang berwarna (tombol/warning/sukses/toast), ikon yang
+   di-mask perlu dibalik ke putih agar kontras. Logo resmi tidak termasuk
+   (logo berwarna tetap asli, termasuk pada protokol file:).
+   Ikon menu sidebar PUNCH TIDAK dilisnting — pada background putih ikon
+   harus tetap gelap/terlihat, jadi tidak mendapat filter invert di sini. */
 .ht-file-protocol .sidebar-menu-icon,
+.ht-file-protocol .ht-nav-toggle-icon {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  background-color: transparent !important;
+  filter: url(#ht-icon-gray) !important;
+}
 .ht-file-protocol .ht-login-actions .ht-btn .icon,
 .ht-file-protocol .ht-btn-primary .icon,
 .ht-file-protocol .ht-btn-success .icon,
@@ -252,9 +277,11 @@
   filter: brightness(0) invert(1);
 }
 
-/* Ikon nav tidak aktif: dilunakkan ke abu abu muda (aktif/hover tetap putih) */
+/* Ikon nav tidak aktif: penuh (warna abu-abu gelap ditentukan oleh
+   .sidebar-menu-icon dan variabel --sidebar-icon), agar kontras jelas pada
+   latar belakang putih. Status aktif/hover mengikuti --primary via sidebar.css. */
 .ht-sidebar .ht-nav-link:not(.active):not(:hover) .sidebar-menu-icon {
-  opacity: 0.82;
+  opacity: 1;
 }
 
 /* ============================================================

@@ -164,6 +164,32 @@ const HTUI = {
   },
 };
 
+/* ============================================================
+   SVG FILTER DESIGNS (ikon warna token)
+   Diinjeksikan sekali ke <body> oleh HTUI.initIconFilters().
+   Kedua def ini mendukung pewarnaan ikon sidebar <img> SVG yang
+   tidak mewarisi color CSS, memberikan:
+     #ht-icon-gray  -> #64748b (ikon normal pada sidebar putih)
+     #ht-icon-blue  -> #2563eb (ikon active/hover = --primary)
+   ============================================================ */
+HTUI.initIconFilters = function () {
+  if (document.getElementById("ht-icon-filters")) return;
+  var svg = document.createElementNS("http://www.w3.org/2000/svg");
+  svg.id = "ht-icon-filters";
+  svg.setAttribute("aria-hidden", "true");
+  svg.style.position = "absolute";
+  svg.style.width = "0";
+  svg.style.height = "0";
+  svg.style.overflow = "hidden";
+  svg.innerHTML =
+    '<defs><filter id="ht-icon-gray">' +
+    '<feColorMatrix type="matrix" values="0 0 0 0 0.392 0 0 0 0 0.455 0 0 0 0 0.549 0 0 0 1 0"/>' +
+    '</filter><filter id="ht-icon-blue">' +
+    '<feColorMatrix type="matrix" values="0 0 0 0 0.145 0 0 0 0 0.388 0 0 0 0 0.922 0 0 0 1 0"/>' +
+    '</filter></defs>';
+  document.body.appendChild(svg);
+};
+
 /* ---- Bootstrap global ---- */
 (function () {
   /* Dibuka langsung dari disk (tanpa server web): SVG eksternal yang dipakai
@@ -173,4 +199,5 @@ const HTUI = {
   if (location.protocol === "file:") {
     document.documentElement.classList.add("ht-file-protocol");
   }
+  HTUI.initIconFilters();
 })();
