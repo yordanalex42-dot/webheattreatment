@@ -1740,33 +1740,55 @@
    .ht-material-info-grid menggantikan layout 2-kolom datar dengan dua
    grup vertikal: Identitas dan Status. Hasil QC dan Delivery tetap
    pada kartu terpisah (qcSection / deliverySection). =====
-.ht-material-info-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.ht-material-info-grid .ht-info-group {
+/* ===== Data Material card: dua bagian =====
+   Bagian A (.ht-material-main): Control Number (teks besar + aksen biru),
+   Customer, Status Part — susunan kompak 3 kolom, mudah dipindai.
+   Bagian B (.ht-material-grid): grid 4 kolom detail material. */
+.ht-material-main {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 18px;
 }
 
-.ht-material-info-grid .ht-group-title {
-  grid-column: 1 / -1;
+.ht-material-main .ht-badge {
   font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-secondary);
 }
 
-.ht-material-info-grid .ht-info-item { margin: 0; }
+.ht-material-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 18px;
+  align-items: start;
+}
 
-@media (max-width: 768px) {
-  .ht-material-info-grid .ht-info-group {
+.ht-material-grid .ht-info-item {
+  min-width: 0;
+}
+
+.ht-material-grid .ht-info-label {
+  font-size: 10px;
+}
+
+.ht-material-grid .ht-info-value {
+  font-size: 11px;
+}
+
+@media (max-width: 1024px) {
+  .ht-material-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ht-material-main {
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 14px;
+    align-items: start;
+  }
+  .ht-material-grid {
+    grid-template-columns: 1fr;
   }
 }
 

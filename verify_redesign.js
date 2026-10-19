@@ -27,7 +27,10 @@ const checks = [
   ["no dead renderProcessResults", inline.indexOf("function renderProcessResults") === -1],
   ["no dead renderQC", inline.indexOf("function renderQC(qcs)") === -1],
   ["no dead renderDelivery", inline.indexOf("function renderDelivery(material, delivery)") === -1],
-  [".ht-material-info-grid present", h.indexOf("ht-material-info-grid") > -1],
+  [".ht-material-main present", h.indexOf("ht-material-main") > -1],
+  [".ht-material-grid present", h.indexOf("ht-material-grid") > -1],
+  ["Control Number label", h.indexOf("Control Number") > -1],
+  ["Status Part label", h.indexOf("Status Part") > -1],
   ["Data Material title", h.indexOf("Data Material") > -1],
   ["Timeline Status Produksi title", h.indexOf("Timeline Status Produksi") > -1],
 ];
