@@ -553,7 +553,7 @@ const HTDashboard = {
     let totalWeight = 0;
 
     materials.forEach(material => {
-      if (!this._isMaterialProductionComplete(material)) return;
+      if (!this._isHeatTreatmentComplete(material)) return;
 
       const processType = material.process_type || "Lainnya";
       const weight = this._getMaterialWeight(material);
@@ -727,40 +727,45 @@ const HTDashboard = {
     this.renderKPIs();
   },
 
-  _getProductionChartData() {
-    const { materials } = this._data;
+   _getHeatTreatmentProduction(material) {
+    const prods = this._data.prodMap[material.id] || [];
+    const htProds = prods.filter(p => {
+      const tKey = DB._normalizeProcessKey(p.jenis_treatment);
+      return tKey !== "SHOTBLAST" && tKey !== "ANTI_RUST" && tKey !== "QC" && tKey !== "QC_CHECK";
+    });
+    if (htProds.length > 0) {
+      return htProds[htProds.length - 1];
+    }
+    return null;
+  },
+
+  _isHeatTreatmentComplete(material) {
+    const prod = this._getHeatTreatmentProduction(material);
+    if (!prod) return false;
+    return prod.production_status === "FINISH" && prod.process_result !== "NG";
+  },
+
+  _getDeliveryChartData() {
+    const { deliveries, materials } = this._data;
 
     const dateWeightMap = {};
 
-    materials.forEach(material => {
-      if (!this._isMaterialProductionComplete(material)) return;
+    const materialById = {};
+    materials.forEach(m => { materialById[m.id] = m; });
 
-      let dateStr = "";
-      const history = this._hasRoute(material) ? DB.getProcessHistory(material) : [];
-      let lastProd = null;
+    deliveries.forEach(d => {
+      if (d.status !== DB.STATUSES.DELIVERY_DELIVERED) return;
 
-      if (history.length > 0) {
-        for (let i = history.length - 1; i >= 0; i--) {
-          if (history[i].production) { lastProd = history[i].production; break; }
-        }
-      }
-
-      if (!lastProd) {
-        const prods = this._data.prodMap[material.id] || [];
-        if (prods.length > 0) lastProd = prods[prods.length - 1];
-      }
-
-      if (lastProd) {
-        dateStr = lastProd.tanggal_proses || "";
-        if (!dateStr && lastProd.machine_finish_at) {
-          const d = this._parseDate(lastProd.machine_finish_at);
-          if (d) dateStr = this._toYMD(d);
-        }
-      }
-
+      const dateStr = d.tanggal_kirim;
       if (!dateStr) return;
 
-      const weight = this._getMaterialWeight(material);
+      const material = materialById[d.material_id];
+      if (!material) return;
+
+      const beratPerPart = parseFloat(material.berat_part_snapshot) || 0;
+      const qtyKirim = parseFloat(d.qty_kirim) || 0;
+      const weight = qtyKirim * beratPerPart;
+
       if (dateWeightMap[dateStr]) {
         dateWeightMap[dateStr] += weight;
       } else {
@@ -778,7 +783,7 @@ const HTDashboard = {
 
     const { chartMode, selectedYear, selectedMonth } = this.state;
 
-    const dateWeightMap = this._getProductionChartData();
+    const dateWeightMap = this._getDeliveryChartData();
 
     if (this._chartProduction) {
       this._chartProduction.destroy();

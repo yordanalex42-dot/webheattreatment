@@ -500,7 +500,7 @@
                    </div>
                 </div>
                 <div class="ht-chart-container">
-                  <canvas id="productionChart" height="280"></canvas>
+                   <canvas id="productionChart"></canvas>
                   <div id="productionChartEmpty" class="ht-chart-empty hidden">
                     <img
                       src="assets/icons/empty-state.svg"
@@ -521,7 +521,9 @@
                   </div>
                 </div>
                  <div class="ht-chart-donut-container">
-                   <canvas id="processDonutChart" width="200" height="200"></canvas>
+                   <div class="ht-donut-wrapper">
+                     <canvas id="processDonutChart" width="200" height="200"></canvas>
+                   </div>
                    <div class="ht-donut-center" id="processDonutCenter">
                      <span class="ht-donut-value" id="processDonutTotal">—</span>
                      <span class="ht-donut-unit">KG</span>

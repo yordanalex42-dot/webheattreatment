@@ -472,61 +472,19 @@
   line-height: 1.3;
 }
 
-.ht-donut-value {
-  display: block;
-  font-size: 42px;
-  font-weight: var(--font-weight-bold);
-  line-height: 1;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
 .ht-donut-wrapper {
   position: relative;
-  width: 180px;
-  height: 180px;
-  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ht-donut-wrapper canvas {
   width: 100%;
   height: 100%;
   display: block;
-}
-
-.ht-donut-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  pointer-events: none;
-}
-
-.ht-donut-value {
-  display: block;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.ht-donut-unit {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-top: 2px;
-}
-
-.ht-donut-center-label {
-  display: block;
-  font-size: 10px;
-  color: var(--text-tertiary);
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 /* Legend donut kontribusi proses */
@@ -593,6 +551,7 @@
   display: grid;
   grid-template-columns: 1.9fr 1fr;
   gap: 20px;
+  align-items: start;
   margin-bottom: 28px;
 }
 
@@ -673,8 +632,7 @@
 .ht-chart-container {
   position: relative;
   width: 100%;
-  height: 320px;
-  min-height: 200px;
+  height: 260px;
 }
 
 .ht-chart-container canvas {
@@ -684,18 +642,59 @@
 }
 
 .ht-chart-donut-container {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 16px;
+  width: 100%;
+  height: 260px;
 }
 
 .ht-chart-donut-container canvas {
-  width: 180px;
-  height: 180px;
+  display: block;
 }
 
-/* Status kosong grafik */
+.ht-donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+  width: max-content;
+}
+
+.ht-donut-value {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ht-donut-unit {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.ht-donut-center-label {
+  display: block;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .ht-chart-empty {
   position: absolute;
   inset: 0;
@@ -1361,6 +1360,10 @@
     height: 170px;
   }
 
+  .ht-chart-donut-container {
+    height: 260px;
+  }
+
   .ht-chart-grid {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -1430,7 +1433,11 @@
     height: 300px;
   }
 
-   .ht-donut-wrapper {
+  .ht-chart-donut-container {
+    height: 300px;
+  }
+
+  .ht-donut-wrapper {
     width: 190px;
     height: 190px;
   }
@@ -1497,11 +1504,6 @@
   }
 
    .ht-donut-wrapper {
-    width: 160px;
-    height: 160px;
-  }
-
-  .ht-chart-donut-container canvas {
     width: 160px;
     height: 160px;
   }
@@ -1610,11 +1612,6 @@
     height: 150px;
   }
 
-  .ht-chart-donut-container canvas {
-    width: 150px;
-    height: 150px;
-  }
-
    .ht-donut-value {
     font-size: 20px;
   }
@@ -1625,6 +1622,10 @@
   }
 
   .ht-chart-container {
+    height: 240px;
+  }
+
+  .ht-chart-donut-container {
     height: 240px;
   }
 
@@ -1713,12 +1714,16 @@
     font-size: 18px;
   }
 
-  .ht-chart-donut-container canvas {
+  .ht-donut-wrapper {
     width: 130px;
     height: 130px;
   }
 
   .ht-chart-container {
+    height: 220px;
+  }
+
+  .ht-chart-donut-container {
     height: 220px;
   }
 
