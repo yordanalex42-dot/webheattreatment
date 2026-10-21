@@ -17,11 +17,14 @@ const HTDashboard = {
     dailyStartDate: "",
     dailyEndDate: "",
     monthlyYear: new Date().getFullYear(),
+    chartMode: "monthly",
+    selectedMonth: new Date().getMonth() + 1,
+    selectedYear: new Date().getFullYear(),
   },
 
   _data: null,
-  _chartDaily: null,
-  _chartMonthly: null,
+  _chartProduction: null,
+  _processDonutChart: null,
   _autoRefreshTimer: null,
 
   MONTH_NAMES_ID: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
@@ -31,6 +34,7 @@ const HTDashboard = {
     DB.init();
     DB.migrate();
     this._cacheElements();
+    this._renderMonthSelectors();
     this._bindEvents();
     this.loadDashboard();
     this._startAutoRefresh();
@@ -42,11 +46,10 @@ const HTDashboard = {
       kpiTotalOutput: document.getElementById("kpiTotalOutput"),
       kpiTotalBeratInput: document.getElementById("kpiTotalBeratInput"),
       kpiTotalBeratOutput: document.getElementById("kpiTotalBeratOutput"),
-      kpiPartNG: document.getElementById("kpiPartNG"),
-      dailyChartCtx: document.getElementById("dailyChart"),
-      monthlyChartCtx: document.getElementById("monthlyChart"),
-      dailyChartEmpty: document.getElementById("dailyChartEmpty"),
-      monthlyChartEmpty: document.getElementById("monthlyChartEmpty"),
+      dailyChartCtx: document.getElementById("productionChart"),
+      dailyChartEmpty: document.getElementById("productionChartEmpty"),
+      monthlyChartCtx: document.getElementById("processDonutChart"),
+      monthlyChartEmpty: document.getElementById("processDonutCenter"),
       searchInput: document.getElementById("searchInput"),
       statusFilter: document.getElementById("statusFilter"),
       customerFilter: document.getElementById("customerFilter"),
@@ -56,6 +59,9 @@ const HTDashboard = {
       dailyStartDate: document.getElementById("dailyStartDate"),
       dailyEndDate: document.getElementById("dailyEndDate"),
       monthlyYear: document.getElementById("monthlyYear"),
+      chartModeToggle: document.getElementById("chartModeToggle"),
+      processDonutTotal: document.getElementById("processDonutTotal"),
+      processDonutLegend: document.getElementById("processDonutLegend"),
       tableBody: document.getElementById("monitoringTableBody"),
       pagination: document.getElementById("pagination"),
       pageInfo: document.getElementById("pageInfo"),
@@ -66,7 +72,31 @@ const HTDashboard = {
       pageSizeSelect: document.getElementById("pageSizeSelect"),
       exportBtn: document.getElementById("exportBtn"),
       refreshBtn: document.getElementById("refreshBtn"),
+      kpiMonthSelect: document.getElementById("kpiMonthSelect"),
+      kpiYearSelect: document.getElementById("kpiYearSelect"),
     };
+  },
+
+  _renderMonthSelectors() {
+    if (!this._el.kpiMonthSelect || !this._el.kpiYearSelect) return;
+
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    let monthHtml = "";
+    for (let m = 1; m <= 12; m++) {
+      monthHtml += `<option value="${m}">${this.MONTH_NAMES_ID[m - 1]}</option>`;
+    }
+    this._el.kpiMonthSelect.innerHTML = monthHtml;
+
+    let yearHtml = "";
+    for (let y = currentYear - 2; y <= currentYear + 2; y++) {
+      yearHtml += `<option value="${y}">${y}</option>`;
+    }
+    this._el.kpiYearSelect.innerHTML = yearHtml;
+
+    this._el.kpiMonthSelect.value = String(this.state.selectedMonth);
+    this._el.kpiYearSelect.value = String(this.state.selectedYear);
   },
 
   _bindEvents() {
@@ -112,25 +142,31 @@ const HTDashboard = {
         this.state.dailyPeriod = parseInt(e.target.value);
         this.state.dailyStartDate = "";
         this.state.dailyEndDate = "";
-        this.renderDailyChart();
+        this.renderProductionChart();
       });
     }
     if (this._el.dailyStartDate) {
       this._el.dailyStartDate.addEventListener("change", () => {
         this.state.dailyStartDate = this._el.dailyStartDate.value;
-        this.renderDailyChart();
+        this.renderProductionChart();
       });
     }
     if (this._el.dailyEndDate) {
       this._el.dailyEndDate.addEventListener("change", () => {
         this.state.dailyEndDate = this._el.dailyEndDate.value;
-        this.renderDailyChart();
+        this.renderProductionChart();
       });
     }
     if (this._el.monthlyYear) {
       this._el.monthlyYear.addEventListener("change", (e) => {
         this.state.monthlyYear = parseInt(e.target.value);
-        this.renderMonthlyChart();
+        this.renderProductionChart();
+      });
+    }
+    if (this._el.chartModeToggle) {
+      this._el.chartModeToggle.addEventListener("change", (e) => {
+        this.state.chartMode = e.target.value;
+        this.renderProductionChart();
       });
     }
 
@@ -166,13 +202,28 @@ const HTDashboard = {
     if (this._el.refreshBtn) {
       this._el.refreshBtn.addEventListener("click", () => this.refresh());
     }
+
+    if (this._el.kpiMonthSelect) {
+      this._el.kpiMonthSelect.addEventListener("change", () => {
+        this.state.selectedMonth = parseInt(this._el.kpiMonthSelect.value);
+        this._cacheData();
+        this.renderKPIs();
+      });
+    }
+    if (this._el.kpiYearSelect) {
+      this._el.kpiYearSelect.addEventListener("change", () => {
+        this.state.selectedYear = parseInt(this._el.kpiYearSelect.value);
+        this._cacheData();
+        this.renderKPIs();
+      });
+    }
   },
 
   loadDashboard() {
     this._cacheData();
     this.renderKPIs();
-    this.renderDailyChart();
-    this.renderMonthlyChart();
+    this.renderProductionChart();
+    this.renderProcessDonutChart();
     this.renderCustomerFilter();
     this.renderTable();
   },
@@ -455,13 +506,12 @@ const HTDashboard = {
   },
 
   renderKPIs() {
-    const { materials, productions, qcs, deliveries } = this._data;
+    const { materials, productions, deliveries } = this._data;
 
     let totalInput = 0;
     let totalBeratInput = 0;
     let totalOutput = 0;
     let totalBeratOutput = 0;
-    let partNG = 0;
 
     const prodMap = this._data.prodMap;
     const prodById = {};
@@ -490,17 +540,9 @@ const HTDashboard = {
       }
     });
 
-    // Part NG dari qcs (semua rekaman)
-    qcs.forEach(q => {
-      if (q.hasil === "NG") {
-        partNG++;
-      }
-    });
-
-    // Target & Persentase Capaian
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
+    // Target & Persentase Capaian — berdasarkan bulan yang dipilih
+    const year = this.state.selectedYear;
+    const month = this.state.selectedMonth;
     const targetKey = `${year}-${String(month).padStart(2, '0')}`;
     let target = 0;
     try {
@@ -517,81 +559,86 @@ const HTDashboard = {
     if (this._el.kpiTotalOutput) this._el.kpiTotalOutput.textContent = totalOutput;
     if (this._el.kpiTotalBeratInput) this._el.kpiTotalBeratInput.textContent = this._formatWeight(totalBeratInput);
     if (this._el.kpiTotalBeratOutput) this._el.kpiTotalBeratOutput.textContent = this._formatWeight(totalBeratOutput);
-    if (this._el.kpiPartNG) this._el.kpiPartNG.textContent = partNG;
-
-    // Render grafik donat
-    this._renderDonutChart(target, totalBeratOutput, persentase);
 
     // Render kartu info target
     this._renderTargetCard(target, totalBeratOutput, persentase);
   },
 
-  _renderDonutChart(target, output, persentase) {
-    const canvas = document.getElementById("donutChart");
-    const centerValue = document.getElementById("donutValue");
-    const detailEl = document.getElementById("donutDetail");
-    if (!canvas || !centerValue || !detailEl) return;
+  renderProcessDonutChart() {
+    const canvas = this._el.monthlyChartCtx;
+    const centerEl = this._el.monthlyChartEmpty;
+    const legendEl = this._el.processDonutLegend;
+    if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
 
-    // Hancurkan grafik yang ada jika ada
-    if (this._donutChart) {
-      this._donutChart.destroy();
+    if (this._processDonutChart) {
+      this._processDonutChart.destroy();
     }
 
-    if (target === 0) {
-      centerValue.textContent = "—";
-      detailEl.textContent = "Target bulan ini belum ditentukan";
-      // Gambar donut kosong (abu-abu)
-      this._donutChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-          datasets: [{
-            data: [1],
-            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue("--border") || "#E2E8F0"],
-            borderWidth: 0,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: "70%",
-          plugins: { legend: { display: false }, tooltip: { enabled: false } },
-        }
-      });
-      return;
+    const { materials } = this._data;
+
+    const processWeights = {};
+    let totalWeight = 0;
+
+    materials.forEach(material => {
+      if (!this._isMaterialProductionComplete(material)) return;
+
+      const processType = material.process_type || "Lainnya";
+      const weight = this._getMaterialWeight(material);
+
+      if (!processWeights[processType]) processWeights[processType] = 0;
+      processWeights[processType] += weight;
+      totalWeight += weight;
+    });
+
+    const sortedTypes = Object.keys(processWeights).sort((a, b) => processWeights[b] - processWeights[a]);
+    const data = sortedTypes.map(t => processWeights[t]);
+    const labels = sortedTypes;
+
+    if (centerEl) {
+      centerEl.textContent = this._formatWeight(totalWeight);
     }
-
-    const actualPersentase = Math.round((output / target) * 100);
-    const displayPersentase = Math.min(actualPersentase, 100);
-    const sisa = Math.max(target - output, 0);
-
-    centerValue.textContent = actualPersentase;
-    detailEl.textContent = `Output ${this._formatWeight(output)} Kg dari Target ${this._formatWeight(target)} Kg`;
 
     const css = getComputedStyle(document.documentElement);
-    const primaryColor = css.getPropertyValue("--primary") || "#2563eb";
-    const successColor = css.getPropertyValue("--success") || "#10B981";
-    const borderColor = css.getPropertyValue("--border") || "#DAD1C8";
 
-    const isOverTarget = output >= target;
+    const donutColors = [
+      css.getPropertyValue("--primary") || "#2563eb",
+      "#3b82f6",
+      "#60a5fa",
+      "#93c5fd",
+      "#bfdbfe",
+      "#94a3b8",
+      "#cbd5e1",
+    ];
+    const backgroundColors = labels.map((_, i) => donutColors[i % donutColors.length]);
 
-    this._donutChart = new Chart(ctx, {
+    this._processDonutChart = new Chart(ctx, {
       type: "doughnut",
       data: {
+        labels: labels,
         datasets: [{
-          data: [displayPersentase, 100 - displayPersentase],
-          backgroundColor: [isOverTarget ? successColor : primaryColor, borderColor],
+          data: data,
+          backgroundColor: backgroundColors,
           borderWidth: 0,
+          hoverOffset: 6,
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: "70%",
+        cutout: "65%",
         plugins: {
           legend: { display: false },
-          tooltip: { enabled: false },
+          tooltip: {
+            callbacks: {
+              label: (item) => {
+                const val = item.parsed;
+                const pct = totalWeight > 0 ? Math.round((val / totalWeight) * 100) : 0;
+                return `${item.label}: ${this._formatWeight(val)} KG (${pct}%)`;
+              }
+            }
+          },
         },
         animation: {
           animateRotate: true,
@@ -601,6 +648,19 @@ const HTDashboard = {
         },
       }
     });
+
+    if (legendEl) {
+      let legendHtml = "";
+      labels.forEach((label, i) => {
+        const val = data[i];
+        const pct = totalWeight > 0 ? Math.round((val / totalWeight) * 100) : 0;
+        legendHtml += `<div class="ht-donut-legend-item">
+          <span class="ht-donut-legend-swatch" style="background-color:${backgroundColors[i]}"></span>
+          <span class="ht-donut-legend-label">${label}: ${this._formatWeight(val)} KG (${pct}%)</span>
+        </div>`;
+      });
+      legendEl.innerHTML = legendHtml;
+    }
   },
 
   _renderTargetCard(target, output, persentase) {
@@ -609,25 +669,16 @@ const HTDashboard = {
     const targetEditBtn = document.getElementById("targetEditBtn");
     if (!targetDisplay || !targetMonthLabel || !targetEditBtn) return;
 
-    const now = new Date();
-    const monthName = this.MONTH_NAMES_ID[now.getMonth()];
-    const year = now.getFullYear();
-
+    const monthName = this.MONTH_NAMES_ID[(this.state.selectedMonth || 1) - 1];
+    const year = this.state.selectedYear || new Date().getFullYear();
     targetMonthLabel.textContent = `${monthName} ${year}`;
 
     if (target === 0) {
-      targetDisplay.innerHTML = `
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 w-full">
-          <span class="ht-kpi-value font-bold" style="color: var(--text-tertiary);">Belum Diatur</span>
-        </div>
-      `;
+      targetDisplay.textContent = "—";
+      targetDisplay.classList.add("muted");
     } else {
-      targetDisplay.innerHTML = `
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 w-full">
-          <span class="ht-kpi-value font-bold" style="color: var(--primary);">${this._formatWeight(target)}</span>
-          <span class="text-xs" style="color: var(--text-secondary);">Kg</span>
-        </div>
-      `;
+      targetDisplay.textContent = this._formatWeight(target);
+      targetDisplay.classList.remove("muted");
     }
 
     // Lampirkan handler klik pada tombol edit
@@ -639,9 +690,8 @@ const HTDashboard = {
     const input = document.getElementById("targetEditInput");
     if (!modal || !input) return;
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
+    const year = this.state.selectedYear;
+    const month = this.state.selectedMonth;
     const targets = DB.get("targets");
     const targetRecord = targets.find(t => t.year === year && t.month === month);
     input.value = targetRecord ? targetRecord.target_berat_output : "";
@@ -662,9 +712,8 @@ const HTDashboard = {
       HTUI.toast("Target harus berupa angka positif.", "error");
       return;
     }
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
+    const year = this.state.selectedYear;
+    const month = this.state.selectedMonth;
     const targets = DB.get("targets");
     const existingIdx = targets.findIndex(t => t.year === year && t.month === month);
     const record = {
@@ -730,73 +779,12 @@ const HTDashboard = {
     return dateWeightMap;
   },
 
-  renderDailyChart() {
+  renderProductionChart() {
     const ctx = this._el.dailyChartCtx;
     const emptyEl = this._el.dailyChartEmpty;
     if (!ctx) return;
 
-    const { dailyPeriod, dailyStartDate, dailyEndDate } = this.state;
-    let startDate, endDate;
-
-    if (dailyStartDate && dailyEndDate) {
-      startDate = dailyStartDate;
-      endDate = dailyEndDate;
-    } else {
-      const end = new Date();
-      const start = new Date();
-      start.setDate(end.getDate() - (dailyPeriod - 1));
-      startDate = this._toYMD(start);
-      endDate = this._toYMD(end);
-    }
-
-    if (this._el.dailyStartDate) this._el.dailyStartDate.value = startDate;
-    if (this._el.dailyEndDate) this._el.dailyEndDate.value = endDate;
-
-    const dateWeightMap = this._getProductionChartData();
-    const dates = this._generateDateRange(startDate, endDate);
-    const labels = dates.map(d => this._formatDateLabel(d));
-    const data = dates.map(d => dateWeightMap[this._toYMD(d)] || 0);
-
-    const hasData = data.some(v => v > 0);
-
-    if (emptyEl) emptyEl.classList.toggle("hidden", hasData);
-
-    if (this._chartDaily) {
-      this._chartDaily.destroy();
-    }
-
-    const theme = this._chartTheme();
-    /* Tampilkan lebih sedikit label tanggal pada periode panjang agar tidak bertumpuk. */
-    const tickLimit = dates.length <= 7 ? dates.length : dates.length <= 14 ? 7 : 10;
-    const fullLabels = dates.map(d => HTDateFormat.formatLongDate(d));
-
-    this._chartDaily = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "Total Berat Produksi (KG)",
-          data: data,
-          backgroundColor: theme.toRgba(theme.primary, 0.75),
-          hoverBackgroundColor: theme.primary,
-          borderRadius: 6,
-          borderSkipped: false,
-          maxBarThickness: 34,
-        }]
-      },
-      options: this._chartOptions(theme, {
-        tickLimit: tickLimit,
-        tooltipTitle: (item) => fullLabels[item.dataIndex] || labels[item.dataIndex],
-      }),
-    });
-  },
-
-  renderMonthlyChart() {
-    const ctx = this._el.monthlyChartCtx;
-    const emptyEl = this._el.monthlyChartEmpty;
-    if (!ctx) return;
-
-    const { monthlyYear } = this.state;
+    const { chartMode, monthlyYear, dailyPeriod, dailyStartDate, dailyEndDate } = this.state;
 
     if (this._el.monthlyYear) {
       const currentYear = new Date().getFullYear();
@@ -809,85 +797,223 @@ const HTDashboard = {
 
     const { materials } = this._data;
 
-    const monthWeightMap = {};
-    materials.forEach(material => {
-      if (!this._isMaterialProductionComplete(material)) return;
-
-      let dateStr = "";
-      const history = this._hasRoute(material) ? DB.getProcessHistory(material) : [];
-      let lastProd = null;
-
-      if (history.length > 0) {
-        for (let i = history.length - 1; i >= 0; i--) {
-          if (history[i].production) { lastProd = history[i].production; break; }
-        }
-      }
-
-      if (!lastProd) {
-        const prods = this._data.prodMap[material.id] || [];
-        if (prods.length > 0) lastProd = prods[prods.length - 1];
-      }
-
-      if (lastProd) {
-        dateStr = lastProd.tanggal_proses || "";
-        if (!dateStr && lastProd.machine_finish_at) {
-          const d = this._parseDate(lastProd.machine_finish_at);
-          if (d) dateStr = this._toYMD(d);
-        }
-      }
-
-      if (!dateStr) return;
-
-      const year = dateStr.split("-")[0];
-      if (parseInt(year) !== monthlyYear) return;
-
-      const month = dateStr.split("-")[1];
-      const weight = this._getMaterialWeight(material);
-      const key = `${year}-${month}`;
-      if (monthWeightMap[key]) {
-        monthWeightMap[key] += weight;
+    if (chartMode === "daily") {
+      let startDate, endDate;
+      if (dailyStartDate && dailyEndDate) {
+        startDate = dailyStartDate;
+        endDate = dailyEndDate;
       } else {
-        monthWeightMap[key] = weight;
+        const end = new Date();
+        const start = new Date();
+        start.setDate(end.getDate() - (dailyPeriod - 1));
+        startDate = this._toYMD(start);
+        endDate = this._toYMD(end);
       }
-    });
 
-    const data = [];
-    for (let m = 1; m <= 12; m++) {
-      const key = `${monthlyYear}-${String(m).padStart(2, '0')}`;
-      data.push(monthWeightMap[key] || 0);
+      if (this._el.dailyStartDate) this._el.dailyStartDate.value = startDate;
+      if (this._el.dailyEndDate) this._el.dailyEndDate.value = endDate;
+
+      const dateWeightMap = this._getProductionChartData();
+      const dates = this._generateDateRange(startDate, endDate);
+      const labels = dates.map(d => this._formatDateLabel(d));
+      const data = dates.map(d => dateWeightMap[this._toYMD(d)] || 0);
+
+      const hasData = data.some(v => v > 0);
+      if (emptyEl) emptyEl.classList.toggle("hidden", hasData);
+
+      if (this._chartProduction) {
+        this._chartProduction.destroy();
+      }
+
+      const theme = this._chartTheme();
+      const tickLimit = dates.length <= 7 ? dates.length : dates.length <= 14 ? 7 : 10;
+      const fullLabels = dates.map(d => HTDateFormat.formatLongDate(d));
+
+      this._chartProduction = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Output Produksi (KG)",
+            data: data,
+            backgroundColor: theme.toRgba(theme.primary, 0.75),
+            hoverBackgroundColor: theme.primary,
+            borderRadius: 6,
+            borderSkipped: false,
+            maxBarThickness: 34,
+          }]
+        },
+        options: this._productionChartOptions(theme, {
+          tickLimit: tickLimit,
+          tooltipTitle: (item) => fullLabels[item.dataIndex] || labels[item.dataIndex],
+          showTargetLine: false,
+        }),
+      });
+    } else {
+      const monthWeightMap = {};
+      materials.forEach(material => {
+        if (!this._isMaterialProductionComplete(material)) return;
+
+        let dateStr = "";
+        const history = this._hasRoute(material) ? DB.getProcessHistory(material) : [];
+        let lastProd = null;
+
+        if (history.length > 0) {
+          for (let i = history.length - 1; i >= 0; i--) {
+            if (history[i].production) { lastProd = history[i].production; break; }
+          }
+        }
+
+        if (!lastProd) {
+          const prods = this._data.prodMap[material.id] || [];
+          if (prods.length > 0) lastProd = prods[prods.length - 1];
+        }
+
+        if (lastProd) {
+          dateStr = lastProd.tanggal_proses || "";
+          if (!dateStr && lastProd.machine_finish_at) {
+            const d = this._parseDate(lastProd.machine_finish_at);
+            if (d) dateStr = this._toYMD(d);
+          }
+        }
+
+        if (!dateStr) return;
+
+        const year = dateStr.split("-")[0];
+        if (parseInt(year) !== monthlyYear) return;
+
+        const month = dateStr.split("-")[1];
+        const weight = this._getMaterialWeight(material);
+        const key = `${year}-${month}`;
+        if (monthWeightMap[key]) {
+          monthWeightMap[key] += weight;
+        } else {
+          monthWeightMap[key] = weight;
+        }
+      });
+
+      const data = [];
+      for (let m = 1; m <= 12; m++) {
+        const key = `${monthlyYear}-${String(m).padStart(2, '0')}`;
+        data.push(monthWeightMap[key] || 0);
+      }
+
+      const hasData = data.some(v => v > 0);
+      if (emptyEl) emptyEl.classList.toggle("hidden", hasData);
+
+      const targets = DB.get("targets");
+      const targetData = this.MONTH_NAMES_ID.map((_, m) => {
+        const targetRecord = targets.find(t => t.year === monthlyYear && t.month === m + 1);
+        return targetRecord ? parseFloat(targetRecord.target_berat_output) || 0 : 0;
+      });
+
+      if (this._chartProduction) {
+        this._chartProduction.destroy();
+      }
+
+      const theme = this._chartTheme();
+
+      this._chartProduction = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: this.MONTH_SHORT_ID.slice(),
+          datasets: [
+            {
+              label: "Output Aktual (KG)",
+              data: data,
+              backgroundColor: theme.primary,
+              hoverBackgroundColor: theme.primary,
+              borderRadius: 4,
+              borderSkipped: false,
+              maxBarThickness: 34,
+            },
+            {
+              label: "Target (KG)",
+              data: targetData,
+              type: "line",
+              borderColor: "#bfdbfe",
+              borderDash: [5, 5],
+              borderWidth: 2,
+              backgroundColor: "transparent",
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              tension: 0.3,
+            }
+          ]
+        },
+        options: this._productionChartOptions(theme, {
+          tickLimit: 12,
+          tooltipTitle: (item) => this.MONTH_NAMES_ID[item.datasetIndex === 0 ? item.dataIndex : 0] + " " + monthlyYear,
+          showTargetLine: true,
+          targetData: targetData,
+          actualData: data,
+        }),
+      });
     }
+  },
 
-    const hasData = data.some(v => v > 0);
-
-    if (emptyEl) emptyEl.classList.toggle("hidden", hasData);
-
-    if (this._chartMonthly) {
-      this._chartMonthly.destroy();
-    }
-
-    const theme = this._chartTheme();
-
-    this._chartMonthly = new Chart(ctx, {
-      type: "bar",
-      data: {
-        /* Nama bulan pendek mempertahankan 12 tick yang dapat dibaca;
-           nama lengkap digunakan di tooltip. Bulan tanpa produksi tetap 0. */
-        labels: this.MONTH_SHORT_ID.slice(),
-        datasets: [{
-          label: "Total Berat Produksi (KG)",
-          data: data,
-          backgroundColor: theme.toRgba(theme.primary, 0.75),
-          hoverBackgroundColor: theme.primary,
-          borderRadius: 6,
-          borderSkipped: false,
-          maxBarThickness: 34,
-        }]
+  _productionChartOptions(theme, opts) {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      animation: { duration: 250 },
+      layout: { padding: { top: 4, right: 4, bottom: 0, left: 0 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: theme.textStrong,
+          titleColor: theme.surface,
+          bodyColor: theme.surface,
+          titleFont: { family: theme.font, size: 12, weight: "600" },
+          bodyFont: { family: theme.font, size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false,
+          callbacks: {
+            title: (items) => (items.length ? opts.tooltipTitle(items[0]) : ""),
+            label: (item) => {
+              const val = item.parsed.y;
+              if (item.dataset.label === "Target (KG)") {
+                return "Target: " + this._formatWeight(val) + " KG";
+              }
+              return "Output: " + this._formatWeight(val) + " KG";
+            }
+          }
+        },
       },
-      options: this._chartOptions(theme, {
-        tickLimit: 12,
-        tooltipTitle: (item) => this.MONTH_NAMES_ID[item.dataIndex] + " " + monthlyYear,
-      }),
-    });
+      scales: {
+        y: {
+          beginAtZero: true,
+          border: { display: false },
+          grid: { color: theme.border, drawTicks: false },
+          title: {
+            display: true,
+            text: "KG",
+            color: theme.textMuted,
+            font: { family: theme.font, size: 11, weight: "600" },
+          },
+          ticks: {
+            color: theme.textMuted,
+            padding: 8,
+            font: { family: theme.font, size: 11 },
+            callback: (value) => this._formatWeight(value),
+          },
+        },
+        x: {
+          border: { color: theme.border },
+          grid: { display: false },
+          ticks: {
+            color: theme.textMuted,
+            padding: 6,
+            maxRotation: 0,
+            autoSkip: true,
+            maxTicksLimit: opts.tickLimit,
+            font: { family: theme.font, size: 11 },
+          },
+        },
+      },
+    };
   },
 
   _getFilteredMaterials() {
@@ -1181,8 +1307,8 @@ const HTDashboard = {
       try {
         this._cacheData();
         this.renderKPIs();
-        this.renderDailyChart();
-        this.renderMonthlyChart();
+        this.renderProductionChart();
+        this.renderProcessDonutChart();
         this.renderTable();
       } catch (e) {
         console.error("[Dashboard] Auto-refresh error:", e);

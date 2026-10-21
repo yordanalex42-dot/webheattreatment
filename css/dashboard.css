@@ -159,44 +159,43 @@
 }
 
 /* ============================================================
-   TATA LETAK KPI — Premium Industrial 2 Kolom
+   TATA LETAK KPI — Baris Tunggal: Pemilih Bulan + Target + 4 KPI
    ============================================================ */
 
 .ht-kpi-layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 24px;
-  margin-bottom: 28px;
-  align-items: stretch;
-}
-
-.ht-kpi-left {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-height: 0;
+  margin-bottom: 28px;
 }
 
-.ht-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
-  flex-shrink: 0;
+.ht-kpi-main-row {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ht-kpi-secondary-row {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 /* ============================================================
-   KARTU KPI — Minimal Industrial Bersih
+   KARTU KPI — Minimal Industrial Bersih dengan Ikon
    ============================================================ */
 
 .ht-kpi-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 24px;
+  align-items: stretch;
+  padding: 16px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition:
     background-color 250ms ease,
@@ -206,7 +205,10 @@
     box-shadow 250ms ease;
   min-height: 140px;
   overflow: hidden;
-  animation: kpiEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-name: kpiEntrance;
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
 }
 
 @keyframes kpiEntrance {
@@ -221,28 +223,45 @@
 }
 
 .ht-kpi-card:hover {
-  background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%);
-  border-color: #BFDBFE;
+  border-color: var(--primary-light);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.10);
+  box-shadow: var(--shadow-sm);
 }
 
 .ht-kpi-card:focus-within {
   box-shadow: var(--focus-ring-blue);
 }
 
-/* Masuk berjenjar */
-.ht-kpi-grid .ht-kpi-card:nth-child(1) { animation-delay: 0.05s; }
-.ht-kpi-grid .ht-kpi-card:nth-child(2) { animation-delay: 0.1s; }
-.ht-kpi-grid .ht-kpi-card:nth-child(3) { animation-delay: 0.15s; }
-.ht-kpi-grid .ht-kpi-card:nth-child(4) { animation-delay: 0.2s; }
-.ht-kpi-grid .ht-kpi-card:nth-child(5) { animation-delay: 0.25s; }
+/* Kotak ikon: latar belakang biru muda (#EFF6FF), ikon biru (#2563EB) */
+.ht-kpi-icon-box {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.ht-kpi-icon-box .icon {
+  width: 20px;
+  height: 20px;
+  color: inherit;
+}
 
 .ht-kpi-card .ht-kpi-container {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
+  height: 100%;
+  padding-top: 6px;
+  position: static;
 }
 
 .ht-kpi-card .ht-kpi-label {
@@ -264,82 +283,95 @@
   white-space: nowrap;
 }
 
-.ht-kpi-card:hover .ht-kpi-value {
-  color: var(--primary);
-}
-
 .ht-kpi-card .ht-kpi-description {
   font-size: 12px;
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.4;
+  margin-top: auto;
+}
+
+/* Unit berat */
+.ht-kpi-unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+/* Flex sizing — baris utama */
+.ht-kpi-main-row > .ht-kpi-month {
+  flex: 0 0 125px;
+  min-width: 125px;
+}
+
+.ht-kpi-main-row > .ht-kpi-target {
+  flex: 0 0 140px;
+  min-width: 140px;
+}
+
+.ht-kpi-main-row > .ht-kpi-card:not(.ht-kpi-month):not(.ht-kpi-target) {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Flex sizing — baris sekunder */
+.ht-kpi-secondary-row .ht-kpi-card {
+  flex: 1;
+  min-width: 160px;
+}
+
+.ht-kpi-secondary-row #persentaseCard {
+  flex: 2;
+  min-width: 240px;
 }
 
 /* ============================================================
-   KARTU TARGET — Berbeda dari KPI, aksen halus
+   KARTU TARGET — Ringkas, konsisten dengan KPI card lainnya
    ============================================================ */
 
-.ht-kpi-left #targetCard {
-  flex-shrink: 0;
-  flex-grow: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  animation: kpiEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
-}
-
-.ht-kpi-left #targetCard .ht-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-  transition:
-    transform var(--transition-sm),
-    box-shadow var(--transition-sm),
-    border-color var(--transition-sm);
-  border-left: 3px solid var(--primary);
-}
-
-.ht-kpi-left #targetCard .ht-card:hover {
-  border-left-color: var(--primary-hover);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-.ht-kpi-left #targetCard .ht-card-header {
+.ht-kpi-target .ht-kpi-target-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 8px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-hover);
+  margin-bottom: 22px;
 }
 
-.ht-kpi-left #targetCard .ht-card-title {
-  font-size: 14px;
-  font-weight: var(--font-weight-semi);
-  color: var(--text-primary);
+.ht-kpi-target .ht-kpi-icon-box {
+  position: static;
+  transform: none;
+  width: 28px;
+  height: 28px;
+  margin-right: 6px;
 }
 
-.ht-kpi-left #targetCard .ht-card-body {
-  flex: 0 0 auto;
+.ht-kpi-target .ht-kpi-target-display {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-  padding: 16px 20px;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: auto;
 }
 
-#targetDisplay .ht-kpi-value {
-  font-size: 28px;
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
+.ht-kpi-target #targetDisplay {
   color: var(--primary);
+  font-size: 32px;
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
 }
 
-.ht-kpi-left #targetCard .ht-btn-ghost {
+.ht-kpi-target #targetDisplay.muted {
+  color: var(--text-tertiary);
+}
+
+.ht-kpi-target-month {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.ht-kpi-target .ht-btn-ghost {
   width: 32px;
   height: 32px;
   padding: 6px;
@@ -350,33 +382,58 @@
     color var(--transition-sm),
     background-color var(--transition-sm),
     border-color var(--transition-sm);
+  flex-shrink: 0;
 }
 
-.ht-kpi-left #targetCard .ht-btn-ghost:hover {
+.ht-kpi-target .ht-btn-ghost:hover {
   background: var(--primary-soft);
-  color: var(--primary-hover);
+  color: var(--primary);
   border-color: rgba(37, 99, 235, 0.2);
 }
 
-.ht-kpi-left #targetCard .ht-btn-ghost:focus-visible {
+.ht-kpi-target .ht-btn-ghost:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring-blue);
 }
 
-.ht-kpi-left #targetCard .ht-btn-ghost .icon {
+.ht-kpi-target .ht-btn-ghost .icon {
   width: 16px;
   height: 16px;
 }
 
 /* ============================================================
-   KARTU TARGET DONUT — Kolom Kanan
+   PEMILIH BULAN
    ============================================================ */
 
-.ht-kpi-right {
+.ht-kpi-month .ht-kpi-month-selects {
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  gap: 6px;
+  margin-top: 28px;
 }
+
+.ht-kpi-month .ht-form-select {
+  padding: 4px 10px;
+  font-size: 12px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  transition:
+    border-color var(--transition-sm),
+    box-shadow var(--transition-sm);
+}
+
+.ht-kpi-month .ht-form-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ============================================================
+   KARTU TARGET DONUT — Kolom Sekunder (perilaku grafik dipertahankan)
+   ============================================================ */
 
 .ht-kpi-card-primary-large {
   position: relative;
@@ -384,12 +441,14 @@
   flex-direction: column;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  flex: 1;
-  min-height: 0;
-  animation: kpiEntrance 400ms cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+  animation-name: kpiEntrance;
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.35s;
+  animation-fill-mode: both;
 }
 
 .ht-kpi-primary-content {
@@ -444,6 +503,32 @@
   pointer-events: none;
 }
 
+/* Legend donut kontribusi proses */
+.ht-donut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 11px;
+}
+
+.ht-donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ht-donut-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.ht-donut-legend-label {
+  color: var(--text-secondary);
+}
+
 .ht-donut-unit {
   display: block;
   font-size: 16px;
@@ -459,22 +544,21 @@
   line-height: 1.4;
   white-space: nowrap;
 }
-
 /* ============================================================
-   KARTU GRAFIK — Harian & Bulanan
+   KARTU GRAFIK — Panel Tren Output & Rincian Produksi
    ============================================================ */
 
 .ht-chart-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  grid-template-columns: 1.9fr 1fr;
+  gap: 20px;
   margin-bottom: 28px;
 }
 
 .ht-chart-grid .ht-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition:
     transform var(--transition-sm),
@@ -494,11 +578,11 @@
 }
 
 .ht-chart-grid .ht-card {
-  padding: 20px;
+  padding: 18px;
 }
 
 .ht-chart-grid .ht-card-header-with-actions {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .ht-chart-grid .ht-card-title {
@@ -548,8 +632,26 @@
 .ht-chart-container {
   position: relative;
   width: 100%;
-  height: 280px;
+  height: 320px;
   min-height: 200px;
+}
+
+.ht-chart-container canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ht-chart-donut-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 16px;
+}
+
+.ht-chart-donut-container canvas {
+  width: 180px;
+  height: 180px;
 }
 
 /* Status kosong grafik */
@@ -1185,17 +1287,15 @@
   }
 
   .ht-kpi-layout {
-    grid-template-columns: 1fr 300px;
     gap: 20px;
   }
 
-  .ht-kpi-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+  .ht-kpi-main-row {
     gap: 14px;
   }
 
   .ht-kpi-card {
-    padding: 18px 18px;
+    padding: 16px 16px;
     min-height: 130px;
   }
 
@@ -1203,8 +1303,16 @@
     font-size: 26px;
   }
 
-  .ht-kpi-left #targetCard .ht-card {
-    border-radius: var(--radius-xl);
+  .ht-kpi-target {
+    flex: 0 0 130px;
+    min-width: 130px;
+  }
+
+  .ht-kpi-icon-box {
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
   }
 
   .ht-donut-wrapper {
@@ -1259,7 +1367,8 @@
     font-size: 26px;
   }
 
-  .ht-kpi-grid {
+  .ht-kpi-main-row,
+  .ht-kpi-secondary-row {
     gap: 20px;
   }
 
@@ -1314,12 +1423,10 @@
   }
 
   .ht-kpi-layout {
-    grid-template-columns: 1fr 280px;
     gap: 18px;
   }
 
-  .ht-kpi-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+  .ht-kpi-main-row {
     gap: 12px;
   }
 
@@ -1332,15 +1439,28 @@
     font-size: 24px;
   }
 
-  .ht-kpi-left #targetCard .ht-card-body {
-    padding: 14px 16px;
+  .ht-kpi-target {
+    flex: 0 0 130px;
+    min-width: 130px;
   }
 
-  #targetDisplay .ht-kpi-value {
+  .ht-kpi-target #targetDisplay {
     font-size: 26px;
   }
 
-  .ht-donut-wrapper {
+  .ht-kpi-icon-box {
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+  }
+
+   .ht-donut-wrapper {
+    width: 160px;
+    height: 160px;
+  }
+
+  .ht-chart-donut-container canvas {
     width: 160px;
     height: 160px;
   }
@@ -1390,22 +1510,24 @@
   }
 
   .ht-kpi-layout {
-    grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  .ht-kpi-left {
+  .ht-kpi-main-row {
     gap: 12px;
   }
 
-  .ht-kpi-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .ht-kpi-main-row .ht-kpi-card:not(.ht-kpi-month):not(.ht-kpi-target) {
+    min-width: 140px;
+  }
+
+  .ht-kpi-secondary-row {
     gap: 12px;
   }
 
   .ht-kpi-card {
     padding: 14px 12px;
-    min-height: 110px;
+    min-height: 120px;
   }
 
   .ht-kpi-card .ht-kpi-value {
@@ -1416,6 +1538,23 @@
     font-size: 10px;
   }
 
+  .ht-kpi-target {
+    flex: 0 0 125px;
+    min-width: 125px;
+  }
+
+  .ht-kpi-month {
+    flex: 0 0 120px;
+    min-width: 120px;
+  }
+
+  .ht-kpi-icon-box {
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+  }
+
   .ht-kpi-card-primary-large {
     min-height: 220px;
   }
@@ -1424,7 +1563,12 @@
     padding: 24px 16px;
   }
 
-  .ht-donut-wrapper {
+   .ht-donut-wrapper {
+    width: 150px;
+    height: 150px;
+  }
+
+  .ht-chart-donut-container canvas {
     width: 150px;
     height: 150px;
   }
@@ -1478,6 +1622,31 @@
     font-size: 11px;
   }
 
+  .ht-kpi-layout {
+    gap: 14px;
+  }
+
+  .ht-kpi-main-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ht-kpi-secondary-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ht-kpi-month,
+  .ht-kpi-target {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+
+  .ht-kpi-main-row .ht-kpi-card {
+    flex: 1;
+    min-width: 0;
+  }
+
   .ht-kpi-card {
     padding: 12px 10px;
     min-height: 100px;
@@ -1491,8 +1660,20 @@
     font-size: 9px;
   }
 
-  .ht-donut-value {
+  .ht-kpi-icon-box {
+    top: 8px;
+    right: 8px;
+    width: 26px;
+    height: 26px;
+  }
+
+   .ht-donut-value {
     font-size: 34px;
+  }
+
+  .ht-chart-donut-container canvas {
+    width: 130px;
+    height: 130px;
   }
 
   .ht-chart-container {
@@ -1522,16 +1703,6 @@
   .ht-content {
     padding: 8px;
   }
-
-  .ht-monitor-table .ht-table th,
-  .ht-monitor-table .ht-table td {
-    padding: 6px 8px;
-  }
-
-  .ht-monitor-table .ht-table th {
-    font-size: 8px;
-  }
-}
 
   .ht-monitor-table .ht-table th,
   .ht-monitor-table .ht-table td {

@@ -77,6 +77,9 @@
 .kpiEntranceDelay3 { animation-delay: 0.15s; }
 .kpiEntranceDelay4 { animation-delay: 0.20s; }
 .kpiEntranceDelay5 { animation-delay: 0.25s; }
+.kpiEntranceDelay6 { animation-delay: 0.30s; }
+.kpiEntranceDelay7 { animation-delay: 0.35s; }
+.kpiEntranceDelay8 { animation-delay: 0.40s; }
 
 @keyframes kpiEntrance {
   from { opacity: 0; transform: translateY(16px); }

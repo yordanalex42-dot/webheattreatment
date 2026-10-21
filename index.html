@@ -293,61 +293,49 @@
               </p>
             </div>
 
-            <!-- Tata Letak KPI: 2 Kolom -->
+            <!-- Tata Letak KPI -->
             <div class="ht-kpi-layout" id="kpiLayout">
-              <!-- Kolom Kiri: 5 KPI + Target -->
-              <div class="ht-kpi-left">
-                <!-- Baris Atas: 5 Kartu KPI -->
-                <div class="ht-kpi-grid" id="kpiGrid">
-                  <div class="ht-kpi-card accent kpiEntranceDelay1">
-                    <div class="ht-kpi-container">
-                      <p class="ht-kpi-label">Total Input</p>
-                      <h3 class="ht-kpi-value" id="kpiTotalInput">0</h3>
-                      <span class="ht-kpi-description">Part masuk</span>
+              <div class="ht-kpi-grid" id="kpiGrid">
+                <!-- Baris KPI Utama: Pemilih Bulan + Target + 4 KPI -->
+                <div class="ht-kpi-main-row" id="kpiMainRow">
+                <!-- Pemilih Bulan -->
+                <div class="ht-kpi-card ht-kpi-month kpiEntranceDelay1" id="monthPickerCard">
+                  <div class="ht-kpi-container">
+                    <p class="ht-kpi-label">Bulan Ini</p>
+                    <div class="ht-kpi-icon-box">
+                      <img
+                        src="assets/icons/filter.svg"
+                        alt="Bulan"
+                        class="icon"
+                      />
                     </div>
-                  </div>
-                  <div class="ht-kpi-card accent kpiEntranceDelay2">
-                    <div class="ht-kpi-container">
-                      <p class="ht-kpi-label">Total Output</p>
-                      <h3 class="ht-kpi-value" id="kpiTotalOutput">0</h3>
-                      <span class="ht-kpi-description">Part keluar</span>
-                    </div>
-                  </div>
-                  <div class="ht-kpi-card accent kpiEntranceDelay3">
-                    <div class="ht-kpi-container">
-                      <p class="ht-kpi-label">Total Berat Input</p>
-                      <h3 class="ht-kpi-value" id="kpiTotalBeratInput">0</h3>
-                      <span class="ht-kpi-description">KG</span>
-                    </div>
-                  </div>
-                  <div class="ht-kpi-card accent kpiEntranceDelay4">
-                    <div class="ht-kpi-container">
-                      <p class="ht-kpi-label">Total Berat Output</p>
-                      <h3 class="ht-kpi-value" id="kpiTotalBeratOutput">0</h3>
-                      <span class="ht-kpi-description">KG</span>
-                    </div>
-                  </div>
-                  <div class="ht-kpi-card accent kpiEntranceDelay5">
-                    <div class="ht-kpi-container">
-                      <p class="ht-kpi-label">Part NG</p>
-                      <h3 class="ht-kpi-value" id="kpiPartNG">0</h3>
-                      <span class="ht-kpi-description"
-                        >Part tidak memenuhi</span
-                      >
+                    <div class="ht-kpi-month-selects">
+                      <select
+                        id="kpiMonthSelect"
+                        class="ht-form-select ht-form-select-sm"
+                        aria-label="Bulan"
+                      ></select>
+                      <select
+                        id="kpiYearSelect"
+                        class="ht-form-select ht-form-select-sm"
+                        aria-label="Tahun"
+                      ></select>
                     </div>
                   </div>
                 </div>
 
-                <!-- Target Berat Output Bulan Ini -->
-                <div class="ht-card fade-in" id="targetCard">
-                  <div class="ht-card-header ht-card-header-with-actions">
-                    <h3 class="ht-card-title">Target Berat Output Bulan Ini</h3>
-                    <div class="flex items-center gap-2">
-                      <span
-                        id="targetMonthLabel"
-                        class="ht-info-label"
-                        style="display: none"
-                      ></span>
+                <!-- Target Berat Output -->
+                <div class="ht-kpi-card ht-kpi-target kpiEntranceDelay2" id="targetCard">
+                  <div class="ht-kpi-container">
+                    <div class="ht-kpi-target-header">
+                      <p class="ht-kpi-label">Target Berat Output</p>
+                      <div class="ht-kpi-icon-box">
+                        <img
+                          src="assets/icons/weight.svg"
+                          alt="Target"
+                          class="icon"
+                        />
+                      </div>
                       <button
                         id="targetEditBtn"
                         class="ht-btn ht-btn-ghost ht-btn-sm"
@@ -361,37 +349,80 @@
                         />
                       </button>
                     </div>
-                  </div>
-                  <div class="ht-card-body">
-                    <div class="ht-info-item" id="targetDisplay">
-                      <!-- Nilai target dirender oleh JS -->
+                    <span class="ht-kpi-target-month" id="targetMonthLabel"></span>
+                    <div class="ht-kpi-target-display">
+                      <h3 class="ht-kpi-value" id="targetDisplay"></h3>
+                      <span class="ht-kpi-unit">KG</span>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Kolom Kanan: Persentase Capaian Target (Grafik Donat) -->
-              <div class="ht-kpi-right">
-                <div
-                  class="ht-kpi-card-primary-large fade-in"
-                  id="persentaseCard"
-                >
-                  <div class="ht-kpi-primary-content">
-                    <p class="ht-kpi-primary-label">
-                      Persentase Capaian Target
-                    </p>
-                    <div class="ht-donut-wrapper" id="donutWrapper">
-                      <canvas id="donutChart" width="200" height="200"></canvas>
-                      <div class="ht-donut-center" id="donutCenter">
-                        <span class="ht-donut-value" id="donutValue">—</span>
-                        <span class="ht-donut-unit">%</span>
-                      </div>
+                <!-- Total Input -->
+                <div class="ht-kpi-card accent kpiEntranceDelay3" id="kpiCardTotalInput">
+                  <div class="ht-kpi-container">
+                    <p class="ht-kpi-label">Total Input</p>
+                    <div class="ht-kpi-icon-box">
+                      <img
+                        src="assets/icons/incoming.svg"
+                        alt="Total Input"
+                        class="icon"
+                      />
                     </div>
-                    <p class="ht-donut-detail" id="donutDetail">—</p>
+                    <h3 class="ht-kpi-value" id="kpiTotalInput">0</h3>
+                    <span class="ht-kpi-description">Part masuk</span>
                   </div>
                 </div>
+
+                <!-- Total Output -->
+                <div class="ht-kpi-card accent kpiEntranceDelay4" id="kpiCardTotalOutput">
+                  <div class="ht-kpi-container">
+                    <p class="ht-kpi-label">Total Output</p>
+                    <div class="ht-kpi-icon-box">
+                      <img
+                        src="assets/icons/delivery.svg"
+                        alt="Total Output"
+                        class="icon"
+                      />
+                    </div>
+                    <h3 class="ht-kpi-value" id="kpiTotalOutput">0</h3>
+                    <span class="ht-kpi-description">Part keluar</span>
+                  </div>
+                </div>
+
+                <!-- Total Berat Input -->
+                <div class="ht-kpi-card accent kpiEntranceDelay5" id="kpiCardTotalBeratInput">
+                  <div class="ht-kpi-container">
+                    <p class="ht-kpi-label">Total Berat Input</p>
+                    <div class="ht-kpi-icon-box">
+                      <img
+                        src="assets/icons/weight.svg"
+                        alt="Total Berat Input"
+                        class="icon"
+                      />
+                    </div>
+                    <h3 class="ht-kpi-value" id="kpiTotalBeratInput">0</h3>
+                    <span class="ht-kpi-description">KG</span>
+                  </div>
+                </div>
+
+                <!-- Total Berat Output -->
+                <div class="ht-kpi-card accent kpiEntranceDelay6" id="kpiCardTotalBeratOutput">
+                  <div class="ht-kpi-container">
+                    <p class="ht-kpi-label">Total Berat Output</p>
+                    <div class="ht-kpi-icon-box">
+                      <img
+                        src="assets/icons/weight.svg"
+                        alt="Total Berat Output"
+                        class="icon"
+                      />
+                    </div>
+                    <h3 class="ht-kpi-value" id="kpiTotalBeratOutput">0</h3>
+                    <span class="ht-kpi-description">KG</span>
+                  </div>
               </div>
             </div>
+          </div>
+        </div>
 
             <!-- Modal Edit Target -->
             <div id="targetEditModal" class="ht-modal-overlay hidden">
@@ -450,14 +481,27 @@
 
             <!-- Grafik -->
             <div class="ht-chart-grid">
-              <!-- Grafik Produksi Harian -->
+              <!-- Panel Kiri: Tren Output Produksi -->
               <div class="ht-card fade-in">
                 <div class="ht-card-header ht-card-header-with-actions">
                   <div>
-                    <h3 class="ht-card-title">Produksi Harian</h3>
-                    <p class="ht-card-subtitle">Total Berat Produksi (KG)</p>
+                    <h3 class="ht-card-title">Tren output produksi</h3>
+                    <p class="ht-card-subtitle">Perbandingan output produksi vs target bulanan</p>
                   </div>
                   <div class="ht-chart-controls">
+                    <select
+                      id="chartModeToggle"
+                      class="ht-form-select ht-form-select-sm"
+                      aria-label="Mode tampilan grafik"
+                    >
+                      <option value="monthly">Bulanan</option>
+                      <option value="daily">Harian</option>
+                    </select>
+                    <select
+                      id="monthlyYear"
+                      class="ht-form-select ht-form-select-sm w-auto"
+                      aria-label="Tahun"
+                    ></select>
                     <select
                       id="dailyPeriod"
                       class="ht-form-select ht-form-select-sm"
@@ -484,8 +528,8 @@
                   </div>
                 </div>
                 <div class="ht-chart-container">
-                  <canvas id="dailyChart" height="280"></canvas>
-                  <div id="dailyChartEmpty" class="ht-chart-empty hidden">
+                  <canvas id="productionChart" height="280"></canvas>
+                  <div id="productionChartEmpty" class="ht-chart-empty hidden">
                     <img
                       src="assets/icons/empty-state.svg"
                       alt="Kosong"
@@ -496,30 +540,22 @@
                 </div>
               </div>
 
-              <!-- Grafik Produksi Bulanan -->
+              <!-- Panel Kanan: Rincian Produksi -->
               <div class="ht-card fade-in">
                 <div class="ht-card-header ht-card-header-with-actions">
                   <div>
-                    <h3 class="ht-card-title">Produksi Bulanan</h3>
-                    <p class="ht-card-subtitle">Total Berat Produksi (KG)</p>
-                  </div>
-                  <select
-                    id="monthlyYear"
-                    class="ht-form-select ht-form-select-sm w-auto"
-                    aria-label="Tahun bulanan"
-                  ></select>
-                </div>
-                <div class="ht-chart-container">
-                  <canvas id="monthlyChart" height="280"></canvas>
-                  <div id="monthlyChartEmpty" class="ht-chart-empty hidden">
-                    <img
-                      src="assets/icons/empty-state.svg"
-                      alt="Kosong"
-                      class="icon"
-                    />
-                    <p>Belum ada data produksi pada tahun ini.</p>
+                    <h3 class="ht-card-title">Rincian produksi</h3>
+                    <p class="ht-card-subtitle">Kontribusi produksi per kategori</p>
                   </div>
                 </div>
+                <div class="ht-chart-donut-container">
+                  <canvas id="processDonutChart" width="200" height="200"></canvas>
+                  <div class="ht-donut-center" id="processDonutCenter">
+                    <span class="ht-donut-value" id="processDonutTotal">—</span>
+                    <span class="ht-donut-unit">KG</span>
+                  </div>
+                </div>
+                <div id="processDonutLegend" class="ht-donut-legend"></div>
               </div>
             </div>
 
