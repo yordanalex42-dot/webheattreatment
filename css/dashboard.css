@@ -503,19 +503,46 @@
   pointer-events: none;
 }
 
+.ht-donut-value {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ht-donut-unit {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.ht-donut-center-label {
+  display: block;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* Legend donut kontribusi proses */
 .ht-donut-legend {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 8px;
   margin-top: 12px;
   font-size: 11px;
 }
 
 .ht-donut-legend-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 16px 1fr auto auto;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .ht-donut-legend-swatch {
@@ -525,16 +552,30 @@
   flex-shrink: 0;
 }
 
-.ht-donut-legend-label {
+.ht-donut-legend-name {
   color: var(--text-secondary);
+  font-size: 11px;
+  word-break: break-word;
 }
 
-.ht-donut-unit {
-  display: block;
-  font-size: 16px;
+.ht-donut-legend-value {
+  text-align: right;
+  color: var(--text-primary);
   font-weight: 600;
+  font-size: 11px;
+}
+
+.ht-donut-legend-percent {
+  text-align: right;
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+
+.ht-donut-empty {
+  text-align: center;
+  padding: 20px;
   color: var(--text-secondary);
-  margin-top: 2px;
+  font-size: 12px;
 }
 
 .ht-donut-detail {
@@ -1389,13 +1430,13 @@
     height: 300px;
   }
 
-  .ht-donut-wrapper {
+   .ht-donut-wrapper {
     width: 190px;
     height: 190px;
   }
 
   .ht-donut-value {
-    font-size: 46px;
+    font-size: 24px;
   }
 }
 
@@ -1465,9 +1506,10 @@
     height: 160px;
   }
 
-  .ht-donut-value {
-    font-size: 38px;
+   .ht-donut-value {
+    font-size: 22px;
   }
+
 
   .ht-monitor-table .ht-table {
     min-width: max(1280px, 100%);
@@ -1573,8 +1615,8 @@
     height: 150px;
   }
 
-  .ht-donut-value {
-    font-size: 36px;
+   .ht-donut-value {
+    font-size: 20px;
   }
 
   .ht-chart-grid {
@@ -1668,7 +1710,7 @@
   }
 
    .ht-donut-value {
-    font-size: 34px;
+    font-size: 18px;
   }
 
   .ht-chart-donut-container canvas {

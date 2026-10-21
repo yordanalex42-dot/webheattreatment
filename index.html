@@ -488,44 +488,16 @@
                     <h3 class="ht-card-title">Tren output produksi</h3>
                     <p class="ht-card-subtitle">Perbandingan output produksi vs target bulanan</p>
                   </div>
-                  <div class="ht-chart-controls">
-                    <select
-                      id="chartModeToggle"
-                      class="ht-form-select ht-form-select-sm"
-                      aria-label="Mode tampilan grafik"
-                    >
-                      <option value="monthly">Bulanan</option>
-                      <option value="daily">Harian</option>
-                    </select>
-                    <select
-                      id="monthlyYear"
-                      class="ht-form-select ht-form-select-sm w-auto"
-                      aria-label="Tahun"
-                    ></select>
-                    <select
-                      id="dailyPeriod"
-                      class="ht-form-select ht-form-select-sm"
-                      aria-label="Periode harian"
-                    >
-                      <option value="7">7 Hari</option>
-                      <option value="14">14 Hari</option>
-                      <option value="30">30 Hari</option>
-                    </select>
-                    <input
-                      type="date"
-                      id="dailyStartDate"
-                      class="ht-form-input ht-form-input-sm w-auto"
-                      placeholder="Tgl Mulai"
-                      aria-label="Tanggal Mulai"
-                    />
-                    <input
-                      type="date"
-                      id="dailyEndDate"
-                      class="ht-form-input ht-form-input-sm w-auto"
-                      placeholder="Tgl Akhir"
-                      aria-label="Tanggal Akhir"
-                    />
-                  </div>
+                   <div class="ht-chart-controls">
+                     <select
+                       id="chartModeToggle"
+                       class="ht-form-select ht-form-select-sm"
+                       aria-label="Mode tampilan grafik"
+                     >
+                       <option value="monthly">Bulanan</option>
+                       <option value="daily">Harian</option>
+                     </select>
+                   </div>
                 </div>
                 <div class="ht-chart-container">
                   <canvas id="productionChart" height="280"></canvas>
@@ -548,13 +520,14 @@
                     <p class="ht-card-subtitle">Kontribusi produksi per kategori</p>
                   </div>
                 </div>
-                <div class="ht-chart-donut-container">
-                  <canvas id="processDonutChart" width="200" height="200"></canvas>
-                  <div class="ht-donut-center" id="processDonutCenter">
-                    <span class="ht-donut-value" id="processDonutTotal">—</span>
-                    <span class="ht-donut-unit">KG</span>
-                  </div>
-                </div>
+                 <div class="ht-chart-donut-container">
+                   <canvas id="processDonutChart" width="200" height="200"></canvas>
+                   <div class="ht-donut-center" id="processDonutCenter">
+                     <span class="ht-donut-value" id="processDonutTotal">—</span>
+                     <span class="ht-donut-unit">KG</span>
+                     <span class="ht-donut-center-label">Total Output</span>
+                   </div>
+                 </div>
                 <div id="processDonutLegend" class="ht-donut-legend"></div>
               </div>
             </div>

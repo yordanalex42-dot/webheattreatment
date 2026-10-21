@@ -13,10 +13,6 @@ const HTDashboard = {
     dateEnd: "",
     pageSize: 25,
     currentPage: 1,
-    dailyPeriod: 7,
-    dailyStartDate: "",
-    dailyEndDate: "",
-    monthlyYear: new Date().getFullYear(),
     chartMode: "monthly",
     selectedMonth: new Date().getMonth() + 1,
     selectedYear: new Date().getFullYear(),
@@ -49,18 +45,14 @@ const HTDashboard = {
       dailyChartCtx: document.getElementById("productionChart"),
       dailyChartEmpty: document.getElementById("productionChartEmpty"),
       monthlyChartCtx: document.getElementById("processDonutChart"),
-      monthlyChartEmpty: document.getElementById("processDonutCenter"),
       searchInput: document.getElementById("searchInput"),
       statusFilter: document.getElementById("statusFilter"),
       customerFilter: document.getElementById("customerFilter"),
       filterDateStart: document.getElementById("filterDateStart"),
       filterDateEnd: document.getElementById("filterDateEnd"),
-      dailyPeriod: document.getElementById("dailyPeriod"),
-      dailyStartDate: document.getElementById("dailyStartDate"),
-      dailyEndDate: document.getElementById("dailyEndDate"),
-      monthlyYear: document.getElementById("monthlyYear"),
       chartModeToggle: document.getElementById("chartModeToggle"),
       processDonutTotal: document.getElementById("processDonutTotal"),
+      processDonutCenter: document.getElementById("processDonutCenter"),
       processDonutLegend: document.getElementById("processDonutLegend"),
       tableBody: document.getElementById("monitoringTableBody"),
       pagination: document.getElementById("pagination"),
@@ -137,32 +129,6 @@ const HTDashboard = {
       });
     }
 
-    if (this._el.dailyPeriod) {
-      this._el.dailyPeriod.addEventListener("change", (e) => {
-        this.state.dailyPeriod = parseInt(e.target.value);
-        this.state.dailyStartDate = "";
-        this.state.dailyEndDate = "";
-        this.renderProductionChart();
-      });
-    }
-    if (this._el.dailyStartDate) {
-      this._el.dailyStartDate.addEventListener("change", () => {
-        this.state.dailyStartDate = this._el.dailyStartDate.value;
-        this.renderProductionChart();
-      });
-    }
-    if (this._el.dailyEndDate) {
-      this._el.dailyEndDate.addEventListener("change", () => {
-        this.state.dailyEndDate = this._el.dailyEndDate.value;
-        this.renderProductionChart();
-      });
-    }
-    if (this._el.monthlyYear) {
-      this._el.monthlyYear.addEventListener("change", (e) => {
-        this.state.monthlyYear = parseInt(e.target.value);
-        this.renderProductionChart();
-      });
-    }
     if (this._el.chartModeToggle) {
       this._el.chartModeToggle.addEventListener("change", (e) => {
         this.state.chartMode = e.target.value;
@@ -208,6 +174,8 @@ const HTDashboard = {
         this.state.selectedMonth = parseInt(this._el.kpiMonthSelect.value);
         this._cacheData();
         this.renderKPIs();
+        this.renderProductionChart();
+        this.renderProcessDonutChart();
       });
     }
     if (this._el.kpiYearSelect) {
@@ -215,7 +183,9 @@ const HTDashboard = {
         this.state.selectedYear = parseInt(this._el.kpiYearSelect.value);
         this._cacheData();
         this.renderKPIs();
-      });
+        this.renderProductionChart();
+        this.renderProcessDonutChart();
+       });
     }
   },
 
@@ -566,8 +536,9 @@ const HTDashboard = {
 
   renderProcessDonutChart() {
     const canvas = this._el.monthlyChartCtx;
-    const centerEl = this._el.monthlyChartEmpty;
+    const totalEl = this._el.processDonutTotal;
     const legendEl = this._el.processDonutLegend;
+    const centerContainer = this._el.processDonutCenter;
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
@@ -596,22 +567,39 @@ const HTDashboard = {
     const data = sortedTypes.map(t => processWeights[t]);
     const labels = sortedTypes;
 
-    if (centerEl) {
-      centerEl.textContent = this._formatWeight(totalWeight);
+    if (totalEl) {
+      totalEl.textContent = this._formatWeight(totalWeight);
     }
 
-    const css = getComputedStyle(document.documentElement);
-
     const donutColors = [
-      css.getPropertyValue("--primary") || "#2563eb",
-      "#3b82f6",
-      "#60a5fa",
+      "#2563eb",
+      "#0891b2",
+      "#7c3aed",
+      "#059669",
+      "#d97706",
+      "#64748b",
       "#93c5fd",
-      "#bfdbfe",
-      "#94a3b8",
-      "#cbd5e1",
     ];
     const backgroundColors = labels.map((_, i) => donutColors[i % donutColors.length]);
+
+    if (totalWeight === 0) {
+      canvas.style.display = "none";
+      if (totalEl) {
+        totalEl.textContent = "—";
+      }
+      if (centerContainer) {
+        centerContainer.style.display = "flex";
+      }
+      if (legendEl) {
+        legendEl.innerHTML = '<div class="ht-donut-empty"><p>Belum ada data produksi yang selesai pada periode ini.</p></div>';
+      }
+      return;
+    }
+
+    canvas.style.display = "block";
+    if (centerContainer) {
+      centerContainer.style.display = "flex";
+    }
 
     this._processDonutChart = new Chart(ctx, {
       type: "doughnut",
@@ -620,8 +608,10 @@ const HTDashboard = {
         datasets: [{
           data: data,
           backgroundColor: backgroundColors,
-          borderWidth: 0,
-          hoverOffset: 6,
+          borderColor: "white",
+          borderWidth: 2,
+          hoverOffset: 4,
+          hoverBorderSaturation: 0,
         }]
       },
       options: {
@@ -641,9 +631,9 @@ const HTDashboard = {
           },
         },
         animation: {
-          animateRotate: true,
+          animateRotate: false,
           animateScale: true,
-          duration: 800,
+          duration: 500,
           easing: "easeOutQuart",
         },
       }
@@ -656,7 +646,9 @@ const HTDashboard = {
         const pct = totalWeight > 0 ? Math.round((val / totalWeight) * 100) : 0;
         legendHtml += `<div class="ht-donut-legend-item">
           <span class="ht-donut-legend-swatch" style="background-color:${backgroundColors[i]}"></span>
-          <span class="ht-donut-legend-label">${label}: ${this._formatWeight(val)} KG (${pct}%)</span>
+          <span class="ht-donut-legend-name">${label}</span>
+          <span class="ht-donut-legend-value">${this._formatWeight(val)} KG</span>
+          <span class="ht-donut-legend-percent">${pct}%</span>
         </div>`;
       });
       legendEl.innerHTML = legendHtml;
@@ -784,48 +776,30 @@ const HTDashboard = {
     const emptyEl = this._el.dailyChartEmpty;
     if (!ctx) return;
 
-    const { chartMode, monthlyYear, dailyPeriod, dailyStartDate, dailyEndDate } = this.state;
+    const { chartMode, selectedYear, selectedMonth } = this.state;
 
-    if (this._el.monthlyYear) {
-      const currentYear = new Date().getFullYear();
-      const options = [];
-      for (let y = 2020; y <= currentYear + 2; y++) {
-        options.push(`<option value="${y}" ${y === monthlyYear ? "selected" : ""}>${y}</option>`);
-      }
-      this._el.monthlyYear.innerHTML = options.join("");
+    const dateWeightMap = this._getProductionChartData();
+
+    if (this._chartProduction) {
+      this._chartProduction.destroy();
     }
 
-    const { materials } = this._data;
+    const theme = this._chartTheme();
+    const targets = DB.get("targets");
+    let data = [];
+    let labels = [];
+
+    const year = selectedYear || new Date().getFullYear();
+    const month = selectedMonth || 1;
 
     if (chartMode === "daily") {
-      let startDate, endDate;
-      if (dailyStartDate && dailyEndDate) {
-        startDate = dailyStartDate;
-        endDate = dailyEndDate;
-      } else {
-        const end = new Date();
-        const start = new Date();
-        start.setDate(end.getDate() - (dailyPeriod - 1));
-        startDate = this._toYMD(start);
-        endDate = this._toYMD(end);
-      }
-
-      if (this._el.dailyStartDate) this._el.dailyStartDate.value = startDate;
-      if (this._el.dailyEndDate) this._el.dailyEndDate.value = endDate;
-
-      const dateWeightMap = this._getProductionChartData();
-      const dates = this._generateDateRange(startDate, endDate);
-      const labels = dates.map(d => this._formatDateLabel(d));
-      const data = dates.map(d => dateWeightMap[this._toYMD(d)] || 0);
+      const dates = this._generateMonthDates(year, month);
+      data = dates.map(d => dateWeightMap[this._toYMD(d)] || 0);
+      labels = dates.map(d => String(d.getDate()).padStart(2, '0'));
 
       const hasData = data.some(v => v > 0);
       if (emptyEl) emptyEl.classList.toggle("hidden", hasData);
 
-      if (this._chartProduction) {
-        this._chartProduction.destroy();
-      }
-
-      const theme = this._chartTheme();
       const tickLimit = dates.length <= 7 ? dates.length : dates.length <= 14 ? 7 : 10;
       const fullLabels = dates.map(d => HTDateFormat.formatLongDate(d));
 
@@ -850,73 +824,31 @@ const HTDashboard = {
         }),
       });
     } else {
-      const monthWeightMap = {};
-      materials.forEach(material => {
-        if (!this._isMaterialProductionComplete(material)) return;
-
-        let dateStr = "";
-        const history = this._hasRoute(material) ? DB.getProcessHistory(material) : [];
-        let lastProd = null;
-
-        if (history.length > 0) {
-          for (let i = history.length - 1; i >= 0; i--) {
-            if (history[i].production) { lastProd = history[i].production; break; }
-          }
-        }
-
-        if (!lastProd) {
-          const prods = this._data.prodMap[material.id] || [];
-          if (prods.length > 0) lastProd = prods[prods.length - 1];
-        }
-
-        if (lastProd) {
-          dateStr = lastProd.tanggal_proses || "";
-          if (!dateStr && lastProd.machine_finish_at) {
-            const d = this._parseDate(lastProd.machine_finish_at);
-            if (d) dateStr = this._toYMD(d);
-          }
-        }
-
-        if (!dateStr) return;
-
-        const year = dateStr.split("-")[0];
-        if (parseInt(year) !== monthlyYear) return;
-
-        const month = dateStr.split("-")[1];
-        const weight = this._getMaterialWeight(material);
-        const key = `${year}-${month}`;
-        if (monthWeightMap[key]) {
-          monthWeightMap[key] += weight;
-        } else {
-          monthWeightMap[key] = weight;
-        }
-      });
-
-      const data = [];
       for (let m = 1; m <= 12; m++) {
-        const key = `${monthlyYear}-${String(m).padStart(2, '0')}`;
-        data.push(monthWeightMap[key] || 0);
+        const key = `${year}-${String(m).padStart(2, '0')}`;
+        let monthTotal = 0;
+        for (const dateKey of Object.keys(dateWeightMap)) {
+          if (dateKey.startsWith(key)) {
+            monthTotal += dateWeightMap[dateKey];
+          }
+        }
+        data.push(monthTotal);
       }
+      labels = this.MONTH_SHORT_ID.slice();
 
-      const hasData = data.some(v => v > 0);
-      if (emptyEl) emptyEl.classList.toggle("hidden", hasData);
+      const actualHasData = data.some(v => v > 0);
+      if (emptyEl) emptyEl.classList.toggle("hidden", actualHasData);
 
-      const targets = DB.get("targets");
       const targetData = this.MONTH_NAMES_ID.map((_, m) => {
-        const targetRecord = targets.find(t => t.year === monthlyYear && t.month === m + 1);
+        const targetRecord = targets.find(t => t.year === year && t.month === m + 1);
         return targetRecord ? parseFloat(targetRecord.target_berat_output) || 0 : 0;
       });
 
-      if (this._chartProduction) {
-        this._chartProduction.destroy();
-      }
-
-      const theme = this._chartTheme();
-
+      const monthNames = this.MONTH_NAMES_ID.slice();
       this._chartProduction = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: this.MONTH_SHORT_ID.slice(),
+          labels: labels,
           datasets: [
             {
               label: "Output Aktual (KG)",
@@ -943,13 +875,22 @@ const HTDashboard = {
         },
         options: this._productionChartOptions(theme, {
           tickLimit: 12,
-          tooltipTitle: (item) => this.MONTH_NAMES_ID[item.datasetIndex === 0 ? item.dataIndex : 0] + " " + monthlyYear,
+          tooltipTitle: (item) => monthNames[item.datasetIndex === 0 ? item.dataIndex : 0] + " " + year,
           showTargetLine: true,
           targetData: targetData,
           actualData: data,
         }),
       });
     }
+  },
+
+  _generateMonthDates(year, month) {
+    const dates = [];
+    const lastDay = new Date(year, month, 0).getDate();
+    for (let d = 1; d <= lastDay; d++) {
+      dates.push(new Date(year, month - 1, d));
+    }
+    return dates;
   },
 
   _productionChartOptions(theme, opts) {
