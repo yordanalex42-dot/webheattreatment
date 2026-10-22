@@ -579,17 +579,17 @@
       var STEP_LABELS = {
         INCOMING: "INCOMING",
         HT: "HEAT TREATMENT",
+        QC: "QUALITY CONTROL",
         SHOTBLAST: "SHOT BLAST",
         ANTI_RUST: "ANTI RUST",
-        QC: "QUALITY CONTROL",
         DELIVERY: "DELIVERY",
       };
       var STEP_ICONS = {
         INCOMING: "incoming.svg",
         HT: "production.svg",
+        QC: "quality-control.svg",
         SHOTBLAST: "factory.svg",
         ANTI_RUST: "process.svg",
-        QC: "quality-control.svg",
         DELIVERY: "delivery.svg",
       };
 
@@ -599,7 +599,8 @@
          pending/na). SVG asli di assets/icons/ tetap dipakai <img> untuk
          judul kartu & sidebar (kontras gelap di atas latar putih). */
       var ICON_SVG = {
-        "incoming.svg": '<svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.25v7.5"/><path d="m8.5 7.75 3.5 3.5 3.5-3.5"/><path d="M3.5 13.25v4.5a2.5 2.5 0 0 0 2.5 2.5h12a2.5 2.5 0 0 0 2.5-2.5v-4.5"/><path d="M2.75 13.25h3.6l1.3 2.2h8.7l1.3-2.2h3.6"/></svg>',
+         "incoming.svg": '<svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.25v7.5"/><path d="m8.5 7.75 3.5 3.5 3.5-3.5"/><path d="M3.5 13.25v4.5a2.5 2.5 0 0 0 2.5 2.5h12a2.5 2.5 0 0 0 2.5-2.5v-4.5"/><path d="M2.75 13.25h3.6l1.3 2.2h8.7l1.3-2.2h3.6"/></svg>',
+        "eye.svg": '<svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 10 8 10 8-4 8-10 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
         "production.svg": '<svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8.6 2.9h6.8l5.15 9.1-5.15 9.1H8.6L3.45 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>',
         "factory.svg": '<svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 19.75a1.75 1.75 0 0 0 1.75 1.75h15.5a1.75 1.75 0 0 0 1.75-1.75V8.5L14.75 13V8.5L8 13V4.25A1.75 1.75 0 0 0 6.25 2.5h-2A1.75 1.75 0 0 0 2.5 4.25Z"/><path d="M7 18.25h.01"/><path d="M12 18.25h.01"/><path d="M17 18.25h.01"/></svg>',
         "process.svg": '<svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.85c2.2 2.8 7 5.3 7 9.65a7 7 0 1 1-14 0c0-4.35 4.8-6.85 7-9.65Z"/></svg>',
@@ -628,18 +629,18 @@
          return "pending";
        }
 
-       function badgeForStep(item) {
-         if (item.process === "QC" || item.process === "QC_CHECK") {
-           if (item.ng) return { label: "NG", cls: "ht-badge-ng" };
-           if (item.done) return { label: "OK", cls: "ht-badge-ok" };
-           return { label: "Menunggu", cls: "ht-badge-waiting" };
-         }
-         if (item.ng) return { label: "NG", cls: "ht-badge-ng" };
-         if (item.done) return { label: "Selesai", cls: "ht-badge-ok" };
-         if (item.status === "PROCESS" || item.status === "PROCESSING")
-           return { label: "Aktif", cls: "ht-badge-process" };
-         return { label: "Belum Mulai", cls: "ht-badge-waiting" };
-       }
+        function badgeForStep(item) {
+          if (item.process === "QC" || item.process === "QC_CHECK") {
+            if (item.ng) return { label: "NG", cls: "ht-badge-ng" };
+            if (item.done) return { label: "OK", cls: "ht-badge-ok" };
+            return { label: "Belum Dimulai", cls: "ht-badge-waiting" };
+          }
+          if (item.ng) return { label: "NG", cls: "ht-badge-ng" };
+          if (item.done) return { label: "Selesai", cls: "ht-badge-ok" };
+          if (item.status === "PROCESS" || item.status === "PROCESSING")
+            return { label: "Sedang Berjalan", cls: "ht-badge-process" };
+          return { label: "Belum Dimulai", cls: "ht-badge-waiting" };
+        }
 
       function processStepDate(prod) {
         if (!prod) return "-";
@@ -666,8 +667,12 @@
           : null;
 
         var steps = [];
+        var route = material.process_route || {};
         var routeSteps = DB._getRouteSteps(material);
         var history = DB.getProcessHistory(material);
+
+        /* HT production record — satu-sumber untuk Heat Treatment. */
+        var htProd = DB.getProcessProduction(material, "HT");
 
         function row(label, value, mono) {
           return { label: label, value: value, mono: !!mono };
@@ -678,6 +683,7 @@
 
         /* 1. Incoming — material sudah masuk sistem (selalu completed). */
         var incomingDate = fmt(formatDateLong(material.tanggal_masuk));
+        var incomingWeight = fmt(material.berat_total_part);
         steps.push({
           key: "INCOMING",
           name: "INCOMING",
@@ -689,28 +695,137 @@
           card: {
             title: "Data Incoming",
             rows: [
-              row("Control Number", fmt(material.kode)),
               row("Tanggal Masuk", incomingDate),
-              row("Customer", fmt(customer ? customer.nama_customer : null)),
-              row("Part", fmt(part ? part.nama_part : null)),
-              row("Quantity", fmt(material.qty || 0)),
-              row("Status", "Incoming", true),
+              row("Nomor Surat Jalan", fmt(material.nomor_surat_jalan)),
+              row("Qty Incoming", fmt(material.qty || 0)),
+              row("Weight Incoming", incomingWeight),
+              row("Petugas", fmt(material.diinput_oleh)),
             ],
           },
         });
 
-        /* 2-4. Heat Treatment -> Shotblast -> Anti-Rust (urutan aturan produksi).
-           Langkah di luar rute (mis. Anti-Rust / Shotblast) ditampilkan
-           netral 'na' dengan kartu 'Tidak ada proses ...' — bukan error. */
+        /* 2. Heat Treatment — berdasarkan HT production record. */
+        var stdTemp = part ? DB.getPartStandardTemperature(material.part_id) : null;
         var TL_TITLE = { HT: "Heat Treatment", SHOTBLAST: "Shotblast", ANTI_RUST: "Anti-Rust" };
-        var processOrder = ["HT", "SHOTBLAST", "ANTI_RUST"];
-        processOrder.forEach(function (step) {
+
+        var htHistoryItem = history.find(function (h) { return h.process === "HT"; });
+        var htItem = {
+          process: "HT",
+          status: htHistoryItem ? htHistoryItem.status : (htProd ? htProd.status : "NOT_STARTED"),
+          done: htHistoryItem ? htHistoryItem.completed : false,
+          ng: !!(htProd && (htProd.process_result === "NG" || htProd.status === "FINISH_NG")),
+          production: htProd,
+        };
+        var htState = classifyStepState(htItem);
+        var htBadge = badgeForStep(htItem);
+
+        var htStart = fmt(formatDateTime(htProd ? htProd.start_scan_at : null));
+        var htFinish = fmt(formatDateTime(htProd ? htProd.finish_scan_at : null));
+        var htDuration = htProd ? formatDuration(htProd.start_scan_at, htProd.finish_scan_at) : null;
+        var htNote = htState === "ng" && htProd ? (htProd.process_ng_note || null) : null;
+
+        var htRows = [];
+        htRows.push(row("Tanggal Proses", fmt(formatDateLong(htProd ? htProd.tanggal_proses : null))));
+        htRows.push(row("Jenis Treatment", fmt(htProd ? htProd.jenis_treatment : null)));
+        htRows.push(row("Target Suhu", stdTemp !== null && stdTemp !== undefined ? stdTemp + " \u00B0C" : "-"));
+        if (htProd && htProd.actual_temperature != null && htProd.actual_temperature !== "") {
+          htRows.push(row("Suhu Aktual", fmt(htProd.actual_temperature) + " \u00B0C"));
+          htRows.push(row("Hasil Suhu", fmt(htProd.temperature_result)));
+          htRows.push(row("Rentang Suhu", fmt(htProd.temperature_min) + " - " + fmt(htProd.temperature_max) + " \u00B0C"));
+          if (htProd.temperature_deviation != null) {
+            htRows.push(row("Deviation", fmt(htProd.temperature_deviation) + " \u00B0C"));
+          }
+        } else {
+          htRows.push(row("Suhu Aktual", "-"));
+        }
+        htRows.push(row("Mulai", fmt(htStart)));
+        htRows.push(row("Selesai", fmt(htFinish)));
+        if (htDuration) htRows.push(row("Durasi", htDuration));
+        htRows.push(row("Operator", fmt(htProd ? htProd.machine_start_by : null)));
+        htRows.push(row("Status Proses", fmt(htProd ? (htProd.production_status || htProd.status) : null)));
+        if (htNote) htRows.push(row("Catatan NG", htNote));
+
+        steps.push({
+          key: "HT",
+          name: STEP_LABELS.HT,
+          label: "Heat Treatment",
+          icon: STEP_ICONS.HT,
+          state: htState,
+          badge: htBadge,
+          date: fmt(htFinish !== "-" ? htFinish : htStart),
+          card: {
+            title: "Heat Treatment",
+            rows: htRows,
+            start: htStart,
+            finish: htFinish,
+            duration: htDuration,
+            note: htNote,
+          },
+        });
+
+        /* 3. Quality Control — diletakkan setelah Heat Treatment, sebelum Shotblast. */
+        var qcState, qcBadge;
+        if (qc) {
+          if (qc.hasil === "NG") {
+            qcState = "ng";
+            qcBadge = { label: "NG", cls: "ht-badge-ng" };
+          } else {
+            qcState = "completed";
+            qcBadge = { label: "OK", cls: "ht-badge-ok" };
+          }
+        } else {
+          qcState = "pending";
+          qcBadge = { label: "Belum Dimulai", cls: "ht-badge-waiting" };
+        }
+        var qcRows = [];
+        qcRows.push(row("Tanggal Inspek", fmt(formatDateTime(qc ? qc.tanggal_inspector : null))));
+        qcRows.push(row("Hardness Aktual", fmt(qc && qc.hardness ? qc.hardness + " " + (qc.satuan_hardness || "") : null)));
+        qcRows.push(row("Inspector", fmt(qc ? qc.inspector : null)));
+        qcRows.push(row("Hasil", fmt(qc ? qc.hasil : null)));
+        qcRows.push(row("Microstructure", fmt(qc ? qc.microstructure : null)));
+        qcRows.push(row("Catatan", fmt(qc ? qc.catatan : null)));
+        steps.push({
+          key: "QC",
+          name: STEP_LABELS.QC,
+          label: "Quality Control",
+          icon: STEP_ICONS.QC,
+          state: qcState,
+          badge: qcBadge,
+          card: {
+            title: "Quality Control",
+            rows: qcRows,
+            start: fmt(formatDateTime(qc ? qc.tanggal_inspector : null)),
+            finish: fmt(formatDateTime(qc ? qc.tanggal_inspector : null)),
+          },
+        });
+
+        /* 4-5. Shotblast -> Anti-Rust (urutan aturan produksi).
+           Jika secara eksplisit tidak diperlukan (route field = false),
+           tampilkan "Tidak Diperlukan" dengan kartu "Tidak ada proses ...".
+           Jika route field tidak ada, anggap diperlukan (pending). */
+        var notRequiredSteps = ["SHOTBLAST", "ANTI_RUST"];
+        notRequiredSteps.forEach(function (step) {
           var inRoute = routeSteps.indexOf(step) !== -1;
           var label = TL_TITLE[step] || PROCESS_CARD_LABELS[step] || step;
-          var historyItem = history.find(function (h) {
-            return h.process === step;
-          });
-          var prod = DB.getProcessProduction(material, step) || null;
+
+          function isNotRequired(s) {
+            if (s !== "SHOTBLAST" && s !== "ANTI_RUST") return false;
+            var key = s === "SHOTBLAST" ? "shotblast" : "anti_rust";
+            return typeof route[key] !== "undefined" && !route[key];
+          }
+
+          if (isNotRequired(step)) {
+            steps.push({
+              key: step,
+              name: STEP_LABELS[step] || step,
+              label: label,
+              icon: STEP_ICONS[step],
+              state: "na",
+              badge: { label: "Tidak Diperlukan", cls: "ht-badge-waiting" },
+              card: { title: label, notice: "Tidak ada proses " + label + "." },
+            });
+            return;
+          }
 
           if (!inRoute) {
             steps.push({
@@ -718,12 +833,15 @@
               name: STEP_LABELS[step] || step,
               label: label,
               icon: STEP_ICONS[step],
-              state: "na",
-              badge: { label: "Tidak Berlaku", cls: "ht-badge-waiting" },
-              card: { title: label, notice: "Tidak ada proses " + label + "." },
+              state: "pending",
+              badge: { label: "Belum Dimulai", cls: "ht-badge-waiting" },
+              card: { title: label, notice: "Rute proses belum ditentukan." },
             });
             return;
           }
+
+          var historyItem = history.find(function (h) { return h.process === step; });
+          var prod = DB.getProcessProduction(material, step) || null;
 
           var item = {
             process: step,
@@ -735,25 +853,15 @@
           var state = classifyStepState(item);
           var badge = badgeForStep(item);
 
-          var stdTemp = part ? DB.getPartStandardTemperature(material.part_id) : null;
           var start = fmt(formatDateTime(prod ? prod.start_scan_at : null));
           var finish = fmt(formatDateTime(prod ? prod.finish_scan_at : null));
           var duration = prod ? formatDuration(prod.start_scan_at, prod.finish_scan_at) : null;
           var note = state === "ng" && prod ? (prod.process_ng_note || null) : null;
 
           var rows = [];
+          rows.push(row("Tanggal Proses", fmt(formatDateLong(prod ? prod.tanggal_proses : null))));
           rows.push(row("Jenis Treatment", fmt(prod ? prod.jenis_treatment : null)));
-          rows.push(row("Target Suhu", stdTemp !== null && stdTemp !== undefined ? stdTemp + " \u00B0C" : "-"));
-          if (prod && prod.actual_temperature != null && prod.actual_temperature !== "") {
-            rows.push(row("Suhu Aktual", fmt(prod.actual_temperature) + " \u00B0C"));
-            rows.push(row("Hasil Suhu", fmt(prod.temperature_result)));
-            rows.push(row("Rentang Suhu", fmt(prod.temperature_min) + " - " + fmt(prod.temperature_max) + " \u00B0C"));
-            if (prod.temperature_deviation != null) {
-              rows.push(row("Deviation", fmt(prod.temperature_deviation) + " \u00B0C"));
-            }
-          } else {
-            rows.push(row("Suhu Aktual", "-"));
-          }
+          rows.push(row("Operator", fmt(prod ? (prod.machine_start_by || prod.start_scan_by) : null)));
           rows.push(row("Mulai", fmt(start)));
           rows.push(row("Selesai", fmt(finish)));
           if (duration) rows.push(row("Durasi", duration));
@@ -767,6 +875,7 @@
             icon: STEP_ICONS[step],
             state: state,
             badge: badge,
+            date: fmt(finish !== "-" ? finish : start),
             card: {
               title: label,
               rows: rows,
@@ -777,57 +886,19 @@
             },
           });
         });
-
-        /* 5. Quality Control — inspeksi akhir sebelum delivery. */
-        var qcState, qcBadge;
-        if (qc) {
-          if (qc.hasil === "NG") {
-            qcState = "ng";
-            qcBadge = { label: "NG", cls: "ht-badge-ng" };
-          } else {
-            qcState = "completed";
-            qcBadge = { label: "OK", cls: "ht-badge-ok" };
-          }
-        } else {
-          qcState = "pending";
-          qcBadge = { label: "Belum Dilakukan", cls: "ht-badge-waiting" };
-        }
-        var qcRows = [];
-        qcRows.push(row("Inspektur", fmt(qc ? qc.inspector : null)));
-        qcRows.push(row("Tanggal Inspeksi", fmt(formatDateTime(qc ? qc.tanggal_inspector : null))));
-        qcRows.push(row("Hardness", fmt(qc && qc.hardness ? qc.hardness + " " + (qc.satuan_hardness || "") : null)));
-        qcRows.push(row("Hasil", fmt(qc ? qc.hasil : null)));
-        qcRows.push(row("Microstructure", fmt(qc ? qc.microstructure : null)));
-        qcRows.push(row("Catatan", fmt(qc ? qc.catatan : null)));
-        steps.push({
-          key: "QC",
-          name: STEP_LABELS.QC,
-          label: STEP_LABELS.QC,
-          icon: STEP_ICONS.QC,
-          state: qcState,
-          badge: qcBadge,
-          card: {
-            title: "Quality Control",
-            rows: qcRows,
-            start: fmt(formatDateTime(qc ? qc.tanggal_inspector : null)),
-            finish: fmt(formatDateTime(qc ? qc.tanggal_inspector : null)),
-          },
-        });
-
-        /* 6. Delivery — diklasifikasikan dari record delivery yang ada,
-           bukan dari gate canDeliver() (hanya mencegah pengiriman baru). */
+        /* 6. Delivery — diklasifikasikan dari record delivery yang ada. */
         var deliveryState = getDeliveryState(delivery);
         var D = delivery || {};
         var delivRows = [];
-        delivRows.push(row("Status Delivery", deliveryState.badge.label, true));
-        delivRows.push(row("Delivery ID", fmt(D.id)));
         delivRows.push(row("Tanggal Kirim", fmt(deliveryState.date)));
-        delivRows.push(row("Qty Kirim", fmt(D.qty_kirim || "-")));
-        delivRows.push(row("Catatan", fmt(D.catatan || D.remarks || "-")));
+        delivRows.push(row("Qty Out", fmt(D.qty_kirim || "-")));
+        delivRows.push(row("Weight Out", "-"));
+        delivRows.push(row("Petugas", "-"));
+        delivRows.push(row("Status", deliveryState.badge.label, true));
         steps.push({
           key: "DELIVERY",
           name: STEP_LABELS.DELIVERY,
-          label: STEP_LABELS.DELIVERY,
+          label: "Delivery",
           icon: STEP_ICONS.DELIVERY,
           state: deliveryState.state,
           badge: deliveryState.badge,
@@ -943,7 +1014,9 @@
       function renderProgressBar(material, steps) {
         var totalSteps = 0;
         var completedSteps = 0;
-        var nextStep = null;
+        var activeStep = null;
+        var ngStep = null;
+        var firstPending = null;
 
         for (var i = 0; i < steps.length; i++) {
           var s = steps[i];
@@ -951,9 +1024,12 @@
           totalSteps++;
           if (s.state === "completed") {
             completedSteps++;
-          } else if (!nextStep && (s.state === "pending" || s.state === "active")) {
-            nextStep = s;
           }
+          if (s.state === "active") activeStep = s;
+          if (s.state === "ng" && s.key !== "DELIVERY") {
+            if (!ngStep) ngStep = s;
+          }
+          if (!firstPending && s.state === "pending") firstPending = s;
         }
 
         var percent = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
@@ -979,11 +1055,39 @@
           segContainer.innerHTML = segHtml;
         }
 
+        /* "Berikutnya" logic:
+           1. NG blokir normal flow → tunjuk ke NG
+           2. Jika sudah Delivery → "Selesai"
+           3. Setelah stage aktif → tahap berikutnya (skip completed & na)
+           4. Jika tidak ada aktif → first pending (skip completed & na) */
+        var deliveryStep = steps.find(function (s) { return s.key === "DELIVERY"; });
+        var isDelivered = deliveryStep && deliveryStep.state === "completed";
+        var nextStep = null;
+        if (ngStep) {
+          nextStep = ngStep;
+        } else if (isDelivered) {
+          nextStep = null;
+        } else if (activeStep) {
+          var foundActive = false;
+          for (var k = 0; k < steps.length; k++) {
+            if (steps[k] === activeStep) {
+              foundActive = true;
+              continue;
+            }
+            if (foundActive && steps[k].state !== "na" && steps[k].state !== "completed") {
+              nextStep = steps[k];
+              break;
+            }
+          }
+        } else {
+          nextStep = firstPending;
+        }
+
         var nextEl = document.getElementById("trackNextProcess");
         if (nextEl) {
           if (nextStep) {
             nextEl.textContent = nextStep.label || nextStep.name;
-          } else if (completedSteps === totalSteps) {
+          } else if (isDelivered || completedSteps === totalSteps) {
             nextEl.textContent = "Selesai";
           } else {
             nextEl.textContent = "-";
