@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/tables.css" />
     <link rel="stylesheet" href="css/forms.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/tracking.css" />
     <link rel="stylesheet" href="css/icons.css" />
   </head>
   <body>
@@ -274,72 +275,160 @@
             </div>
 
             <!-- Hasil -->
-            <div id="trackingResult" class="hidden space-y-4 fade-in">
-              <!-- 1. Data Material -->
-              <div class="ht-card">
-                <div class="ht-card-header">
-                  <h3 class="ht-card-title">Data Material</h3>
-                </div>
-
-                <div class="ht-material-main">
-                  <div class="ht-material-main-item">
-                    <span class="ht-info-label">Control Number</span>
-                    <span class="ht-info-value mono ht-info-value-big" id="trackKode">-</span>
+            <div id="trackingResult" class="hidden fade-in">
+              <!-- Header detail tracking -->
+              <div class="ht-tracking-header-bar">
+                <h3 class="ht-tracking-title">Detail tracking</h3>
+                <div class="ht-tracking-meta">
+                  <div class="ht-tracking-control">
+                    <span class="ht-tracking-label">Control Number</span>
+                    <span class="ht-tracking-value mono" id="trackKodeHeader">-</span>
                   </div>
-                  <div class="ht-material-main-item">
-                    <span class="ht-info-label">Customer</span>
-                    <span class="ht-info-value" id="trackCustomer">-</span>
+                  <div class="ht-tracking-journey">
+                    <span class="ht-tracking-journey-text" id="trackJourneyDesc">-</span>
                   </div>
-                  <div class="ht-material-main-item">
-                    <span class="ht-info-label">Status Part</span>
-                    <span class="ht-badge" id="trackStatus">-</span>
+                  <div class="ht-tracking-process-info">
+                    <span class="ht-tracking-process-label">Proses Aktif</span>
+                    <span class="ht-info-value" id="trackCurrentProcess">-</span>
                   </div>
-                </div>
-
-                <div class="ht-material-grid">
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Nama Part</span>
-                    <span class="ht-info-value" id="trackNamaPart">-</span>
-                    <span class="ht-info-label">Nomor Part</span>
-                    <span class="ht-info-value mono" id="trackNoPart">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Jenis Proses</span>
-                    <span class="ht-info-value" id="trackProcessType">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Lot No</span>
-                    <span class="ht-info-value mono" id="trackLot">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Material Charge</span>
-                    <span class="ht-info-value mono" id="trackCharge">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Quantity</span>
-                    <span class="ht-info-value" id="trackQty">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Tanggal Masuk</span>
-                    <span class="ht-info-value" id="trackTanggalMasuk">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Nomor SJ</span>
-                    <span class="ht-info-value mono" id="trackSJ">-</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Target Hardness</span>
-                    <span class="ht-info-value mono" id="trackTargetHardness">-</span>
+                  <div class="ht-tracking-status-badge">
+                    <span id="trackStatus" class="ht-badge ht-badge-waiting">-</span>
                   </div>
                 </div>
               </div>
 
-              <!-- 2. Timeline Status Produksi (two-column stepper) -->
-              <div class="ht-card">
-                <div class="ht-card-header">
-                  <h3 class="ht-card-title">Timeline Status Produksi</h3>
+              <!-- Progress bar -->
+              <div class="ht-progress-container">
+                <div class="ht-progress-info">
+                  <span class="ht-progress-percent" id="trackProgressPercent">0%</span>
+                  <span class="ht-progress-steps" id="trackProgressSteps">0/6</span>
                 </div>
-                <div class="ht-timeline" id="timelineContainer"></div>
+                <div class="ht-progress-bar">
+                  <div class="ht-progress-segments" id="trackProgressSegments"></div>
+                  <div class="ht-progress-fill" id="trackProgressFill" style="width: 0%"></div>
+                </div>
+                <div class="ht-progress-next">
+                  <span class="ht-progress-next-label">Berikutnya</span>
+                  <span class="ht-progress-next-value" id="trackNextProcess">-</span>
+                </div>
+                <div class="ht-progress-delivery">
+                  <span class="ht-progress-delivery-label">Target Delivery</span>
+                  <span class="ht-progress-delivery-value" id="trackDeliveryTarget">-</span>
+                </div>
+              </div>
+
+              <!-- Two-column layout -->
+              <div class="ht-tracking-layout">
+                <!-- Left column (30-32%) -->
+                <div class="ht-tracking-left">
+                  <!-- Card 1: Identitas pekerjaan -->
+                  <div class="ht-card">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Identitas Pekerjaan</h3>
+                    </div>
+                    <div class="ht-tracking-identity-grid">
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Customer</span>
+                        <span class="ht-info-value" id="trackCustomer">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Nama Part</span>
+                        <span class="ht-info-value" id="trackNamaPart">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Status Part</span>
+                        <span class="ht-info-value" id="trackStatusPart">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Nomor Part</span>
+                        <span class="ht-info-value mono" id="trackNoPart">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Control Number</span>
+                        <span class="ht-info-value mono ht-info-value-big" id="trackKode">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Lot Number</span>
+                        <span class="ht-info-value mono" id="trackLot">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Charge Number</span>
+                        <span class="ht-info-value mono" id="trackCharge">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Process Name</span>
+                        <span class="ht-info-value" id="trackProcessType">-</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 2: Kuantitas part -->
+                  <div class="ht-card">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Kuantitas Part</h3>
+                    </div>
+                    <table class="ht-table ht-table-sm">
+                      <thead>
+                        <tr>
+                          <th>Alur</th>
+                          <th>Qty (pcs)</th>
+                          <th>Weight (kg)</th>
+                        </tr>
+                      </thead>
+                      <tbody id="trackingQtyTableBody"></tbody>
+                    </table>
+                  </div>
+
+                  <!-- Card 3: Tanggal & catatan -->
+                  <div class="ht-card">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Tanggal &amp; Catatan</h3>
+                    </div>
+                    <div class="ht-tracking-dates-grid">
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Tanggal Incoming</span>
+                        <span class="ht-info-value" id="trackTanggalMasuk">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Inspector</span>
+                        <span class="ht-info-value" id="trackInspector">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Target Hardness</span>
+                        <span class="ht-info-value mono" id="trackTargetHardness">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">No Surat Jalan</span>
+                        <span class="ht-info-value mono" id="trackSJ">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Delivery Date</span>
+                        <span class="ht-info-value" id="trackDeliveryDate">-</span>
+                      </div>
+                      <div class="ht-info-item ht-info-item-wide">
+                        <span class="ht-info-label">Remarks</span>
+                        <span class="ht-info-value" id="trackRemarks">-</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right column: Timeline -->
+                <div class="ht-tracking-right">
+                   <div class="ht-card">
+                     <div class="ht-card-header">
+                       <div class="ht-card-header-title-group">
+                         <h3 class="ht-card-title">Timeline Proses</h3>
+                         <p class="ht-card-subtitle">Waktu aktual mengikuti waktu yang tersimpan di aplikasi</p>
+                       </div>
+                     </div>
+                     <div class="ht-timeline" id="timelineContainer"></div>
+                   </div>
+                  <!-- Note under timeline -->
+                  <p class="ht-tracking-note">
+                    Tanggal rencana atau penugasan tidak mengikaratkan proses telah selesai.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -558,6 +647,16 @@
         if (prod.start_scan_at) return formatDateTime(prod.start_scan_at);
         if (prod.tanggal_proses) return formatDateLong(prod.tanggal_proses);
         return "-";
+      }
+
+      function escapeHtml(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
       }
 
       function buildTimeline(material, qcs, delivery, part, customer) {
@@ -804,8 +903,132 @@
         document.getElementById("timelineContainer").innerHTML = html;
       }
 
-      function renderPartData(material, part, customer) {
+      /* Helper: weight calculation (mirrors dashboard.js logic) */
+      function getMaterialWeight(material) {
+        if (material.berat_total_part)
+          return parseFloat(material.berat_total_part) || 0;
+        var qty = parseFloat(material.qty) || 0;
+        var perPart = parseFloat(material.berat_part_snapshot) || 0;
+        return qty * perPart;
+      }
+
+      /* Helper: human-readable process name */
+      function processLabel(step) {
+        var map = { HT: "Heat Treatment", SHOTBLAST: "Shotblast", ANTI_RUST: "Anti-Rust", QC: "Quality Control" };
+        return map[step] || step;
+      }
+
+      /* Helper: brief journey description */
+      function getJourneyDescription(steps, isDelivered, currentProcess) {
+        var activeStep = null;
+        var hasNg = false;
+        var firstPending = null;
+        for (var i = 0; i < steps.length; i++) {
+          if (steps[i].state === "active") activeStep = steps[i];
+          if (steps[i].state === "ng" && steps[i].key !== "DELIVERY") hasNg = true;
+          if (!firstPending && steps[i].state === "pending") firstPending = steps[i];
+        }
+        if (isDelivered)
+          return "Barang sudah dikirim ke customer";
+        if (hasNg)
+          return "Ada proses dengan hasil NG — perlukan perhatian";
+        if (activeStep)
+          return "Sedang dalam proses " + (activeStep.label || activeStep.name);
+        if (firstPending)
+          return "Menunggu proses " + (firstPending.label || firstPending.name) + " dimulai";
+        return "Semua proses selesai";
+      }
+
+      /* Helper: render progress bar */
+      function renderProgressBar(material, steps) {
+        var totalSteps = 0;
+        var completedSteps = 0;
+        var nextStep = null;
+
+        for (var i = 0; i < steps.length; i++) {
+          var s = steps[i];
+          if (s.state === "na") continue;
+          totalSteps++;
+          if (s.state === "completed") {
+            completedSteps++;
+          } else if (!nextStep && (s.state === "pending" || s.state === "active")) {
+            nextStep = s;
+          }
+        }
+
+        var percent = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+
+        var pctEl = document.getElementById("trackProgressPercent");
+        if (pctEl) pctEl.textContent = percent + "%";
+
+        var stepsEl = document.getElementById("trackProgressSteps");
+        if (stepsEl) stepsEl.textContent = completedSteps + "/" + totalSteps;
+
+        var fillEl = document.getElementById("trackProgressFill");
+        if (fillEl) fillEl.style.width = percent + "%";
+
+        /* Render segments */
+        var segContainer = document.getElementById("trackProgressSegments");
+        if (segContainer) {
+          var segHtml = "";
+          for (var j = 0; j < steps.length; j++) {
+            if (steps[j].state === "na") continue;
+            var segCls = steps[j].state;
+            segHtml += '<div class="ht-progress-segment ' + segCls + '"></div>';
+          }
+          segContainer.innerHTML = segHtml;
+        }
+
+        var nextEl = document.getElementById("trackNextProcess");
+        if (nextEl) {
+          if (nextStep) {
+            nextEl.textContent = nextStep.label || nextStep.name;
+          } else if (completedSteps === totalSteps) {
+            nextEl.textContent = "Selesai";
+          } else {
+            nextEl.textContent = "-";
+          }
+        }
+
+        var delivery = DB.get("deliveries").find(
+          (d) => String(d.material_id) === String(material.id)
+        ) || null;
+        var delivEl = document.getElementById("trackDeliveryTarget");
+        if (delivEl) {
+          delivEl.textContent = delivery
+            ? formatDateLong(delivery.tanggal_kirim)
+            : "-";
+        }
+      }
+
+      /* Helper: render quantity table */
+      function renderQtyTable(material, delivery) {
+        var tbody = document.getElementById("trackingQtyTableBody");
+        if (!tbody) return;
+        var html = "";
+        var weight = getMaterialWeight(material);
+
+        /* Incoming */
+        html += '<tr>';
+        html += '<td>Incoming</td>';
+        html += '<td>' + (material.qty || 0) + '</td>';
+        html += '<td>' + (weight ? weight : "-") + '</td>';
+        html += '</tr>';
+
+        /* Delivery (keluar) */
+        var outQty = delivery ? (delivery.qty_kirim || "-") : "-";
+        html += '<tr>';
+        html += '<td>Delivery</td>';
+        html += '<td>' + (outQty !== "-" ? outQty : "-") + '</td>';
+        html += '<td>-</td>';
+        html += '</tr>';
+
+        tbody.innerHTML = html;
+      }
+
+      function renderPartData(material, part, customer, qcs, delivery) {
         document.getElementById("trackKode").textContent = material.kode || "-";
+        document.getElementById("trackKodeHeader").textContent = material.kode || "-";
         document.getElementById("trackNamaPart").textContent = part
           ? part.nama_part
           : "-";
@@ -819,27 +1042,38 @@
           material.process_type ||
           (part ? part.process_type : "") ||
           "-";
-        document.getElementById("trackQty").textContent = material.qty || 0;
-        document.getElementById("trackTanggalMasuk").textContent =
-          formatDateLong(material.tanggal_masuk);
-        document.getElementById("trackSJ").textContent =
-          material.nomor_surat_jalan || "-";
+        document.getElementById("trackStatusPart").textContent =
+          material.status_part || "-";
         document.getElementById("trackLot").textContent =
           material.lot_no || "-";
         document.getElementById("trackCharge").textContent =
           material.material_charge || "-";
+        document.getElementById("trackTanggalMasuk").textContent =
+          formatDateLong(material.tanggal_masuk);
+        document.getElementById("trackSJ").textContent =
+          material.nomor_surat_jalan || "-";
+
+        /* Inspector (from QC data) */
+        var qc = qcs && qcs.length > 0
+          ? qcs.reduce((latest, q) =>
+            !latest || (q.id || 0) > (latest.id || 0) ? q : latest, null)
+          : null;
+        document.getElementById("trackInspector").textContent =
+          qc ? (qc.inspector || "-") : "-";
+
+        /* Delivery date */
+        document.getElementById("trackDeliveryDate").textContent =
+          delivery ? formatDateLong(delivery.tanggal_kirim) : "-";
+
+        /* Remarks */
+        document.getElementById("trackRemarks").textContent =
+          material.remarks || material.keterangan || "-";
 
         /* Overall status badge */
         var gate = DB.canDeliver(material);
-        var delivery = DB.get("deliveries").find(
-          (d) => String(d.material_id) === String(material.id),
-        ) || null;
+        var deliveryState = getDeliveryState(delivery);
         var currentProcess = DB.getCurrentProcess(material);
         var routeCompleted = DB.isRouteCompleted(material);
-        /* Sebuah record delivery yang ada = materi sudah dikirim.
-           Gate canDeliver() hanya dipakai untuk alasan (reason) pada
-           state Belum Dikirim, bukan untuk menolak status "Delivered". */
-        var deliveryState = getDeliveryState(delivery);
         var isDelivered = deliveryState.delivered;
 
         var status = "INCOMING";
@@ -860,25 +1094,26 @@
           status = "Selesai";
           statusClass = "ht-badge-finish";
         }
-         var statusEl = document.getElementById("trackStatus");
-         statusEl.textContent = status;
-         statusEl.className = "ht-badge " + statusClass;
 
-         var stdTemp = part ? DB.getPartStandardTemperature(material.part_id) : null;
-         document.getElementById("trackTargetHardness").textContent =
-           stdTemp !== null && stdTemp !== undefined
-             ? stdTemp + " \u00B0C"
-             : "-";
-      }
+        var statusEl = document.getElementById("trackStatus");
+        statusEl.textContent = status;
+        statusEl.className = "ht-badge " + statusClass;
 
-      function escapeHtml(str) {
-        if (str === null || str === undefined) return "";
-        return String(str)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#39;");
+        /* Active process name */
+        var procEl = document.getElementById("trackCurrentProcess");
+        if (procEl) {
+          procEl.textContent = isDelivered
+            ? "Delivered"
+            : (currentProcess
+              ? processLabel(currentProcess)
+              : "Menunggu");
+        }
+
+        var stdTemp = part ? DB.getPartStandardTemperature(material.part_id) : null;
+        document.getElementById("trackTargetHardness").textContent =
+          stdTemp !== null && stdTemp !== undefined
+            ? stdTemp + " \u00B0C"
+            : "-";
       }
 
       function renderTracking(material) {
@@ -895,11 +1130,30 @@
         var customer = DB.findCustomerById(material.customer_id);
         var part = DB.findPartById(material.part_id);
 
-        /* Data Part */
-        renderPartData(material, part, customer);
-
-        /* Timeline (unified two-column) — termasuk kartu proses, QC, dan Delivery */
+        /* Timeline steps (used for progress + journey description) */
         var steps = buildTimeline(material, qcs, delivery, part, customer);
+
+        /* Data Part + header + badges */
+        renderPartData(material, part, customer, qcs, delivery);
+
+        /* Journey description */
+        var gate = DB.canDeliver(material);
+        var deliveryState = getDeliveryState(delivery);
+        var currentProcess = DB.getCurrentProcess(material);
+        var journeyEl = document.getElementById("trackJourneyDesc");
+        if (journeyEl) {
+          journeyEl.textContent = getJourneyDescription(
+            steps, deliveryState.delivered, currentProcess
+          );
+        }
+
+        /* Progress bar */
+        renderProgressBar(material, steps);
+
+        /* Quantity table */
+        renderQtyTable(material, delivery);
+
+        /* Timeline */
         renderTimeline(steps);
       }
       function openScanModal() {

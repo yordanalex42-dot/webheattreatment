@@ -1,0 +1,396 @@
+/* ============================================================
+   HALAMAN TRACKING
+   Semua selector di scoping ke dalam #trackingPage untuk
+   menghindari menimpa halaman lain.
+   ============================================================ */
+
+/* ===== Header detail tracking ===== */
+.ht-tracking-header-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ht-tracking-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.ht-tracking-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.ht-tracking-control,
+.ht-tracking-journey,
+.ht-tracking-process-info,
+.ht-tracking-status-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ht-tracking-label,
+.ht-tracking-process-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  font-weight: 600;
+}
+
+.ht-tracking-value,
+.ht-tracking-journey-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ht-tracking-value.mono,
+.ht-tracking-control .ht-info-value.mono {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+}
+
+.ht-tracking-journey-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.ht-tracking-status-badge .ht-badge {
+  font-size: 10px;
+  padding: 2px 10px;
+}
+
+/* ===== Progress bar ===== */
+.ht-progress-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ht-progress-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 70px;
+  flex-shrink: 0;
+}
+
+.ht-progress-percent {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.ht-progress-steps {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ht-progress-bar {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  height: 8px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ht-progress-segments {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  border-radius: 999px;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.ht-progress-segment {
+  flex: 1;
+  height: 100%;
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.ht-progress-segment:last-child {
+  border-right: none;
+}
+
+.ht-progress-segment.completed {
+  background: var(--success);
+}
+
+.ht-progress-segment.active {
+  background: var(--primary);
+}
+
+.ht-progress-segment.pending {
+  background: var(--border);
+  opacity: 0.4;
+}
+
+.ht-progress-segment.na {
+  background: transparent;
+}
+
+.ht-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: transparent;
+  transition: width 320ms ease;
+  z-index: 1;
+}
+
+.ht-progress-next,
+.ht-progress-delivery {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.ht-progress-next-label,
+.ht-progress-delivery-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  font-weight: 600;
+}
+
+.ht-progress-next-value,
+.ht-progress-delivery-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.ht-progress-segment-label {
+  font-size: 8px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* ===== Two-column layout ===== */
+.ht-tracking-layout {
+  display: grid;
+  grid-template-columns: 31% 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.ht-tracking-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ht-tracking-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ht-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ht-card-subtitle {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+/* ===== Identity card ===== */
+.ht-tracking-identity-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.ht-tracking-identity-grid .ht-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ht-info-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  font-weight: 600;
+}
+
+.ht-info-value {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.ht-info-value.mono {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-weight: 600;
+}
+
+.ht-info-value.ht-info-value-big {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.ht-info-item.ht-info-item-wide {
+  grid-column: 1 / -1;
+}
+
+/* ===== Quantity table ===== */
+.ht-table.ht-table-sm {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.ht-table.ht-table-sm th,
+.ht-table.ht-table-sm td {
+  padding: 8px 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.ht-table.ht-table-sm th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  background: var(--table-dashboard-header-bg);
+  border-bottom: 2px solid var(--table-header-border);
+}
+
+.ht-table.ht-table-sm td:first-child,
+.ht-table.ht-table-sm th:first-child {
+  text-align: left;
+}
+
+.ht-table.ht-table-sm td:last-child,
+.ht-table.ht-table-sm th:last-child {
+  text-align: right;
+}
+
+.ht-table.ht-table-sm tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== Dates grid ===== */
+.ht-tracking-dates-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+/* ===== Timeline subtitle ===== */
+.ht-timeline .ht-card-subtitle {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+/* ===== Responsive breakpoints ===== */
+@media (max-width: 1024px) {
+  .ht-tracking-layout {
+    grid-template-columns: 34% 1fr;
+    gap: 16px;
+  }
+
+  .ht-tracking-header-bar {
+    flex-wrap: wrap;
+  }
+
+  .ht-tracking-meta {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ht-tracking-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .ht-progress-container {
+    flex-wrap: wrap;
+  }
+
+  .ht-progress-bar {
+    min-width: 100%;
+  }
+
+  .ht-progress-next,
+  .ht-progress-delivery {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ht-tracking-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .ht-tracking-meta {
+    gap: 8px;
+  }
+
+  .ht-progress-percent {
+    font-size: 14px;
+  }
+
+  .ht-tracking-identity-grid {
+    gap: 8px;
+  }
+}
+
+/* ===== Note under timeline ===== */
+.ht-tracking-note {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+/* Card header title group */
+.ht-card-header-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
