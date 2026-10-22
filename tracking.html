@@ -777,8 +777,9 @@
           qcState = "pending";
           qcBadge = { label: "Belum Dimulai", cls: "ht-badge-waiting" };
         }
+        var qcDate = fmt(formatDateLong(qc ? qc.tanggal_inspector : null));
         var qcRows = [];
-        qcRows.push(row("Tanggal Inspek", fmt(formatDateTime(qc ? qc.tanggal_inspector : null))));
+        qcRows.push(row("Tanggal Inspek", qcDate));
         qcRows.push(row("Hardness Aktual", fmt(qc && qc.hardness ? qc.hardness + " " + (qc.satuan_hardness || "") : null)));
         qcRows.push(row("Inspector", fmt(qc ? qc.inspector : null)));
         qcRows.push(row("Hasil", fmt(qc ? qc.hasil : null)));
@@ -794,8 +795,8 @@
           card: {
             title: "Quality Control",
             rows: qcRows,
-            start: fmt(formatDateTime(qc ? qc.tanggal_inspector : null)),
-            finish: fmt(formatDateTime(qc ? qc.tanggal_inspector : null)),
+            start: qcDate,
+            finish: qcDate,
           },
         });
 
@@ -892,7 +893,14 @@
         var delivRows = [];
         delivRows.push(row("Tanggal Kirim", fmt(deliveryState.date)));
         delivRows.push(row("Qty Out", fmt(D.qty_kirim || "-")));
-        delivRows.push(row("Weight Out", "-"));
+        var weightOut = "-";
+        if (D.qty_kirim && material.berat_part_snapshot) {
+          var wOut = parseFloat(D.qty_kirim) * parseFloat(material.berat_part_snapshot);
+          if (!isNaN(wOut)) {
+            weightOut = wOut;
+          }
+        }
+        delivRows.push(row("Weight Out", fmt(weightOut)));
         delivRows.push(row("Petugas", "-"));
         delivRows.push(row("Status", deliveryState.badge.label, true));
         steps.push({
@@ -1213,10 +1221,10 @@
               : "Menunggu");
         }
 
-        var stdTemp = part ? DB.getPartStandardTemperature(material.part_id) : null;
+        var targetHardness = part ? part.target_hardness : null;
         document.getElementById("trackTargetHardness").textContent =
-          stdTemp !== null && stdTemp !== undefined
-            ? stdTemp + " \u00B0C"
+          targetHardness !== null && targetHardness !== undefined && targetHardness !== ""
+            ? targetHardness
             : "-";
       }
 

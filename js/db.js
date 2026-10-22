@@ -38,7 +38,7 @@ const DB = {
     materials: ["id", "kode", "customer_id", "part_id", "nomor_surat_jalan", "lot_no", "material_charge", "status_part", "qty", "berat_part_snapshot", "berat_total_part", "tanggal_masuk", "keterangan", "remarks", "process_type", "diinput_oleh", "qr_code", "status_proses", "process_route", "created_at", "updated_at"],
     productions: ["id", "material_id", "incoming_id", "tracking_id", "status", "production_status", "kode", "process_result", "visual_check_result", "visual_check_note", "visual_check_operator", "start_scan_at", "start_scan_by", "machine_start_at", "machine_start_by", "finish_scan_at", "finish_scan_by", "process_ng_note", "machine_finish_at", "machine_finish_by", "tanggal_proses", "jenis_treatment", "remarks", "created_at", "updated_at", "standard_temperature_snapshot", "temperature_tolerance_snapshot", "actual_temperature", "temperature_min", "temperature_max", "temperature_deviation", "temperature_result", "temperature_recorded_at", "temperature_recorded_by"],
     qcs: ["id", "production_id", "material_id", "hardness", "satuan_hardness", "hasil", "microstructure", "remarks", "inspector", "tanggal_inspector", "catatan", "user_id", "created_at", "updated_at"],
-    deliveries: ["id", "production_id", "material_id", "customer_id", "tanggal_kirim", "qty_kirim", "status", "catatan", "user_id", "remarks", "created_at", "updated_at"],
+    deliveries: ["id", "production_id", "material_id", "customer_id", "tanggal_kirim", "qty_kirim", "nama_pengirim", "status", "catatan", "user_id", "remarks", "created_at", "updated_at"],
     tracking: ["id", "material_id", "production_id", "delivery_id", "remarks", "created_at", "updated_at"],
      targets: ["id", "year", "month", "target_berat_output", "created_at", "updated_at"],
    },
@@ -1043,7 +1043,7 @@ const DB = {
       }
     }
     if (changed) localStorage.setItem("ht_qcs", JSON.stringify(qcs));
-    const validDeliveryFields = ["id","production_id","material_id","customer_id","tanggal_kirim","qty_kirim","status","catatan","user_id","remarks","created_at","updated_at"];
+    const validDeliveryFields = ["id","production_id","material_id","customer_id","tanggal_kirim","qty_kirim","nama_pengirim","status","catatan","user_id","remarks","created_at","updated_at"];
     const deliveries = this.get("deliveries");
     changed = false;
     for (const d of deliveries) {
@@ -1052,6 +1052,7 @@ const DB = {
       if (!("remarks" in d)) { d.remarks = ""; changed = true; }
       if (!("material_id" in d)) { d.material_id = ""; changed = true; }
       if (!("customer_id" in d)) { d.customer_id = ""; changed = true; }
+      if (!("nama_pengirim" in d)) { d.nama_pengirim = ""; changed = true; }
       /* Normalisasi status pengiriman */
       if ("status" in d) {
         const nds = this._normalizeStatusValue(d.status);

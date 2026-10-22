@@ -328,7 +328,17 @@
                   </div>
                 </div>
                 <div class="ht-form-group">
-                  <label class="ht-form-label" for="delCatatan">Catatan</label>
+                  <label class="ht-form-label" for="delNamaPengirim"
+                    >Nama Pengirim</label
+                  >
+                  <input
+                    type="text"
+                    id="delNamaPengirim"
+                    class="ht-form-input"
+                    placeholder="Masukkan nama pengirim"
+                  />
+                </div>
+                <div class="ht-form-group">
                   <textarea
                     id="delCatatan"
                     rows="2"
@@ -361,12 +371,13 @@
                 <table class="ht-table">
                   <thead>
                     <tr>
-                      <th>No Part</th>
-                      <th>Nama Part</th>
-                      <th>Customer</th>
-                      <th>Qty Kirim</th>
-                      <th>Tanggal Kirim</th>
-                      <th>Status</th>
+                       <th>No Part</th>
+                       <th>Nama Part</th>
+                       <th>Customer</th>
+                       <th>Nama Pengirim</th>
+                       <th>Qty Kirim</th>
+                       <th>Tanggal Kirim</th>
+                       <th>Status</th>
                     </tr>
                   </thead>
                   <tbody id="deliveryTable"></tbody>
@@ -483,6 +494,7 @@
           document.getElementById("delId").value = existing.id;
           document.getElementById("delTanggal").value = existing.tanggal_kirim;
           document.getElementById("delQty").value = existing.qty_kirim;
+          document.getElementById("delNamaPengirim").value = existing.nama_pengirim || "";
           document.getElementById("delCatatan").value = existing.catatan || "";
         } else {
           document.getElementById("delId").value = "";
@@ -490,6 +502,7 @@
             .toISOString()
             .split("T")[0];
           document.getElementById("delQty").value = material.qty;
+          document.getElementById("delNamaPengirim").value = "";
           document.getElementById("delCatatan").value = "";
         }
         document.getElementById("deliveryForm").classList.remove("hidden");
@@ -508,11 +521,18 @@
           document.getElementById("delProductionId").value,
         );
         const delId = document.getElementById("delId").value;
+        const namaPengirim = document.getElementById("delNamaPengirim").value.trim();
+        if (!namaPengirim) {
+          HTUI.toast("Nama Pengirim wajib diisi.", "error");
+          document.getElementById("delNamaPengirim").focus();
+          return;
+        }
         const data = {
           production_id: productionId,
           material_id: document.getElementById("delMaterialId").value,
           tanggal_kirim: document.getElementById("delTanggal").value,
           qty_kirim: parseInt(document.getElementById("delQty").value),
+          nama_pengirim: namaPengirim,
           catatan: document.getElementById("delCatatan").value.trim(),
         };
         if (delId) DB.update("deliveries", delId, data);
@@ -536,18 +556,20 @@
             const part = DB.findPartById(m.part_id);
             const customer = DB.findCustomerById(m.customer_id);
             return `<tr class="ht-table-row">
-            <td class="font-medium">${part ? part.nomor_part : "-"}</td>
-            <td>${part ? part.nama_part : "-"}</td>
-            <td class="text-secondary">${(customer && customer.nama_customer) || "-"}</td>
-            <td>${d.qty_kirim ?? "-"}</td>
-            <td class="text-secondary">${formatDateLong(d.tanggal_kirim)}</td>
-            <td><span class="ht-badge ht-badge-delivered">Delivered</span></td>
-          </tr>`;
+             <td class="font-medium">${part ? part.nomor_part : "-"}</td>
+             <td>${part ? part.nama_part : "-"}</td>
+             <td class="text-secondary">${(customer && customer.nama_customer) || "-"}</td>
+             <td>${d.nama_pengirim || "-"}</td>
+             <td>${d.qty_kirim ?? "-"}</td>
+             <td class="text-secondary">${formatDateLong(d.tanggal_kirim)}</td>
+             <td><span class="ht-badge ht-badge-delivered">Delivered</span></td>
+           </tr>`;
           })
           .join("");
         document.getElementById("deliveryTable").innerHTML =
           html ||
-          '<tr><td colspan="6" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data pengiriman</p></td></tr>';
+
+ '<tr><td colspan="7" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data pengiriman</p></td></tr>';
       }
       function openScanModal() {
         HTUI.openModal("scanModal");

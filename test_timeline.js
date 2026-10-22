@@ -54,6 +54,36 @@ localStorage.setItem("ht_qcs", JSON.stringify([...DB.get("qcs"),
   { id: 9994, material_id: 9994, production_id: 99941, hasil: "OK", hardness: "60", satuan_hardness: "HRC", inspector: "Inspector 01", tanggal_inspector: "2026-09-01T10:00:00" }
 ]));
 
+/* Add mock Parts for Target Hardness verification */
+const mockParts = [...DB.get("parts"),
+  { id: 99, customer_id: 1, nomor_part: "HT-TEST-99", nama_part: "Test Part No Hardness", berat_part: 1.0, satuan_berat: "KG", target_hardness: null, standard_temperature: 600, process_type: "Heat Treatment", standard_process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false }, status: "Active", created_at: "2026-01-01T00:00:00Z", updated_at: "2026-01-01T00:00:00Z" }
+];
+localStorage.setItem("ht_parts", JSON.stringify(mockParts));
+
+/* Add mock materials referencing Part 4 (700-750 HV, 650°C) and Part 99 (null hardness, 600°C) */
+localStorage.setItem("ht_materials", JSON.stringify([...DB.get("materials"),
+  { id: 9994, kode: "TEST4", part_id: 1, customer_id: 1,
+    tanggal_masuk: "2026-09-01", nomor_surat_jalan: "SJ-TEST4", qty: 50,
+    berat_total_part: 125, diinput_oleh: "Operator Test",
+    process_route: { heat_treatment: true, qc_check: true, shotblast: true, anti_rust: true },
+    status_proses: "FINISH" },
+  { id: 9995, kode: "TEST5", part_id: 4, customer_id: 1,
+    tanggal_masuk: "2026-09-15", nomor_surat_jalan: "SJ-TEST5", qty: 10,
+    berat_total_part: 32, diinput_oleh: "Operator Test",
+    process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false },
+    status_proses: "FINISH" },
+  { id: 9999, kode: "TEST9", part_id: 99, customer_id: 1,
+    tanggal_masuk: "2026-10-01", nomor_surat_jalan: "SJ-TEST9", qty: 10,
+    berat_total_part: 10, diinput_oleh: "Operator Test",
+    process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false },
+    status_proses: "FINISH" },
+  { id: 99913, kode: "TEST13", part_id: 1, customer_id: 1,
+    tanggal_masuk: "2026-10-01", nomor_surat_jalan: "SJ-TEST13", qty: 30,
+    berat_total_part: 75, diinput_oleh: "Operator Test",
+    process_route: undefined,
+    status_proses: "WAITING" }
+]));
+
 global.document = mockDocument();
 global.Auth = { getSession: () => ({ name: "user" }) };
 
@@ -69,7 +99,7 @@ function mockWindow() {
 }
 const ctx = { DB, document: global.document, HTUI, window: mockWindow() };
 
-const fn = new Function("DB", "document", "HTUI", "window", code + "\n; return { buildTimeline: buildTimeline, renderTimeline: renderTimeline, renderProgressBar: renderProgressBar, getJourneyDescription: getJourneyDescription, classifyStepState: classifyStepState, badgeForStep: badgeForStep, STEP_LABELS: STEP_LABELS, STEP_ICONS: STEP_ICONS };");
+const fn = new Function("DB", "document", "HTUI", "window", code + "\n; return { buildTimeline: buildTimeline, renderTimeline: renderTimeline, renderProgressBar: renderProgressBar, getJourneyDescription: getJourneyDescription, classifyStepState: classifyStepState, badgeForStep: badgeForStep, STEP_LABELS: STEP_LABELS, STEP_ICONS: STEP_ICONS, renderPartData: renderPartData };");
 const api = fn(ctx.DB, ctx.document, ctx.HTUI, ctx.window);
 
 var passCount = 0;
@@ -183,6 +213,55 @@ run("2M");
 // Scenario 13: Rute proses Shotblast/Anti Rust tidak tersedia
 // TEST13: process_route=undefined
 run("TEST13");
+
+/* ================================================================
+   Target Hardness Verification Tests
+   Memastikan trackTargetHardness menampilkan part.target_hardness,
+   bukan standard_temperature. Dan Target Suhu di kartu HT tetap
+   menampilkan nilai suhu standar (°C).
+   ================================================================ */
+
+function runTargetHardnessTest(kode, expectedHardness, expectedTempC) {
+  var m = DB.findByKode(kode);
+  if (!m) {
+    console.log("\n=== " + kode + " (Target Hardness) === NOT FOUND");
+    failCount++;
+    return;
+  }
+  var part = DB.findPartById(m.part_id);
+  var customer = DB.findCustomerById(m.customer_id);
+  var qcs = DB.get("qcs").filter(q => String(q.material_id) === String(m.id));
+  var delivery = DB.get("deliveries").find(d => String(d.material_id) === String(m.id)) || null;
+
+  Object.keys(domElements).forEach(k => {
+    delete domElements[k].innerHTML;
+    domElements[k].textContent = "";
+  });
+
+  api.renderPartData(m, part, customer, qcs, delivery);
+
+  var thEl = domElements["trackTargetHardness"];
+  check("  trackTargetHardness", thEl ? thEl.textContent : "(none)", expectedHardness);
+
+  /* Verify HT card Target Suhu is unchanged — still uses standard_temperature */
+  var steps = api.buildTimeline(m, qcs, delivery, part, customer);
+  var htStep = steps[1];
+  var targetSuhuRow = htStep.card.rows.find(r => r.label === "Target Suhu");
+  var expectedTempStr = expectedTempC !== null ? expectedTempC + " °C" : "-";
+  check("  HT Target Suhu", targetSuhuRow ? targetSuhuRow.value : "(none)", expectedTempStr);
+}
+
+/* Part 1: target_hardness="58-62 HRC", standard_temperature=580 */
+console.log("\n=== Target Hardness: Part 1 (TEST4) ===");
+runTargetHardnessTest("TEST4", "58-62 HRC", 580);
+
+/* Part 4: target_hardness="700-750 HV", standard_temperature=650 */
+console.log("\n=== Target Hardness: Part 4 (TEST5) ===");
+runTargetHardnessTest("TEST5", "700-750 HV", 650);
+
+/* Part 99: target_hardness=null, standard_temperature=600 → hardness shows "-" */
+console.log("\n=== Target Hardness: Part 99 (TEST9) ===");
+runTargetHardnessTest("TEST9", "-", 600);
 
 console.log("\n=== SUMMARY: " + passCount + " passed, " + failCount + " failed ===");
 process.exit(failCount > 0 ? 1 : 0);

@@ -458,6 +458,52 @@
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Riwayat QC</h3>
               </div>
+
+              <!-- Filter & Pencarian QC -->
+              <div
+                class="ht-filter-bar"
+                role="search"
+                aria-label="Filter dan pencarian QC"
+              >
+                <div class="flex-1 min-w-48">
+                  <input
+                    type="text"
+                    id="qcSearchInput"
+                    class="ht-form-input"
+                    placeholder="Cari: Kode, Customer, Part, Treatment..."
+                    aria-label="Pencarian data QC"
+                  />
+                </div>
+                <select
+                  id="qcStatusFilter"
+                  class="ht-form-select w-auto min-w-[140px]"
+                  aria-label="Filter status hasil QC"
+                >
+                  <option value="all">Semua Status</option>
+                  <option value="OK">OK</option>
+                  <option value="NG">NG</option>
+                </select>
+                <input
+                  type="date"
+                  id="qcDateFilter"
+                  class="ht-form-input w-auto"
+                  placeholder="Tgl Inspector"
+                  aria-label="Tanggal inspector"
+                />
+                <button
+                  type="button"
+                  id="qcResetBtn"
+                  class="ht-btn ht-btn-secondary-outlined ht-btn-sm"
+                  aria-label="Reset filter"
+                >
+                  <img
+                    src="assets/icons/close.svg"
+                    alt="Reset"
+                    class="icon mr-1"
+                  />Reset
+                </button>
+              </div>
+
               <div class="ht-table-wrapper">
                 <table class="ht-table">
                   <thead>
@@ -520,6 +566,111 @@
       const session = Auth.getSession();
       let currentMaterial = null;
       let currentProduction = null;
+
+      /* ---- Filter state untuk tabel Riwayat QC ---- */
+      var qcFilterState = {
+        searchQuery: "",
+        statusFilter: "all",
+        dateFilter: "",
+      };
+
+      /* ---- Helpers filter ---- */
+      function getQCRelations(q) {
+        var prod = DB.get("productions").find(function (p) {
+          return String(p.id) === String(q.production_id);
+        }) || {};
+        var m = DB.get("materials").find(function (mat) {
+          return String(mat.id) === String(q.material_id);
+        }) || {};
+        var part = (m.part_id != null) ? DB.findPartById(m.part_id) : null;
+        var cust = (m.customer_id != null) ? DB.findCustomerById(m.customer_id) : null;
+        var treatment = prod.jenis_treatment || "-";
+        return { prod, m, part, cust, treatment };
+      }
+
+      function getFilteredQCs() {
+        var qcs = DB.get("qcs");
+        var s = qcFilterState;
+        var search = s.searchQuery.toLowerCase();
+
+        return qcs.filter(function (q) {
+          var rel = getQCRelations(q);
+
+          /* Search filter: Kode, Customer, Nama Part, Nomor Part, Treatment */
+          if (search) {
+            var kode = (rel.m.kode || "").toLowerCase();
+            var custName = (rel.cust && rel.cust.nama_customer || "").toLowerCase();
+            var partName = (rel.part && rel.part.nama_part || "").toLowerCase();
+            var partNo = (rel.part && rel.part.nomor_part || "").toLowerCase();
+            var treatment = rel.treatment.toLowerCase();
+
+            if (!kode.includes(search) &&
+                !custName.includes(search) &&
+                !partName.includes(search) &&
+                !partNo.includes(search) &&
+                !treatment.includes(search)) {
+              return false;
+            }
+          }
+
+          /* Status filter */
+          if (s.statusFilter !== "all") {
+            if (q.hasil !== s.statusFilter) return false;
+          }
+
+          /* Date filter (tanggal_inspector) */
+          if (s.dateFilter) {
+            var inspectorDate = (q.tanggal_inspector || "").slice(0, 10);
+            if (inspectorDate !== s.dateFilter) return false;
+          }
+
+          return true;
+        });
+      }
+
+      function resetQCFilters() {
+        qcFilterState.searchQuery = "";
+        qcFilterState.statusFilter = "all";
+        qcFilterState.dateFilter = "";
+        var searchEl = document.getElementById("qcSearchInput");
+        var statusEl = document.getElementById("qcStatusFilter");
+        var dateEl = document.getElementById("qcDateFilter");
+        if (searchEl) searchEl.value = "";
+        if (statusEl) statusEl.value = "all";
+        if (dateEl) dateEl.value = "";
+        loadQCs();
+      }
+
+      function bindQCFilterEvents() {
+        var searchEl = document.getElementById("qcSearchInput");
+        var statusEl = document.getElementById("qcStatusFilter");
+        var dateEl = document.getElementById("qcDateFilter");
+        var resetEl = document.getElementById("qcResetBtn");
+
+        if (searchEl) {
+          searchEl.addEventListener("input", function (e) {
+            qcFilterState.searchQuery = e.target.value;
+            loadQCs();
+          });
+        }
+        if (statusEl) {
+          statusEl.addEventListener("change", function (e) {
+            qcFilterState.statusFilter = e.target.value;
+            loadQCs();
+          });
+        }
+        if (dateEl) {
+          dateEl.addEventListener("change", function (e) {
+            qcFilterState.dateFilter = e.target.value;
+            loadQCs();
+          });
+        }
+        if (resetEl) {
+          resetEl.addEventListener("click", function () {
+            resetQCFilters();
+          });
+        }
+      }
       function startScanner() {
         if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
         if (!html5QrCode) return;
@@ -711,7 +862,7 @@
         loadQCs();
       });
       function loadQCs() {
-        const qcs = DB.get("qcs");
+        const qcs = getFilteredQCs();
         const productions = DB.get("productions");
         const materials = DB.get("materials");
         const html = qcs
@@ -838,6 +989,7 @@
         } catch (e) {
           console.warn("[QC] Scanner init failed:", e);
         }
+        bindQCFilterEvents();
         loadQCs();
 
         var qcModalOverlay = document.getElementById("qcModal");
