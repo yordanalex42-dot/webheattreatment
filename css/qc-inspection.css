@@ -1,0 +1,226 @@
+/* ============================================================
+   QC Inspection Report — Gaya khusus untuk modal hasil
+   pemeriksaan hardness yang mengganti form QC lama.
+   Melengkapi global.css, dashboard.css, components.css,
+   tables.css, dan forms.css yang sudah ada.
+   ============================================================ */
+
+/* ===== Header laporan ===== */
+.ht-ir-report-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  background: var(--primary-light);
+  border-radius: var(--radius-md);
+}
+
+.ht-ir-report-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin: 0;
+}
+
+.ht-ir-report-company {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 2px 0;
+}
+
+.ht-ir-report-dept {
+  font-size: 11px;
+  color: #475569;
+  margin: 0;
+}
+
+/* ===== Inspeksi stage radio ===== */
+.ht-ir-stage-radio {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.ht-ir-stage-radio .ht-radio-label {
+  flex: 1;
+  justify-content: center;
+  padding: 10px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ht-ir-stage-radio .ht-radio {
+  display: none;
+}
+
+.ht-ir-stage-radio .ht-radio-label:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.ht-ir-stage-radio .ht-radio-text {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* ===== Target hardness display ===== */
+.ht-ir-target-hardness-display {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: #1e3a8a;
+  margin-top: 4px;
+}
+
+.ht-ir-target-hardness-display.badge-ok {
+  color: #166534;
+}
+
+.ht-ir-target-hardness-display.badge-ng {
+  color: #991b1b;
+}
+
+/* ===== Tabel pengukuran ===== */
+.ht-ir-measurement-table .ht-table {
+  font-size: 12px;
+}
+
+.ht-ir-measurement-table .ht-table th {
+  text-align: center;
+  background: var(--surface-muted);
+  font-weight: 600;
+  padding: 6px 8px;
+}
+
+.ht-ir-measurement-table .ht-table td {
+  text-align: center;
+  padding: 4px 8px;
+}
+
+.ht-ir-measurement-table .ht-table td:first-child {
+  text-align: center;
+  font-weight: 600;
+  color: #475569;
+}
+
+.ht-ir-measurement-table input {
+  width: 70px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 2px 4px;
+}
+
+.ht-ir-measurement-table .ht-table-row.summary td {
+  background: var(--surface-muted);
+  font-weight: 600;
+}
+
+.ht-ir-measurement-table .ht-table-row.summary input {
+  background: var(--surface-muted);
+  font-weight: 700;
+  width: 75px;
+}
+
+/* ===== Signature canvas ===== */
+.ht-ir-signature-canvas {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  margin-top: 8px;
+  touch-action: none;
+}
+
+.ht-ir-signature-canvas canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+}
+
+.ht-ir-signature-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== Supervisor locked section ===== */
+.ht-ir-locked-section {
+  position: relative;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.ht-ir-locked-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 10;
+  font-size: 12px;
+  color: #475569;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.ht-ir-locked-overlay .icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== Modal lebar ===== */
+.ht-modal-ir-form {
+  max-width: 960px;
+  width: 95vw;
+}
+
+@media (max-width: 1024px) {
+  .ht-modal-ir-form {
+    width: 98vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .ht-ir-stage-radio {
+    flex-direction: column;
+  }
+
+  .ht-ir-measurement-table input {
+    width: 55px;
+    font-size: 10px;
+  }
+}
+
+/* ===== Inspection stage column di tabel QC ===== */
+.ht-ir-stage-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ht-ir-stage-before {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+
+.ht-ir-stage-after {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+@media print {
+  .ht-ir-signature-actions,
+  .ht-ir-locked-overlay {
+    display: none !important;
+  }
+}

@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/forms.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
+    <link rel="stylesheet" href="css/qc-inspection.css" />
   </head>
   <body>
     <div class="ht-app-shell">
@@ -269,13 +270,13 @@
               </div>
             </div>
 
-            <!-- Modal Quality Control -->
-            <div id="qcModal" class="ht-modal-overlay" aria-hidden="true">
-              <div class="ht-modal ht-modal-width">
+            <!-- Modal: Hardness Inspection Report -->
+            <div id="qcModal" class="ht-modal-overlay hidden" aria-hidden="true">
+              <div class="ht-modal ht-modal-ir-form">
                 <div class="ht-modal-header">
                   <div class="ht-modal-header-title">
-                    <h3 class="ht-modal-title">Pemeriksaan Quality Control</h3>
-                    <p class="ht-modal-subtitle">Input hasil pemeriksaan keras material</p>
+                    <h3 class="ht-modal-title">HARDNESS INSPECTION REPORT</h3>
+                    <p class="ht-modal-subtitle">PT CHUNETSU INDONESIA<br>HEAT TREATMENT DEPARTMENT</p>
                   </div>
                   <button
                     type="button"
@@ -287,170 +288,245 @@
                   </button>
                 </div>
                 <div class="ht-modal-body">
-                  <div id="qcForm" class="ht-card fade-in">
-                    <div class="ht-card-header">
-                      <h3 class="ht-card-title">Data Part</h3>
-                    </div>
-                    <div class="ht-info-grid mb-4">
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Nomor Kode</span>
-                  <span class="ht-info-value mono" id="infoKode">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Customer</span>
-                  <span class="ht-info-value" id="infoCustomer">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Nomor Part</span>
-                  <span class="ht-info-value" id="infoNoPart">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Nama Part</span>
-                  <span class="ht-info-value" id="infoNamaPart">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Status Part</span>
-                  <span class="ht-info-value" id="infoStatusPart">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Lot Number</span>
-                  <span class="ht-info-value mono" id="infoLot">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Material Charge</span>
-                  <span class="ht-info-value mono" id="infoCharge">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Target Hardness</span>
-                  <span
-                    class="ht-info-value mono hardness"
-                    id="infoTargetHardness"
-                    >-</span
-                  >
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Qty</span>
-                  <span class="ht-info-value" id="infoQty">-</span>
-                </div>
-              </div>
-
-              <div class="ht-card ht-card-input fade-in">
-                <div class="ht-card-header">
-                  <h3 class="ht-card-title">INPUT HASIL QC</h3>
-                </div>
-                <div class="ht-step-form">
-                  <h4 class="ht-step-form-title">DATA INSPECTOR</h4>
-                  <div class="ht-form-row ht-form-row--inline">
-                    <div class="ht-form-group">
-                      <label class="ht-form-label" for="qcInspector"
-                        >Nama Inspector</label
-                      >
-                      <input
-                        type="text"
-                        id="qcInspector"
-                        required
-                        class="ht-form-input"
-                        placeholder="Nama Inspector"
-                      />
-                    </div>
-                    <div class="ht-form-group">
-                      <label class="ht-form-label" for="qcTanggalInspector"
-                        >Tanggal Inspector</label
-                      >
-                      <input
-                        type="date"
-                        id="qcTanggalInspector"
-                        required
-                        class="ht-form-input"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="ht-card ht-card-input fade-in">
-                <div class="ht-card-header">
-                  <h3 class="ht-card-title">HASIL PEMERIKSAAN QC</h3>
-                </div>
-                <form id="hasilForm" class="ht-form">
                   <input type="hidden" id="qcProductionId" />
                   <input type="hidden" id="qcId" />
-                  <div class="ht-step-form">
-                    <h4 class="ht-step-form-title">PARAMETER PEMERIKSAAN</h4>
-                    <div class="ht-form-row ht-form-row--inline">
-                      <div class="ht-form-group">
-                        <label class="ht-form-label" for="qcHardness"
-                          >Nilai Hardness</label
-                        >
-                        <input
-                          type="text"
-                          id="qcHardness"
-                          required
-                          class="ht-form-input"
-                          placeholder="Contoh: 58-62 HRC"
-                        />
-                      </div>
-                      <div class="ht-form-group">
-                        <label class="ht-form-label" for="qcSatuan">Satuan</label>
-                        <select id="qcSatuan" class="ht-form-select">
-                          <option value="HRC">HRC</option>
-                          <option value="HV">HV</option>
-                          <option value="HB">HB</option>
-                        </select>
-                      </div>
+
+                  <!-- Report Header -->
+                  <div class="ht-ir-report-header">
+                    <h3 class="ht-ir-report-title">HARDNESS INSPECTION REPORT</h3>
+                    <p class="ht-ir-report-company">PT CHUNETSU INDONESIA</p>
+                    <p class="ht-ir-report-dept">HEAT TREATMENT DEPARTMENT</p>
+                  </div>
+
+                  <!-- Informasi Part -->
+                  <div class="ht-card ht-card-flat fade-in ht-card-no-radius">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Informasi Part</h3>
                     </div>
-                    <div class="ht-form-row ht-form-row--inline">
-                      <div class="ht-form-group">
-                        <label class="ht-form-label" for="qcMicrostructure"
-                          >Microstructure</label
-                        >
-                        <select id="qcMicrostructure" required class="ht-form-select">
-                          <option value="">Pilih hasil microstructure</option>
-                          <option value="OK">OK</option>
-                          <option value="NG">NG</option>
-                        </select>
+                    <div class="ht-info-grid">
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Control Number</span>
+                        <span class="ht-info-value mono" id="irControlNumber">-</span>
                       </div>
-                      <div class="ht-form-group">
-                        <label class="ht-form-label" for="qcHasilDisplay"
-                          >Hasil QC</label
-                        >
-                        <input
-                          type="text"
-                          id="qcHasilDisplay"
-                          readonly
-                          class="ht-form-input"
-                          value="-"
-                        />
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Customer</span>
+                        <span class="ht-info-value" id="irCustomer">-</span>
                       </div>
-                    </div>
-                    <div class="ht-form-group">
-                      <label class="ht-form-label" for="qcCatatan">Catatan</label>
-                      <textarea
-                        id="qcCatatan"
-                        rows="2"
-                        class="ht-form-input ht-form-textarea"
-                        placeholder="Opsional"
-                      ></textarea>
-                    </div>
-                    <div class="ht-form-actions">
-                      <button
-                        type="submit"
-                        class="ht-btn ht-btn-success"
-                        aria-label="Simpan hasil QC"
-                      >
-                        <img
-                          src="assets/icons/save.svg"
-                          alt="Simpan"
-                          class="icon mr-2"
-                        />Simpan Hasil QC
-                      </button>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Part Name</span>
+                        <span class="ht-info-value" id="irNamaPart">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Part No.</span>
+                        <span class="ht-info-value mono" id="irNomorPart">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Lot Number</span>
+                        <span class="ht-info-value mono" id="irLotNumber">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Material Charge</span>
+                        <span class="ht-info-value mono" id="irMaterialCharge">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Status Part</span>
+                        <span class="ht-info-value" id="irStatusPart">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Jenis Proses</span>
+                        <span class="ht-info-value" id="irJenisProses">-</span>
+                      </div>
+                      <div class="ht-info-item">
+                        <span class="ht-info-label">Quantity (pcs)</span>
+                        <span class="ht-info-value" id="irQty">0</span>
+                      </div>
                     </div>
                   </div>
-                </form>
+
+                  <!-- Inspection Stage -->
+                  <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Inspection Stage</h3>
+                    </div>
+                    <div class="ht-form-group">
+                      <label class="ht-form-label">Pilih Tahap Pemeriksaan <span class="ht-required">*</span></label>
+                      <div class="ht-ir-stage-radio">
+                        <label class="ht-radio-label">
+                          <input
+                            type="radio"
+                            name="inspectionStage"
+                            id="stageBefore"
+                            value="before"
+                            class="ht-radio"
+                            onchange="onStageChange()"
+                          />
+                          <span class="ht-radio-text">Before Heat Treatment</span>
+                        </label>
+                        <label class="ht-radio-label">
+                          <input
+                            type="radio"
+                            name="inspectionStage"
+                            id="stageAfter"
+                            value="after"
+                            class="ht-radio"
+                            onchange="onStageChange()"
+                          />
+                          <span class="ht-radio-text">After Heat Treatment</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Target Hardness -->
+                  <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Target Hardness</h3>
+                    </div>
+                    <div class="ht-form-group">
+                      <span
+                        class="ht-ir-target-hardness-display"
+                        id="irTargetHardness"
+                        >-</span
+                      >
+                      <p class="ht-hint mt-2">
+                        Nilai target berasal dari master data Part dan tidak dapat diedit.
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Tabel Hasil Pengukuran -->
+                  <div class="ht-card ht-card-flat fade-in ht-ir-measurement-table" style="margin-top: 16px">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Hasil Pengukuran Hardness</h3>
+                    </div>
+                    <div class="ht-table-responsive">
+                      <table class="ht-table ht-table-sm">
+                        <thead>
+                          <tr>
+                            <th>Test Piece</th>
+                            <th>Surface (HRC)</th>
+                            <th>Core (HRC)</th>
+                          </tr>
+                        </thead>
+                        <tbody id="measurementTableBody">
+                          <tr><td>1</td><td><input type="number" step="0.1" id="surface-1" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-1" class="ir-measure-input"></td></tr>
+                          <tr><td>2</td><td><input type="number" step="0.1" id="surface-2" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-2" class="ir-measure-input"></td></tr>
+                          <tr><td>3</td><td><input type="number" step="0.1" id="surface-3" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-3" class="ir-measure-input"></td></tr>
+                          <tr><td>4</td><td><input type="number" step="0.1" id="surface-4" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-4" class="ir-measure-input"></td></tr>
+                          <tr><td>5</td><td><input type="number" step="0.1" id="surface-5" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-5" class="ir-measure-input"></td></tr>
+                          <tr><td>6</td><td><input type="number" step="0.1" id="surface-6" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-6" class="ir-measure-input"></td></tr>
+                          <tr><td>7</td><td><input type="number" step="0.1" id="surface-7" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-7" class="ir-measure-input"></td></tr>
+                          <tr><td>8</td><td><input type="number" step="0.1" id="surface-8" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-8" class="ir-measure-input"></td></tr>
+                          <tr><td>9</td><td><input type="number" step="0.1" id="surface-9" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-9" class="ir-measure-input"></td></tr>
+                          <tr><td>10</td><td><input type="number" step="0.1" id="surface-10" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-10" class="ir-measure-input"></td></tr>
+                          <tr><td>11</td><td><input type="number" step="0.1" id="surface-11" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-11" class="ir-measure-input"></td></tr>
+                          <tr><td>12</td><td><input type="number" step="0.1" id="surface-12" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-12" class="ir-measure-input"></td></tr>
+                          <tr class="summary">
+                            <td>Average</td>
+                            <td id="avgSurface">—</td>
+                            <td id="avgCore">—</td>
+                          </tr>
+                          <tr class="summary">
+                            <td>R (Max − Min)</td>
+                            <td id="rSurface">—</td>
+                            <td id="rCore">—</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Inspector Section -->
+                  <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Inspected by</h3>
+                      <p class="ht-card-subtitle">Jabatan: Inspector</p>
+                    </div>
+                    <div class="ht-form">
+                      <div class="ht-form-row">
+                        <div class="ht-form-group">
+                          <label class="ht-form-label" for="irInspectorName">Nama Inspector</label>
+                          <input
+                            type="text"
+                            id="irInspectorName"
+                            class="ht-form-input"
+                            placeholder="Nama Inspector"
+                          />
+                        </div>
+                        <div class="ht-form-group">
+                          <label class="ht-form-label" for="irInspectionDate">Tanggal Pemeriksaan</label>
+                          <input
+                            type="date"
+                            id="irInspectionDate"
+                            class="ht-form-input"
+                          />
+                        </div>
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label">Tanda Tangan Inspector</label>
+                        <div class="ht-ir-signature-canvas">
+                          <canvas id="signatureCanvas" width="500" height="150"></canvas>
+                        </div>
+                        <div class="ht-ir-signature-actions">
+                          <button
+                            type="button"
+                            id="btnClearSignature"
+                            class="ht-btn ht-btn-secondary-outlined ht-btn-sm"
+                          >
+                            <img src="assets/icons/close.svg" alt="Hapus" class="icon" />
+                            Hapus Tanda Tangan
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- QC Supervisor (Locked) -->
+                  <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Approved by</h3>
+                      <p class="ht-card-subtitle">Jabatan: QC Supervisor</p>
+                    </div>
+                    <div class="ht-ir-locked-section">
+                      <div class="ht-ir-locked-overlay">
+                        <img src="assets/icons/warning.svg" alt="" class="icon" />
+                        <span>Pengisian dan persetujuan dilakukan melalui halaman khusus QC Supervisor.</span>
+                      </div>
+                      <div class="ht-info-grid">
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Nama QC Supervisor</span>
+                          <span class="ht-info-value" id="irSupervisorName">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Tanggal Persetujuan</span>
+                          <span class="ht-info-value" id="irSupervisorDate">-</span>
+                        </div>
+                        <div class="ht-info-item ht-info-item-wide">
+                          <span class="ht-info-label">Catatan Supervisor</span>
+                          <span class="ht-info-value" id="irSupervisorNotes">-</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ht-modal-footer">
+                  <button
+                    type="button"
+                    onclick="closeQcModal()"
+                    class="ht-btn ht-btn-secondary-outlined ht-btn-sm"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    id="btnSaveInspection"
+                    class="ht-btn ht-btn-success ht-btn-sm"
+                  >
+                    <img src="assets/icons/save.svg" alt="Simpan" class="icon" />
+                    Simpan Inspection Report
+                  </button>
+                </div>
               </div>
-            </div>
-            </div>
-            </div>
             </div>
 
             <!-- Tabel riwayat -->
@@ -566,6 +642,9 @@
       const session = Auth.getSession();
       let currentMaterial = null;
       let currentProduction = null;
+      let currentStage = "after";
+      let signatureData = null;
+      let saveInProgress = false;
 
       /* ---- Filter state untuk tabel Riwayat QC ---- */
       var qcFilterState = {
@@ -574,9 +653,50 @@
         dateFilter: "",
       };
 
-      /* ---- Helpers filter ---- */
+      /* ---- Helpers: parse / build remarks JSON (untuk data ekstended) ----
+         `remarks` adalah field yang valid di skema qcs, sehingga aman
+         melewati migrasi DB. JSON berisi: stage, surface_values,
+         core_values, signature. Data lama (string biasa) tetap dibaca
+         sebagai string sempurna. */
+      function parseQCRemarks(qc) {
+        if (!qc || !qc.remarks) return null;
+        try {
+          var parsed = JSON.parse(qc.remarks);
+          if (parsed && typeof parsed === "object" && parsed.stage !== undefined) {
+            return parsed;
+          }
+        } catch (e) { /* plain string — treat as legacy */ }
+        return null;
+      }
+
+      function findQCByStage(materialId, stage) {
+        var qcs = DB.get("qcs");
+        for (var i = 0; i < qcs.length; i++) {
+          var q = qcs[i];
+          if (String(q.material_id) !== String(materialId)) continue;
+          var ext = parseQCRemarks(q);
+          if (ext && ext.stage) {
+            if (ext.stage === stage) return q;
+          } else {
+            /* Legacy record tanpa stage — cocokkan sebagai "after" */
+            if (stage === "after") return q;
+          }
+        }
+        return null;
+      }
+
+      function buildQCRemarks(stage, surfaceValues, coreValues, signature) {
+        return JSON.stringify({
+          stage: stage,
+          surface_values: surfaceValues,
+          core_values: coreValues,
+          signature: signature || null,
+        });
+      }
+
+      /* ---- Helpers filter (tetap sama) ---- */
       function getQCRelations(q) {
-        var prod = DB.get("productions").find(function (p) {
+        var prod = DB.get("prolections").find(function (p) {
           return String(p.id) === String(q.production_id);
         }) || {};
         var m = DB.get("materials").find(function (mat) {
@@ -596,29 +716,28 @@
         return qcs.filter(function (q) {
           var rel = getQCRelations(q);
 
-          /* Search filter: Kode, Customer, Nama Part, Nomor Part, Treatment */
           if (search) {
             var kode = (rel.m.kode || "").toLowerCase();
             var custName = (rel.cust && rel.cust.nama_customer || "").toLowerCase();
             var partName = (rel.part && rel.part.nama_part || "").toLowerCase();
             var partNo = (rel.part && rel.part.nomor_part || "").toLowerCase();
             var treatment = rel.treatment.toLowerCase();
+            var stage = getQCStage(q);
 
             if (!kode.includes(search) &&
                 !custName.includes(search) &&
                 !partName.includes(search) &&
                 !partNo.includes(search) &&
-                !treatment.includes(search)) {
+                !treatment.includes(search) &&
+                !stage.includes(search)) {
               return false;
             }
           }
 
-          /* Status filter */
           if (s.statusFilter !== "all") {
             if (q.hasil !== s.statusFilter) return false;
           }
 
-          /* Date filter (tanggal_inspector) */
           if (s.dateFilter) {
             var inspectorDate = (q.tanggal_inspector || "").slice(0, 10);
             if (inspectorDate !== s.dateFilter) return false;
@@ -626,6 +745,12 @@
 
           return true;
         });
+      }
+
+      function getQCStage(q) {
+        var ext = parseQCRemarks(q);
+        if (ext && ext.stage) return ext.stage === "before" ? "Before HT" : "After HT";
+        return "After HT"; /* legacy default */
       }
 
       function resetQCFilters() {
@@ -671,6 +796,8 @@
           });
         }
       }
+
+      /* ---- Scanner ---- */
       function startScanner() {
         if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
         if (!html5QrCode) return;
@@ -679,6 +806,7 @@
           loadMaterialById(id);
         });
       }
+
       function loadMaterialById(manualId) {
         const id = manualId || document.getElementById("manualId").value;
         if (!id) return;
@@ -687,241 +815,433 @@
           HTUI.toast("Material tidak ditemukan! Kode: " + id, "error");
           return;
         }
+
         currentMaterial = material;
-        const production = DB.getProcessProduction(material, "HT");
-        currentProduction = production || null;
-        if (!production) {
-          HTUI.toast(
-            "Material ini belum memiliki data produksi. Silakan update di modul Produksi terlebih dahulu.",
-            "error",
-          );
-          return;
-        }
+        currentProduction = DB.getProcessProduction(material, "HT") || null;
         const part = DB.findPartById(material.part_id);
         const customer = DB.findCustomerById(material.customer_id);
-        document.getElementById("infoKode").textContent = material.kode || "-";
-        document.getElementById("infoCustomer").textContent = customer
-          ? customer.nama_customer
-          : "-";
-        document.getElementById("infoNoPart").textContent = part
-          ? part.nomor_part
-          : "-";
-        document.getElementById("infoNamaPart").textContent = part
-          ? part.nama_part
-          : "-";
-        document.getElementById("infoStatusPart").textContent =
-          material.status_part || "-";
-        document.getElementById("infoLot").textContent = material.lot_no || "-";
-        document.getElementById("infoCharge").textContent =
-          material.material_charge || "-";
-        document.getElementById("infoTargetHardness").textContent = part
-          ? part.target_hardness || "-"
-          : "-";
-        document.getElementById("infoQty").textContent = material.qty || 0;
-        document.getElementById("qcProductionId").value = production.id;
-        const existing = DB.get("qcs").find(
-          (q) => String(q.material_id) === String(material.id),
-        );
-        const hasilDisplay = document.getElementById("qcHasilDisplay");
-        const hardnessInput = document.getElementById("qcHardness");
-        const microInput = document.getElementById("qcMicrostructure");
-        if (!hardnessInput._hasComputeListener) {
-          hardnessInput.addEventListener("input", computeQcHasil);
-          microInput.addEventListener("change", computeQcHasil);
-          hardnessInput._hasComputeListener = true;
+
+        /* Reset form state for new material */
+        currentStage = "after";
+        signatureData = null;
+        document.getElementById("stageBefore").checked = false;
+        document.getElementById("stageAfter").checked = true;
+
+        /* Populate part info */
+        document.getElementById("irControlNumber").textContent = material.kode || "-";
+        document.getElementById("irCustomer").textContent = customer ? customer.nama_customer : "-";
+        document.getElementById("irNamaPart").textContent = part ? part.nama_part : "-";
+        document.getElementById("irNomorPart").textContent = part ? part.nomor_part : "-";
+        document.getElementById("irLotNumber").textContent = material.lot_no || "-";
+        document.getElementById("irMaterialCharge").textContent = material.material_charge || "-";
+        document.getElementById("irStatusPart").textContent = material.status_part || "-";
+        document.getElementById("irQty").textContent = material.qty || 0;
+
+        /* Jenis Proses */
+        var processType = "-";
+        if (currentProduction && currentProduction.jenis_treatment) {
+          processType = currentProduction.jenis_treatment;
+        } else if (part && part.process_type) {
+          processType = part.process_type;
         }
-        if (existing) {
-          document.getElementById("qcId").value = existing.id;
-          document.getElementById("qcHardness").value = existing.hardness;
-          document.getElementById("qcSatuan").value =
-            existing.satuan_hardness || "HRC";
-          document.getElementById("qcMicrostructure").value =
-            existing.microstructure || "";
-          document.getElementById("qcInspector").value =
-            existing.inspector || "";
-          document.getElementById("qcTanggalInspector").value =
-            existing.tanggal_inspector || "";
-          document.getElementById("qcCatatan").value = existing.catatan || "";
-          if (existing.microstructure) {
-            computeQcHasil();
-          } else {
-            hasilDisplay.value = existing.hasil || "-";
-          }
+        document.getElementById("irJenisProses").textContent = processType;
+
+        /* Target Hardness (readonly — dari master Part) */
+        var targetHardnessEl = document.getElementById("irTargetHardness");
+        if (part && part.target_hardness) {
+          targetHardnessEl.textContent = part.target_hardness;
         } else {
-          document.getElementById("qcId").value = "";
-          document.getElementById("qcHardness").value = "";
-          document.getElementById("qcSatuan").value = "HRC";
-          document.getElementById("qcMicrostructure").value = "";
-          document.getElementById("qcInspector").value = "";
-          document.getElementById("qcTanggalInspector").value = "";
-          document.getElementById("qcCatatan").value = "";
-          hasilDisplay.value = "-";
+          targetHardnessEl.textContent = "Belum diatur";
         }
-        openQcModal();
+
+        /* Hidden production id */
+        document.getElementById("qcProductionId").value = currentProduction ? currentProduction.id : "";
+
+        /* Init signature canvas */
+        initSignatureCanvas();
+
+        /* Load existing QC for default stage */
+        loadExistingQC();
+
+        HTUI.openModal("qcModal");
       }
+
       function clearManualError() {
         const err = document.getElementById("manualError");
         if (err && !err.classList.contains("hidden"))
           err.classList.add("hidden");
       }
-      function parseHardnessTarget(target) {
-        if (!target || target === "-") return null;
-        const numericPart = target.replace(/[^\d.]/g, "").trim();
-        if (!numericPart) return null;
-        return parseFloat(numericPart);
-      }
+
+      /* ---- Parsing hardness target (untuk perhitungan OK/NG) ---- */
       function parseHardnessRange(target) {
-        if (!target || target === "-") return null;
-        const match = target.match(/(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)/);
+        if (!target || target === "-" || target === "Belum diatur") return null;
+        var match = target.match(/(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)/);
         if (match) {
-          const min = parseFloat(match[1]);
-          const max = parseFloat(match[2]);
+          var min = parseFloat(match[1]);
+          var max = parseFloat(match[2]);
           if (!isNaN(min) && !isNaN(max))
             return { min: Math.min(min, max), max: Math.max(min, max) };
         }
-        const single = parseHardnessTarget(target);
+        var single = parseHardnessTarget(target);
         if (single !== null && !isNaN(single))
           return { min: single, max: single };
         return null;
       }
+
+      function parseHardnessTarget(target) {
+        if (!target || target === "-" || target === "Belum diatur") return null;
+        var numericPart = target.replace(/[^\d.]/g, "").trim();
+        if (!numericPart) return null;
+        return parseFloat(numericPart);
+      }
+
       function checkHardness(target, actual) {
-        const range = parseHardnessRange(target);
+        var range = parseHardnessRange(target);
         if (!range) return true;
-        const actualVal = parseFloat(actual);
+        var actualVal = parseFloat(actual);
         if (isNaN(actualVal)) return false;
         return actualVal >= range.min && actualVal <= range.max;
       }
-      function computeQcHasil() {
-        const hardness = document.getElementById("qcHardness").value.trim();
-        const microstructure =
-          document.getElementById("qcMicrostructure").value;
-        const hasilDisplay = document.getElementById("qcHasilDisplay");
-        const target =
-          document.getElementById("infoTargetHardness").textContent || "-";
-        const hardnessPass = hardness ? checkHardness(target, hardness) : false;
-        const microPass = microstructure === "OK";
-        const hasil = hardnessPass && microPass ? "OK" : "NG";
-        hasilDisplay.value = hasil;
+
+      /* ---- Measurement table ---- */
+      function clearMeasurementTable() {
+        for (var i = 1; i <= 12; i++) {
+          document.getElementById("surface-" + i).value = "";
+          document.getElementById("core-" + i).value = "";
+        }
+        document.getElementById("avgSurface").textContent = "—";
+        document.getElementById("avgCore").textContent = "—";
+        document.getElementById("rSurface").textContent = "—";
+        document.getElementById("rCore").textContent = "—";
+      }
+
+      function bindMeasurementInputs() {
+        for (var i = 1; i <= 12; i++) {
+          var s = document.getElementById("surface-" + i);
+          var c = document.getElementById("core-" + i);
+          if (s) s.addEventListener("input", calculateAverages);
+          if (c) c.addEventListener("input", calculateAverages);
+        }
+      }
+
+      function loadMeasurementValues(surfaceValues, coreValues) {
+        for (var i = 0; i < 12; i++) {
+          if (surfaceValues && surfaceValues[i] !== undefined && surfaceValues[i] !== null) {
+            document.getElementById("surface-" + (i + 1)).value = surfaceValues[i];
+          }
+          if (coreValues && coreValues[i] !== undefined && coreValues[i] !== null) {
+            document.getElementById("core-" + (i + 1)).value = coreValues[i];
+          }
+        }
+        calculateAverages();
+      }
+
+      function calculateAverages() {
+        var surfaceValues = [];
+        var coreValues = [];
+
+        for (var i = 1; i <= 12; i++) {
+          var sv = document.getElementById("surface-" + i).value;
+          var cv = document.getElementById("core-" + i).value;
+          if (sv) {
+            var sNum = parseFloat(sv);
+            if (!isNaN(sNum)) surfaceValues.push(sNum);
+          }
+          if (cv) {
+            var cNum = parseFloat(cv);
+            if (!isNaN(cNum)) coreValues.push(cNum);
+          }
+        }
+
+        /* Average */
+        var surfaceAvg = surfaceValues.length > 0
+          ? (surfaceValues.reduce(function (a, b) { return a + b; }, 0) / surfaceValues.length).toFixed(2)
+          : "—";
+        var coreAvg = coreValues.length > 0
+          ? (coreValues.reduce(function (a, b) { return a + b; }, 0) / coreValues.length).toFixed(2)
+          : "—";
+
+        /* R (Max - Min) */
+        var surfaceR = surfaceValues.length > 0
+          ? (Math.max.apply(null, surfaceValues) - Math.min.apply(null, surfaceValues)).toFixed(2)
+          : "—";
+        var coreR = coreValues.length > 0
+          ? (Math.max.apply(null, coreValues) - Math.min.apply(null, coreValues)).toFixed(2)
+          : "—";
+
+        document.getElementById("avgSurface").textContent = surfaceAvg;
+        document.getElementById("avgCore").textContent = coreAvg;
+        document.getElementById("rSurface").textContent = surfaceR;
+        document.getElementById("rCore").textContent = coreR;
+      }
+
+      /* ---- Signature canvas ---- */
+       function initSignatureCanvas() {
+        var canvas = document.getElementById("signatureCanvas");
+        if (!canvas) return;
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 2;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        if (signatureData) {
+          var img = new Image();
+          img.onload = function () {
+            ctx.drawImage(img, 0, 0);
+          };
+          img.src = signatureData;
+        }
+
+        if (!canvas._sigListenerBound) {
+          canvas.addEventListener("mousedown", startSignatureDraw);
+          canvas.addEventListener("mousemove", continueSignatureDraw);
+          canvas.addEventListener("mouseup", stopSignatureDraw);
+          canvas.addEventListener("mouseleave", stopSignatureDraw);
+          canvas.addEventListener("touchstart", handleTouchStart);
+          canvas.addEventListener("touchmove", handleTouchMove);
+          canvas.addEventListener("touchend", handleTouchEnd);
+          canvas._sigListenerBound = true;
+        }
+      }
+
+      var sigDrawing = false;
+
+      function getCanvasPos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        var clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        var clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
         return {
-          hasil: hasil,
-          hardnessPass: hardnessPass,
-          microPass: microPass,
+          x: clientX - rect.left,
+          y: clientY - rect.top
         };
       }
-      document.getElementById("hasilForm").addEventListener("submit", (e) => {
+
+      function startSignatureDraw(e) {
+        sigDrawing = true;
+        var canvas = e.target;
+        var ctx = canvas.getContext("2d");
+        var pos = getCanvasPos(canvas, e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+      }
+
+      function continueSignatureDraw(e) {
+        if (!sigDrawing) return;
         e.preventDefault();
-        const productionId = parseInt(
-          document.getElementById("qcProductionId").value,
-        );
-        const qcId = document.getElementById("qcId").value;
-        const inspector = document.getElementById("qcInspector").value.trim();
-        const tanggalInspector =
-          document.getElementById("qcTanggalInspector").value;
-        const hardness = document.getElementById("qcHardness").value.trim();
-        const satuan = document.getElementById("qcSatuan").value;
-        const microstructure =
-          document.getElementById("qcMicrostructure").value;
-        const catatan = document.getElementById("qcCatatan").value.trim();
-        const kode = document.getElementById("infoKode").textContent;
-        if (!kode || kode === "-") {
-          HTUI.toast("Nomor Kode tidak ditemukan!", "error");
-          return;
-        }
-        if (!inspector) {
-          HTUI.toast("Nama Inspector wajib diisi!", "error");
-          return;
-        }
-        if (!tanggalInspector) {
-          HTUI.toast("Tanggal Inspector wajib diisi!", "error");
-          return;
-        }
-        if (!hardness) {
-          HTUI.toast("Nilai Hardness wajib diisi!", "error");
-          return;
-        }
-        if (!microstructure) {
-          HTUI.toast("Silakan isi hasil Microstructure.", "error");
-          return;
-        }
-        const computed = computeQcHasil();
-        const hasil = computed.hasil;
-        const data = {
-          production_id: productionId,
-          material_id: currentMaterial ? currentMaterial.id : "",
-          hardness,
-          satuan_hardness: satuan,
-          hasil,
-          microstructure,
-          inspector,
-          tanggal_inspector: tanggalInspector,
-          catatan,
-        };
-        if (qcId) DB.update("qcs", qcId, data);
-        else DB.insert("qcs", data);
-        HTUI.toast("Hasil QC berhasil disimpan!", "success");
-        loadQCs();
-      });
-      function loadQCs() {
-        const qcs = getFilteredQCs();
-        const productions = DB.get("productions");
-        const materials = DB.get("materials");
-        const html = qcs
-          .map((q) => {
-            const prod = productions.find((p) => p.id == q.production_id) || {};
-            const m = materials.find((mat) => mat.id == prod.material_id) || {};
-            const part = DB.findPartById(m.part_id);
-            const cust = DB.findCustomerById(m.customer_id);
-            const hasilColor =
-              q.hasil === "PASS" || q.hasil === "OK"
-                ? "ht-badge-ok"
-                : q.hasil === "NG"
-                  ? "ht-badge-ng"
-                  : "ht-badge-waiting";
-             const microDisplay = q.microstructure
-               ? q.microstructure === "OK"
-                 ? '<span class="ht-badge ht-badge-ok">OK</span>'
-                 : '<span class="ht-badge ht-badge-ng">NG</span>'
-               : '<span class="text-secondary">-</span>';
-             const tempBadge = (prod) => {
-               const actual = prod.actual_temperature;
-               const res = prod.temperature_result;
-               if (actual === null || actual === undefined || actual === "") {
-                 return '<span class="text-secondary">-</span>';
-               }
-               const cls = res === "OK" ? "ht-badge-ok" : "ht-badge-ng";
-               return '<span class="ht-badge ' + cls + '">' + actual + " \u00B0C (" + (res || "-") + ")</span>";
-             };
-            return `<tr class="ht-table-row">
-             <td class="font-mono">${m.kode || "-"}</td>
-             <td>${(cust && cust.nama_customer) || "-"}</td>
-             <td>${part ? part.nama_part : "-"}</td>
-             <td class="font-mono">${part ? part.nomor_part : "-"}</td>
-             <td class="text-secondary">${prod.jenis_treatment || "-"}</td>
-            <td class="font-mono">${q.hardness || "-"} ${q.satuan_hardness || ""}</td>
-             <td>${microDisplay}</td>
-             <td><span class="ht-badge ${hasilColor}">${q.hasil || "-"}</span></td>
-             <td>
-               ${tempBadge(prod)}
-             </td>
-             <td>
-              <div class="ht-action-group">
-                <button onclick="loadMaterialById('${m.kode || m.id}')" class="ht-action-btn edit" title="Edit" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>
-                <button onclick="deleteQC(${q.id})" class="ht-action-btn delete" title="Delete" aria-label="Delete"><img src="assets/icons/delete.svg" alt="Delete" class="icon"></button>
-              </div>
-            </td>
-          </tr>`;
-          })
-          .join("");
-        document.getElementById("qcTable").innerHTML =
-          html ||
-          '<tr><td colspan="10" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data QC</p></td></tr>';
+        var canvas = e.target;
+        var ctx = canvas.getContext("2d");
+        var pos = getCanvasPos(canvas, e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
       }
-      function deleteQC(id) {
-        if (confirm("Hapus data QC ini?")) {
-          DB.delete("qcs", id);
+
+      function stopSignatureDraw(e) {
+        if (!sigDrawing) return;
+        sigDrawing = false;
+        var canvas = e.target;
+        if (!signatureData) {
+          signatureData = canvas.toDataURL("image/png");
+        } else {
+          signatureData = canvas.toDataURL("image/png");
+        }
+      }
+
+      function handleTouchStart(e) {
+        if (e.touches.length > 0) {
+          startSignatureDraw({ target: e.target, touches: e.touches });
+        }
+      }
+
+      function handleTouchMove(e) {
+        if (e.touches.length > 0) {
+          continueSignatureDraw({ target: e.target, touches: e.touches });
+        }
+      }
+
+      function handleTouchEnd(e) {
+        stopSignatureDraw({ target: e.target });
+      }
+
+      function clearSignature() {
+        signatureData = null;
+        var canvas = document.getElementById("signatureCanvas");
+        if (!canvas) return;
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      /* ---- Inspection stage ---- */
+      function onStageChange() {
+        var before = document.getElementById("stageBefore").checked;
+        var after = document.getElementById("stageAfter").checked;
+        currentStage = after ? "after" : "before";
+        loadExistingQC();
+      }
+
+      /* ---- Load existing QC for current material + stage ---- */
+      function loadExistingQC() {
+        clearMeasurementTable();
+        var qc = null;
+        if (currentMaterial) {
+          qc = findQCByStage(currentMaterial.id, currentStage);
+        }
+
+        document.getElementById("qcId").value = "";
+        document.getElementById("irInspectorName").value = "";
+        document.getElementById("irInspectionDate").value = "";
+        clearSignature();
+
+        /* Supervisor info */
+        document.getElementById("irSupervisorName").textContent = "-";
+        document.getElementById("irSupervisorDate").textContent = "-";
+        document.getElementById("irSupervisorNotes").textContent = "-";
+
+        if (qc) {
+          document.getElementById("qcId").value = qc.id;
+          document.getElementById("irInspectorName").value = qc.inspector || "";
+          document.getElementById("irInspectionDate").value = (qc.tanggal_inspector || "").slice(0, 10);
+
+          var ext = parseQCRemarks(qc);
+          if (ext) {
+            signatureData = ext.signature || null;
+            if (signatureData) {
+              var canvas = document.getElementById("signatureCanvas");
+              if (canvas) {
+                var ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#fff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                var img = new Image();
+                img.onload = function () { ctx.drawImage(img, 0, 0); };
+                img.src = signatureData;
+              }
+            }
+            loadMeasurementValues(ext.surface_values, ext.core_values);
+          }
+        }
+      }
+
+      /* ---- Save inspection report ---- */
+      function saveInspectionReport() {
+        if (saveInProgress) return;
+        saveInProgress = true;
+
+        try {
+          /* Validasi stage */
+          var before = document.getElementById("stageBefore").checked;
+          var after = document.getElementById("stageAfter").checked;
+          if (!before && !after) {
+            HTUI.toast("Pilih tahap pemeriksaan (Before atau After Heat Treatment).", "error");
+            saveInProgress = false;
+            return;
+          }
+          var stage = after ? "after" : "before";
+
+          /* Validasi inspector */
+          var inspector = document.getElementById("irInspectorName").value.trim();
+          if (!inspector) {
+            HTUI.toast("Nama Inspector wajib diisi!", "error");
+            saveInProgress = false;
+            return;
+          }
+
+          var inspectionDate = document.getElementById("irInspectionDate").value;
+          if (!inspectionDate) {
+            HTUI.toast("Tanggal Pemeriksaan wajib diisi!", "error");
+            saveInProgress = false;
+            return;
+          }
+
+          /* Kumpulkan nilai Surface dan Core */
+          var surfaceValues = [];
+          var coreValues = [];
+          for (var i = 1; i <= 12; i++) {
+            var sv = document.getElementById("surface-" + i).value;
+            var cv = document.getElementById("core-" + i).value;
+            surfaceValues.push(sv ? parseFloat(sv) : null);
+            coreValues.push(cv ? parseFloat(cv) : null);
+          }
+
+          /* Validasi minimal: setidaknya 1 nilai di-input */
+          var validSurface = surfaceValues.filter(function (v) { return v !== null && !isNaN(v); });
+          var validCore = coreValues.filter(function (v) { return v !== null && !isNaN(v); });
+          if (validSurface.length === 0 && validCore.length === 0) {
+            HTUI.toast("Masukkan setidaknya satu nilai hardness.", "error");
+            saveInProgress = false;
+            return;
+          }
+
+          /* Hitung Average untuk hasil penyimpanan */
+          var surfaceAvg = validSurface.length > 0
+            ? (validSurface.reduce(function (a, b) { return a + b; }, 0) / validSurface.length).toFixed(2)
+            : null;
+          var coreAvg = validCore.length > 0
+            ? (validCore.reduce(function (a, b) { return a + b; }, 0) / validCore.length).toFixed(2)
+            : null;
+
+          /* Hitung Overall Average untuk hasil OK/NG */
+          var allValid = validSurface.concat(validCore);
+          var overallAvg = allValid.length > 0
+            ? (allValid.reduce(function (a, b) { return a + b; }, 0) / allValid.length).toFixed(2)
+            : null;
+
+          /* Target hardness */
+          var targetEl = document.getElementById("irTargetHardness");
+          var targetHardness = targetEl ? targetEl.textContent : "-";
+
+          /* Hitung hasil OK/NG */
+          var hasil = "-";
+          if (overallAvg && targetHardness && targetHardness !== "Belum diatur") {
+            var pass = checkHardness(targetHardness, overallAvg);
+            hasil = pass ? "OK" : "NG";
+          }
+
+          /* Build remarks JSON */
+          var remarks = buildQCRemarks(
+            stage,
+            surfaceValues,
+            coreValues,
+            signatureData
+          );
+
+          var productionId = document.getElementById("qcProductionId").value;
+          productionId = productionId ? parseInt(productionId, 10) : (currentProduction ? currentProduction.id : null);
+
+          var qcId = document.getElementById("qcId").value;
+          var data = {
+            production_id: productionId,
+            material_id: currentMaterial ? currentMaterial.id : "",
+            hardness: overallAvg != null ? String(overallAvg) : "",
+            satuan_hardness: "HRC",
+            hasil: hasil,
+            microstructure: null,
+            remarks: remarks,
+            inspector: inspector,
+            tanggal_inspector: inspectionDate,
+            catatan: "",
+          };
+
+          if (qcId) {
+            DB.update("qcs", qcId, data);
+          } else {
+            DB.insert("qcs", data);
+          }
+
+          HTUI.toast("Inspection Report berhasil disimpan!", "success");
+          closeQcModal();
           loadQCs();
+        } finally {
+          saveInProgress = false;
         }
       }
+
+      /* ---- Scan modal ---- */
       function openScanModal() {
         HTUI.openModal("scanModal");
         if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader-modal");
@@ -932,41 +1252,24 @@
           });
         }
       }
+
       function closeScanModal() {
         HTUI.stopScanner(html5QrCode);
         html5QrCode = null;
         HTUI.closeModal("scanModal");
       }
-      var qcBodyOverflowCache = "";
-      function openQcModal() {
-        var modal = document.getElementById("qcModal");
-        if (!modal) return;
-        if (modal.classList.contains("active")) return;
-        modal.classList.add("active");
-        modal.setAttribute("aria-hidden", "false");
-        qcBodyOverflowCache = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
-        try {
-          HTUI.stopScanner(html5QrCode);
-        } catch (e) {}
-        html5QrCode = null;
-      }
+
       function closeQcModal() {
-        var modal = document.getElementById("qcModal");
-        if (!modal) return;
-        modal.classList.remove("active");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = qcBodyOverflowCache;
+        HTUI.closeModal("qcModal");
         restartScanner();
         var manualInput = document.getElementById("manualId");
         if (manualInput) manualInput.focus();
       }
+
       function restartScanner() {
         try {
           if (html5QrCode) {
-            try {
-              HTUI.stopScanner(html5QrCode);
-            } catch (e) {}
+            try { HTUI.stopScanner(html5QrCode); } catch (e) {}
             html5QrCode = null;
           }
           html5QrCode = HTUI.createScanner("qr-reader");
@@ -980,6 +1283,70 @@
           console.warn("[QC] restart scanner failed:", e);
         }
       }
+
+      function loadQCs() {
+        var qcs = getFilteredQCs();
+        var productions = DB.get("productions");
+        var materials = DB.get("materials");
+        var html = qcs.map(function (q) {
+          var prod = productions.find(function (p) { return p.id == q.production_id; }) || {};
+          var m = materials.find(function (mat) { return mat.id == q.material_id; }) || {};
+          var part = DB.findPartById(m.part_id);
+          var cust = DB.findCustomerById(m.customer_id);
+
+          var hasilColor = q.hasil === "OK" ? "ht-badge-ok"
+                         : q.hasil === "NG" ? "ht-badge-ng"
+                         : "ht-badge-waiting";
+
+          var microDisplay = q.microstructure
+            ? (q.microstructure === "OK" ? '<span class="ht-badge ht-badge-ok">OK</span>'
+                                         : '<span class="ht-badge ht-badge-ng">NG</span>')
+            : '<span class="text-secondary">-</span>';
+
+          var stage = getQCStage(q);
+          var stageClass = stage === "Before HT" ? "ht-ir-stage-before" : "ht-ir-stage-after";
+
+          var tempBadge = function (prod) {
+            var actual = prod.actual_temperature;
+            var res = prod.temperature_result;
+            if (actual === null || actual === undefined || actual === "") {
+              return '<span class="text-secondary">-</span>';
+            }
+            var cls = res === "OK" ? "ht-badge-ok" : "ht-badge-ng";
+            return '<span class="ht-badge ' + cls + '">' + actual + " \u00B0C (" + (res || "-") + ")</span>";
+          };
+
+          return '<tr class="ht-table-row">' +
+            '<td class="font-mono">' + (m.kode || "-") + '</td>' +
+            '<td>' + ((cust && cust.nama_customer) || "-") + '</td>' +
+            '<td>' + (part ? part.nama_part : "-") + '</td>' +
+            '<td class="font-mono">' + (part ? part.nomor_part : "-") + '</td>' +
+            '<td class="text-secondary">' + (prod.jenis_treatment || "-") + '</td>' +
+            '<td class="font-mono">' + (q.hardness || "-") + " " + (q.satuan_hardness || "") + '</td>' +
+            '<td>' + microDisplay + '</td>' +
+            '<td><span class="ht-badge ' + hasilColor + '">' + (q.hasil || "-") + '</span></td>' +
+            '<td>' + tempBadge(prod) + '</td>' +
+            '<td><span class="ht-ir-stage-badge ' + stageClass + '">' + stage + '</span></td>' +
+            '<td>' +
+              '<div class="ht-action-group">' +
+                '<button onclick="loadMaterialById(\'' + (m.kode || m.id) + '\')" class="ht-action-btn edit" title="Edit" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>' +
+                '<button onclick="deleteQC(' + q.id + ')" class="ht-action-btn delete" title="Delete" aria-label="Delete"><img src="assets/icons/delete.svg" alt="Delete" class="icon"></button>' +
+              '</div>' +
+            '</td>' +
+          '</tr>';
+        }).join("");
+
+        document.getElementById("qcTable").innerHTML = html ||
+          '<tr><td colspan="11" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data QC</p></td></tr>';
+      }
+
+      function deleteQC(id) {
+        if (confirm("Hapus data QC ini?")) {
+          DB.delete("qcs", id);
+          loadQCs();
+        }
+      }
+
       window.addEventListener("DOMContentLoaded", () => {
         DB.init();
         DB.migrate();
@@ -989,6 +1356,7 @@
         } catch (e) {
           console.warn("[QC] Scanner init failed:", e);
         }
+        bindMeasurementInputs();
         bindQCFilterEvents();
         loadQCs();
 
@@ -1000,6 +1368,22 @@
             }
           });
         }
+
+        var saveBtn = document.getElementById("btnSaveInspection");
+        if (saveBtn) {
+          saveBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            saveInspectionReport();
+          });
+        }
+
+         var clearSigBtn = document.getElementById("btnClearSignature");
+        if (clearSigBtn) {
+          clearSigBtn.addEventListener("click", function () {
+            clearSignature();
+          });
+        }
+
         document.addEventListener("keydown", function (e) {
           if (
             e.key === "Escape" &&

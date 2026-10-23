@@ -1,0 +1,255 @@
+/* ============================================================
+   Inspection Report — Gaya khusus modul
+   Melengkapi global.css, dashboard.css, components.css,
+   tables.css, dan forms.css yang sudah ada.
+   ============================================================ */
+
+/* ===== Grid kartu ringkasan ===== */
+.ht-ir-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .ht-ir-summary-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .ht-ir-summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .ht-ir-summary-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== Warna ikon kartu ringkasan per status ===== */
+.ht-ir-card-draft .ht-kpi-icon-box {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+}
+
+.ht-ir-card-pending .ht-kpi-icon-box {
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+}
+
+.ht-ir-card-approved .ht-kpi-icon-box {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.ht-ir-card-rejected .ht-kpi-icon-box {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.ht-ir-card-total .ht-kpi-icon-box {
+  background: var(--primary-light);
+  color: var(--primary-hover);
+}
+
+/* ===== Lencana status laporan (Approval) ===== */
+.ht-badge-draft {
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+.ht-badge-pending {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.ht-badge-approved {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.ht-badge-rejected {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* ===== Banner peringatan role (browser-only) ===== */
+.ht-ir-role-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning);
+  font-size: 12px;
+  color: var(--warning-text);
+  margin-bottom: 12px;
+}
+
+.ht-ir-role-warning .icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ===== Modal lebar form inspection report ===== */
+.ht-modal-ir-form {
+  max-width: 880px;
+  width: 95vw;
+}
+
+@media (max-width: 768px) {
+  .ht-modal-ir-form {
+    width: 98vw;
+  }
+}
+
+/* ===== Grid info material di modal form ===== */
+.ht-ir-material-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .ht-ir-material-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Ringkasan konfirmasi sebelum simpan ===== */
+.ht-ir-summary-box {
+  background: var(--primary-light);
+  border: 1px solid var(--primary-light);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-top: 16px;
+  font-size: 12px;
+}
+
+.ht-ir-summary-box .mono {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.ht-ir-summary-box .ht-info-label {
+  color: var(--text-secondary);
+}
+
+.ht-ir-summary-box .ht-info-value {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ===== Radio judgment di modal approval ===== */
+.ht-judgement-radio {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.ht-judgement-radio .ht-radio-label {
+  flex: 1;
+  justify-content: center;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+}
+
+.ht-judgement-radio .ht-radio-label:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.ht-judgement-ok {
+  border-color: var(--success);
+}
+
+.ht-judgement-ok:has(input:checked) {
+  border-color: var(--success);
+  background: var(--success-bg);
+}
+
+.ht-judgement-ng {
+  border-color: var(--danger);
+}
+
+.ht-judgement-ng:has(input:checked) {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+/* ===== Print styles untuk halaman utama =====
+   Menyembunyikan elemen UI ketika mencetak dari halaman utama.
+   (Dokumen final dicetak dari jendela preview terpisah.) */
+@media print {
+  .ht-sidebar { display: none !important; }
+  .ht-header-right { display: none !important; }
+  .ht-filter-bar { display: none !important; }
+  .ht-card-header .flex.items-center.gap-2 { display: none !important; }
+  .ht-action-group { display: none !important; }
+  .ht-ir-summary-grid { display: none !important; }
+
+  .ht-main {
+    margin-left: 0 !important;
+  }
+
+  .ht-content {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .ht-content-max {
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  .ht-card {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    page-break-inside: avoid;
+  }
+
+  body {
+    background: var(--surface) !important;
+  }
+}
+
+/* ============================================================
+   DOKUMEN PREVIEW — A4 report (dirender di jendela terpisah)
+   Semua style di-inline pada dokumen yang dibangkitkan JS,
+   sehingga tidak memengaruhi halaman utama.
+   ============================================================ */
+
+/* ===== Responsif tabel di perangkat kecil (halaman utama) ===== */
+@media (max-width: 768px) {
+  .ht-table {
+    font-size: 11px;
+  }
+
+  .ht-table th,
+  .ht-table td {
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ht-table {
+    font-size: 10px;
+  }
+
+  .ht-table th,
+  .ht-table td {
+    padding: 6px 8px;
+  }
+
+  .ht-action-group.compact .ht-action-btn {
+    width: 22px;
+    height: 20px;
+  }
+}
