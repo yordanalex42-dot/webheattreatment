@@ -185,6 +185,14 @@
               <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
               Inspection Report
             </a>
+            <a href="leader-qc.html" class="ht-nav-link">
+              <img src="assets/icons/gavel.svg" alt="Leader QC" class="sidebar-menu-icon" />
+              Leader QC
+            </a>
+            <a href="supervisor-qc.html" class="ht-nav-link">
+              <img src="assets/icons/user.svg" alt="Supervisor QC" class="sidebar-menu-icon" />
+              Supervisor QC
+            </a>
           </div>
           <div class="nav-section">
             <p class="nav-section_title ht-nav-section-title">Tracking</p>
@@ -414,14 +422,18 @@
                             <span class="ht-info-label">Status Heat Treatment</span>
                             <span class="ht-info-value" id="htStatus">-</span>
                           </div>
-                          <div class="ht-info-item">
-                            <span class="ht-info-label">Status QC</span>
-                            <span class="ht-info-value" id="qcStatus">-</span>
-                          </div>
-                          <div class="ht-info-item">
-                            <span class="ht-info-label">Status Shotblast</span>
-                            <span class="ht-info-value" id="shotblastStatus">-</span>
-                          </div>
+                         <div class="ht-info-item">
+                             <span class="ht-info-label">Status QC</span>
+                             <span class="ht-info-value" id="qcStatus">-</span>
+                           </div>
+                           <div class="ht-info-item">
+                             <span class="ht-info-label">Leader QC</span>
+                             <span class="ht-info-value" id="leaderQcStatus">-</span>
+                           </div>
+                           <div class="ht-info-item">
+                             <span class="ht-info-label">Status Shotblast</span>
+                             <span class="ht-info-value" id="shotblastStatus">-</span>
+                           </div>
                         </div>
                         <p class="ht-hint mt-2" id="gateReason"></p>
 
@@ -757,6 +769,21 @@
                   ? "TIDAK DITEMUKAN"
                   : gate.qcStatus || "-";
 
+        // Leader QC status
+        var leaderEl = document.getElementById("leaderQcStatus");
+        if (leaderEl) {
+          var judge = DB.getQCJudgement(material);
+          if (!judge.hasInspector) {
+            leaderEl.innerHTML = '<span class="ht-badge ht-badge-waiting">BELUM ADA QC</span>';
+          } else if (judge.inspectorHasil === "NG") {
+            leaderEl.innerHTML = '<span class="ht-badge ht-badge-ng">QC NG</span>';
+          } else if (!DB.isLeaderApproved(material)) {
+            leaderEl.innerHTML = '<span class="ht-badge ht-badge-warning">MENUNGGU LEADER QC</span>';
+          } else {
+            leaderEl.innerHTML = '<span class="ht-badge ht-badge-ok">APPROVED</span>';
+          }
+        }
+
         // Status Shotblast
         var sbProd = DB.getProcessProduction(material, PROCESS_KEY);
         var sbEl = document.getElementById("shotblastStatus");
@@ -953,15 +980,21 @@
 
         var gate = DB.checkQualityGate(material);
         if (gate.qcStatus === "NOT_CHECKED") {
-          showBlocked("QC belum dilakukan.");
+            showBlocked("QC belum dilakukan.");
           return;
         }
         if (gate.qcStatus === "NG") {
-          showBlocked("QC berstatus NG.");
+            showBlocked("QC berstatus NG.");
           return;
         }
         if (gate.qcStatus !== "PASS") {
-          showBlocked("QC belum dilakukan.");
+            showBlocked("QC belum dilakukan.");
+          return;
+        }
+
+        // Gate: Leader QC harus sudah memberikan judgement OK
+        if (!DB.isLeaderApproved(material)) {
+            showBlocked("Part belum dapat masuk proses: menunggu judgement Leader QC.");
           return;
         }
 
@@ -1100,8 +1133,14 @@
 
         var gate = DB.checkQualityGate(currentMaterial);
         if (gate.qcStatus !== "PASS") {
-          HTUI.toast("QC belum PASS. Status: " + gate.qcStatus, "error");
-          return;
+            HTUI.toast("QC belum PASS. Status: " + gate.qcStatus, "error");
+            return;
+        }
+
+        // Gate: Leader QC harus sudah memberikan judgement OK
+        if (!DB.isLeaderApproved(currentMaterial)) {
+            HTUI.toast("Part belum dapat diproses: menunggu judgement Leader QC.", "error");
+            return;
         }
 
         var visualOK = document.getElementById("visualOK").checked;

@@ -185,6 +185,14 @@
               <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
               Inspection Report
             </a>
+            <a href="leader-qc.html" class="ht-nav-link">
+              <img src="assets/icons/gavel.svg" alt="Leader QC" class="sidebar-menu-icon" />
+              Leader QC
+            </a>
+            <a href="supervisor-qc.html" class="ht-nav-link">
+              <img src="assets/icons/user.svg" alt="Supervisor QC" class="sidebar-menu-icon" />
+              Supervisor QC
+            </a>
           </div>
           <div class="nav-section">
             <p class="nav-section_title ht-nav-section-title">Tracking</p>
@@ -276,28 +284,36 @@
               <div class="ht-card-header">
                 <h3 class="ht-card-title">Input Data Pengiriman</h3>
               </div>
-              <div class="ht-info-grid mb-4">
-                <div class="ht-info-item">
-                  <span class="ht-info-label">No Part</span>
-                  <span class="ht-info-value" id="infoNoPart">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Nama Part</span>
-                  <span class="ht-info-value" id="infoNamaPart">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Customer</span>
-                  <span class="ht-info-value" id="infoCustomer">-</span>
-                </div>
+               <div class="ht-info-grid mb-4">
+                 <div class="ht-info-item">
+                   <span class="ht-info-label">No Part</span>
+                   <span class="ht-info-value" id="infoNoPart">-</span>
+                 </div>
+                 <div class="ht-info-item">
+                   <span class="ht-info-label">Nama Part</span>
+                   <span class="ht-info-value" id="infoNamaPart">-</span>
+                 </div>
+                 <div class="ht-info-item">
+                   <span class="ht-info-label">Customer</span>
+                   <span class="ht-info-value" id="infoCustomer">-</span>
+                 </div>
                  <div class="ht-info-item">
                    <span class="ht-info-label">Hasil QC</span>
                    <span class="ht-info-value" id="infoQc">-</span>
                  </div>
                  <div class="ht-info-item">
+                   <span class="ht-info-label">Leader QC</span>
+                   <span class="ht-info-value" id="infoLeaderQc">-</span>
+                 </div>
+                 <div class="ht-info-item">
+                   <span class="ht-info-label">Supervisor QC</span>
+                   <span class="ht-info-value" id="infoSupervisorQc">-</span>
+                 </div>
+                 <div class="ht-info-item">
                    <span class="ht-info-label">Suhu Proses</span>
                    <span class="ht-info-value" id="infoTemperature">-</span>
                  </div>
-              </div>
+               </div>
 
               <form id="deliverForm" class="ht-form">
                 <input type="hidden" id="delProductionId" />
@@ -420,6 +436,7 @@
         throw new Error("redirecting");
       }
       let html5QrCode = null;
+      let currentMaterial = null;
       const session = Auth.getSession();
       function startScanner() {
         if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
@@ -437,6 +454,7 @@
           HTUI.toast("Material tidak ditemukan!", "error");
           return;
         }
+        currentMaterial = material;
         const production = DB.get("productions").find(
           (p) => p.material_id == material.id,
         );
@@ -460,6 +478,9 @@
                 null,
               )
             : null;
+        const afterQc = DB._getAfterQc(material);
+        const judge = DB.getQCJudgement(material);
+
         const part = DB.findPartById(material.part_id);
         const cust = DB.findCustomerById(material.customer_id);
         document.getElementById("infoNoPart").textContent = part
@@ -471,10 +492,22 @@
         document.getElementById("infoCustomer").textContent = cust
           ? cust.nama_customer
           : "-";
-         document.getElementById("infoQc").innerHTML =
-           '<span class="ht-badge ht-badge-ok">' +
-           (qc ? qc.hasil : "-") +
-           "</span>";
+        document.getElementById("infoQc").innerHTML =
+          '<span class="ht-badge ' + (qc ? (qc.hasil === "OK" ? "ht-badge-ok" : "ht-badge-ng") : "ht-badge-waiting") + '">' +
+          (qc ? qc.hasil : "-") +
+          "</span>";
+        document.getElementById("infoLeaderQc").innerHTML =
+          '<span class="ht-badge ' + (judge.leaderJudgement === "OK" ? "ht-badge-ok"
+            : judge.leaderJudgement === "NG" ? "ht-badge-ng"
+            : "ht-badge-waiting") + '">' +
+          (judge.leaderJudgement || "-") +
+          "</span>";
+        document.getElementById("infoSupervisorQc").innerHTML =
+          '<span class="ht-badge ' + (judge.supervisorJudgement === "OK" ? "ht-badge-ok"
+            : judge.supervisorJudgement === "NG" ? "ht-badge-ng"
+            : "ht-badge-warning") + '">' +
+          (judge.supervisorJudgement ? judge.supervisorJudgement : "MENUNGGU") +
+          "</span>";
          var tempRes = production ? production.temperature_result : "";
          var tempActual = production ? production.actual_temperature : "";
          if (tempActual === null || tempActual === undefined || tempActual === "") {
@@ -517,6 +550,12 @@
       }
       document.getElementById("deliverForm").addEventListener("submit", (e) => {
         e.preventDefault();
+        // Gate: Supervisor QC approval check
+        var gateRecheck = DB.canDeliver(currentMaterial);
+        if (!gateRecheck.allowed) {
+          HTUI.toast(gateRecheck.reason + ". Tidak dapat dikirim.", "error");
+          return;
+        }
         const productionId = parseInt(
           document.getElementById("delProductionId").value,
         );

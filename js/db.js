@@ -37,7 +37,7 @@ const DB = {
     parts: ["id", "customer_id", "nomor_part", "nama_part", "berat_part", "satuan_berat", "target_hardness", "standard_temperature", "process_type", "standard_process_route", "status", "created_at", "updated_at"],
     materials: ["id", "kode", "customer_id", "part_id", "nomor_surat_jalan", "lot_no", "material_charge", "status_part", "qty", "berat_part_snapshot", "berat_total_part", "tanggal_masuk", "keterangan", "remarks", "process_type", "diinput_oleh", "qr_code", "status_proses", "process_route", "created_at", "updated_at"],
     productions: ["id", "material_id", "incoming_id", "tracking_id", "status", "production_status", "kode", "process_result", "visual_check_result", "visual_check_note", "visual_check_operator", "start_scan_at", "start_scan_by", "machine_start_at", "machine_start_by", "finish_scan_at", "finish_scan_by", "process_ng_note", "machine_finish_at", "machine_finish_by", "tanggal_proses", "jenis_treatment", "remarks", "created_at", "updated_at", "standard_temperature_snapshot", "temperature_tolerance_snapshot", "actual_temperature", "temperature_min", "temperature_max", "temperature_deviation", "temperature_result", "temperature_recorded_at", "temperature_recorded_by"],
-    qcs: ["id", "production_id", "material_id", "hardness", "satuan_hardness", "hasil", "microstructure", "remarks", "inspector", "tanggal_inspector", "catatan", "user_id", "created_at", "updated_at"],
+    qcs: ["id", "production_id", "material_id", "hardness", "satuan_hardness", "hasil", "microstructure", "remarks", "inspector", "tanggal_inspector", "catatan", "user_id", "created_at", "updated_at", "leader_judgement", "leader_name", "leader_date", "leader_signature", "supervisor_judgement", "supervisor_name", "supervisor_date", "supervisor_signature"],
     deliveries: ["id", "production_id", "material_id", "customer_id", "tanggal_kirim", "qty_kirim", "nama_pengirim", "status", "catatan", "user_id", "remarks", "created_at", "updated_at"],
     tracking: ["id", "material_id", "production_id", "delivery_id", "remarks", "created_at", "updated_at"],
      targets: ["id", "year", "month", "target_berat_output", "created_at", "updated_at"],
@@ -553,6 +553,95 @@ const DB = {
     };
   },
 
+  /* ---- Helper untuk parse QC remarks JSON ----
+     remarks berisi stage, surface_values, core_values, signature.
+     Data lama (string biasa) diperlakukan sebagai stage "after". */
+  _parseQCRemarks(qc) {
+    if (!qc || !qc.remarks) return null;
+    try {
+      var parsed = JSON.parse(qc.remarks);
+      if (parsed && typeof parsed === "object" && parsed.stage !== undefined) {
+        return parsed;
+      }
+    } catch (e) { /* plain string — legacy */ }
+    return null;
+  },
+
+  /* ---- Dapatkan QC record "after" untuk sebuah material ----
+     Leader dan Supervisor judgment selalu merujuk ke laporan
+     inspeksi akhir (setelah Heat Treatment). Record lama tanpa
+     stage dianggap "after". */
+  _getAfterQc(material) {
+    if (!material) return null;
+    var qcs = this.get("qcs").filter(function (q) {
+      return String(q.material_id) === String(material.id);
+    });
+    var afterQc = null;
+    for (var i = 0; i < qcs.length; i++) {
+      var q = qcs[i];
+      var ext = this._parseQCRemarks(q);
+      var stage = (ext && ext.stage) || "after";
+      if (stage === "after") {
+        if (!afterQc || (q.id || 0) > (afterQc.id || 0)) {
+          afterQc = q;
+        }
+      }
+    }
+    return afterQc;
+  },
+
+  /* ---- QC judgement lengkap: Inspector + Leader + Supervisor ---- */
+  getQCJudgement(material) {
+    var qc = this._getAfterQc(material);
+    if (!qc) {
+      return {
+        hasInspector: false,
+        inspectorHasil: null,
+        leaderApproved: false,
+        supervisorApproved: false,
+      };
+    }
+    var ext = this._parseQCRemarks(qc);
+    var hasil = (qc.hasil || "").toUpperCase();
+    return {
+      qc: qc,
+      hasInspector: true,
+      inspectorHasil: hasil,
+      leaderJudgement: qc.leader_judgement || null,
+      leaderName: qc.leader_name || "",
+      leaderDate: qc.leader_date || "",
+      leaderSignature: qc.leader_signature || null,
+      supervisorJudgement: qc.supervisor_judgement || null,
+      supervisorName: qc.supervisor_name || "",
+      supervisorDate: qc.supervisor_date || "",
+      supervisorSignature: qc.supervisor_signature || null,
+      surfaceValues: (ext && ext.surface_values) || [],
+      coreValues: (ext && ext.core_values) || [],
+      inspectorSignature: (ext && ext.signature) || null,
+      inspectorName: qc.inspector || "",
+      inspectionDate: qc.tanggal_inspector || "",
+    };
+  },
+
+  isLeaderApproved(material) {
+    var j = this.getQCJudgement(material);
+    return j.hasInspector &&
+           j.inspectorHasil === "OK" &&
+           j.leaderJudgement === "OK" &&
+           !!j.leaderName &&
+           !!j.leaderSignature;
+  },
+
+  isSupervisorApproved(material) {
+    var j = this.getQCJudgement(material);
+    return j.hasInspector &&
+           j.inspectorHasil === "OK" &&
+           j.leaderJudgement === "OK" &&
+           j.supervisorJudgement === "OK" &&
+           !!j.supervisorName &&
+           !!j.supervisorSignature;
+  },
+
   /* ---- Integrasi pintu gerbang kualitas (QC) untuk proses pasca-QC (Tahap 3B-2) ---- */
   _normalizeProcessName(name) {
     if (!name) return "";
@@ -776,6 +865,61 @@ const DB = {
       }
     }
 
+    /* ---- Leader QC judgement gate ----
+       Untuk proses Shotblast / Anti Rust, Leader QC harus persetujuan.
+       Jika Leader belum approve, proses tidak boleh dimulai. */
+    if (targetKey === "SHOTBLAST" || targetKey === "ANTI_RUST") {
+      var judge = this.getQCJudgement(material);
+      if (!judge.hasInspector) {
+        return {
+          allowed: false,
+          allowedRoute: true,
+          reason: "QC belum dilakukan oleh Inspector.",
+          qcStatus: "NOT_CHECKED",
+          processRoute: proceedResult.processRoute,
+          processRouteSteps: steps,
+          processName: targetKey,
+          leaderApproved: false,
+        };
+      }
+      if (judge.inspectorHasil === "NG") {
+        return {
+          allowed: false,
+          allowedRoute: true,
+          reason: "Hasil QC NG. Hubungi QC Supervisor.",
+          qcStatus: "NG",
+          processRoute: proceedResult.processRoute,
+          processRouteSteps: steps,
+          processName: targetKey,
+          leaderApproved: false,
+        };
+      }
+      if (judge.inspectorHasil !== "OK") {
+        return {
+          allowed: false,
+          allowedRoute: true,
+          reason: "Hasil QC belum dapat ditentukan.",
+          qcStatus: "NOT_CHECKED",
+          processRoute: proceedResult.processRoute,
+          processRouteSteps: steps,
+          processName: targetKey,
+          leaderApproved: false,
+        };
+      }
+      if (!this.isLeaderApproved(material)) {
+        return {
+          allowed: false,
+          allowedRoute: true,
+          reason: "Part belum dapat diproses: menunggu judgement Leader QC.",
+          qcStatus: proceedResult.qcStatus,
+          processRoute: proceedResult.processRoute,
+          processRouteSteps: steps,
+          processName: targetKey,
+          leaderApproved: false,
+        };
+      }
+    }
+
     return {
       allowed: true,
       allowedRoute: true,
@@ -784,6 +928,7 @@ const DB = {
       processRoute: proceedResult.processRoute,
       processRouteSteps: steps,
       processName: targetKey,
+      leaderApproved: true,
     };
   },
 
@@ -936,7 +1081,29 @@ const DB = {
       return { allowed: false, reason: "Material sudah dikirim", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false };
     }
 
-    return { allowed: true, reason: null, qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: true };
+    /* ---- Supervisor QC judgement gate ----
+       Delivery membutuhkan persetujuan akhir dari Supervisor QC. */
+    var judge = this.getQCJudgement(material);
+    if (!judge.hasInspector) {
+      return { allowed: false, reason: "QC belum dilakukan oleh Inspector.", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false, supervisorApproved: false };
+    }
+    if (judge.inspectorHasil === "NG") {
+      return { allowed: false, reason: "Hasil QC NG.", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false, supervisorApproved: false };
+    }
+    if (judge.inspectorHasil !== "OK") {
+      return { allowed: false, reason: "Hasil QC belum dapat ditentukan.", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false, supervisorApproved: false };
+    }
+    if (!this.isLeaderApproved(material)) {
+      return { allowed: false, reason: "Part belum dapat dikirim: menunggu judgement Leader QC.", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false, supervisorApproved: false };
+    }
+    if (judge.supervisorJudgement !== "OK" || !judge.supervisorName || !judge.supervisorSignature) {
+      return { allowed: false, reason: "Part belum dapat dikirim: menunggu judgement Supervisor QC.", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false, supervisorApproved: false };
+    }
+    if (judge.supervisorJudgement === "NG") {
+      return { allowed: false, reason: "Delivery ditolak: judgement Supervisor QC NG.", qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: false, supervisorApproved: false };
+    }
+
+    return { allowed: true, reason: null, qcStatus: gate.qcStatus, processRoute: gate.processRoute, processRouteSteps: steps, canDeliver: true, supervisorApproved: true };
   },
   migrate() {
     const validPartFields = ["id","customer_id","nomor_part","nama_part","berat_part","satuan_berat","target_hardness","standard_temperature","process_type","standard_process_route","status","created_at","updated_at"];
@@ -1025,7 +1192,7 @@ const DB = {
       if (!("visual_check_operator" in p)) { p.visual_check_operator = ""; changed = true; }
     }
     if (changed) localStorage.setItem("ht_productions", JSON.stringify(productions));
-    const validQCFields = ["id","production_id","material_id","hardness","satuan_hardness","hasil","microstructure","remarks","inspector","tanggal_inspector","catatan","user_id","created_at","updated_at"];
+    const validQCFields = ["id","production_id","material_id","hardness","satuan_hardness","hasil","microstructure","remarks","inspector","tanggal_inspector","catatan","user_id","created_at","updated_at","leader_judgement","leader_name","leader_date","leader_signature","supervisor_judgement","supervisor_name","supervisor_date","supervisor_signature"];
     const qcs = this.get("qcs");
     changed = false;
     for (const q of qcs) {
@@ -1034,6 +1201,14 @@ const DB = {
       if (!("remarks" in q)) { q.remarks = ""; changed = true; }
       if (!("material_id" in q)) { q.material_id = ""; changed = true; }
       if (!("microstructure" in q)) { q.microstructure = null; changed = true; }
+      if (!("leader_judgement" in q)) { q.leader_judgement = null; changed = true; }
+      if (!("leader_name" in q)) { q.leader_name = ""; changed = true; }
+      if (!("leader_date" in q)) { q.leader_date = ""; changed = true; }
+      if (!("leader_signature" in q)) { q.leader_signature = null; changed = true; }
+      if (!("supervisor_judgement" in q)) { q.supervisor_judgement = null; changed = true; }
+      if (!("supervisor_name" in q)) { q.supervisor_name = ""; changed = true; }
+      if (!("supervisor_date" in q)) { q.supervisor_date = ""; changed = true; }
+      if (!("supervisor_signature" in q)) { q.supervisor_signature = null; changed = true; }
       /* Normalisasi hasil: PASS -> OK (hasil QC menggunakan OK/NG) */
       if ("hasil" in q) {
         const hOK = String(q.hasil).toUpperCase();

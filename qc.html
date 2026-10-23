@@ -186,6 +186,14 @@
               <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
               Inspection Report
             </a>
+            <a href="leader-qc.html" class="ht-nav-link">
+              <img src="assets/icons/gavel.svg" alt="Leader QC" class="sidebar-menu-icon" />
+              Leader QC
+            </a>
+            <a href="supervisor-qc.html" class="ht-nav-link">
+              <img src="assets/icons/user.svg" alt="Supervisor QC" class="sidebar-menu-icon" />
+              Supervisor QC
+            </a>
           </div>
           <div class="nav-section">
             <p class="nav-section_title ht-nav-section-title">Tracking</p>
@@ -481,12 +489,40 @@
                     </div>
                   </div>
 
-                  <!-- QC Supervisor (Locked) -->
-                  <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
-                    <div class="ht-card-header">
-                      <h3 class="ht-card-title">Approved by</h3>
-                      <p class="ht-card-subtitle">Jabatan: QC Supervisor</p>
-                    </div>
+                   <!-- Leader QC Review (read-only on Inspector page) -->
+                   <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
+                     <div class="ht-card-header">
+                       <h3 class="ht-card-title">Leader QC Review</h3>
+                       <p class="ht-card-subtitle">Judgement dan tanda tangan Leader QC</p>
+                     </div>
+                     <div class="ht-ir-locked-section">
+                       <div class="ht-ir-locked-overlay">
+                         <img src="assets/icons/warning.svg" alt="" class="icon" />
+                         <span>Persetujuan Leader QC dilakukan pada halaman Leader QC.</span>
+                       </div>
+                       <div class="ht-info-grid">
+                         <div class="ht-info-item">
+                           <span class="ht-info-label">Judgement</span>
+                           <span class="ht-info-value" id="irLeaderJudgement">-</span>
+                         </div>
+                         <div class="ht-info-item">
+                           <span class="ht-info-label">Nama Leader QC</span>
+                           <span class="ht-info-value" id="irLeaderName">-</span>
+                         </div>
+                         <div class="ht-info-item">
+                           <span class="ht-info-label">Tanggal Judgement</span>
+                           <span class="ht-info-value" id="irLeaderDate">-</span>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+
+                   <!-- QC Supervisor (Locked) -->
+                   <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
+                     <div class="ht-card-header">
+                       <h3 class="ht-card-title">Approved by</h3>
+                       <p class="ht-card-subtitle">Jabatan: QC Supervisor</p>
+                     </div>
                     <div class="ht-ir-locked-section">
                       <div class="ht-ir-locked-overlay">
                         <img src="assets/icons/warning.svg" alt="" class="icon" />
@@ -1094,8 +1130,13 @@
 
         document.getElementById("qcId").value = "";
         document.getElementById("irInspectorName").value = "";
-        document.getElementById("irInspectionDate").value = "";
+         document.getElementById("irInspectionDate").value = "";
         clearSignature();
+
+        /* Leader QC info */
+        document.getElementById("irLeaderJudgement").textContent = "-";
+        document.getElementById("irLeaderName").textContent = "-";
+        document.getElementById("irLeaderDate").textContent = "-";
 
         /* Supervisor info */
         document.getElementById("irSupervisorName").textContent = "-";
@@ -1106,6 +1147,20 @@
           document.getElementById("qcId").value = qc.id;
           document.getElementById("irInspectorName").value = qc.inspector || "";
           document.getElementById("irInspectionDate").value = (qc.tanggal_inspector || "").slice(0, 10);
+
+          /* Populate Leader QC review display */
+          var leaderJudgement = qc.leader_judgement;
+          document.getElementById("irLeaderJudgement").textContent = leaderJudgement
+            ? (leaderJudgement === "OK" ? "OK" : "NG")
+            : "-";
+          document.getElementById("irLeaderName").textContent = qc.leader_name || "-";
+          document.getElementById("irLeaderDate").textContent = qc.leader_date ? qc.leader_date.slice(0, 10) : "-";
+
+          /* Populate Supervisor QC display */
+          var supervisorJudgement = qc.supervisor_judgement;
+          document.getElementById("irSupervisorName").textContent = qc.supervisor_name || "-";
+          document.getElementById("irSupervisorDate").textContent = qc.supervisor_date ? qc.supervisor_date.slice(0, 10) : "-";
+          document.getElementById("irSupervisorNotes").textContent = qc.supervisor_notes || "-";
 
           var ext = parseQCRemarks(qc);
           if (ext) {

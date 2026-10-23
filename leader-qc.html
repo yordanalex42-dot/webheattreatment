@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leader QC - Sistem Informasi Produksi Heat Treatment</title>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/tables.css" />
+    <link rel="stylesheet" href="css/forms.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/icons.css" />
+    <link rel="stylesheet" href="css/qc-inspection.css" />
+  </head>
+  <body>
+    <div class="ht-app-shell">
+      <aside class="ht-sidebar" id="sidebar">
+        <div class="ht-sidebar-header">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <img
+                  src="assets/logo/logo baru.svg"
+                  alt="PT CHUNETSU INDONESIA"
+                  class="sidebar-logo"
+                />
+                <div class="ht-sidebar-brand">
+                  <span class="brand-sub">Heat Treatment of</span>
+                  <span class="brand-name">PT CHUNETSU INDONESIA</span>
+                </div>
+              </div>
+              <p class="brand-subtitle">Sistem Informasi Produksi</p>
+            </div>
+          </div>
+        </div>
+        <nav class="ht-sidebar-nav">
+          <div class="nav-section">
+            <a href="index.html" class="ht-nav-link">
+              <img src="assets/icons/dashboard.svg" alt="Dashboard" class="sidebar-menu-icon" />
+              Dashboard
+            </a>
+          </div>
+          <div class="nav-section">
+            <p class="nav-section_title ht-nav-section-title">Quality Control</p>
+            <a href="qc.html" class="ht-nav-link">
+              <img src="assets/icons/quality-control.svg" alt="Input Data" class="sidebar-menu-icon" />
+              Input Data QC
+            </a>
+            <a href="leader-qc.html" class="ht-nav-link active">
+              <img src="assets/icons/gavel.svg" alt="Leader QC" class="sidebar-menu-icon" />
+              Leader QC
+            </a>
+            <a href="supervisor-qc.html" class="ht-nav-link">
+              <img src="assets/icons/user.svg" alt="Supervisor QC" class="sidebar-menu-icon" />
+              Supervisor QC
+            </a>
+          </div>
+        </nav>
+        <div class="ht-sidebar-footer">
+          <div class="ht-user-panel">
+            <div class="ht-user-info">
+              <div class="ht-user-avatar" id="sidebarInitial">L</div>
+              <div class="ht-user-details">
+                <p class="ht-user-name" id="sidebarName">Leader QC</p>
+                <p class="ht-user-role" id="sidebarRole">Leader QC</p>
+              </div>
+            </div>
+            <button onclick="Auth.logout(); window.location.href='login.html';" class="ht-sidebar-logout" title="Logout" aria-label="Logout">
+              <img src="assets/icons/logout.svg" alt="Logout" class="sidebar-menu-icon" />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="ht-main full-width">
+        <header class="ht-header">
+          <div class="ht-header-left">
+            <h1 id="pageTitle">Leader QC</h1>
+            <p id="pageSubtitle">
+              Review dan approval hasil pemeriksaan hardness sebelum proses lanjutan.
+            </p>
+          </div>
+          <div class="ht-header-right">
+            <span class="ht-header-date" id="currentDate"></span>
+          </div>
+        </header>
+
+        <div class="ht-content">
+          <div class="ht-content-max">
+            <!-- Scan / Input -->
+            <div class="ht-card fade-in">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Scan QR Code Material</h3>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex-1">
+                  <div id="qr-reader" class="ht-qr-frame"></div>
+                  <p class="ht-hint text-center mt-3">
+                    Arahkan kamera ke QR Code material
+                  </p>
+                </div>
+                <div class="space-y-2">
+                  <p class="ht-hint">Atau masukkan Kode secara manual:</p>
+                  <div class="flex gap-2">
+                    <input type="text" id="manualId" aria-label="Nomor kode material" placeholder="Kode (contoh: 20260001I)" class="ht-form-input flex-1" oninput="clearManualError()" onkeydown="if (event.key === 'Enter') loadMaterialById();" />
+                    <button onclick="loadMaterialById()" class="ht-btn ht-btn-primary ht-btn-sm" aria-label="Cari material">
+                      <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1" />Cari
+                    </button>
+                  </div>
+                  <p id="manualError" class="hidden ht-error-text"></p>
+                </div>
+              </div>
+            </div>
+
+            <p class="ht-hint text-center mt-4">
+              Scan atau masukkan kode untuk melihat laporan QC dan memberikan judgement.
+            </p>
+
+            <!-- Modal: Review Leader QC -->
+            <div id="leaderModal" class="ht-modal-overlay hidden" aria-hidden="true">
+              <div class="ht-modal ht-modal-ir-form">
+                <div class="ht-modal-header">
+                  <div class="ht-modal-header-title">
+                    <h3 class="ht-modal-title">Leader QC Review</h3>
+                    <p class="ht-modal-subtitle">Review laporan inspeksi dan berikan judgement</p>
+                  </div>
+                  <button type="button" onclick="closeLeaderModal()" class="ht-modal-close" aria-label="Close">
+                    <img src="assets/icons/close.svg" alt="Close" class="icon" />
+                  </button>
+                </div>
+                <div class="ht-modal-body">
+                  <input type="hidden" id="leaderQcId" />
+                  <input type="hidden" id="leaderMaterialId" />
+
+                  <!-- Report Header -->
+                  <div class="ht-ir-report-header">
+                    <h3 class="ht-ir-report-title">HARDNESS INSPECTION REPORT</h3>
+                    <p class="ht-ir-report-company">PT CHUNETSU INDONESIA</p>
+                    <p class="ht-ir-report-dept">HEAT TREATMENT DEPARTMENT</p>
+                  </div>
+
+                  <!-- Informasi Part -->
+                  <div class="ht-card ht-card-flat fade-in ht-card-no-radius">
+                    <div class="ht-card-header"><h3 class="ht-card-title">Informasi Part</h3></div>
+                    <div class="ht-info-grid">
+                      <div class="ht-info-item"><span class="ht-info-label">Control Number</span><span class="ht-info-value mono" id="lControlNumber">-</span></div>
+                      <div class="ht-info-item"><span class="ht-info-label">Customer</span><span class="ht-info-value" id="lCustomer">-</span></div>
+                      <div class="ht-info-item"><span class="ht-info-label">Part Name</span><span class="ht-info-value" id="lNamaPart">-</span></div>
+                      <div class="ht-info-item"><span class="ht-info-label">Part No.</span><span class="ht-info-value mono" id="lNomorPart">-</span></div>
+                      <div class="ht-info-item"><span class="ht-info-label">Target Hardness</span><span class="ht-info-value mono" id="lTargetHardness">-</span></div>
+                      <div class="ht-info-item"><span class="ht-info-label">Jenis Proses</span><span class="ht-info-value" id="lJenisProses">-</span></div>
+                    </div>
+                  </div>
+
+                  <!-- Measurement Results -->
+                  <div class="ht-card ht-card-flat fade-in ht-ir-measurement-table" style="margin-top: 16px">
+                    <div class="ht-card-header"><h3 class="ht-card-title">Hasil Pengukuran Hardness</h3></div>
+                    <div class="ht-table-responsive">
+                      <table class="ht-table ht-table-sm">
+                        <thead><tr><th>Test Piece</th><th>Surface (HRC)</th><th>Core (HRC)</th></tr></thead>
+                        <tbody id="leaderMeasurementBody">
+                          <tr><td colspan="3" class="text-center ht-hint">Memuat...</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="ht-info-grid ht-info-grid-cols-3" style="margin-top: 8px">
+                      <div class="ht-info-item"><span class="ht-info-label">Surface Average</span><span class="ht-info-value mono" id="lSurfaceAvg">-</span></div>
+                      <div class="ht-info-item"><span class="ht-info-label">Core Average</span><span class="ht-info-value mono" id="lCoreAvg">-</span></div>
+                      <div class="ht-info-item"><span class="ht-info-label">Overall Average</span><span class="ht-info-value mono" id="lOverallAvg">-</span></div>
+                    </div>
+                  </div>
+
+                  <!-- Inspector Info -->
+                  <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
+                    <div class="ht-card-header"><h3 class="ht-card-title">Laporan Inspector</h3></div>
+                    <div class="ht-info-grid">
+                      <div class="ht-info-item"><span class="ht-info-label">Nama Inspector</span><span class="ht-info-value" id="lInspectorName">-</span></div>
+                      <div class="ht-info-item"><span class="ht-info-label">Tanggal Inspeksi</span><span class="ht-info-value" id="lInspectionDate">-</span></div>
+                      <div class="ht-info-item"><span class="ht-info-label">Hasil QC</span><span class="ht-info-value" id="lQcHasil">-</span></div>
+                    </div>
+                    <div id="leaderInspectorSignature" class="ht-ir-signature-canvas" style="margin-top: 12px"></div>
+                  </div>
+
+                  <!-- Judgement Form -->
+                  <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
+                    <div class="ht-card-header"><h3 class="ht-card-title">Leader QC Judgement</h3><p class="ht-card-subtitle">Berikan keputusan approval</p></div>
+                    <div class="ht-form-group">
+                      <label class="ht-form-label">Judgement <span class="ht-required">*</span></label>
+                      <div class="ht-form-row ht-form-row--inline">
+                        <label class="ht-radio-label"><input type="radio" name="leaderJudgement" value="OK" class="ht-radio" /><span class="ht-radio-text ht-radio-text--ok">OK</span></label>
+                        <label class="ht-radio-label"><input type="radio" name="leaderJudgement" value="NG" class="ht-radio" /><span class="ht-radio-text ht-radio-text--ng">NG</span></label>
+                      </div>
+                    </div>
+                    <div class="ht-form-row">
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="leaderName">Nama Leader QC</label>
+                        <input type="text" id="leaderName" class="ht-form-input" placeholder="Nama Leader QC" />
+                      </div>
+                      <div class="ht-form-group">
+                        <label class="ht-form-label" for="leaderDate">Tanggal Judgement</label>
+                        <input type="date" id="leaderDate" class="ht-form-input" />
+                      </div>
+                    </div>
+                    <div class="ht-form-group">
+                      <label class="ht-form-label">Tanda Tangan Leader QC</label>
+                      <div class="ht-ir-signature-canvas">
+                        <canvas id="leaderSignatureCanvas" width="500" height="150"></canvas>
+                      </div>
+                      <div class="ht-ir-signature-actions">
+                        <button type="button" id="btnClearLeaderSignature" class="ht-btn ht-btn-secondary-outlined ht-btn-sm">
+                          <img src="assets/icons/close.svg" alt="Hapus" class="icon" /> Hapus Tanda Tangan
+                        </button>
+                      </div>
+                    </div>
+                    <div id="leaderNGNote" class="hidden">
+                      <label class="ht-form-label">Keterangan NG <span class="ht-required">*</span></label>
+                      <input type="text" id="leaderNgNote" maxlength="200" class="ht-form-input" placeholder="Jelaskan mengapa bagian ini NG" />
+                    </div>
+                  </div>
+                </div>
+                <div class="ht-modal-footer">
+                  <button type="button" onclick="closeLeaderModal()" class="ht-btn ht-btn-secondary-outlined ht-btn-sm">Batal</button>
+                  <button type="button" id="btnSaveLeaderJudgement" class="ht-btn ht-btn-success ht-btn-sm">
+                    <img src="assets/icons/save.svg" alt="Simpan" class="icon" /><span>Simpan Judgement</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Riwayat -->
+            <div class="ht-card fade-in">
+              <div class="ht-card-header"><h3 class="ht-card-title">Riwayat QC yang Perlu Review</h3></div>
+              <div class="ht-filter-bar" role="search" aria-label="Filter dan pencarian QC">
+                <input type="text" id="leaderSearchInput" class="ht-form-input" placeholder="Cari: Kode, Customer, Part..." />
+                <select id="leaderStatusFilter" class="ht-form-select w-auto min-w-[140px]">
+                  <option value="all">Semua Status</option>
+                  <option value="pending">Butuh Review</option>
+                  <option value="ok">Sudah Disetujui</option>
+                  <option value="ng">Ditolak</option>
+                </select>
+                <button id="leaderResetBtn" class="ht-btn ht-btn-secondary-outlined ht-btn-sm">Reset</button>
+              </div>
+              <div class="ht-table-wrapper">
+                <table class="ht-table">
+                  <thead>
+                    <tr>
+                      <th>Control Number</th>
+                      <th>Customer</th>
+                      <th>Part Name</th>
+                      <th>Hardness</th>
+                      <th>Hasil QC</th>
+                      <th>Laboratori</th>
+                      <th>Judgement</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leaderTableBody">
+                    <tr><td colspan="8" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Memuat...</p></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/date-format.js"></script>
+    <script>
+      if (!HTUI.requireAuth()) {
+        throw new Error("redirecting");
+      }
+      const session = Auth.getSession();
+
+      /* Role guard: hanya Leader QC atau Administrator yang boleh akses */
+      if (!Auth.hasRole([Auth.ROLES.LEADER_QC, Auth.ROLES.ADMINISTRATOR])) {
+        HTUI.toast("Halaman ini hanya untuk Leader QC.", "error");
+        window.location.href = "index.html";
+        throw new Error("Akses ditolak");
+      }
+
+      let html5QrCode = null;
+      let currentMaterial = null;
+      let leaderSignatureData = null;
+      let leaderFilterState = { searchQuery: "", statusFilter: "all" };
+
+      function startScanner() {
+        if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader");
+        if (!html5QrCode) return;
+        HTUI.startScanner(html5QrCode, function (decodedText) {
+          var id = HTUI.parseScanId(decodedText);
+          loadMaterialById(id);
+        });
+      }
+
+      function clearManualError() {
+        var err = document.getElementById("manualError");
+        if (err && !err.classList.contains("hidden")) err.classList.add("hidden");
+      }
+
+      function parseQCRemarks(qc) {
+        if (!qc || !qc.remarks) return null;
+        try {
+          var parsed = JSON.parse(qc.remarks);
+          if (parsed && typeof parsed === "object" && parsed.stage !== undefined) return parsed;
+        } catch (e) { /* plain string — legacy */ }
+        return null;
+      }
+
+      function getAfterQc(material) {
+        if (!material) return null;
+        var qcs = DB.get("qcs").filter(function (q) { return String(q.material_id) === String(material.id); });
+        var afterQc = null;
+        for (var i = 0; i < qcs.length; i++) {
+          var q = qcs[i];
+          var ext = parseQCRemarks(q);
+          var stage = (ext && ext.stage) || "after";
+          if (stage === "after") {
+            if (!afterQc || (q.id || 0) > (afterQc.id || 0)) afterQc = q;
+          }
+        }
+        return afterQc;
+      }
+
+      function formatJudgementStatus(qc) {
+        if (!qc) return { label: "Butuh Review", cls: "ht-badge-pending", val: "pending" };
+        if (qc.leader_judgement === "OK") return { label: "Approved", cls: "ht-badge-ok", val: "ok" };
+        if (qc.leader_judgement === "NG") return { label: "Ditolak", cls: "ht-badge-ng", val: "ng" };
+        return { label: "Butuh Review", cls: "ht-badge-pending", val: "pending" };
+      }
+
+      function loadMaterialById(manualId) {
+        var id = manualId || document.getElementById("manualId").value;
+        if (!id) return;
+        var material = DB.findByKode(id) || DB.findMaterial(id);
+        if (!material) {
+          HTUI.toast("Material tidak ditemukan! Kode: " + id, "error");
+          return;
+        }
+
+        var qc = getAfterQc(material);
+        if (!qc) {
+          HTUI.toast("Belum ada laporan QC (Inspector belum mengisi).", "error");
+          return;
+        }
+
+        var hasil = (qc.hasil || "").toUpperCase();
+        if (hasil === "NG") {
+          HTUI.toast("Hasil QC NG — tidak dapat diberikan judgement Leader OK.", "error");
+        }
+
+        currentMaterial = material;
+
+        var part = DB.findPartById(material.part_id);
+        var cust = DB.findCustomerById(material.customer_id);
+
+        document.getElementById("lControlNumber").textContent = material.kode || "-";
+        document.getElementById("lCustomer").textContent = cust ? cust.nama_customer : "-";
+        document.getElementById("lNamaPart").textContent = part ? part.nama_part : "-";
+        document.getElementById("lNomorPart").textContent = part ? part.nomor_part : "-";
+        document.getElementById("lTargetHardness").textContent = part ? (part.target_hardness || "-") : "-";
+
+        var prod = DB.getProcessProduction(material, "HT");
+        document.getElementById("lJenisProses").textContent = prod ? (prod.jenis_treatment || "-") : "-";
+
+        /* Populate measurement values */
+        var tbody = document.getElementById("leaderMeasurementBody");
+        tbody.innerHTML = "";
+        var ext = parseQCRemarks(qc);
+        var surfaceValues = (ext && ext.surface_values) || [];
+        var coreValues = (ext && ext.core_values) || [];
+        var surfaceAvg = "-", coreAvg = "-", overallAvg = "-";
+        var svValid = [], cvValid = [];
+        for (var i = 0; i < 12; i++) {
+          var sv = surfaceValues[i];
+          var cv = coreValues[i];
+          sv = (sv !== null && sv !== undefined && !isNaN(parseFloat(sv))) ? String(sv) : "";
+          cv = (cv !== null && cv !== undefined && !isNaN(parseFloat(cv))) ? String(cv) : "";
+          if (sv) svValid.push(parseFloat(sv));
+          if (cv) cvValid.push(parseFloat(cv));
+          tbody.innerHTML += '<tr><td>' + (i + 1) + '</td><td class="font-mono">' + sv + '</td><td class="font-mono">' + cv + '</td></tr>';
+        }
+        if (svValid.length > 0) surfaceAvg = (svValid.reduce(function (a, b) { return a + b; }, 0) / svValid.length).toFixed(2);
+        if (cvValid.length > 0) coreAvg = (cvValid.reduce(function (a, b) { return a + b; }, 0) / cvValid.length).toFixed(2);
+        var allValid = svValid.concat(cvValid);
+        if (allValid.length > 0) overallAvg = (allValid.reduce(function (a, b) { return a + b; }, 0) / allValid.length).toFixed(2);
+
+        document.getElementById("lSurfaceAvg").textContent = surfaceAvg;
+        document.getElementById("lCoreAvg").textContent = coreAvg;
+        document.getElementById("lOverallAvg").textContent = overallAvg;
+
+        /* Inspector info */
+        document.getElementById("lInspectorName").textContent = qc.inspector || "-";
+        document.getElementById("lInspectionDate").textContent = qc.tanggal_inspector ? qc.tanggal_inspector.slice(0, 10) : "-";
+        var hasilEl = document.getElementById("lQcHasil");
+        if (hasil === "OK") hasilEl.innerHTML = '<span class="ht-badge ht-badge-ok">OK</span>';
+        else if (hasil === "NG") hasilEl.innerHTML = '<span class="ht-badge ht-badge-ng">NG</span>';
+        else hasilEl.textContent = qc.hasil || "-";
+
+        /* Inspector signature */
+        if (ext && ext.signature) {
+          document.getElementById("leaderInspectorSignature").innerHTML =
+            '<img src="' + ext.signature + '" style="max-width:100%;max-height:120px;" alt="Inspector Signature" />';
+        } else {
+          document.getElementById("leaderInspectorSignature").innerHTML = '<span class="ht-hint">Tidak ada tanda tangan</span>';
+        }
+
+        /* Load existing Leader judgment if any */
+        document.getElementById("leaderQcId").value = qc.id;
+        document.getElementById("leaderMaterialId").value = material.id;
+        document.getElementsByName("leaderJudgement").forEach(function (r) { r.checked = false; });
+        document.getElementById("leaderName").value = qc.leader_name || "";
+        document.getElementById("leaderDate").value = qc.leader_date ? qc.leader_date.slice(0, 10) : new Date().toISOString().split("T")[0];
+        document.getElementById("leaderNgNote").value = "";
+        document.getElementById("leaderNGNote").classList.add("hidden");
+        leaderSignatureData = qc.leader_signature || null;
+        initLeaderSignatureCanvas();
+
+        /* Show/hide NG note */
+        var ngRadio = document.querySelector('input[name="leaderJudgement"][value="NG"]');
+        if (ngRadio) {
+          ngRadio.addEventListener("change", function () {
+            document.getElementById("leaderNGNote").classList.toggle("hidden", !this.checked);
+          });
+        }
+        var okRadio = document.querySelector('input[name="leaderJudgement"][value="OK"]');
+        if (okRadio) {
+          okRadio.addEventListener("change", function () {
+            document.getElementById("leaderNGNote").classList.add("hidden");
+          });
+        }
+
+        HTUI.openModal("leaderModal");
+      }
+
+      function initLeaderSignatureCanvas() {
+        var canvas = document.getElementById("leaderSignatureCanvas");
+        if (!canvas) return;
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 2;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        if (leaderSignatureData) {
+          var img = new Image();
+          img.onload = function () { ctx.drawImage(img, 0, 0); };
+          img.src = leaderSignatureData;
+        }
+
+        if (!canvas._leaderSigBound) {
+          canvas.addEventListener("mousedown", leaderSigStart);
+          canvas.addEventListener("mousemove", leaderSigContinue);
+          canvas.addEventListener("mouseup", leaderSigStop);
+          canvas.addEventListener("mouseleave", leaderSigStop);
+          canvas.addEventListener("touchstart", leaderSigTouchStart);
+          canvas.addEventListener("touchmove", leaderSigTouchMove);
+          canvas.addEventListener("touchend", leaderSigStop);
+          canvas._leaderSigBound = true;
+        }
+      }
+
+      var leaderDrawing = false;
+      function leaderSigStart(e) {
+        leaderDrawing = true;
+        var canvas = e.target;
+        var ctx = canvas.getContext("2d");
+        var rect = canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      }
+      function leaderSigContinue(e) {
+        if (!leaderDrawing) return;
+        e.preventDefault();
+        var canvas = e.target;
+        var ctx = canvas.getContext("2d");
+        var rect = canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+      function leaderSigStop(e) {
+        if (!leaderDrawing) return;
+        leaderDrawing = false;
+        var canvas = e.target;
+        leaderSignatureData = canvas.toDataURL("image/png");
+      }
+      function leaderSigTouchStart(e) {
+        if (e.touches && e.touches.length > 0) leaderSigStart({ target: e.target, clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+      }
+      function leaderSigTouchMove(e) {
+        if (e.touches && e.touches.length > 0) leaderSigContinue({ target: e.target, touches: e.touches });
+      }
+
+      function clearLeaderSignature() {
+        leaderSignatureData = null;
+        var canvas = document.getElementById("leaderSignatureCanvas");
+        if (!canvas) return;
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      function closeLeaderModal() {
+        HTUI.closeModal("leaderModal");
+        restartScanner();
+        var manualInput = document.getElementById("manualId");
+        if (manualInput) manualInput.focus();
+      }
+
+      function restartScanner() {
+        try {
+          if (html5QrCode) { try { HTUI.stopScanner(html5QrCode); } catch (e) {} html5QrCode = null; }
+          html5QrCode = HTUI.createScanner("qr-reader");
+          if (html5QrCode) HTUI.startScanner(html5QrCode, function (decodedText) {
+            var id = HTUI.parseScanId(decodedText);
+            loadMaterialById(id);
+          });
+        } catch (e) { console.warn("[LeaderQC] restart scanner failed:", e); }
+      }
+
+      function saveLeaderJudgement() {
+        if (!currentMaterial) return;
+        var leaderName = document.getElementById("leaderName").value.trim();
+        var leaderDate = document.getElementById("leaderDate").value;
+        var judgement = null;
+        var radios = document.getElementsByName("leaderJudgement");
+        for (var i = 0; i < radios.length; i++) {
+          if (radios[i].checked) { judgement = radios[i].value; break; }
+        }
+
+        if (!judgement) {
+          HTUI.toast("Pilih judgement (OK / NG).", "error");
+          return;
+        }
+        if (!leaderName) {
+          HTUI.toast("Nama Leader QC wajib diisi!", "error");
+          return;
+        }
+        if (!leaderDate) {
+          HTUI.toast("Tanggal judgment wajib diisi!", "error");
+          return;
+        }
+        if (judgement === "NG") {
+          var note = document.getElementById("leaderNgNote").value.trim();
+          if (!note) {
+            HTUI.toast("Keterangan NG wajib diisi.", "error");
+            return;
+          }
+        }
+
+        var qcId = document.getElementById("leaderQcId").value;
+        var data = {
+          leader_judgement: judgement,
+          leader_name: leaderName,
+          leader_date: leaderDate,
+          leader_signature: leaderSignatureData || null,
+          catatan: judgement === "NG" ? document.getElementById("leaderNgNote").value.trim() : "",
+        };
+
+        if (qcId) {
+          DB.update("qcs", qcId, data);
+        }
+
+        HTUI.toast("Judgement Leader QC berhasil disimpan!", "success");
+        closeLeaderModal();
+        loadLeaderQCs();
+      }
+
+      function loadLeaderQCs() {
+        var qcs = DB.get("qcs");
+        var materials = DB.get("materials");
+        var productions = DB.get("productions");
+        var parts = DB.get("parts");
+        var customers = DB.get("customers");
+
+        var search = leaderFilterState.searchQuery.toLowerCase();
+        var filtered = qcs.filter(function (q) {
+          var m = materials.find(function (mat) { return mat.id == q.material_id; }) || {};
+          var part = DB.findPartById(m.part_id);
+          var cust = DB.findCustomerById(m.customer_id);
+          var ext = parseQCRemarks(q);
+          var stage = (ext && ext.stage) || "after";
+          if (stage !== "after") return false;
+
+          var status = formatJudgementStatus(q).val;
+          if (leaderFilterState.statusFilter !== "all" && leaderFilterState.statusFilter !== status) return false;
+
+          if (search) {
+            if (!String(m.kode || "").toLowerCase().includes(search) &&
+                !String((cust && cust.nama_customer) || "").toLowerCase().includes(search) &&
+                !String((part && part.nama_part) || "").toLowerCase().includes(search)) return false;
+          }
+          return true;
+        });
+
+        filtered.sort(function (a, b) { return (b.id || 0) - (a.id || 0); });
+
+        var html = filtered.map(function (q) {
+          var m = materials.find(function (mat) { return mat.id == q.material_id; }) || {};
+          var part = DB.findPartById(m.part_id);
+          var cust = DB.findCustomerById(m.customer_id);
+          var status = formatJudgementStatus(q);
+          var hasilColor = q.hasil === "OK" ? "ht-badge-ok" : q.hasil === "NG" ? "ht-badge-ng" : "ht-badge-waiting";
+          var canReview = q.hasil === "OK" && !q.leader_judgement;
+
+          return '<tr class="ht-table-row">' +
+            '<td class="font-mono">' + (m.kode || "-") + '</td>' +
+            '<td>' + ((cust && cust.nama_customer) || "-") + '</td>' +
+            '<td>' + (part ? part.nama_part : "-") + '</td>' +
+            '<td class="font-mono">' + (q.hardness || "-") + " " + (q.satuan_hardness || "") + '</td>' +
+            '<td><span class="ht-badge ' + hasilColor + '">' + (q.hasil || "-") + '</span></td>' +
+            '<td><span class="ht-badge ' + status.cls + '">' + status.label + '</span></td>' +
+            '<td><span class="ht-badge ' + (q.leader_judgement === "OK" ? "ht-badge-ok" : q.leader_judgement === "NG" ? "ht-badge-ng" : "ht-badge-waiting") + '">' + (q.leader_judgement || "-") + '</span></td>' +
+            '<td>' +
+              (canReview ? '<button onclick="loadMaterialById(\'' + (m.kode || m.id) + '\')" class="ht-action-btn edit" title="Review" aria-label="Review"><img src="assets/icons/edit.svg" alt="Review" class="icon"></button>' :
+               '<button onclick="loadMaterialById(\'' + (m.kode || m.id) + '\')" class="ht-action-btn view" title="Lihat" aria-label="Lihat"><img src="assets/icons/eye.svg" alt="Lihat" class="icon"></button>') +
+            '</td>' +
+          '</tr>';
+        }).join("");
+
+        document.getElementById("leaderTableBody").innerHTML = html ||
+          '<tr><td colspan="8" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Tidak ada data QC yang perlu review</p></td></tr>';
+      }
+
+      document.getElementById("btnSaveLeaderJudgement").addEventListener("click", function (e) {
+        e.preventDefault();
+        saveLeaderJudgement();
+      });
+      document.getElementById("btnClearLeaderSignature").addEventListener("click", function () {
+        clearLeaderSignature();
+      });
+
+      document.getElementById("leaderSearchInput").addEventListener("input", function (e) {
+        leaderFilterState.searchQuery = e.target.value;
+        loadLeaderQCs();
+      });
+      document.getElementById("leaderStatusFilter").addEventListener("change", function (e) {
+        leaderFilterState.statusFilter = e.target.value;
+        loadLeaderQCs();
+      });
+      document.getElementById("leaderResetBtn").addEventListener("click", function () {
+        leaderFilterState.searchQuery = "";
+        leaderFilterState.statusFilter = "all";
+        document.getElementById("leaderSearchInput").value = "";
+        document.getElementById("leaderStatusFilter").value = "all";
+        loadLeaderQCs();
+      });
+
+      window.addEventListener("DOMContentLoaded", function () {
+        DB.init();
+        DB.migrate();
+        HTDateFormat.init();
+        try { startScanner(); } catch (e) { console.warn("[LeaderQC] Scanner init failed:", e); }
+        loadLeaderQCs();
+
+        var modalOverlay = document.getElementById("leaderModal");
+        if (modalOverlay) {
+          modalOverlay.addEventListener("click", function (e) {
+            if (e.target === modalOverlay) closeLeaderModal();
+          });
+        }
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && modalOverlay && modalOverlay.classList.contains("active")) {
+            closeLeaderModal();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
