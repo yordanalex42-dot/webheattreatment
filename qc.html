@@ -558,6 +558,7 @@
                   <option value="all">Semua Status</option>
                   <option value="OK">OK</option>
                   <option value="NG">NG</option>
+                  <option value="BELUM DAPAT DITENTUKAN">Belum Dapat Ditentukan</option>
                 </select>
                 <input
                   type="date"
@@ -1226,7 +1227,7 @@
              Status OK hanya jika Surface dan Core sama-sama dapat dinilai dan OK. */
           var hasil = (surfaceResult === "NG" || coreResult === "NG")
             ? "NG"
-            : (surfaceResult === "OK" && coreResult === "OK" ? "OK" : "-");
+            : (surfaceResult === "OK" && coreResult === "OK" ? "OK" : "BELUM DAPAT DITENTUKAN");
 
           var existingQC = null;
           var existingQcId = document.getElementById("qcId").value;
