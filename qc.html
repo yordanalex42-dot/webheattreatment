@@ -594,6 +594,7 @@
                   <option value="all">Semua Status</option>
                   <option value="OK">OK</option>
                   <option value="NG">NG</option>
+                  <option value="BELUM DAPAT DITENTUKAN">Belum Dapat Ditentukan</option>
                 </select>
                 <input
                   type="date"
@@ -706,33 +707,47 @@
       }
 
       function findQCByStage(materialId, stage) {
-        var qcs = DB.get("qcs");
-        for (var i = 0; i < qcs.length; i++) {
-          var q = qcs[i];
-          if (String(q.material_id) !== String(materialId)) continue;
+        var qcs = DB.get("qcs").filter(function (q) {
+          if (String(q.material_id) !== String(materialId)) return false;
           var ext = parseQCRemarks(q);
-          if (ext && ext.stage) {
-            if (ext.stage === stage) return q;
-          } else {
-            /* Legacy record tanpa stage — cocokkan sebagai "after" */
-            if (stage === "after") return q;
-          }
-        }
-        return null;
+          if (ext && ext.stage) return ext.stage === stage;
+          /* Data lama tanpa stage tetap dianggap laporan After. */
+          return stage === "after";
+        });
+        if (!qcs.length) return null;
+        /* Jika ada beberapa laporan pada tahap sama, buka yang paling baru. */
+        qcs.sort(function (a, b) {
+          var aTime = Date.parse(a.updated_at || a.created_at || "") || 0;
+          var bTime = Date.parse(b.updated_at || b.created_at || "") || 0;
+          if (aTime !== bTime) return bTime - aTime;
+          return (Number(b.id) || 0) - (Number(a.id) || 0);
+        });
+        return qcs[0];
       }
 
-      function buildQCRemarks(stage, surfaceValues, coreValues, signature) {
-        return JSON.stringify({
-          stage: stage,
-          surface_values: surfaceValues,
-          core_values: coreValues,
-          signature: signature || null,
-        });
+      function buildQCRemarks(stage, surfaceValues, coreValues, signature, previousRemarks, surfaceResult, coreResult) {
+        var preserved = {};
+        if (previousRemarks) {
+          try {
+            var old = JSON.parse(previousRemarks);
+            if (old && typeof old === "object" && !Array.isArray(old)) preserved = old;
+          } catch (e) {
+            /* Pertahankan remarks lama yang berupa teks biasa. */
+            preserved.legacy_remarks = previousRemarks;
+          }
+        }
+        preserved.stage = stage;
+        preserved.surface_values = surfaceValues;
+        preserved.core_values = coreValues;
+        preserved.signature = signature || null;
+        preserved.surface_result = surfaceResult || "UNDETERMINED";
+        preserved.core_result = coreResult || "UNDETERMINED";
+        return JSON.stringify(preserved);
       }
 
       /* ---- Helpers filter (tetap sama) ---- */
       function getQCRelations(q) {
-        var prod = DB.get("prolections").find(function (p) {
+        var prod = DB.get("productions").find(function (p) {
           return String(p.id) === String(q.production_id);
         }) || {};
         var m = DB.get("materials").find(function (mat) {
@@ -909,34 +924,35 @@
       }
 
       /* ---- Parsing hardness target (untuk perhitungan OK/NG) ---- */
-      function parseHardnessRange(target) {
+      function parseHardnessRange(target, measurementUnit) {
         if (!target || target === "-" || target === "Belum diatur") return null;
-        var match = target.match(/(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)/);
-        if (match) {
-          var min = parseFloat(match[1]);
-          var max = parseFloat(match[2]);
-          if (!isNaN(min) && !isNaN(max))
-            return { min: Math.min(min, max), max: Math.max(min, max) };
+        var text = String(target).trim().toUpperCase();
+        var unitMatch = text.match(/\b(HRC|HV|HBW?|HRA|HRB)\b/);
+        /* Unit harus eksplisit dan sama dengan unit pengukuran form (HRC). */
+        if (!unitMatch || unitMatch[1] !== String(measurementUnit || "HRC").toUpperCase()) return null;
+        var numeric = text.replace(unitMatch[1], "").trim();
+        var rangeMatch = numeric.match(/(?:^|\s)(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)(?:\s|$)/);
+        if (rangeMatch) {
+          var min = parseFloat(rangeMatch[1]);
+          var max = parseFloat(rangeMatch[2]);
+          if (isFinite(min) && isFinite(max)) return { min: Math.min(min, max), max: Math.max(min, max), unit: unitMatch[1] };
         }
-        var single = parseHardnessTarget(target);
-        if (single !== null && !isNaN(single))
-          return { min: single, max: single };
+        /* Target tunggal diterima hanya bila unit eksplisit; tanpa toleransi
+           berarti harus sama persis dengan nilai target. */
+        var singleMatch = numeric.match(/^\s*(\d+(?:\.\d+)?)\s*$/);
+        if (singleMatch) {
+          var single = parseFloat(singleMatch[1]);
+          if (isFinite(single)) return { min: single, max: single, unit: unitMatch[1] };
+        }
         return null;
       }
 
-      function parseHardnessTarget(target) {
-        if (!target || target === "-" || target === "Belum diatur") return null;
-        var numericPart = target.replace(/[^\d.]/g, "").trim();
-        if (!numericPart) return null;
-        return parseFloat(numericPart);
-      }
-
-      function checkHardness(target, actual) {
-        var range = parseHardnessRange(target);
-        if (!range) return true;
-        var actualVal = parseFloat(actual);
-        if (isNaN(actualVal)) return false;
-        return actualVal >= range.min && actualVal <= range.max;
+      function evaluateHardness(target, actual, measurementUnit) {
+        var range = parseHardnessRange(target, measurementUnit);
+        var actualText = String(actual == null ? "" : actual).trim();
+        var actualVal = actualText === "" ? NaN : Number(actualText);
+        if (!range || !isFinite(actualVal)) return "UNDETERMINED";
+        return actualVal >= range.min && actualVal <= range.max ? "OK" : "NG";
       }
 
       /* ---- Measurement table ---- */
@@ -1050,9 +1066,10 @@
         var rect = canvas.getBoundingClientRect();
         var clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
         var clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+        /* Konversi koordinat CSS ke koordinat bitmap canvas agar akurat saat responsif. */
         return {
-          x: clientX - rect.left,
-          y: clientY - rect.top
+          x: (clientX - rect.left) * (canvas.width / (rect.width || canvas.width)),
+          y: (clientY - rect.top) * (canvas.height / (rect.height || canvas.height))
         };
       }
 
@@ -1067,7 +1084,7 @@
 
       function continueSignatureDraw(e) {
         if (!sigDrawing) return;
-        e.preventDefault();
+        if (typeof e.preventDefault === "function") e.preventDefault();
         var canvas = e.target;
         var ctx = canvas.getContext("2d");
         var pos = getCanvasPos(canvas, e);
@@ -1079,22 +1096,20 @@
         if (!sigDrawing) return;
         sigDrawing = false;
         var canvas = e.target;
-        if (!signatureData) {
-          signatureData = canvas.toDataURL("image/png");
-        } else {
-          signatureData = canvas.toDataURL("image/png");
-        }
+        if (canvas) signatureData = canvas.toDataURL("image/png");
       }
 
       function handleTouchStart(e) {
+        if (e.cancelable) e.preventDefault();
         if (e.touches.length > 0) {
           startSignatureDraw({ target: e.target, touches: e.touches });
         }
       }
 
       function handleTouchMove(e) {
+        if (e.cancelable) e.preventDefault();
         if (e.touches.length > 0) {
-          continueSignatureDraw({ target: e.target, touches: e.touches });
+          continueSignatureDraw({ target: e.target, touches: e.touches, preventDefault: function () {} });
         }
       }
 
@@ -1240,29 +1255,50 @@
             ? (validCore.reduce(function (a, b) { return a + b; }, 0) / validCore.length).toFixed(2)
             : null;
 
-          /* Hitung Overall Average untuk hasil OK/NG */
+          /* Nilai rata-rata keseluruhan hanya untuk kolom legacy qcs.hardness.
+             Penentuan hasil part tidak boleh memakai gabungan Surface + Core. */
           var allValid = validSurface.concat(validCore);
           var overallAvg = allValid.length > 0
             ? (allValid.reduce(function (a, b) { return a + b; }, 0) / allValid.length).toFixed(2)
             : null;
 
-          /* Target hardness */
+          /* Nilai target harus jelas format dan satuannya; input form saat ini HRC. */
           var targetEl = document.getElementById("irTargetHardness");
           var targetHardness = targetEl ? targetEl.textContent : "-";
+          var surfaceAverageValue = validSurface.length > 0
+            ? validSurface.reduce(function (a, b) { return a + b; }, 0) / validSurface.length
+            : null;
+          var coreAverageValue = validCore.length > 0
+            ? validCore.reduce(function (a, b) { return a + b; }, 0) / validCore.length
+            : null;
+          var surfaceResult = surfaceAverageValue === null
+            ? "UNDETERMINED"
+            : evaluateHardness(targetHardness, surfaceAverageValue, "HRC");
+          var coreResult = coreAverageValue === null
+            ? "UNDETERMINED"
+            : evaluateHardness(targetHardness, coreAverageValue, "HRC");
 
-          /* Hitung hasil OK/NG */
-          var hasil = "-";
-          if (overallAvg && targetHardness && targetHardness !== "Belum diatur") {
-            var pass = checkHardness(targetHardness, overallAvg);
-            hasil = pass ? "OK" : "NG";
+          /* Jika salah satu sisi NG, keseluruhan part tetap NG.
+             Status OK hanya jika Surface dan Core sama-sama dapat dinilai dan OK. */
+          var hasil = (surfaceResult === "NG" || coreResult === "NG")
+            ? "NG"
+            : (surfaceResult === "OK" && coreResult === "OK" ? "OK" : "BELUM DAPAT DITENTUKAN");
+
+          var existingQC = null;
+          var existingQcId = document.getElementById("qcId").value;
+          if (existingQcId) {
+            existingQC = DB.get("qcs").find(function (q) {
+              return String(q.id) === String(existingQcId);
+            }) || null;
           }
-
-          /* Build remarks JSON */
           var remarks = buildQCRemarks(
             stage,
             surfaceValues,
             coreValues,
-            signatureData
+            signatureData,
+            existingQC ? existingQC.remarks : null,
+            surfaceResult,
+            coreResult
           );
 
           var productionId = document.getElementById("qcProductionId").value;
