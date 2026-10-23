@@ -306,6 +306,23 @@
       let html5QrCode = null;
       let currentMaterial = null;
       let supervisorSignatureData = null;
+      /* Data URL kanvas tanda tangan Supervisor yang masih kosong (putih).
+         Dipakai untuk mendeteksi "tanda tangan kosong" agar tidak
+         diterima sebagai persetujuan OK yang sah (nama+tanggal bukan
+         pengganti tanda tangan yang tersedia). */
+      var supervisorBlankSignature = (function () {
+        var c = document.createElement("canvas");
+        c.width = 500;
+        c.height = 150;
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, c.width, c.height);
+        return c.toDataURL("image/png");
+      })();
+      function supervisorHasValidSignature() {
+        if (!supervisorSignatureData || typeof supervisorSignatureData !== "string" || supervisorSignatureData.indexOf("data:image") !== 0) return false;
+        return supervisorSignatureData !== supervisorBlankSignature;
+      }
       let supervisorFilterState = { searchQuery: "", statusFilter: "all" };
 
       function startScanner() {
@@ -572,6 +589,38 @@
 
       function saveSupervisorJudgement() {
         if (!currentMaterial) return;
+        var qcId = document.getElementById("supervisorQcId").value;
+        if (!qcId) {
+          HTUI.toast("Data QC tidak ditemukan.", "error");
+          return;
+        }
+
+        /* Re-validasi dari DB (fresh) agar syarat tetap dicek pada saat
+           penyimpanan, bukan hanya saat modal dibuka. */
+        var qc = DB.get("qcs").find(function (q) { return String(q.id) === String(qcId); });
+        if (!qc) {
+          HTUI.toast("Data QC tidak ditemukan di database.", "error");
+          return;
+        }
+        var hasil = (qc.hasil || "").toUpperCase();
+
+        /* Rule 2a: hasil QC Inspector harus OK sebelum supervisor menyimpan. */
+        if (hasil !== "OK") {
+          var inspReason = hasil === "NG" ? "NG"
+            : hasil === "BELUM DAPAT DITENTUKAN" ? "BELUM DAPAT DITENTUKAN"
+            : (hasil ? hasil : "kosong/ambigu");
+          HTUI.toast("Hasil QC Inspector " + inspReason + " — tidak dapat menyimpan judgment Supervisor.", "error");
+          return;
+        }
+
+        /* Rule 2b: Leader QC sudah memberikan judgment OK (termasuk tanda
+           tangan) sebelum supervisor menyimpan. Menggunakan
+           DB.isLeaderApproved agar konsisten dengan canDeliver()/delivery. */
+        if (!DB.isLeaderApproved(currentMaterial)) {
+          HTUI.toast("Leader QC belum memberikan judgment OK yang sah (termasuk tanda tangan). Supervisor tidak dapat menyimpan judgment.", "error");
+          return;
+        }
+
         var supervisorName = document.getElementById("supervisorName").value.trim();
         var supervisorDate = document.getElementById("supervisorDate").value;
         var judgement = null;
@@ -592,6 +641,15 @@
           HTUI.toast("Tanggal judgmet wajib diisi!", "error");
           return;
         }
+
+        /* Rule 4: tanda tangan wajib untuk judgment OK.
+           Nama dan tanggal tidak dianggap pengganti tanda tangan. */
+        if (judgement === "OK" && !supervisorHasValidSignature()) {
+          HTUI.toast("Tanda tangan Supervisor QC wajib diisi untuk judgment OK.", "error");
+          return;
+        }
+
+        /* Rule 5: judgment NG wajib memiliki keterangan. */
         if (judgement === "NG") {
           var note = document.getElementById("supervisorNgNote").value.trim();
           if (!note) {
@@ -600,7 +658,12 @@
           }
         }
 
-        var qcId = document.getElementById("supervisorQcId").value;
+        /* Rule 6: hanya update field milik Supervisor. DB.update melakukan
+           merge sehingga data Inspector (hasil, remarks, inspector,
+           tanggal_inspector, hardness, microstructure) dan data Leader
+           (leader_judgement, leader_name, leader_date, leader_signature)
+           tidak tersentuh. supervisor_notes hanya berisi keterangan NG
+           Supervisor bila NG. */
         var data = {
           supervisor_judgement: judgement,
           supervisor_name: supervisorName,
@@ -613,7 +676,7 @@
           DB.update("qcs", qcId, data);
         }
 
-        HTUI.toast("Judgement Supervisor QC berhasil disimpan!", "success");
+        HTUI.toast("Judgment Supervisor QC berhasil disimpan!", "success");
         closeSupervisorModal();
         loadSupervisorQCs();
       }

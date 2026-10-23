@@ -37,7 +37,7 @@ const DB = {
     parts: ["id", "customer_id", "nomor_part", "nama_part", "berat_part", "satuan_berat", "target_hardness", "standard_temperature", "process_type", "standard_process_route", "status", "created_at", "updated_at"],
     materials: ["id", "kode", "customer_id", "part_id", "nomor_surat_jalan", "lot_no", "material_charge", "status_part", "qty", "berat_part_snapshot", "berat_total_part", "tanggal_masuk", "keterangan", "remarks", "process_type", "diinput_oleh", "qr_code", "status_proses", "process_route", "created_at", "updated_at"],
     productions: ["id", "material_id", "incoming_id", "tracking_id", "status", "production_status", "kode", "process_result", "visual_check_result", "visual_check_note", "visual_check_operator", "start_scan_at", "start_scan_by", "machine_start_at", "machine_start_by", "finish_scan_at", "finish_scan_by", "process_ng_note", "machine_finish_at", "machine_finish_by", "tanggal_proses", "jenis_treatment", "remarks", "created_at", "updated_at", "standard_temperature_snapshot", "temperature_tolerance_snapshot", "actual_temperature", "temperature_min", "temperature_max", "temperature_deviation", "temperature_result", "temperature_recorded_at", "temperature_recorded_by"],
-    qcs: ["id", "production_id", "material_id", "hardness", "satuan_hardness", "hasil", "microstructure", "remarks", "inspector", "tanggal_inspector", "catatan", "user_id", "created_at", "updated_at", "leader_judgement", "leader_name", "leader_date", "leader_signature", "supervisor_judgement", "supervisor_name", "supervisor_date", "supervisor_signature"],
+    qcs: ["id", "production_id", "material_id", "hardness", "satuan_hardness", "hasil", "microstructure", "remarks", "inspector", "tanggal_inspector", "catatan", "user_id", "created_at", "updated_at", "leader_judgement", "leader_name", "leader_date", "leader_signature", "supervisor_judgement", "supervisor_name", "supervisor_date", "supervisor_signature", "supervisor_notes"],
     deliveries: ["id", "production_id", "material_id", "customer_id", "tanggal_kirim", "qty_kirim", "nama_pengirim", "status", "catatan", "user_id", "remarks", "created_at", "updated_at"],
     tracking: ["id", "material_id", "production_id", "delivery_id", "remarks", "created_at", "updated_at"],
      targets: ["id", "year", "month", "target_berat_output", "created_at", "updated_at"],
@@ -1192,7 +1192,7 @@ const DB = {
       if (!("visual_check_operator" in p)) { p.visual_check_operator = ""; changed = true; }
     }
     if (changed) localStorage.setItem("ht_productions", JSON.stringify(productions));
-    const validQCFields = ["id","production_id","material_id","hardness","satuan_hardness","hasil","microstructure","remarks","inspector","tanggal_inspector","catatan","user_id","created_at","updated_at","leader_judgement","leader_name","leader_date","leader_signature","supervisor_judgement","supervisor_name","supervisor_date","supervisor_signature"];
+    const validQCFields = ["id","production_id","material_id","hardness","satuan_hardness","hasil","microstructure","remarks","inspector","tanggal_inspector","catatan","user_id","created_at","updated_at","leader_judgement","leader_name","leader_date","leader_signature","supervisor_judgement","supervisor_name","supervisor_date","supervisor_signature","supervisor_notes"];
     const qcs = this.get("qcs");
     changed = false;
     for (const q of qcs) {
@@ -1209,6 +1209,7 @@ const DB = {
       if (!("supervisor_name" in q)) { q.supervisor_name = ""; changed = true; }
       if (!("supervisor_date" in q)) { q.supervisor_date = ""; changed = true; }
       if (!("supervisor_signature" in q)) { q.supervisor_signature = null; changed = true; }
+      if (!("supervisor_notes" in q)) { q.supervisor_notes = ""; changed = true; }
       /* Normalisasi hasil: PASS -> OK (hasil QC menggunakan OK/NG) */
       if ("hasil" in q) {
         const hOK = String(q.hasil).toUpperCase();

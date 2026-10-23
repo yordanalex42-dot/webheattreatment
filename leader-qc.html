@@ -288,6 +288,23 @@
       let html5QrCode = null;
       let currentMaterial = null;
       let leaderSignatureData = null;
+      /* Data URL kanvas tanda tangan yang masih kosong (putih).
+         Dipakai untuk mendeteksi "tanda tangan kosong" agar tidak
+         diterima sebagai persetujuan OK yang sah (nama+tanggal bukan
+         pengganti tanda tangan yang tersedia). */
+      var leaderBlankSignature = (function () {
+        var c = document.createElement("canvas");
+        c.width = 500;
+        c.height = 150;
+        var ctx = c.getContext("2d");
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, c.width, c.height);
+        return c.toDataURL("image/png");
+      })();
+      function leaderHasValidSignature() {
+        if (!leaderSignatureData || typeof leaderSignatureData !== "string" || leaderSignatureData.indexOf("data:image") !== 0) return false;
+        return leaderSignatureData !== leaderBlankSignature;
+      }
       let leaderFilterState = { searchQuery: "", statusFilter: "all" };
 
       function startScanner() {
@@ -534,6 +551,21 @@
 
       function saveLeaderJudgement() {
         if (!currentMaterial) return;
+        var qcId = document.getElementById("leaderQcId").value;
+        if (!qcId) {
+          HTUI.toast("Data QC tidak ditemukan.", "error");
+          return;
+        }
+
+        /* Re-validasi hasil QC Inspector dari DB (fresh, bukan state modal)
+           agar penyimpanan O never dilakukan ketika hasil Inspector belum OK. */
+        var qc = DB.get("qcs").find(function (q) { return String(q.id) === String(qcId); });
+        if (!qc) {
+          HTUI.toast("Data QC tidak ditemukan di database.", "error");
+          return;
+        }
+        var hasil = (qc.hasil || "").toUpperCase();
+
         var leaderName = document.getElementById("leaderName").value.trim();
         var leaderDate = document.getElementById("leaderDate").value;
         var judgement = null;
@@ -546,6 +578,18 @@
           HTUI.toast("Pilih judgement (OK / NG).", "error");
           return;
         }
+
+        /* Rule 1: Leader hanya boleh menyimpan judgment OK bila hasil
+           Inspector benar-benar OK. Hasil NG / kosong / ambigu /
+           "BELUM DAPAT DITENTUKAN" — tolak penyimpanan judgment OK. */
+        if (judgement === "OK" && hasil !== "OK") {
+          var inspReason = hasil === "NG" ? "NG"
+            : hasil === "BELUM DAPAT DITENTUKAN" ? "BELUM DAPAT DITENTUKAN"
+            : (hasil ? hasil : "kosong/ambigu");
+          HTUI.toast("Hasil QC Inspector " + inspReason + " — tidak dapat menyimpan judgment OK. Periksa kembali hasil Inspector.", "error");
+          return;
+        }
+
         if (!leaderName) {
           HTUI.toast("Nama Leader QC wajib diisi!", "error");
           return;
@@ -554,6 +598,15 @@
           HTUI.toast("Tanggal judgment wajib diisi!", "error");
           return;
         }
+
+        /* Rule 4: tanda tangan wajib untuk judgment OK.
+           Nama dan tanggal tidak dianggap pengganti tanda tangan. */
+        if (judgement === "OK" && !leaderHasValidSignature()) {
+          HTUI.toast("Tanda tangan Leader QC wajib diisi untuk judgment OK.", "error");
+          return;
+        }
+
+        /* Rule 5: judgment NG wajib memiliki keterangan. */
         if (judgement === "NG") {
           var note = document.getElementById("leaderNgNote").value.trim();
           if (!note) {
@@ -562,7 +615,10 @@
           }
         }
 
-        var qcId = document.getElementById("leaderQcId").value;
+        /* Rule 6: hanya update field milik Leader. DB.update melakukan merge
+           sehingga data Inspector (hasil, remarks/termasuk signature & nilai
+           kekerasan, inspector, tanggal_inspector, hardness, microstructure)
+           tidak tersentuh. catatan hanya berisi keterangan NG Leader bila NG. */
         var data = {
           leader_judgement: judgement,
           leader_name: leaderName,
@@ -575,7 +631,7 @@
           DB.update("qcs", qcId, data);
         }
 
-        HTUI.toast("Judgement Leader QC berhasil disimpan!", "success");
+        HTUI.toast("Judgment Leader QC berhasil disimpan!", "success");
         closeLeaderModal();
         loadLeaderQCs();
       }
