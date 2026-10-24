@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Inspection Report - Sistem Informasi Produksi Heat Treatment</title>
+    <title>Final Inspection Report - Sistem Informasi Produksi Heat Treatment</title>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="css/global.css" />
     <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/sidebar.css" />
@@ -13,6 +15,7 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
     <link rel="stylesheet" href="css/inspection-report.css" />
+    <link rel="stylesheet" href="css/report-center.css" />
   </head>
   <body>
     <div class="ht-app-shell">
@@ -80,7 +83,7 @@
               Delivery
             </a>
           </div>
-                    <div class="nav-section ht-nav-collapsible collapsed" data-nav-section="production">
+                  <div class="nav-section ht-nav-collapsible collapsed" data-nav-section="production">
             <button type="button" class="ht-nav-section-header" onclick="HTUI.toggleNavSection(this)">
               <span class="section-label">
                 <img src="assets/icons/factory.svg" alt="Production" class="sidebar-menu-icon" />
@@ -186,6 +189,14 @@
               <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
               Inspection Report
             </a>
+            <a href="leader-qc.html" class="ht-nav-link">
+              <img src="assets/icons/gavel.svg" alt="Leader QC" class="sidebar-menu-icon" />
+              Leader QC
+            </a>
+            <a href="supervisor-qc.html" class="ht-nav-link">
+              <img src="assets/icons/user.svg" alt="Supervisor QC" class="sidebar-menu-icon" />
+              Supervisor QC
+            </a>
           </div>
           <div class="nav-section">
             <p class="nav-section_title ht-nav-section-title">Tracking</p>
@@ -218,207 +229,244 @@
           </div>
         </div>
       </aside>
-      <main class="ht-main full-width">
+
+      <main class="ht-main">
         <header class="ht-header">
           <div class="ht-header-left">
-            <h1>Inspection Report</h1>
-            <p>Pengelolaan laporan hasil pemeriksaan hardness dan persetujuan QC.</p>
+            <nav class="ht-breadcrumb" aria-label="Breadcrumb">
+              <span class="ht-breadcrumb-item">Dashboard</span>
+              <span class="ht-breadcrumb-separator">/</span>
+              <span class="ht-breadcrumb-item ht-breadcrumb-current">Final Inspection Report</span>
+            </nav>
+            <h1 class="ht-page-title">Final Inspection Report</h1>
+            <p class="ht-page-description">
+              Cari dan terbitkan laporan inspeksi yang telah disetujui oleh
+              <strong>Inspector QC</strong>, <strong>Leader QC</strong>, dan
+              <strong>Supervisor QC</strong>.
+            </p>
           </div>
-          <div class="ht-header-right ht-header-actions">
-            <button
-              type="button"
-              id="btnCreateReport"
-              class="ht-btn ht-btn-primary"
-            >
-              <img src="assets/icons/add.svg" alt="Tambah" class="icon" />
-              <span>+ Buat Inspection Report</span>
-            </button>
+          <div class="ht-header-right">
             <span class="ht-header-date" id="currentDate"></span>
           </div>
         </header>
+
         <div class="ht-content">
           <div class="ht-content-max">
-            <!-- Kartu Ringkasan -->
-            <div class="ht-ir-summary-grid">
-              <div class="ht-kpi-card kpiEntranceDelay1 ht-ir-card-total">
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">TOTAL LAPORAN</p>
-                  <div class="ht-kpi-icon-box">
-                    <img src="assets/icons/file.svg" alt="Total" class="icon" />
+            <!-- Search Panel -->
+            <section class="ht-card fade-in" id="searchPanel">
+              <div class="ht-card-header">
+                <h2 class="ht-card-title">
+                  <img src="assets/icons/search.svg" alt="" class="icon mr-2" />
+                  Cari Inspection Report
+                </h2>
+              </div>
+              <div class="ht-card-body">
+                <!-- QR Scanner -->
+                <div class="ht-ir-scanner-row">
+                  <div class="ht-ir-scanner-col">
+                    <div id="qr-reader" class="ht-qr-frame"></div>
+                    <p class="ht-hint text-center mt-2">
+                      Arahkan kamera ke QR Code material
+                    </p>
                   </div>
-                  <h3 class="ht-kpi-value" id="kpiTotalReports">0</h3>
-                  <span class="ht-kpi-description">Semua laporan</span>
+                  <div class="ht-ir-divider">
+                    <span class="ht-divider-text">ATAU</span>
+                  </div>
+                  <div class="ht-ir-input-col">
+                    <label class="ht-form-label" for="materialCodeInput">
+                      QR Code / Nomor Kode Material / Control Number
+                    </label>
+                    <div class="flex gap-2">
+                      <input
+                        type="text"
+                        id="materialCodeInput"
+                        class="ht-form-input flex-1"
+                        placeholder="Masukkan kode material (contoh: 2M, 20260004I)"
+                        aria-label="Nomor kode material"
+                        autocomplete="off"
+                      />
+                      <button
+                        type="button"
+                        id="btnSearch"
+                        class="ht-btn ht-btn-primary ht-btn-sm"
+                        aria-label="Cari"
+                      >
+                        <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1" />
+                        Cari
+                      </button>
+                      <button
+                        type="button"
+                        id="btnReset"
+                        class="ht-btn ht-btn-secondary-outlined ht-btn-sm"
+                        aria-label="Reset"
+                      >
+                        <img src="assets/icons/close.svg" alt="Reset" class="icon mr-1" />
+                        Reset
+                      </button>
+                    </div>
+                    <p id="searchError" class="hidden ht-error-text mt-2"></p>
+                  </div>
                 </div>
               </div>
-              <div class="ht-kpi-card kpiEntranceDelay2 ht-ir-card-draft">
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">DRAFT</p>
-                  <div class="ht-kpi-icon-box">
-                    <img src="assets/icons/save.svg" alt="Draft" class="icon" />
-                  </div>
-                  <h3 class="ht-kpi-value" id="kpiDraft">0</h3>
-                  <span class="ht-kpi-description">Belum dikirim</span>
+            </section>
+
+            <!-- Search Results -->
+            <div id="searchResults" class="hidden">
+              <!-- Summary Card -->
+              <section class="ht-card fade-in" id="summaryCard">
+                <div class="ht-card-header">
+                  <h2 class="ht-card-title">Ringkasan Material</h2>
                 </div>
-              </div>
-              <div class="ht-kpi-card kpiEntranceDelay3 ht-ir-card-pending">
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">MENUNGGU APPROVAL</p>
-                  <div class="ht-kpi-icon-box">
-                    <img src="assets/icons/warning.svg" alt="Pending" class="icon" />
+                <div class="ht-card-body">
+                  <div class="ht-ir-summary-grid">
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Control Number / Kode Material</span>
+                      <span class="ht-info-value mono" id="sControlNumber">-</span>
+                    </div>
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Customer</span>
+                      <span class="ht-info-value" id="sCustomer">-</span>
+                    </div>
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Nama Part</span>
+                      <span class="ht-info-value" id="sNamaPart">-</span>
+                    </div>
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Nomor Part</span>
+                      <span class="ht-info-value mono" id="sNomorPart">-</span>
+                    </div>
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Heat Number / Batch</span>
+                      <span class="ht-info-value mono" id="sLotNumber">-</span>
+                    </div>
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Quantity</span>
+                      <span class="ht-info-value" id="sQty">-</span>
+                    </div>
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Jenis Proses</span>
+                      <span class="ht-info-value" id="sProcessType">-</span>
+                    </div>
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Target Hardness</span>
+                      <span class="ht-info-value mono hardness" id="sTargetHardness">-</span>
+                    </div>
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Tanggal Inspeksi</span>
+                      <span class="ht-info-value" id="sInspectionDate">-</span>
+                    </div>
+                    <div class="ht-info-item">
+                      <span class="ht-info-label">Hasil QC</span>
+                      <span class="ht-info-value" id="sHasil">-</span>
+                    </div>
                   </div>
-                  <h3 class="ht-kpi-value" id="kpiPending">0</h3>
-                  <span class="ht-kpi-description">Menunggu persetujuan</span>
                 </div>
-              </div>
-              <div class="ht-kpi-card kpiEntranceDelay4 ht-ir-card-approved">
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">DISETUSI</p>
-                  <div class="ht-kpi-icon-box">
-                    <img src="assets/icons/check-circle.svg" alt="Approved" class="icon" />
+              </section>
+
+              <!-- Approval Status -->
+              <section class="ht-card fade-in" id="approvalStatusCard">
+                <div class="ht-card-header">
+                  <h2 class="ht-card-title">Status Persetujuan</h2>
+                </div>
+                <div class="ht-card-body">
+                  <div class="ht-ir-approval-flow">
+                    <div class="ht-ir-approval-step" id="stepInspector">
+                      <div class="ht-ir-approval-icon">
+                        <img src="assets/icons/quality-control.svg" alt="" class="sidebar-menu-icon" />
+                      </div>
+                      <div class="ht-ir-approval-info">
+                        <h4>Inspector QC</h4>
+                        <p class="ht-ir-approval-name" id="aInspectorName">-</p>
+                        <p class="ht-ir-approval-date" id="aInspectorDate">-</p>
+                        <span class="ht-ir-approval-badge" id="aInspectorBadge">Belum Lengkap</span>
+                      </div>
+                    </div>
+                    <div class="ht-ir-approval-arrow"></div>
+                    <div class="ht-ir-approval-step" id="stepLeader">
+                      <div class="ht-ir-approval-icon">
+                        <img src="assets/icons/gavel.svg" alt="" class="sidebar-menu-icon" />
+                      </div>
+                      <div class="ht-ir-approval-info">
+                        <h4>Leader QC</h4>
+                        <p class="ht-ir-approval-name" id="aLeaderName">-</p>
+                        <p class="ht-ir-approval-date" id="aLeaderDate">-</p>
+                        <span class="ht-ir-approval-badge" id="aLeaderBadge">Belum Lengkap</span>
+                      </div>
+                    </div>
+                    <div class="ht-ir-approval-arrow"></div>
+                    <div class="ht-ir-approval-step" id="stepSupervisor">
+                      <div class="ht-ir-approval-icon">
+                        <img src="assets/icons/user.svg" alt="" class="sidebar-menu-icon" />
+                      </div>
+                      <div class="ht-ir-approval-info">
+                        <h4>Supervisor QC</h4>
+                        <p class="ht-ir-approval-name" id="aSupervisorName">-</p>
+                        <p class="ht-ir-approval-date" id="aSupervisorDate">-</p>
+                        <span class="ht-ir-approval-badge" id="aSupervisorBadge">Belum Lengkap</span>
+                      </div>
+                    </div>
                   </div>
-                  <h3 class="ht-kpi-value" id="kpiApproved">0</h3>
-                  <span class="ht-kpi-description">Laporan resmi</span>
-                </div>
-              </div>
-              <div class="ht-kpi-card kpiEntranceDelay5 ht-ir-card-rejected">
-                <div class="ht-kpi-container">
-                  <p class="ht-kpi-label">DITOLAK</p>
-                  <div class="ht-kpi-icon-box">
-                    <img src="assets/icons/error.svg" alt="Rejected" class="icon" />
+
+                  <div class="ht-ir-issue-list" id="issueList"></div>
+
+                  <div class="ht-ir-status-badge" id="documentStatusBadge">
+                    Belum Lengkap
                   </div>
-                  <h3 class="ht-kpi-value" id="kpiRejected">0</h3>
-                  <span class="ht-kpi-description">Butuh revisi</span>
                 </div>
-              </div>
+              </section>
+
+              <!-- Document Actions -->
+              <section class="ht-card fade-in" id="actionCard">
+                <div class="ht-card-body">
+                  <div class="ht-ir-actions">
+                    <button
+                      type="button"
+                      id="btnPreview"
+                      class="ht-btn ht-btn-secondary-outlined"
+                      disabled
+                    >
+                      <img src="assets/icons/eye.svg" alt="" class="icon mr-1" />
+                      Lihat / Preview Laporan
+                    </button>
+                    <button
+                      type="button"
+                      id="btnPrint"
+                      class="ht-btn ht-btn-primary"
+                      disabled
+                    >
+                      <img src="assets/icons/print.svg" alt="" class="icon mr-1" />
+                      Print Inspection Report
+                    </button>
+                    <button
+                      type="button"
+                      id="btnDownloadPdf"
+                      class="ht-btn ht-btn-success"
+                      disabled
+                    >
+                      <img src="assets/icons/download.svg" alt="" class="icon mr-1" />
+                      Print / Save as PDF
+                    </button>
+                  </div>
+                </div>
+              </section>
             </div>
 
-            <!-- Filter Bar -->
-            <div class="ht-card fade-in mb-6">
-              <div
-                class="ht-filter-bar"
-                role="search"
-                aria-label="Filter dan pencarian Inspection Report"
-              >
-                <div class="flex-1 min-w-48">
-                  <input
-                    type="text"
-                    id="reportSearchInput"
-                    class="ht-form-input"
-                    placeholder="Cari: Report Number, Control Number, Nama Part, Customer..."
-                    aria-label="Pencarian laporan"
-                  />
-                </div>
-                <input
-                  type="date"
-                  id="reportDateFilter"
-                  class="ht-form-input w-auto"
-                  placeholder="Tgl Laporan"
-                  aria-label="Tanggal laporan"
-                />
-                <select
-                  id="reportStatusFilter"
-                  class="ht-form-select w-auto min-w-[140px]"
-                  aria-label="Filter status laporan"
-                >
-                  <option value="all">Semua Status</option>
-                  <option value="Draft">Draft</option>
-                  <option value="Pending Approval">Menunggu Approval</option>
-                  <option value="Approved">Disetujui</option>
-                  <option value="Rejected">Ditolak</option>
-                </select>
-                <button
-                  type="button"
-                  id="reportResetBtn"
-                  class="ht-btn ht-btn-secondary-outlined ht-btn-sm"
-                  aria-label="Reset filter"
-                >
-                  <img
-                    src="assets/icons/close.svg"
-                    alt="Reset"
-                    class="icon mr-1"
-                  />Reset
-                </button>
-              </div>
-            </div>
-
-            <!-- Tabel Laporan -->
-            <div class="ht-card fade-in">
-              <div class="ht-card-header ht-card-header-with-actions">
-                <h3 class="ht-card-title">Daftar Inspection Report</h3>
-                <div class="flex items-center gap-2">
-                  <span class="ht-info-label">Per halaman:</span>
-                  <select
-                    id="reportPageSize"
-                    class="ht-form-select ht-form-select-sm w-auto"
-                    aria-label="Item per halaman"
-                  >
-                    <option value="10">10</option>
-                    <option value="25" selected>25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </div>
-              </div>
-              <div class="ht-table-wrapper">
-                <table class="ht-table">
-                  <thead>
-                    <tr>
-                      <th>No.</th>
-                      <th>Report Number</th>
-                      <th>Control Number</th>
-                      <th>Customer</th>
-                      <th>Nama Part</th>
-                      <th>Tanggal Laporan</th>
-                      <th>Hardness</th>
-                      <th>Final Judgement</th>
-                      <th>Status Approval</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody id="reportTableBody"></tbody>
-                </table>
-              </div>
-              <div
-                class="ht-pagination"
-                id="reportPagination"
-                role="navigation"
-                aria-label="Pagination"
-              >
-                <div class="ht-pagination-info">
-                  Menampilkan <span id="reportPageInfo">0-0</span> dari
-                  <span id="reportTotalItems">0</span> data
-                </div>
-                <div class="ht-pagination-controls">
+            <!-- Not Found State -->
+            <div id="notFoundState" class="hidden">
+              <div class="ht-card fade-in">
+                <div class="ht-card-body text-center">
+                  <img src="assets/icons/empty-state.svg" alt="" class="ht-empty-icon" />
+                  <h3 class="ht-empty-title">Material Tidak Ditemukan</h3>
+                  <p class="ht-empty-text">
+                    Kode material yang Anda cari tidak terdaftar dalam sistem.
+                    Periksa kembali kode tersebut atau hubungi tim Incoming.
+                  </p>
                   <button
-                    id="reportPrevPage"
-                    class="ht-btn ht-btn-ghost ht-btn-sm"
-                    aria-label="Halaman sebelumnya"
-                    disabled
+                    type="button"
+                    id="btnClearSearch"
+                    class="ht-btn ht-btn-secondary ht-btn-sm mt-4"
                   >
-                    <img
-                      src="assets/icons/chevron-left.svg"
-                      alt="Sebelumnya"
-                      class="icon mr-1"
-                    />
-                    Sebelumnya
-                  </button>
-                  <div
-                    id="reportPageNumbers"
-                    class="flex gap-1"
-                    aria-label="Nomor halaman"
-                  ></div>
-                  <button
-                    id="reportNextPage"
-                    class="ht-btn ht-btn-ghost ht-btn-sm"
-                    aria-label="Halaman selanjutnya"
-                    disabled
-                  >
-                    Selanjutnya
-                    <img
-                      src="assets/icons/chevron-right.svg"
-                      alt="Selanjutnya"
-                      class="icon ml-1"
-                    />
+                    Cari Lagi
                   </button>
                 </div>
               </div>
@@ -428,382 +476,32 @@
       </main>
     </div>
 
-    <!-- Modal: Buat / Edit Inspection Report -->
-    <div id="reportFormModal" class="ht-modal-overlay hidden" aria-hidden="true">
-      <div class="ht-modal ht-modal-ir-form">
+    <!-- Document Preview Modal -->
+    <div id="documentPreviewModal" class="ht-modal-overlay hidden" aria-hidden="true">
+      <div class="ht-modal ht-modal-document">
         <div class="ht-modal-header">
           <div class="ht-modal-header-title">
-            <h3 class="ht-modal-title" id="reportFormTitle">Buat Inspection Report</h3>
-            <p class="ht-modal-subtitle" id="reportFormSubtitle">Isi data material dan hasil hardness</p>
+            <h3 class="ht-modal-title">Preview Inspection Report</h3>
+            <p class="ht-modal-subtitle">
+              Dokumen final yang siap dikirim ke customer
+            </p>
           </div>
           <button
             type="button"
-            id="btnCloseForm"
+            id="btnClosePreview"
             class="ht-modal-close"
             aria-label="Close"
           >
             <img src="assets/icons/close.svg" alt="Close" class="icon" />
           </button>
         </div>
-        <div class="ht-modal-body">
-          <div class="ht-form" id="reportForm">
-            <!-- Section: Identitas Material -->
-            <div class="ht-card ht-card-flat fade-in">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title">Identitas Material</h3>
-              </div>
-              <div class="ht-form">
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="reportControlNumber">
-                    Control Number <span class="ht-required">*</span>
-                  </label>
-                  <select
-                    id="reportControlNumber"
-                    class="ht-form-select"
-                    aria-label="Control Number material"
-                  >
-                    <option value="">Pilih Control Number...</option>
-                  </select>
-                </div>
-
-                <div id="reportMaterialWarning"></div>
-
-                <div class="ht-info-grid ht-info-grid-cols-2">
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Customer</span>
-                    <span class="ht-info-value" id="reportCustomer">—</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Nomor Part</span>
-                    <span class="ht-info-value mono" id="reportNomorPart">—</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Nama Part</span>
-                    <span class="ht-info-value" id="reportNamaPart">—</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Quantity</span>
-                    <span class="ht-info-value" id="reportQty">0</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Jenis Proses Heat Treatment</span>
-                    <span class="ht-info-value" id="reportProcessType">—</span>
-                  </div>
-                  <div class="ht-info-item">
-                    <span class="ht-info-label">Target Hardness</span>
-                    <span class="ht-info-value mono hardness" id="reportTargetHardness">—</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Section: Input Hardness -->
-            <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title">INPUT HASIL HARDNESS INSPECTION</h3>
-              </div>
-              <div class="ht-form">
-                <div class="ht-form-row">
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="reportHardnessActual">
-                      Nilai Hardness Aktual <span class="ht-required">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      id="reportHardnessActual"
-                      class="ht-form-input"
-                      placeholder="Masukkan nilai hardness (mis. 60)"
-                      min="0"
-                      step="0.1"
-                      aria-label="Nilai hardness aktual"
-                    />
-                  </div>
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="reportHardnessUnit">
-                      Satuan <span class="ht-required">*</span>
-                    </label>
-                    <select
-                      id="reportHardnessUnit"
-                      class="ht-form-select"
-                      aria-label="Satuan hardness"
-                    >
-                      <option value="HRC">HRC</option>
-                      <option value="HV">HV</option>
-                      <option value="HB">HB</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="ht-form-row">
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="reportInspectionDate">
-                      Tanggal Inspeksi <span class="ht-required">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      id="reportInspectionDate"
-                      class="ht-form-input"
-                      aria-label="Tanggal inspeksi"
-                    />
-                  </div>
-                  <div class="ht-form-group">
-                    <label class="ht-form-label" for="reportInspector">
-                      Nama Inspector <span class="ht-required">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="reportInspector"
-                      class="ht-form-input"
-                      placeholder="Nama Inspector"
-                      aria-label="Nama inspector"
-                    />
-                  </div>
-                </div>
-
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="reportInspectorNotes">
-                    Catatan Inspector
-                  </label>
-                  <textarea
-                    id="reportInspectorNotes"
-                    rows="2"
-                    class="ht-form-input ht-form-textarea"
-                    placeholder="Opsional — masukkan catatan tambahan"
-                  ></textarea>
-                </div>
-              </div>
-            </div>
-
-            <!-- Section: Ringkasan -->
-            <div id="reportSummaryBox" class="ht-ir-summary-box">
-              <p class="ht-hint">Pilih Control Number untuk melihat ringkasan data.</p>
-            </div>
-          </div>
+        <div class="ht-modal-body" id="documentPreviewBody">
+          <!-- Generated by JS -->
         </div>
         <div class="ht-modal-footer">
           <button
             type="button"
-            id="btnCancelForm"
-            class="ht-btn ht-btn-secondary-outlined ht-btn-sm"
-          >
-            Batal
-          </button>
-          <button
-            type="button"
-            id="btnSaveDraft"
-            class="ht-btn ht-btn-success ht-btn-sm"
-          >
-            <img src="assets/icons/save.svg" alt="Draft" class="icon" />
-            Simpan Draft
-          </button>
-          <button
-            type="button"
-            id="btnSendApproval"
-            class="ht-btn ht-btn-primary ht-btn-sm"
-          >
-            <img src="assets/icons/paper-plane.svg" alt="Kirim" class="icon" />
-            <span>Kirim untuk Approval</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal: Approval -->
-    <div id="approvalModal" class="ht-modal-overlay hidden" aria-hidden="true">
-      <div class="ht-modal ht-modal-width">
-        <div class="ht-modal-header">
-          <div class="ht-modal-header-title">
-            <h3 class="ht-modal-title">Persetujuan Inspection Report</h3>
-            <p class="ht-modal-subtitle">Verifikasi hasil hardness dan tentukan Final Judgement</p>
-          </div>
-          <button
-            type="button"
-            id="btnCloseApproval"
-            class="ht-modal-close"
-            aria-label="Close"
-          >
-            <img src="assets/icons/close.svg" alt="Close" class="icon" />
-          </button>
-        </div>
-        <div class="ht-modal-body">
-          <div class="ht-form" id="approvalForm">
-            <!-- Batasan browser-only -->
-            <div
-              id="approvalRoleWarning"
-              class="hidden ht-ir-role-warning"
-            >
-              <img src="assets/icons/warning.svg" alt="" class="icon" />
-              <span>
-                <strong>Pembatasan aplikasi browser-only:</strong>
-                Anda adalah operator maupun approver yang sama (Administrator).
-                Di lingkungan produksi dengan role terpisah, approval harus
-                dilakukan oleh atasan yang berbeda.
-              </span>
-            </div>
-
-            <!-- Informasi Material -->
-            <div class="ht-card ht-card-flat">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title">Informasi Material</h3>
-              </div>
-              <div class="ht-info-grid">
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Report Number</span>
-                  <span class="ht-info-value mono" id="approvalReportNumber">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Customer</span>
-                  <span class="ht-info-value" id="approvalCustomer">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Control Number</span>
-                  <span class="ht-info-value mono" id="approvalControlNumber">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Nomor Part</span>
-                  <span class="ht-info-value mono" id="approvalNomorPart">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Nama Part</span>
-                  <span class="ht-info-value" id="approvalNamaPart">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Quantity</span>
-                  <span class="ht-info-value" id="approvalQty">0</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Jenis Proses</span>
-                  <span class="ht-info-value" id="approvalProcessType">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Target Hardness</span>
-                  <span class="ht-info-value mono hardness" id="approvalTargetHardness">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Hasil Aktual</span>
-                  <span class="ht-info-value mono" id="approvalActual">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Satuan</span>
-                  <span class="ht-info-value" id="approvalUnit">-</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Informasi Inspector -->
-            <div class="ht-card ht-card-flat" style="margin-top: 16px">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title">Data Inspector</h3>
-              </div>
-              <div class="ht-info-grid">
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Nama Inspector</span>
-                  <span class="ht-info-value" id="approvalInspector">-</span>
-                </div>
-                <div class="ht-info-item">
-                  <span class="ht-info-label">Tanggal Inspeksi</span>
-                  <span class="ht-info-value" id="approvalInspectorDate">-</span>
-                </div>
-                <div class="ht-info-item ht-info-item-wide">
-                  <span class="ht-info-label">Catatan Inspector</span>
-                  <span class="ht-info-value" id="approvalInspectorNotes">(tidak ada catatan)</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Final Judgement -->
-            <div class="ht-card ht-card-flat" style="margin-top: 16px">
-              <div class="ht-card-header">
-                <h3 class="ht-card-title">Final Judgement</h3>
-              </div>
-              <div class="ht-form-group">
-                <label class="ht-form-label">Pilih Judgement <span class="ht-required">*</span></label>
-                <div class="ht-judgement-radio">
-                  <label class="ht-radio-label ht-judgement-ok">
-                    <input
-                      type="radio"
-                      name="judgement"
-                      id="judgementOk"
-                      value="OK"
-                      class="ht-radio"
-                    />
-                    <span class="ht-radio-text ht-radio-text--ok">OK</span>
-                  </label>
-                  <label class="ht-radio-label ht-judgement-ng">
-                    <input
-                      type="radio"
-                      name="judgement"
-                      id="judgementNg"
-                      value="NG"
-                      class="ht-radio"
-                    />
-                    <span class="ht-radio-text ht-radio-text--ng">NG</span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="ht-form-group">
-                <label class="ht-form-label" for="approvalNotes">
-                  Catatan Atasan <span class="ht-required">*</span>
-                </label>
-                <textarea
-                  id="approvalNotes"
-                  rows="3"
-                  class="ht-form-input ht-form-textarea"
-                  placeholder="Masukkan alasan penolakan atau catatan approval..."
-                  aria-label="Catatan atasan"
-                ></textarea>
-                <p class="ht-hint">Wajib diisi. Untuk NG, beri penjelasan mengapa.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="ht-modal-footer">
-          <button
-            type="button"
-            id="btnRejectReport"
-            class="ht-btn ht-btn-danger ht-btn-sm"
-          >
-            <img src="assets/icons/close.svg" alt="Tolak" class="icon" />
-            Tolak / Kembalikan
-          </button>
-          <button
-            type="button"
-            id="btnApproveReport"
-            class="ht-btn ht-btn-success ht-btn-sm"
-            disabled
-          >
-            <img src="assets/icons/check.svg" alt="Setujui" class="icon" />
-            <span>Setujui Laporan</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal: Detail -->
-    <div id="reportDetailModal" class="ht-modal-overlay hidden" aria-hidden="true">
-      <div class="ht-modal ht-modal-width">
-        <div class="ht-modal-header">
-          <div class="ht-modal-header-title">
-            <h3 class="ht-modal-title">Detail Inspection Report</h3>
-            <p class="ht-modal-subtitle">Informasi lengkap laporan</p>
-          </div>
-          <button
-            type="button"
-            id="btnCloseDetail"
-            class="ht-modal-close"
-            aria-label="Close"
-          >
-            <img src="assets/icons/close.svg" alt="Close" class="icon" />
-          </button>
-        </div>
-        <div class="ht-modal-body" id="reportDetailBody">
-          <!-- Content di-generate oleh JS -->
-        </div>
-        <div class="ht-modal-footer">
-          <button
-            type="button"
-            id="btnCloseDetailFooter"
+            id="btnClosePreviewFooter"
             class="ht-btn ht-btn-secondary-outlined ht-btn-sm"
           >
             Tutup
@@ -812,15 +510,21 @@
       </div>
     </div>
 
+    <!-- Print Window Content (hidden, used for print) -->
+    <div id="printWindowContent" class="hidden"></div>
+
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/date-format.js"></script>
-    <script src="js/inspection-report.js"></script>
+    <script src="js/report-center.js"></script>
     <script>
+      DB.init();
+      DB.migrate();
       if (!HTUI.requireAuth()) {
         throw new Error("redirecting");
       }
+      RCF.init();
     </script>
   </body>
 </html>

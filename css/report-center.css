@@ -1,0 +1,655 @@
+/* ============================================================
+   Report Center — Final Inspection Report
+   Gaya khusus untuk halaman pencarian dan dokumen final.
+   Melengkapi global.css, dashboard.css, components.css,
+   tables.css, forms.css, dan inspection-report.css.
+   ============================================================ */
+
+/* ===== Layout pencarian ===== */
+.ht-ir-scanner-row {
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+}
+
+@media (max-width: 768px) {
+  .ht-ir-scanner-row {
+    flex-direction: column;
+  }
+}
+
+.ht-ir-scanner-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.ht-ir-input-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ht-ir-input-col .ht-form-input {
+  margin-bottom: 8px;
+}
+
+.ht-ir-divider {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .ht-ir-divider {
+    display: none;
+  }
+}
+
+.ht-qr-frame {
+  width: 100%;
+  min-height: 200px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+/* ===== Summary grid ===== */
+.ht-ir-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .ht-ir-summary-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .ht-ir-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ht-ir-summary-grid .ht-info-item {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+}
+
+.ht-ir-summary-grid .ht-info-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.ht-ir-summary-grid .ht-info-value {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.ht-ir-summary-grid .mono {
+  font-family: var(--font-mono);
+}
+
+.ht-ir-summary-grid .hardness {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+/* ===== Approval flow ===== */
+.ht-ir-approval-flow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .ht-ir-approval-flow {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.ht-ir-approval-step {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ht-ir-approval-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--surface-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  border: 2px solid var(--border);
+  transition: all 0.2s;
+}
+
+.ht-ir-step-complete .ht-ir-approval-icon {
+  background: var(--success-bg);
+  border-color: var(--success);
+}
+
+.ht-ir-step-incomplete .ht-ir-approval-icon {
+  background: var(--surface-muted);
+  border-color: var(--border);
+  opacity: 0.6;
+}
+
+.ht-ir-approval-icon .sidebar-menu-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.ht-ir-approval-arrow {
+  align-self: center;
+  margin: 0 4px;
+  display: flex;
+  align-items: center;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 768px) {
+  .ht-ir-approval-arrow {
+    display: none;
+  }
+}
+
+.ht-ir-approval-info h4 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--text-primary);
+}
+
+.ht-ir-approval-name {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 2px 0;
+}
+
+.ht-ir-approval-date {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin: 2px 0 6px 0;
+}
+
+.ht-ir-approval-badge {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ht-ir-badge-ok {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+
+.ht-ir-badge-incomplete {
+  background: var(--surface-muted);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+/* ===== Issue list ===== */
+.ht-ir-issue-list {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+}
+
+.ht-ir-issue-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ht-ir-issue-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--danger-text);
+  margin-bottom: 4px;
+}
+
+.ht-ir-issue-list li:last-child {
+  margin-bottom: 0;
+}
+
+.ht-ir-issue-text {
+  font-size: 12px;
+  margin: 0;
+}
+
+.ht-ir-issue-ok {
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--success-text);
+}
+
+.ht-ir-issue-ok .ht-ir-issue-text {
+  color: var(--success-text);
+  font-weight: 600;
+}
+
+/* ===== Status badge ===== */
+.ht-ir-status-badge {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 20px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ht-ir-status-ok {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+
+.ht-ir-status-incomplete {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+
+/* ===== Actions ===== */
+.ht-ir-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .ht-ir-actions {
+    flex-direction: column;
+  }
+}
+
+/* ===== Empty state ===== */
+.ht-empty-icon {
+  width: 80px;
+  height: 80px;
+  opacity: 0.4;
+  margin: 0 auto 16px;
+}
+
+.ht-empty-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.ht-empty-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin: 0 auto 16px;
+}
+
+/* ===== Document preview modal ===== */
+.ht-modal-document {
+  max-width: 90vw;
+  width: 100%;
+  padding: 16px;
+}
+
+@media (max-width: 768px) {
+  .ht-modal-document {
+    padding: 8px;
+  }
+}
+
+/* ===== Dokumen Inspection Report (professional, A4 print) ===== */
+.ir-document {
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #0f172a;
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 40px;
+  background: white;
+  box-sizing: border-box;
+}
+
+/* Header dokumen */
+.ir-doc-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--primary);
+}
+
+.ir-logo {
+  height: 40px;
+  width: auto;
+}
+
+.ir-company-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.ir-company-logo img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.ir-company-info h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.ir-company-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.ir-dept-name {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 2px 0;
+}
+
+.ir-doc-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-top: 4px;
+}
+
+/* Metadata table */
+.ir-doc-meta {
+  margin-bottom: 20px;
+}
+
+.ir-meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+}
+
+.ir-meta-table td {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.ir-meta-label {
+  background: var(--surface-muted);
+  font-weight: 600;
+  color: var(--text-secondary);
+  width: 35%;
+}
+
+.ir-meta-value {
+  width: 65%;
+}
+
+.ir-meta-value.mono {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+/* Section */
+.ir-section {
+  margin-bottom: 20px;
+}
+
+.ir-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Hardness table */
+.ir-hardsness-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  margin-bottom: 12px;
+}
+
+.ir-hardsness-table th,
+.ir-hardsness-table td {
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  text-align: center;
+}
+
+.ir-th {
+  background: var(--surface-muted);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 10px;
+}
+
+.ir-td-center {
+  text-align: center;
+}
+
+.ir-hardness-summary p {
+  margin: 2px 0;
+  font-size: 10px;
+}
+
+.ir-result-ok {
+  color: var(--success-text);
+}
+
+.ir-result-ng {
+  color: var(--danger-text);
+}
+
+/* Signature table */
+.ir-signature-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+}
+
+.ir-signature-table td {
+  border: 1px solid var(--border);
+  padding: 12px;
+  vertical-align: top;
+}
+
+.ir-sig-cell {
+  width: 33.33%;
+  min-width: 120px;
+  text-align: center;
+}
+
+.ir-sig-label {
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  font-size: 10px;
+}
+
+.ir-sig-name {
+  font-size: 10px;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.ir-sig-title {
+  font-size: 9px;
+  color: var(--text-secondary);
+  margin: 2px 0;
+}
+
+.ir-sig-date {
+  font-size: 9px;
+  color: var(--text-tertiary);
+  margin: 2px 0;
+}
+
+.ir-sig-image {
+  max-height: 80px;
+  max-width: 180px;
+  display: block;
+  margin: 8px 0;
+}
+
+.ir-sig-placeholder {
+  display: inline-block;
+  padding: 16px 8px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  font-size: 9px;
+  text-align: center;
+}
+
+.ir-sup-notes {
+  margin-top: 8px;
+  font-size: 10px;
+  padding: 8px 12px;
+  background: var(--surface-hover);
+  border-radius: var(--radius-sm);
+}
+
+/* Info table */
+.ir-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+}
+
+.ir-info-table td {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+}
+
+.ir-info-label {
+  background: var(--surface-muted);
+  font-weight: 600;
+  color: var(--text-secondary);
+  width: 40%;
+}
+
+.ir-info-value {
+  width: 60%;
+  font-family: var(--font-mono);
+}
+
+/* Document footer */
+.ir-doc-footer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.ir-footer-text {
+  font-size: 9px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.ir-footer-qr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+.ir-footer-qr-code {
+  width: 80px;
+  height: 80px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.ir-footer-qr-label {
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+/* ===== Print styles ===== */
+@media print {
+  .ht-sidebar,
+  .ht-header,
+  .ht-ir-actions,
+  .ht-card:not(.ir-document),
+  .ht-ir-scanner-row,
+  .ht-ir-summary-grid,
+  .ht-ir-approval-flow,
+  .ht-ir-issue-list,
+  .ht-ir-status-badge,
+  .ht-empty-icon {
+    display: none !important;
+  }
+
+  .ir-document {
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    max-width: none;
+    page-break-after: auto;
+  }
+
+  body {
+    background: white !important;
+  }
+}
