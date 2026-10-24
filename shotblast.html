@@ -88,16 +88,7 @@
                 </span>
                 <img src="assets/icons/chevron-down.svg" alt="" class="ht-nav-toggle-icon" />
               </button>
-              <div class="ht-nav-items">
-                <a href="heat-treatment.html" class="ht-nav-link sub" id="navHeatTreatment">
-                  <img
-                    src="assets/icons/production.svg"
-                    alt="Heat Treatment"
-                    class="sidebar-menu-icon"
-                  />
-                  Heat Treatment
-                </a>
-                <a href="heat-treatment.html?process=Quenching%20%26%20Tempering" class="ht-nav-link sub" id="navQuenching">
+              <div class="ht-nav-items"><a href="heat-treatment.html?process=Quenching%20%26%20Tempering" class="ht-nav-link sub" id="navQuenching">
                   <img
                     src="assets/icons/production.svg"
                     alt="Quenching &amp; Tempering"
@@ -137,13 +128,13 @@
                   />
                   Full Annealing
                 </a>
-                <a href="heat-treatment.html?process=Spherodizing%20Annealing" class="ht-nav-link sub" id="navSpherizing">
+                <a href="heat-treatment.html?process=Spheroidizing%20Annealing" class="ht-nav-link sub" id="navSpheroidizing">
                   <img
                     src="assets/icons/production.svg"
-                    alt="Spherodizing Annealing"
+                    alt="Spheroidizing Annealing"
                     class="sidebar-menu-icon"
                   />
-                  Spherodizing Annealing
+                  Spheroidizing Annealing
                 </a>
                 <a href="heat-treatment.html?process=Carburizing" class="ht-nav-link sub" id="navCarburizing">
                   <img
@@ -281,7 +272,7 @@
             </div>
 
             <p class="ht-hint text-center mt-4">
-              Masukkan Nomor Kode material atau scan QR Code untuk melihat
+               Masukkan Control Number material atau scan QR Code untuk melihat
               detail proses Shotblast.
             </p>
 
@@ -874,7 +865,6 @@
           steps.forEach(function (s) {
             s.classList.remove("active", "completed");
           });
-          steps[0].classList.add("active");
           return;
         }
 
@@ -892,11 +882,11 @@
         );
         steps[1].classList.toggle("completed", !!hasStartScan);
 
-        steps[2].classList.remove("active");
-        steps[2].classList.toggle(
-          "completed",
-          status === "PROCESS" || status === "Process",
-        );
+        steps[2].classList.remove("completed");
+        var isProcessDone =
+          status === "FINISH" || status === "FINISH_NG" || status === "Finish";
+        steps[2].classList.toggle("active", !isProcessDone && hasStartScan);
+        steps[2].classList.toggle("completed", isProcessDone);
 
         steps[3].classList.remove("active");
         steps[3].classList.toggle(
@@ -1036,6 +1026,18 @@
           ) {
             badgeClass = "ht-badge-ng";
           }
+          var STATUS_LABEL_MAP = {
+            NOT_STARTED: "Belum Dimulai",
+            WAITING: "Menunggu",
+            PROCESS: "Sedang Diproses",
+            FINISH: "Selesai",
+            FINISH_NG: "Selesai (NG)",
+            NOT_CHECKED: "Belum Diperiksa",
+            NOT_FOUND: "Belum Dimasukkan",
+            PASS: "PASS",
+            NG: "NG",
+          };
+          statusLabel = STATUS_LABEL_MAP[h.status] || statusLabel;
           var div = document.createElement("div");
           div.className = "ht-history-item";
           div.innerHTML =
@@ -1074,7 +1076,7 @@
         var rawId = manualId || document.getElementById("manualId").value;
         var id = rawId ? String(rawId).trim() : "";
         if (!id) {
-          HTUI.toast("Masukkan Nomor Kode material terlebih dahulu.", "warning");
+               HTUI.toast("Masukkan Control Number material terlebih dahulu.", "warning");
           var errEl = document.getElementById("manualError");
           if (errEl) {
             errEl.textContent = "Kode tidak boleh kosong.";
@@ -1355,6 +1357,8 @@
     </script>
   </body>
 </html>
+
+
 
 
 

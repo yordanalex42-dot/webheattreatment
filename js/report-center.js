@@ -97,7 +97,7 @@ const RCF = {
     if (errorEl) { errorEl.classList.add("hidden"); errorEl.textContent = ""; }
 
     if (!query) {
-      if (errorEl) { errorEl.textContent = "Masukkan QR Code, Nomor Kode Material, atau Control Number."; errorEl.classList.remove("hidden"); }
+      if (errorEl) { errorEl.textContent = "Masukkan QR Code atau Control Number."; errorEl.classList.remove("hidden"); }
       return;
     }
 

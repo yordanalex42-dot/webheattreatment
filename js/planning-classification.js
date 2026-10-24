@@ -392,7 +392,7 @@ const HTPlanningClassification = {
         html += '<table class="ht-table">';
         html += "<thead><tr>" +
           "<th>No.</th>" +
-          "<th>Nomor Kode</th>" +
+           "<th>Control Number</th>" +
           "<th>Customer</th>" +
           "<th>Part Name / Part No.</th>" +
           "<th>Qty</th>" +
@@ -510,7 +510,7 @@ const HTPlanningClassification = {
         html += '<table class="ht-table">';
         html += "<thead><tr>" +
           "<th>No.</th>" +
-          "<th>Nomor Kode</th>" +
+           "<th>Control Number</th>" +
           "<th>Customer</th>" +
           "<th>Part Name / Part No.</th>" +
           "<th>Qty</th>" +
@@ -612,7 +612,7 @@ const HTPlanningClassification = {
     html += ' ondrop="HTPlanningClassification._onDropToOrder(event)">';
     html += "<thead><tr>";
     html += "<th>No.</th>";
-    html += "<th>Nomor Kode</th>";
+    html += "<th>Control Number</th>";
     html += "<th>Customer</th>";
     html += "<th>Part Name / Part No.</th>";
     html += "<th>Qty</th>";
@@ -906,6 +906,7 @@ const HTPlanningClassification = {
         material_id: item.material ? item.material.id : null,
         part_id: item.material ? item.material.part_id : null,
         saved_at: now,
+        order_status: "ACTIVE",
       };
     });
 

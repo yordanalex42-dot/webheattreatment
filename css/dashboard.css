@@ -270,15 +270,13 @@
   align-items: stretch;
   padding: 12px;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
   transition:
-    background-color 250ms ease,
-    border-color 250ms ease,
-    color 250ms ease,
-    transform 250ms ease,
-    box-shadow 250ms ease;
+    background-color var(--transition-sm),
+    border-color var(--transition-sm),
+    box-shadow var(--transition-sm);
   min-height: 110px;
   overflow: hidden;
   animation-name: kpiEntrance;
@@ -290,7 +288,7 @@
 @keyframes kpiEntrance {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -299,50 +297,47 @@
 }
 
 .ht-kpi-card:hover {
-  border-color: var(--primary-light);
-  transform: translateY(-2px);
+  background: var(--primary-light);
+  border-color: var(--primary);
   box-shadow: var(--shadow-sm);
 }
 
 .ht-kpi-card:focus-within {
   box-shadow: var(--focus-ring-blue);
+  border-color: var(--primary);
 }
 
-/* Kotak ikon: latar belakang biru muda (#EFF6FF), ikon biru (#2563EB) */
+/* Kotak ikon: latar belakang biru muda, ikon biru */
 .ht-kpi-icon-box {
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--radius-md);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
   background: var(--primary-light);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary);
   flex-shrink: 0;
-  transition: transform var(--transition-sm);
-}
-
-.ht-kpi-card:hover .ht-kpi-icon-box {
-  transform: scale(1.05);
+  z-index: 1;
 }
 
 .ht-kpi-icon-box .icon {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   color: inherit;
 }
 
 .ht-kpi-card .ht-kpi-container {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 0;
   width: 100%;
   height: 100%;
-  padding: 12px;
-  position: relative;
+  padding: 14px 30px 12px 14px;
   box-sizing: border-box;
 }
 
@@ -367,11 +362,35 @@
 }
 
 .ht-kpi-card .ht-kpi-description {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.3;
-  margin-top: 2px;
+  margin: 0;
+}
+
+/* Ringkasan status kartu KPI */
+.ht-kpi-summary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.ht-kpi-summary-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ht-kpi-summary-text {
+  color: var(--text-secondary);
 }
 
 /* Unit berat */
@@ -413,8 +432,10 @@
 
 .ht-kpi-target .ht-kpi-target-display {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
   gap: 4px;
+  width: 100%;
 }
 
 .ht-kpi-target #targetDisplay {
@@ -423,6 +444,7 @@
   font-weight: var(--font-weight-bold);
   font-variant-numeric: tabular-nums;
   line-height: 1.1;
+  text-align: center;
 }
 
 .ht-kpi-target #targetDisplay.muted {
@@ -960,7 +982,7 @@
 
 /* ===== Lebar kolom (melalui th, karena table-layout: auto) ===== */
 .ht-monitor-table .ht-table th:nth-child(1)  { width: 36px;    min-width: 36px; }   /* No */
-.ht-monitor-table .ht-table th:nth-child(2)  { width: 85px;    min-width: 85px; }   /* Nomor Kode */
+.ht-monitor-table .ht-table th:nth-child(2)  { width: 85px;    min-width: 85px; }   /* Control Number */
 .ht-monitor-table .ht-table th:nth-child(3)  { width: 140px;   min-width: 120px; }  /* Customer */
 .ht-monitor-table .ht-table th:nth-child(4)  { width: 100px;   min-width: 90px; }   /* Nomor Part */
 .ht-monitor-table .ht-table th:nth-child(5)  { width: 130px;   min-width: 110px; }  /* Nama Part */
@@ -984,7 +1006,7 @@
 .ht-monitor-table .ht-table th:nth-child(1),
 .ht-monitor-table .ht-table td:nth-child(1) { text-align: center; }
 
-/* Kiri: Nomor Kode */
+/* Kiri: Control Number */
 .ht-monitor-table .ht-table th:nth-child(2),
 .ht-monitor-table .ht-table td:nth-child(2) { text-align: left; }
 
@@ -1392,16 +1414,16 @@
   }
 
   .ht-kpi-card {
-    padding: 14px 16px;
+    padding: 12px 14px;
     min-height: 110px;
   }
 
   .ht-kpi-card .ht-kpi-container {
-    padding: 12px;
+    padding: 12px 28px 12px 14px;
   }
 
   .ht-kpi-card .ht-kpi-value {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .ht-kpi-period-filter {
@@ -1481,8 +1503,8 @@
     min-height: 110px;
   }
 
-  .ht-kpi-card .ht-kpi-container {
-    padding: 14px;
+   .ht-kpi-card .ht-kpi-container {
+    padding: 14px 36px 12px 16px;
   }
 
   .ht-kpi-card .ht-kpi-value {
@@ -1547,13 +1569,13 @@
     gap: 12px;
   }
 
-  .ht-kpi-card {
+   .ht-kpi-card {
     padding: 14px 12px;
     min-height: 110px;
   }
 
   .ht-kpi-card .ht-kpi-container {
-    padding: 12px;
+    padding: 12px 26px 12px 14px;
   }
 
   .ht-kpi-card .ht-kpi-value {
@@ -1571,8 +1593,8 @@
   .ht-kpi-icon-box {
     top: 12px;
     right: 12px;
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
   }
 
    .ht-donut-wrapper {
@@ -1647,13 +1669,13 @@
     gap: 12px;
   }
 
-  .ht-kpi-card {
+   .ht-kpi-card {
     padding: 12px 10px;
     min-height: 110px;
   }
 
-  .ht-kpi-card .ht-kpi-container {
-    padding: 10px;
+   .ht-kpi-card .ht-kpi-container {
+    padding: 12px 24px 10px 14px;
   }
 
   .ht-kpi-card .ht-kpi-value {
@@ -1775,8 +1797,8 @@
     min-height: 100px;
   }
 
-  .ht-kpi-card .ht-kpi-container {
-    padding: 10px;
+   .ht-kpi-card .ht-kpi-container {
+    padding: 10px 20px 8px 12px;
   }
 
   .ht-kpi-card .ht-kpi-value {

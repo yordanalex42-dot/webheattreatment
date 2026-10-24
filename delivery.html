@@ -88,16 +88,7 @@
                 </span>
                 <img src="assets/icons/chevron-down.svg" alt="" class="ht-nav-toggle-icon" />
               </button>
-              <div class="ht-nav-items">
-                <a href="heat-treatment.html" class="ht-nav-link sub" id="navHeatTreatment">
-                  <img
-                    src="assets/icons/production.svg"
-                    alt="Heat Treatment"
-                    class="sidebar-menu-icon"
-                  />
-                  Heat Treatment
-                </a>
-                <a href="heat-treatment.html?process=Quenching%20%26%20Tempering" class="ht-nav-link sub" id="navQuenching">
+              <div class="ht-nav-items"><a href="heat-treatment.html?process=Quenching%20%26%20Tempering" class="ht-nav-link sub" id="navQuenching">
                   <img
                     src="assets/icons/production.svg"
                     alt="Quenching &amp; Tempering"
@@ -137,13 +128,13 @@
                   />
                   Full Annealing
                 </a>
-                <a href="heat-treatment.html?process=Spherodizing%20Annealing" class="ht-nav-link sub" id="navSpherizing">
+                <a href="heat-treatment.html?process=Spheroidizing%20Annealing" class="ht-nav-link sub" id="navSpheroidizing">
                   <img
                     src="assets/icons/production.svg"
-                    alt="Spherodizing Annealing"
+                    alt="Spheroidizing Annealing"
                     class="sidebar-menu-icon"
                   />
-                  Spherodizing Annealing
+                  Spheroidizing Annealing
                 </a>
                 <a href="heat-treatment.html?process=Carburizing" class="ht-nav-link sub" id="navCarburizing">
                   <img
@@ -285,34 +276,39 @@
                 <h3 class="ht-card-title">Input Data Pengiriman</h3>
               </div>
                <div class="ht-info-grid mb-4">
-                 <div class="ht-info-item">
-                   <span class="ht-info-label">No Part</span>
-                   <span class="ht-info-value" id="infoNoPart">-</span>
-                 </div>
-                 <div class="ht-info-item">
-                   <span class="ht-info-label">Nama Part</span>
-                   <span class="ht-info-value" id="infoNamaPart">-</span>
-                 </div>
-                 <div class="ht-info-item">
-                   <span class="ht-info-label">Customer</span>
-                   <span class="ht-info-value" id="infoCustomer">-</span>
-                 </div>
-                 <div class="ht-info-item">
-                   <span class="ht-info-label">Hasil QC</span>
-                   <span class="ht-info-value" id="infoQc">-</span>
-                 </div>
-                 <div class="ht-info-item">
-                   <span class="ht-info-label">Leader QC</span>
-                   <span class="ht-info-value" id="infoLeaderQc">-</span>
-                 </div>
-                 <div class="ht-info-item">
-                   <span class="ht-info-label">Supervisor QC</span>
-                   <span class="ht-info-value" id="infoSupervisorQc">-</span>
-                 </div>
-                 <div class="ht-info-item">
-                   <span class="ht-info-label">Suhu Proses</span>
-                   <span class="ht-info-value" id="infoTemperature">-</span>
-                 </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Control Number</span>
+                    <span class="ht-info-value mono" id="infoControlNumber">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Customer</span>
+                    <span class="ht-info-value" id="infoCustomer">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Part Name / Part No</span>
+                    <span class="ht-info-value" id="infoPartName">
+                      <span class="ht-part-name-combined">
+                        <span class="ht-part-main" id="infoNamaPart">-</span>
+                        <span class="ht-part-sub" id="infoNoPart">-</span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Hasil QC</span>
+                    <span class="ht-info-value" id="infoQc">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Leader QC</span>
+                    <span class="ht-info-value" id="infoLeaderQc">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Supervisor</span>
+                    <span class="ht-info-value" id="infoSupervisorQc">-</span>
+                  </div>
+                  <div class="ht-info-item">
+                    <span class="ht-info-label">Process Temperature</span>
+                    <span class="ht-info-value" id="infoTemperature">-</span>
+                  </div>
                </div>
 
               <form id="deliverForm" class="ht-form">
@@ -321,8 +317,8 @@
                 <input type="hidden" id="delId" />
                 <div class="ht-form-row">
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="delTanggal"
-                      >Tanggal Kirim</label
+                     <label class="ht-form-label" for="delTanggal"
+                       >Delivery Date</label
                     >
                     <input
                       type="date"
@@ -332,29 +328,29 @@
                     />
                   </div>
                   <div class="ht-form-group">
-                    <label class="ht-form-label" for="delQty">Qty Kirim</label>
+                     <label class="ht-form-label" for="delQty">Qty Out</label>
+                     <input
+                       type="number"
+                       id="delQty"
+                       required
+                       min="1"
+                       class="ht-form-input"
+                       placeholder="Jumlah dikirim"
+                     />
+                   </div>
+                 </div>
+                 <div class="ht-form-group">
+                    <label class="ht-form-label" for="delNamaPengirim"
+                      >Sender Name</label
+                   >
                     <input
-                      type="number"
-                      id="delQty"
-                      required
-                      min="1"
+                      type="text"
+                      id="delNamaPengirim"
                       class="ht-form-input"
-                      placeholder="Jumlah dikirim"
+                      placeholder="Masukkan nama pengirim"
                     />
-                  </div>
-                </div>
-                <div class="ht-form-group">
-                  <label class="ht-form-label" for="delNamaPengirim"
-                    >Nama Pengirim</label
-                  >
-                  <input
-                    type="text"
-                    id="delNamaPengirim"
-                    class="ht-form-input"
-                    placeholder="Masukkan nama pengirim"
-                  />
-                </div>
-                <div class="ht-form-group">
+                   </div>
+                   <div class="ht-form-group">
                   <textarea
                     id="delCatatan"
                     rows="2"
@@ -384,18 +380,20 @@
                 <h3 class="ht-card-title">Riwayat Pengiriman</h3>
               </div>
               <div class="ht-table-wrapper">
-                <table class="ht-table">
-                  <thead>
-                    <tr>
-                       <th>No Part</th>
-                       <th>Nama Part</th>
+                 <table class="ht-table ht-delivery-history-table">
+                   <thead>
+                     <tr>
+                       <th>No</th>
+                       <th>Control Number</th>
                        <th>Customer</th>
-                       <th>Nama Pengirim</th>
-                       <th>Qty Kirim</th>
-                       <th>Tanggal Kirim</th>
+                       <th>Part Name / Part No</th>
+                       <th>Qty Out</th>
+                       <th>Weight Out</th>
+                       <th>Sender Name</th>
+                       <th>Delivery Date</th>
                        <th>Status</th>
-                    </tr>
-                  </thead>
+                     </tr>
+                   </thead>
                   <tbody id="deliveryTable"></tbody>
                 </table>
               </div>
@@ -481,16 +479,17 @@
         const afterQc = DB._getAfterQc(material);
         const judge = DB.getQCJudgement(material);
 
-        const part = DB.findPartById(material.part_id);
-        const cust = DB.findCustomerById(material.customer_id);
-        document.getElementById("infoNoPart").textContent = part
-          ? part.nomor_part
-          : "-";
-        document.getElementById("infoNamaPart").textContent = part
-          ? part.nama_part
-          : "-";
-        document.getElementById("infoCustomer").textContent = cust
-          ? cust.nama_customer
+         const part = DB.findPartById(material.part_id);
+         const cust = DB.findCustomerById(material.customer_id);
+         document.getElementById("infoControlNumber").textContent = material.kode || "-";
+         document.getElementById("infoNoPart").textContent = part
+           ? part.nomor_part
+           : "-";
+         document.getElementById("infoNamaPart").textContent = part
+           ? part.nama_part
+           : "-";
+         document.getElementById("infoCustomer").textContent = cust
+           ? cust.nama_customer
           : "-";
         document.getElementById("infoQc").innerHTML =
           '<span class="ht-badge ' + (qc ? (qc.hasil === "OK" ? "ht-badge-ok" : "ht-badge-ng") : "ht-badge-waiting") + '">' +
@@ -582,34 +581,42 @@
         );
         loadDeliveries();
       });
-      function loadDeliveries() {
-        const deliveries = DB.get("deliveries");
-        const productions = DB.get("productions");
-        const materials = DB.get("materials");
-        const html = deliveries
-          .map((d) => {
-            const m =
-              materials.find(
-                (mat) => String(mat.id) === String(d.material_id),
-              ) || {};
-            const part = DB.findPartById(m.part_id);
-            const customer = DB.findCustomerById(m.customer_id);
-            return `<tr class="ht-table-row">
-             <td class="font-medium">${part ? part.nomor_part : "-"}</td>
-             <td>${part ? part.nama_part : "-"}</td>
-             <td class="text-secondary">${(customer && customer.nama_customer) || "-"}</td>
-             <td>${d.nama_pengirim || "-"}</td>
-             <td>${d.qty_kirim ?? "-"}</td>
-             <td class="text-secondary">${formatDateLong(d.tanggal_kirim)}</td>
-             <td><span class="ht-badge ht-badge-delivered">Delivered</span></td>
-           </tr>`;
-          })
-          .join("");
-        document.getElementById("deliveryTable").innerHTML =
-          html ||
+       function loadDeliveries() {
+         const deliveries = DB.get("deliveries");
+         const productions = DB.get("productions");
+         const materials = DB.get("materials");
+         const html = deliveries
+           .map((d, idx) => {
+             const m =
+               materials.find(
+                 (mat) => String(mat.id) === String(d.material_id),
+               ) || {};
+             const part = DB.findPartById(m.part_id);
+             const customer = DB.findCustomerById(m.customer_id);
+             const weightOut = m.berat_total_part
+               ? Number(m.berat_total_part).toLocaleString("id-ID")
+               : "-";
+             return `<tr class="ht-table-row">
+              <td class="font-medium text-center">${idx + 1}</td>
+              <td class="font-mono">${m.kode || "-"}</td>
+              <td class="text-secondary">${(customer && customer.nama_customer) || "-"}</td>
+              <td class="ht-part-name-cell">
+                <div class="ht-part-main">${part ? part.nama_part : "-"}</div>
+                <div class="ht-part-sub">${part ? part.nomor_part : "-"}</div>
+              </td>
+              <td>${d.qty_kirim ?? "-"}</td>
+              <td class="text-secondary">${weightOut} Kg</td>
+              <td>${d.nama_pengirim || "-"}</td>
+              <td class="text-secondary">${formatDateLong(d.tanggal_kirim)}</td>
+              <td><span class="ht-badge ht-badge-delivered">Delivered</span></td>
+            </tr>`;
+           })
+           .join("");
+         document.getElementById("deliveryTable").innerHTML =
+           html ||
 
- '<tr><td colspan="7" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data pengiriman</p></td></tr>';
-      }
+          '<tr><td colspan="9" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada data pengiriman</p></td></tr>';
+       }
       function openScanModal() {
         HTUI.openModal("scanModal");
         if (!html5QrCode) html5QrCode = HTUI.createScanner("qr-reader-modal");
@@ -635,6 +642,8 @@
     </script>
   </body>
 </html>
+
+
 
 
 

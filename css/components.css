@@ -222,6 +222,31 @@
   font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
 }
 
+.ht-info-important {
+  font-weight: 700;
+}
+
+.ht-part-info-grid {
+  gap: 18px;
+}
+
+/* Part name within info value: main + sub layout */
+.ht-info-value .ht-part-name-combined {
+  display: inline-block;
+}
+
+.ht-info-value .ht-part-main {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ht-info-value .ht-part-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
 .ht-info-value.hardness {
   color: var(--primary);
   font-size: 14px;
@@ -767,6 +792,21 @@
 .ht-step.completed .step-icon {
   background: var(--success);
   border-color: var(--success);
+}
+
+.ht-step.active .step-icon {
+  animation: stepperPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes stepperPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ht-step.active .step-icon {
+    animation: none;
+  }
 }
 
 .ht-step .step-label {
@@ -1396,7 +1436,7 @@
 /* Heat Treatment modal content grid layout */
 .ht-modal-info-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  grid-template-columns: 1fr;
   gap: 18px;
   align-items: stretch;
 }
@@ -1407,7 +1447,13 @@
 
 .ht-modal-info-grid > .ht-info-summary,
 .ht-modal-info-grid > .ht-process-status-card {
-  grid-column: 2;
+  grid-column: 1;
+}
+
+.ht-timeline-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
 .ht-modal-info-grid > #entrySection,
@@ -1886,7 +1932,7 @@
 .ht-step-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .ht-step-form .ht-form-row {
@@ -2521,29 +2567,39 @@
 
 .ht-classification-root .ht-table th,
 .ht-classification-root .ht-table td {
-  padding: 6px 8px;
+  padding: 8px 12px;
   font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  vertical-align: middle;
 }
 
 .ht-classification-root .ht-table th:nth-child(1),
-.ht-classification-root .ht-table td:nth-child(1) { width: 32px; min-width: 32px; text-align: center; }  /* No */
+.ht-classification-root .ht-table td:nth-child(1) { width: 44px; min-width: 44px; text-align: center; }  /* No */
 .ht-classification-root .ht-table th:nth-child(2),
-.ht-classification-root .ht-table td:nth-child(2) { width: 120px; min-width: 100px; }  /* Nomor Kode */
+.ht-classification-root .ht-table td:nth-child(2) { width: 135px; min-width: 135px; }  /* Control Number */
 .ht-classification-root .ht-table th:nth-child(3),
-.ht-classification-root .ht-table td:nth-child(3) { min-width: 140px; }  /* Customer */
+.ht-classification-root .ht-table td:nth-child(3) { width: 150px; min-width: 140px; }  /* Customer */
 .ht-classification-root .ht-table th:nth-child(4),
-.ht-classification-root .ht-table td:nth-child(4) { min-width: 200px; }  /* Part Name/No */
+.ht-classification-root .ht-table td:nth-child(4) { width: 220px; min-width: 200px; }  /* Part Name/No */
 .ht-classification-root .ht-table th:nth-child(5),
-.ht-classification-root .ht-table td:nth-child(5) { width: 65px; min-width: 65px; text-align: right; }  /* Qty */
+.ht-classification-root .ht-table td:nth-child(5) { width: 80px; min-width: 80px; text-align: right; }  /* Qty */
 .ht-classification-root .ht-table th:nth-child(6),
-.ht-classification-root .ht-table td:nth-child(6) { width: 85px; min-width: 85px; text-align: right; }  /* Berat */
+.ht-classification-root .ht-table td:nth-child(6) { width: 100px; min-width: 100px; text-align: right; }  /* Berat */
 .ht-classification-root .ht-table th:nth-child(7),
-.ht-classification-root .ht-table td:nth-child(7) { width: 85px; min-width: 85px; text-align: center; }  /* Suhu */
+.ht-classification-root .ht-table td:nth-child(7) { width: 120px; min-width: 120px; text-align: center; }  /* Suhu */
 .ht-classification-root .ht-table th:nth-child(8),
 .ht-classification-root .ht-table td:nth-child(8) { width: 56px; min-width: 56px; text-align: center; }  /* Aksi */
+
+/* Header text tidak terpotong pada kolom No, Control Number, Suhu */
+.ht-classification-root .ht-table th:nth-child(1),
+.ht-classification-root .ht-table th:nth-child(2),
+.ht-classification-root .ht-table th:nth-child(7) {
+  white-space: nowrap;
+  text-overflow: clip;
+  overflow: visible;
+}
 
 /* ---- Production order table ---- */
 
@@ -2562,7 +2618,7 @@
 
 .ht-production-table th,
 .ht-production-table td {
-  padding: 6px 8px;
+  padding: 8px 12px;
   font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2579,7 +2635,7 @@
   background: var(--surface-hover);
   font-weight: 600;
   text-align: left;
-  padding: 6px 8px;
+  padding: 8px 12px;
   border-bottom: 2px solid var(--border);
   font-size: 11px;
   text-transform: uppercase;
@@ -2650,7 +2706,7 @@
 .ht-jeda-suhu td {
   font-weight: 600;
   color: var(--warning-text, #856404);
-  padding: 6px 10px;
+  padding: 8px 12px;
   white-space: nowrap;
 }
 
@@ -2698,20 +2754,54 @@
 
 /* ---- Production order column widths (9 columns) ---- */
 .ht-production-table th:nth-child(1),
-.ht-production-table td:nth-child(1) { width: 32px; min-width: 32px; text-align: center; }  /* No. */
+.ht-production-table td:nth-child(1) { width: 44px; min-width: 44px; text-align: center; }  /* No. */
 .ht-production-table th:nth-child(2),
-.ht-production-table td:nth-child(2) { width: 120px; min-width: 100px; }  /* Nomor Kode */
+.ht-production-table td:nth-child(2) { width: 130px; min-width: 130px; }  /* Control Number */
 .ht-production-table th:nth-child(3),
-.ht-production-table td:nth-child(3) { min-width: 140px; }  /* Customer */
+.ht-production-table td:nth-child(3) { width: 150px; min-width: 140px; }  /* Customer */
 .ht-production-table th:nth-child(4),
-.ht-production-table td:nth-child(4) { min-width: 200px; }  /* Part Name / No. */
+.ht-production-table td:nth-child(4) { width: 220px; min-width: 200px; }  /* Part Name / No. */
 .ht-production-table th:nth-child(5),
-.ht-production-table td:nth-child(5) { width: 65px; min-width: 65px; text-align: right; }  /* Qty */
+.ht-production-table td:nth-child(5) { width: 80px; min-width: 80px; text-align: right; }  /* Qty */
 .ht-production-table th:nth-child(6),
-.ht-production-table td:nth-child(6) { width: 85px; min-width: 85px; text-align: right; }  /* Berat */
+.ht-production-table td:nth-child(6) { width: 100px; min-width: 100px; text-align: right; }  /* Berat */
 .ht-production-table th:nth-child(7),
-.ht-production-table td:nth-child(7) { width: 85px; min-width: 85px; text-align: center; }  /* Suhu */
+.ht-production-table td:nth-child(7) { width: 115px; min-width: 115px; text-align: center; }  /* Suhu */
 .ht-production-table th:nth-child(8),
 .ht-production-table td:nth-child(8) { min-width: 130px; }  /* Keterangan */
 .ht-production-table th:nth-child(9),
 .ht-production-table td:nth-child(9) { width: 56px; min-width: 56px; text-align: center; }  /* Aksi */
+
+/* Header text tidak terpotong pada kolom No, Control Number, Suhu */
+.ht-production-table th:nth-child(1),
+.ht-production-table th:nth-child(2),
+.ht-production-table th:nth-child(7) {
+  white-space: nowrap;
+  text-overflow: clip;
+  overflow: visible;
+}
+
+/* ---- Delivery history table column widths ---- */
+.ht-delivery-history-table {
+  table-layout: auto;
+  width: 100%;
+}
+
+.ht-delivery-history-table th:nth-child(1),
+.ht-delivery-history-table td:nth-child(1) { width: 40px; min-width: 40px; text-align: center; }  /* No */
+.ht-delivery-history-table th:nth-child(2),
+.ht-delivery-history-table td:nth-child(2) { width: 110px; min-width: 110px; }  /* Control Number */
+.ht-delivery-history-table th:nth-child(3),
+.ht-delivery-history-table td:nth-child(3) { width: 140px; min-width: 130px; }  /* Customer */
+.ht-delivery-history-table th:nth-child(4),
+.ht-delivery-history-table td:nth-child(4) { min-width: 200px; }  /* Part Name / Part No */
+.ht-delivery-history-table th:nth-child(5),
+.ht-delivery-history-table td:nth-child(5) { width: 70px; min-width: 70px; text-align: right; }  /* Qty Out */
+.ht-delivery-history-table th:nth-child(6),
+.ht-delivery-history-table td:nth-child(6) { width: 90px; min-width: 90px; text-align: right; }  /* Weight Out */
+.ht-delivery-history-table th:nth-child(7),
+.ht-delivery-history-table td:nth-child(7) { min-width: 130px; }  /* Sender Name */
+.ht-delivery-history-table th:nth-child(8),
+.ht-delivery-history-table td:nth-child(8) { width: 120px; min-width: 110px; }  /* Delivery Date */
+.ht-delivery-history-table th:nth-child(9),
+.ht-delivery-history-table td:nth-child(9) { width: 80px; min-width: 80px; text-align: center; }  /* Status */

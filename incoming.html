@@ -112,7 +112,7 @@
         filter: brightness(0) invert(1);
       }
 
-      /* Alignment: Nomor Kode di kiri, tombol di kanan, same row */
+      /* Alignment: Control Number di kiri, tombol di kanan, same row */
       #formModalOverlay .ht-modal-footer .ht-kode-bar {
         width: 100%;
         justify-content: space-between;
@@ -240,16 +240,7 @@
                 </span>
                 <img src="assets/icons/chevron-down.svg" alt="" class="ht-nav-toggle-icon" />
               </button>
-              <div class="ht-nav-items">
-                <a href="heat-treatment.html" class="ht-nav-link sub" id="navHeatTreatment">
-                  <img
-                    src="assets/icons/production.svg"
-                    alt="Heat Treatment"
-                    class="sidebar-menu-icon"
-                  />
-                  Heat Treatment
-                </a>
-                <a href="heat-treatment.html?process=Quenching%20%26%20Tempering" class="ht-nav-link sub" id="navQuenching">
+              <div class="ht-nav-items"><a href="heat-treatment.html?process=Quenching%20%26%20Tempering" class="ht-nav-link sub" id="navQuenching">
                   <img
                     src="assets/icons/production.svg"
                     alt="Quenching &amp; Tempering"
@@ -289,13 +280,13 @@
                   />
                   Full Annealing
                 </a>
-                <a href="heat-treatment.html?process=Spherodizing%20Annealing" class="ht-nav-link sub" id="navSpherizing">
+                <a href="heat-treatment.html?process=Spheroidizing%20Annealing" class="ht-nav-link sub" id="navSpheroidizing">
                   <img
                     src="assets/icons/production.svg"
-                    alt="Spherodizing Annealing"
+                    alt="Spheroidizing Annealing"
                     class="sidebar-menu-icon"
                   />
-                  Spherodizing Annealing
+                  Spheroidizing Annealing
                 </a>
                 <a href="heat-treatment.html?process=Carburizing" class="ht-nav-link sub" id="navCarburizing">
                   <img
@@ -494,7 +485,7 @@
                       <div class="ht-form-group">
                         <label class="ht-form-label" for="incQty"
                           >Qty Part
-                          <span class="ht-required">(Manual)</span></label
+                          <span class="ht-required">*</span></label
                         >
                         <input
                           type="number"
@@ -511,7 +502,7 @@
                       <div class="ht-form-group">
                         <label class="ht-form-label" for="incSJ"
                           >Nomor Surat Jalan
-                          <span class="ht-required">(Manual)</span></label
+                          <span class="ht-required">*</span></label
                         >
                         <input
                           type="text"
@@ -525,7 +516,7 @@
                       <div class="ht-form-group">
                         <label class="ht-form-label" for="incLot"
                           >Lot No
-                          <span class="ht-required">(Manual)</span></label
+                          <span class="ht-required">*</span></label
                         >
                         <input
                           type="text"
@@ -541,7 +532,7 @@
                       <div class="ht-form-group">
                         <label class="ht-form-label" for="incCharge"
                           >Material Charge
-                          <span class="ht-required">(Manual)</span></label
+                          <span class="ht-required">*</span></label
                         >
                         <input
                           type="text"
@@ -614,7 +605,7 @@
                     <div id="processNoteGroup" class="hidden ht-form-group">
                       <label class="ht-form-label" for="incProcessNote"
                         >Keterangan Jenis Proses
-                        <span class="ht-required">(Manual)</span></label
+                        <span class="ht-required">*</span></label
                       >
                       <input
                         type="text"
@@ -628,7 +619,7 @@
                       <div class="ht-form-group">
                         <label class="ht-form-label" for="incDiinputOleh"
                           >Diinput Oleh
-                          <span class="ht-required">(Manual)</span></label
+                          <span class="ht-required">*</span></label
                         >
                         <input
                           type="text"
@@ -668,7 +659,7 @@
                 <div class="ht-modal-footer">
                   <div class="ht-kode-bar">
                     <div class="ht-kode-info">
-                      <p class="ht-info-label">Nomor Kode</p>
+                      <p class="ht-info-label">Control Number</p>
                       <p class="ht-kode-display" id="incKodeDisplay">-</p>
                     </div>
                     <div class="flex gap-2">
@@ -707,9 +698,9 @@
                     class="ht-form-select ht-form-select-sm w-auto"
                     aria-label="Item per halaman"
                   >
-                    <option value="14" selected>14</option>
+                    <option value="15" selected>15</option>
                     <option value="30">30</option>
-                    <option value="45">45</option>
+                    <option value="60">60</option>
                     <option value="all">Semua</option>
                   </select>
                 </div>
@@ -719,7 +710,7 @@
                   type="text"
                   id="searchIncoming"
                   aria-label="Search Incoming"
-                  placeholder="Cari: Nomor Kode, Customer, Nama Part, Nomor Part, Jenis Proses, Status..."
+                   placeholder="Cari: Control Number, Customer, Nama Part, Nomor Part, Jenis Proses, Status..."
                   oninput="onIncomingSearch()"
                   class="ht-form-input"
                 />
@@ -729,7 +720,7 @@
                   <thead>
                     <tr>
                       <th>No</th>
-                      <th>Nomor Kode</th>
+                      <th>Control Number</th>
                       <th>Customer</th>
                       <th>Nomor Part</th>
                       <th>Nama Part</th>
@@ -900,9 +891,9 @@
       let currentQRId = null;
       let html5QrCode = null;
 
-      const incomingPageState = {
+       const incomingPageState = {
         currentPage: 1,
-        pageSize: 14,
+        pageSize: 15,
       };
 
       function getFilteredIncoming() {
@@ -1840,5 +1831,7 @@
     </script>
   </body>
 </html>
+
+
 
 

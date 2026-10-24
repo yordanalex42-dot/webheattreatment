@@ -89,14 +89,6 @@
                 <img src="assets/icons/chevron-down.svg" alt="" class="ht-nav-toggle-icon" />
               </button>
               <div class="ht-nav-items">
-                <a href="heat-treatment.html" class="ht-nav-link sub active" id="navHeatTreatment">
-                  <img
-                    src="assets/icons/production.svg"
-                    alt="Heat Treatment"
-                    class="sidebar-menu-icon"
-                  />
-                  Heat Treatment
-                </a>
                 <a href="heat-treatment.html?process=Quenching%20%26%20Tempering" class="ht-nav-link sub" id="navQuenching">
                   <img
                     src="assets/icons/production.svg"
@@ -137,13 +129,13 @@
                   />
                   Full Annealing
                 </a>
-                <a href="heat-treatment.html?process=Spherodizing%20Annealing" class="ht-nav-link sub" id="navSpherizing">
+                <a href="heat-treatment.html?process=Spheroidizing%20Annealing" class="ht-nav-link sub" id="navSpheroidizing">
                   <img
                     src="assets/icons/production.svg"
-                    alt="Spherodizing Annealing"
+                    alt="Spheroidizing Annealing"
                     class="sidebar-menu-icon"
                   />
-                  Spherodizing Annealing
+                  Spheroidizing Annealing
                 </a>
                 <a href="heat-treatment.html?process=Carburizing" class="ht-nav-link sub" id="navCarburizing">
                   <img
@@ -1022,16 +1014,21 @@
           machine_finish_by: session ? session.name : "Operator",
         };
         try {
-          DB.update("productions", currentProduction.id, data);
-          currentMaterial.status_proses = rOK
-            ? DB.STATUSES.PROSES_FINISH
-            : DB.STATUSES.PROSES_FINISH_NG;
-          DB.update("materials", currentMaterial.id, {
-            status_proses: rOK
-              ? DB.STATUSES.PROSES_FINISH
-              : DB.STATUSES.PROSES_FINISH_NG,
-          });
-          btn.innerHTML =
+           DB.update("productions", currentProduction.id, data);
+           currentMaterial.status_proses = rOK
+             ? DB.STATUSES.PROSES_FINISH
+             : DB.STATUSES.PROSES_FINISH_NG;
+           DB.update("materials", currentMaterial.id, {
+             status_proses: rOK
+               ? DB.STATUSES.PROSES_FINISH
+               : DB.STATUSES.PROSES_FINISH_NG,
+           });
+
+           if (data.process_result === "OK" && data.production_status === DB.STATUSES.PROD_FINISH) {
+             markProductionOrderCompleted("Normalizing", currentMaterial.id, currentMaterial.kode);
+           }
+
+           btn.innerHTML =
             '<img src="assets/icons/check.svg" alt="Success" class="icon mr-2">Berhasil';
           setTimeout(function () {
             btn.innerHTML =
@@ -1043,8 +1040,9 @@
               currentMaterial,
               currentProcessKey,
             );
-            renderAction(gate, prod, currentProcessKey);
+             renderAction(gate, prod, currentProcessKey);
             renderNextProcess();
+            renderProductionOrderTable();
             HTUI.toast(
               "Process selesai. Status: " +
                 data.production_status +
@@ -1062,7 +1060,7 @@
         }
        }
 
-      /* ---- Production Order (Normalizing) ---- */
+       /* ---- Production Order (Normalizing) ---- */
 
       var PROC_ORDER_KEY = "ht_production_orders";
       var procBodyOverflowCache = "";
@@ -1075,6 +1073,41 @@
           return orders[processType] || [];
         } catch (e) {
           return [];
+        }
+      }
+
+      function getActiveProductionOrders(processType) {
+        var items = readProductionOrders(processType);
+        return items.filter(function (item) {
+          if (item.order_status === "COMPLETED") return false;
+          return true;
+        });
+      }
+
+      function markProductionOrderCompleted(processType, materialId, kode) {
+        var raw = localStorage.getItem(PROC_ORDER_KEY);
+        if (!raw) return false;
+        try {
+          var orders = JSON.parse(raw);
+          var list = orders[processType];
+          if (!list) return false;
+          var changed = false;
+          for (var i = 0; i < list.length; i++) {
+            var item = list[i];
+            var idMatch = item.material_id != null && String(item.material_id) === String(materialId);
+            var kodeMatch = item.kode === kode;
+            if ((idMatch || kodeMatch) && item.order_status !== "COMPLETED") {
+              item.order_status = "COMPLETED";
+              item.completed_at = new Date().toISOString();
+              changed = true;
+            }
+          }
+          if (changed) {
+            localStorage.setItem(PROC_ORDER_KEY, JSON.stringify(orders));
+          }
+          return changed;
+        } catch (e) {
+          return false;
         }
       }
 
@@ -1092,7 +1125,7 @@
         var container = document.getElementById("procProductionOrderTable");
         if (!container) return;
 
-        var items = readProductionOrders("Normalizing");
+        var items = getActiveProductionOrders("Normalizing");
         var section = document.getElementById("productionOrderSection");
         if (section) section.classList.remove("hidden");
 
@@ -1112,7 +1145,7 @@
           '<table class="ht-table ht-production-table ht-proc-order-table">';
         html += "<thead><tr>";
         html += "<th>No.</th>";
-        html += "<th>Nomor Kode</th>";
+                 html += "<th>Control Number</th>";
         html += "<th>Customer</th>";
         html += "<th>Part Name / Part No.</th>";
         html += "<th>Qty</th>";
@@ -1308,4 +1341,6 @@
     </script>
   </body>
 </html>
+
+
 

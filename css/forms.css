@@ -291,7 +291,7 @@
 .ht-form-row--inline {
   grid-template-columns: repeat(2, 1fr);
   align-items: start;
-  gap: 16px;
+  gap: 12px;
 }
 
 .ht-form-row--inline .ht-form-label {
@@ -301,7 +301,7 @@
 .ht-form-group-inline {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .ht-form-group-inline .ht-form-label {
@@ -369,6 +369,7 @@
 .ht-flex-end {
   display: flex;
   justify-content: flex-end;
+  margin-top: 12px;
 }
 
 .ht-flex-gap {

@@ -42,6 +42,8 @@ const HTDashboard = {
       kpiTotalOutput: document.getElementById("kpiTotalOutput"),
       kpiTotalBeratInput: document.getElementById("kpiTotalBeratInput"),
       kpiTotalBeratOutput: document.getElementById("kpiTotalBeratOutput"),
+      kpiTotalInputSummary: document.getElementById("kpiTotalInputSummary"),
+      kpiTotalOutputSummary: document.getElementById("kpiTotalOutputSummary"),
       dailyChartCtx: document.getElementById("productionChart"),
       dailyChartEmpty: document.getElementById("productionChartEmpty"),
       monthlyChartCtx: document.getElementById("processDonutChart"),
@@ -504,7 +506,7 @@ const HTDashboard = {
       totalBeratInput += parseFloat(m.berat_total_part) || 0;
     });
 
-    // Total Output & Total Berat Output dari deliveries (semua rekaman)
+     // Total Output & Total Berat Output dari deliveries (semua rekaman)
     deliveries.forEach(d => {
       const prod = prodById[d.production_id];
       if (prod) {
@@ -514,6 +516,19 @@ const HTDashboard = {
           const beratPerPart = parseFloat(material.berat_part_snapshot) || 0;
           totalBeratOutput += (parseFloat(d.qty_kirim) || 0) * beratPerPart;
         }
+      }
+    });
+
+    // Status classification untuk Total Input (menggunakan computePartStatus yang sudah ada)
+    const statusCounts = { INCOMING: 0, PROSES_PRODUKSI: 0, NG: 0 };
+    materials.forEach(m => {
+      const status = this.computePartStatus(m);
+      if (status === "INCOMING") {
+        statusCounts.INCOMING++;
+      } else if (status === "PROSES PRODUKSI") {
+        statusCounts.PROSES_PRODUKSI++;
+      } else if (status === "PRODUKSI - NG" || status === "QC - NG") {
+        statusCounts.NG++;
       }
     });
 
@@ -533,10 +548,28 @@ const HTDashboard = {
     const monthlyOutput = this._getMonthlyDeliveryWeight(year, month);
     const persentase = target > 0 ? Math.round((monthlyOutput / target) * 100) : null;
 
-    if (this._el.kpiTotalInput) this._el.kpiTotalInput.textContent = totalInput;
+     if (this._el.kpiTotalInput) this._el.kpiTotalInput.textContent = totalInput;
     if (this._el.kpiTotalOutput) this._el.kpiTotalOutput.textContent = totalOutput;
     if (this._el.kpiTotalBeratInput) this._el.kpiTotalBeratInput.textContent = this._formatWeight(totalBeratInput);
     if (this._el.kpiTotalBeratOutput) this._el.kpiTotalBeratOutput.textContent = this._formatWeight(totalBeratOutput);
+
+    // Render status summary untuk Total Input
+    if (this._el.kpiTotalInputSummary) {
+      const parts = [];
+      if (statusCounts.INCOMING > 0) parts.push(`${statusCounts.INCOMING} Incoming`);
+      if (statusCounts.PROSES_PRODUKSI > 0) parts.push(`${statusCounts.PROSES_PRODUKSI} Proses`);
+      if (statusCounts.NG > 0) parts.push(`${statusCounts.NG} NG`);
+      this._el.kpiTotalInputSummary.innerHTML = parts.length > 0
+        ? `<span class="ht-kpi-summary-dot" style="background:var(--info)"></span><span class="ht-kpi-summary-text">${parts.join(' • ')}</span>`
+        : "";
+    }
+
+    // Render total delivery untuk Total Output
+    if (this._el.kpiTotalOutputSummary) {
+      this._el.kpiTotalOutputSummary.innerHTML = totalOutput > 0
+        ? `<span class="ht-kpi-summary-text">Delivery selesai</span>`
+        : "";
+    }
 
     // Render kartu info target
     this._renderTargetCard(target, monthlyOutput, persentase);
@@ -1122,6 +1155,7 @@ const HTDashboard = {
         <td class="px-3 py-2 font-mono"${title(nomorPart)}>${nomorPart}</td>
         <td class="px-3 py-2"${title(namaPart)}>${namaPart}</td>
         <td class="px-3 py-2"><span class="ht-badge ${badgeClass}">${statusPart}</span></td>
+        <td class="px-3 py-2"${title(material.status_part)}>${material.status_part || "-"}</td>
         <td class="px-3 py-2 font-mono"${title(suratJalan)}>${suratJalan}</td>
         <td class="px-3 py-2"${title(lotNo)}>${lotNo}</td>
         <td class="px-3 py-2"${title(charge)}>${charge}</td>
@@ -1142,7 +1176,7 @@ const HTDashboard = {
     }).join("");
 
       if (this._el.tableBody) {
-        this._el.tableBody.innerHTML = html || '<tr><td colspan="18" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Kosong" class="icon"><p>Data monitoring tidak ditemukan.</p><small>Coba ubah kata kunci atau filter yang dipilih.</small></td></tr>';
+          this._el.tableBody.innerHTML = html || '<tr><td colspan="19" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Kosong" class="icon"><p>Data monitoring tidak ditemukan.</p><small>Coba ubah kata kunci atau filter yang dipilih.</small></td></tr>';
       }
   },
 
@@ -1207,14 +1241,14 @@ const HTDashboard = {
 
       return {
         "No": idx + 1,
-        "Nomor Kode": cell(material.kode),
+        "Control Number": cell(material.kode),
         "Customer": cell(customer ? customer.nama_customer : null),
         "Nomor Part": cell(part ? part.nomor_part : null),
         "Nama Part": cell(part ? part.nama_part : null),
         "No Surat Jalan": cell(material.nomor_surat_jalan),
         "Lot No": cell(material.lot_no),
         "Material Charge": cell(material.material_charge),
-        "Status Part": cell(statusPart),
+        "Status Part": cell(material.status_part),
         "Qty": Number(material.qty) || 0,
         "Berat Total (KG)": Number(this._getMaterialWeight(material)) || 0,
         "Jenis Proses": cell(material.process_type),
