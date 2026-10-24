@@ -2,21 +2,21 @@
    HT SYSTEM — RESET & SEED VALIDATION SCRIPT (Node.js)
 
    Setelah seedDemoData() di js/db.js diperbarui untuk
-   menghasilkan dataset baru (48 material), script ini
+   menghasilkan dataset baru (100 material), script ini
    berfungsi sebagai validator standalone:
 
    1. Membaca backup data lama (ht_backup_old_seed_full.json)
    2. Memanggil DB.init() — yang secara otomatis melakukan
-      seed ulang dengan SEED_VERSION "2026-v3"
+      seed ulang dengan SEED_VERSION "2026-v4"
    3. Memvalidasi seluruh persyaratan dataset baru
    4. Menyimpan snapshot hasil seed
 
    Untuk melakukan RESET TOTAL di browser:
    - Cukup buka aplikasi; DB.init() mendeteksi SEED_VERSION
-     berubah ("2026-v3" != "2026-v2") dan otomatis melakukan
+     berubah ("2026-v4" != "2026-v2") dan otomatis melakukan
      reset + seed ulang.
    - Data lama otomatis dihapus; data baru digenerate dari
-     seedDemoData().
+     seedData().
    ============================================================ */
 
 const fs = require("fs");
@@ -67,7 +67,7 @@ Auth.initDefaultUser();
 // ====================================================================
 // CONFIGURATION
 // ====================================================================
-const TOTAL_EXPECTED = 48;
+const TOTAL_EXPECTED = 100;
 const PROCESS_TYPE_DEFS = [
   { processType: "Quenching & Tempering", partId: 1, stdTemp: 580 },
   { processType: "Annealing", partId: 2, stdTemp: 850 },
@@ -76,14 +76,6 @@ const PROCESS_TYPE_DEFS = [
   { processType: "Full Annealing", partId: 5, stdTemp: 870 },
   { processType: "Stress Relief Annealing", partId: 6, stdTemp: 830 },
   { processType: "Spheroidizing Annealing", partId: 8, stdTemp: 820 },
-];
-
-const HT_STATES = [
-  { key: "WAITING", label: "WAITING (production WAITING)" },
-  { key: "PROCESS", label: "PROCESS" },
-  { key: "FINISH_OK", label: "FINISH + QC OK" },
-  { key: "FINISH_NG", label: "FINISH_NG" },
-  { key: "NO_PROD", label: "NO_PROD (no production)" },
 ];
 
 const passed = [];
@@ -114,7 +106,6 @@ if (fs.existsSync(oldBackupPath)) {
   check(oldBackup.ht_customers && oldBackup.ht_customers.length === 5, "Backup data lama customers tersedia (5 customers)");
   check(oldBackup.ht_parts && oldBackup.ht_parts.length === 10, "Backup data lama parts tersedia (10 parts)");
   check(oldBackup.ht_materials && oldBackup.ht_materials.length === 10, "Backup data lama materials tersedia (10 materials)");
-  // Verify old data had legacy process types
   const oldLegacyParts = oldBackup.ht_parts.filter(p => DB.isProcessTypeLegacy(p.process_type));
   check(oldLegacyParts.length > 0, "Backup data lama mengandung process_type legacy (" + oldLegacyParts.length + " parts)");
   console.log("  Backup lama tersimpan di: ht_backup_old_seed_full.json");
@@ -124,53 +115,42 @@ if (fs.existsSync(oldBackupPath)) {
 
 console.log("\n--- STEP 2: Verifikasi DB.init() melakukan seed baru ---");
 check(localStorage.getItem("ht_db_seed_version") === DB.SEED_VERSION, "SEED_VERSION konsisten (" + DB.SEED_VERSION + ")");
-check(DB.SEED_VERSION === "2026-v3", "SEED_VERSION = 2026-v3");
+check(DB.SEED_VERSION === "2026-v4", "SEED_VERSION = 2026-v4");
 
 console.log("\n--- STEP 3: Validasi master data ---");
 const customers = DB.get("customers");
 const parts = DB.get("parts");
 const materials = DB.get("materials");
 
-check(customers.length === 5, "Customer baru: " + customers.length + " (target 5)");
-check(parts.length === 10, "Part Master baru: " + parts.length + " (target 10)");
+check(customers.length === 10, "Customer baru: " + customers.length + " (target 10)");
+check(parts.length === 30, "Part Master baru: " + parts.length + " (target 30)");
 
-// Check customer kode uniqueness
 const customerKodes = customers.map(c => c.kode_customer);
 const uniqueCustomerKodes = new Set(customerKodes);
 check(uniqueCustomerKodes.size === customerKodes.length, "Semua kode customer unik (" + uniqueCustomerKodes.size + " unique)");
 
-// Check part nomor_part uniqueness
 const partNos = parts.map(p => p.nomor_part);
 const uniquePartNos = new Set(partNos);
 check(uniquePartNos.size === partNos.length, "Semua nomor part unik (" + uniquePartNos.size + " unique)");
 
-// Check part process_type is canonical (no legacy values)
 const legacyParts = parts.filter(p => DB.isProcessTypeLegacy(p.process_type));
 check(legacyParts.length === 0, "Tidak ada part dengan process_type legacy (" + legacyParts.length + " ditemukan)");
 
-// Check all 7 canonical process types are present in parts
 const partProcessTypes = {};
 parts.forEach(p => { partProcessTypes[p.process_type] = (partProcessTypes[p.process_type] || 0) + 1; });
 console.log("  Part process_type distribution:", JSON.stringify(partProcessTypes));
-const allCanonicalPresent = DB.PROCESS_TYPE_OPTIONS.every(t => {
-  // At least one part should have each canonical type (or they're used in materials)
-  return true;
-});
 check(DB.PROCESS_TYPE_OPTIONS.length === 7, "PROCESS_TYPE_OPTIONS memiliki 7 jenis proses (" + DB.PROCESS_TYPE_OPTIONS.length + ")");
 
 console.log("\n--- STEP 4: Validasi data transaksi ---");
-check(materials.length === 48, "Total material: " + materials.length + " (target " + TOTAL_EXPECTED + ")");
+check(materials.length === 100, "Total material: " + materials.length + " (target " + TOTAL_EXPECTED + ")");
 
-// Check material kode uniqueness
 const materialKodes = materials.map(m => m.kode);
 const uniqueMaterialKodes = new Set(materialKodes);
 check(uniqueMaterialKodes.size === materialKodes.length, "Semua kode material unik (" + uniqueMaterialKodes.size + " unique)");
 
-// Check all materials have kode ending with "M"
-const allKodeFormat = materials.every(m => /^([1-9]\d*|\d+M)$/.test(m.kode) && m.kode.endsWith("M"));
+const allKodeFormat = materials.every(m => /^\d+M$/.test(m.kode));
 check(allKodeFormat, "Semua kode material mengikuti format 'N+M'");
 
-// Check no old material kodes exist
 const oldKodeFormats = materials.filter(m => /202600\d+I/.test(m.kode));
 check(oldKodeFormats.length === 0, "Tidak ada kode material lama (202600xxI) tersisa (" + oldKodeFormats.length + ")");
 
@@ -181,14 +161,12 @@ materials.forEach(m => {
 });
 console.log("  Status distribution:", JSON.stringify(statusCounts));
 
-// 35 HT materials (kode 1M-35M)
 const htMaterials = materials.filter(m => {
   const num = parseInt(m.kode);
-  return num >= 1 && num <= 35;
+  return num >= 1 && num <= 70;
 });
-check(htMaterials.length === 35, "Material HT: " + htMaterials.length + " (target 35)");
+check(htMaterials.length === 70, "Material HT: " + htMaterials.length + " (target 70)");
 
-// 5 per process type
 const htPtCounts = {};
 htMaterials.forEach(m => {
   htPtCounts[m.process_type] = (htPtCounts[m.process_type] || 0) + 1;
@@ -196,60 +174,49 @@ htMaterials.forEach(m => {
 console.log("  HT process type distribution:", JSON.stringify(htPtCounts));
 PROCESS_TYPE_DEFS.forEach(pt => {
   const count = htPtCounts[pt.processType] || 0;
-  check(count === 5, "Process type '" + pt.processType + "': " + count + " materials (target 5)");
+  check(count === 10, "Process type '" + pt.processType + "': " + count + " materials (target 10)");
 });
-
-// 5 states per process type (14 WAITING, 7 PROCESS, 7 FINISH, 7 FINISH_NG, 7 NO_PROD)
-const htStatusCounts = {};
-htMaterials.forEach(m => { htStatusCounts[m.status_proses] = (htStatusCounts[m.status_proses] || 0) + 1; });
-console.log("  HT status distribution:", JSON.stringify(htStatusCounts));
-
-// Check specific states for process type 1 (Quenching & Tempering, part 1)
-const pt1Mats = materials.filter(m => parseInt(m.kode) >= 1 && parseInt(m.kode) <= 5);
-const pt1States = pt1Mats.map(m => m.status_proses);
-console.log("  Part 1 (Quenching & Tempering) states:", JSON.stringify(pt1States));
 
 console.log("\n--- STEP 6: Validasi ShotBlast, Anti-Rust, QC, Delivery ---");
-// Material 36M: ShotBlast (PROCESS)
-const sbMat = materials.find(m => m.kode === "36M");
-check(sbMat !== undefined, "Material 36M (ShotBlast) ada");
+
+// Material 71M: Ready for ShotBlast (HT done, QC PASS, no SB production)
+const readyMat = materials.find(m => m.kode === "71M");
+check(readyMat !== undefined, "Material 71M (Ready for ShotBlast) ada");
+if (readyMat) {
+  check(readyMat.process_route.shotblast === true, "Material 71M route has shotblast=true");
+  const htProd = DB.getProcessProduction(readyMat, "HT");
+  check(htProd !== null && htProd.production_status === "FINISH" && htProd.process_result === "OK", "Material 71M HT FINISH+OK");
+  const sbProd = DB.getProcessProduction(readyMat, "SHOTBLAST");
+  check(sbProd === null, "Material 71M no Shotblast production yet (ready for ShotBlast)");
+  const qc = DB.checkQualityGate(readyMat);
+  check(qc.qcStatus === "PASS", "Material 71M QC PASS");
+}
+
+// Material 76M: ShotBlast PROCESS
+const sbMat = materials.find(m => m.kode === "76M");
+check(sbMat !== undefined, "Material 76M (ShotBlast PROCESS) ada");
 if (sbMat) {
-  check(sbMat.status_proses === DB.STATUSES.PROSES_PROCESS, "Material 36M status PROSES");
+  check(sbMat.status_proses === DB.STATUSES.PROSES_PROCESS, "Material 76M status PROSES");
   const htProd = DB.getProcessProduction(sbMat, "HT");
-  check(htProd !== null && htProd.production_status === "FINISH" && htProd.process_result === "OK", "Material 36M HT FINISH+OK");
+  check(htProd !== null && htProd.production_status === "FINISH" && htProd.process_result === "OK", "Material 76M HT FINISH+OK");
   const sbProd = DB.getProcessProduction(sbMat, "SHOTBLAST");
-  check(sbProd !== null && sbProd.production_status === "PROCESS", "Material 36M Shotblast PROCESS");
+  check(sbProd !== null && sbProd.production_status === "PROCESS", "Material 76M Shotblast PROCESS");
   const qc = DB.checkQualityGate(sbMat);
-  check(qc.qcStatus === "PASS", "Material 36M QC PASS");
+  check(qc.qcStatus === "PASS", "Material 76M QC PASS");
 }
 
-// Material 37M: Anti-Rust (PROCESS)
-const arMat = materials.find(m => m.kode === "37M");
-check(arMat !== undefined, "Material 37M (Anti-Rust) ada");
+// Material 81M: Anti-Rust PROCESS
+const arMat = materials.find(m => m.kode === "81M");
+check(arMat !== undefined, "Material 81M (Anti-Rust PROCESS) ada");
 if (arMat) {
-  check(arMat.status_proses === DB.STATUSES.PROSES_PROCESS, "Material 37M status PROSES");
+  check(arMat.status_proses === DB.STATUSES.PROSES_PROCESS, "Material 81M status PROSES");
   const arProd = DB.getProcessProduction(arMat, "ANTI_RUST");
-  check(arProd !== null && arProd.production_status === "PROCESS", "Material 37M Anti-Rust PROCESS");
+  check(arProd !== null && arProd.production_status === "PROCESS", "Material 81M Anti-Rust PROCESS");
 }
 
-// Material 38M-40M: QC OK (FINISH, no next process)
-const qcOkMats = ["38M", "39M", "40M"].map(k => materials.find(m => m.kode === k)).filter(m => m);
-check(qcOkMats.length === 3, "Material 38M-40M (QC OK) ada: " + qcOkMats.length);
-qcOkMats.forEach(m => {
-  check(m.status_proses === DB.STATUSES.PROSES_FINISH, "Material " + m.kode + " status FINISH");
-  const htProd = DB.getProcessProduction(m, "HT");
-  check(htProd !== null && htProd.process_result === "OK", "Material " + m.kode + " HT OK");
-  const qc = DB.checkQualityGate(m);
-  check(qc.qcStatus === "PASS", "Material " + m.kode + " QC PASS");
-  const sbProd = DB.getProcessProduction(m, "SHOTBLAST");
-  check(sbProd === null, "Material " + m.kode + " tidak ada Shotblast production");
-  const arProd = DB.getProcessProduction(m, "ANTI_RUST");
-  check(arProd === null, "Material " + m.kode + " tidak ada Anti-Rust production");
-});
-
-// Material 41M-45M: Ready Delivery (FINISH, all routes done, QC OK, no delivery)
-const readyDlMats = ["41M", "42M", "43M", "44M", "45M"].map(k => materials.find(m => m.kode === k)).filter(m => m);
-check(readyDlMats.length === 5, "Material 41M-45M (Ready Delivery) ada: " + readyDlMats.length);
+// Material 91M-95M: Ready Delivery (FINISH, all routes done, QC OK, no delivery)
+const readyDlMats = ["91M", "92M", "93M", "94M", "95M"].map(k => materials.find(m => m.kode === k)).filter(m => m);
+check(readyDlMats.length === 5, "Material 91M-95M (Ready Delivery) ada: " + readyDlMats.length);
 readyDlMats.forEach(m => {
   check(m.status_proses === DB.STATUSES.PROSES_FINISH, "Material " + m.kode + " status FINISH");
   const htProd = DB.getProcessProduction(m, "HT");
@@ -262,9 +229,9 @@ readyDlMats.forEach(m => {
   check(!hasDelivery, "Material " + m.kode + " belum ada delivery");
 });
 
-// Material 46M-48M: Delivered (FINISH, QC OK, delivered)
-const deliveredMats = ["46M", "47M", "48M"].map(k => materials.find(m => m.kode === k)).filter(m => m);
-check(deliveredMats.length === 3, "Material 46M-48M (Delivered) ada: " + deliveredMats.length);
+// Material 96M-100M: Delivered (FINISH, QC OK, delivered)
+const deliveredMats = ["96M", "97M", "98M", "99M", "100M"].map(k => materials.find(m => m.kode === k)).filter(m => m);
+check(deliveredMats.length === 5, "Material 96M-100M (Delivered) ada: " + deliveredMats.length);
 deliveredMats.forEach(m => {
   const htProd = DB.getProcessProduction(m, "HT");
   check(htProd !== null && htProd.process_result === "OK", "Material " + m.kode + " HT OK");
@@ -287,7 +254,6 @@ const validation = DB.validate();
 check(validation.errors.length === 0, "DB.validate() tidak ada errors (" + validation.errors.length + ")");
 check(validation.warnings.length === 0, "DB.validate() tidak ada warnings (" + validation.warnings.length + ")");
 
-// Check referential integrity
 const materialPartIds = new Set(materials.map(m => m.part_id));
 const partIds = new Set(parts.map(p => p.id));
 check(materialPartIds.size <= partIds.size, "Semua part_id material ada di parts");
@@ -295,14 +261,12 @@ const materialCustomerIds = new Set(materials.map(m => m.customer_id));
 const customerIds = new Set(customers.map(c => c.id));
 check(materialCustomerIds.size <= customerIds.size, "Semua customer_id material ada di customers");
 
-// Check production-material consistency
 const productions = DB.get("productions");
 const prodMaterialIds = productions.map(p => p.material_id);
 const materialIds = new Set(materials.map(m => m.id));
 const orphanProds = prodMaterialIds.filter(mid => !materialIds.has(mid));
 check(orphanProds.length === 0, "Tidak ada production orphank (" + orphanProds.length + ")");
 
-// Check all HT productions have jenis_treatment in canonical set (exclude SB/AR)
 const nonCanonicalProd = productions.filter(p => p.jenis_treatment && DB.isProcessTypeLegacy(p.jenis_treatment) && !["Shotblast", "Anti Rust"].includes(p.jenis_treatment));
 check(nonCanonicalProd.length === 0, "Tidak ada production HT dengan process_type legacy (" + nonCanonicalProd.length + ")");
 
@@ -313,7 +277,6 @@ check(oldProdukTypes.length === 0, "Tidak ada production legacy (Heat Treatment/
 const oldPartTypes = parts.filter(p => DB.isProcessTypeLegacy(p.process_type));
 check(oldPartTypes.length === 0, "Tidak ada part legacy (" + oldPartTypes.length + ")");
 
-// Check no old material kodes with format YYYYNNNNN
 const oldKodePattern = materials.filter(m => /^\d{8}I$/.test(m.kode));
 check(oldKodePattern.length === 0, "Tidak ada kode material lama format 202600xxI");
 
@@ -326,13 +289,12 @@ check(legacyReport.filter(r => r.table === "parts").length === 0, "getLegacyProc
 console.log("\n--- STEP 9: Validasi incoming kode counter ---");
 const incCounter = JSON.parse(localStorage.getItem("ht_incoming_kode_counter") || "{}");
 console.log("  Incoming counter:", JSON.stringify(incCounter));
-check(incCounter["2026"] === 48, "Incoming counter 2026 = 48");
+check(incCounter["2026"] === 100, "Incoming counter 2026 = 100");
 const nextKode = DB.nextIncomingKode(new Date().toISOString());
-check(nextKode === "49M", "Kode incoming berikutnya = '49M' (dapat '" + nextKode + "')");
+check(nextKode === "101M", "Kode incoming berikutnya = '101M' (dapat '" + nextKode + "')");
 
 // Check no duplicate IDs
 console.log("\n--- STEP 10: Validasi ID unik ---");
-const allIds = {};
 let dupFound = false;
 DB.tables.forEach(t => {
   const data = DB.get(t);
@@ -345,7 +307,6 @@ DB.tables.forEach(t => {
 });
 check(!dupFound, "Tidak ada duplicate ID di semua tabel");
 
-// Check ID counter is set
 const idCounter = localStorage.getItem("ht_id_counter");
 check(idCounter !== null, "ht_id_counter ter-set setelah seed");
 

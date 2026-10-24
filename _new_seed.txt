@@ -1,0 +1,486 @@
+  seedData() {
+    if (this.get("customers").length > 0) return;
+    const S = this.STATUSES;
+    const TOL = this.TEMPERATURE_DEFAULT_TOLERANCE;
+    const db = this;
+
+    const addDays = (y, m, d, days) => {
+      const dt = new Date(Date.UTC(y, m - 1, d));
+      dt.setUTCDate(dt.getUTCDate() + days);
+      return dt;
+    };
+    const ymd = (dt) =>
+      dt.getUTCFullYear() + "-" +
+      String(dt.getUTCMonth() + 1).padStart(2, "0") + "-" +
+      String(dt.getUTCDate()).padStart(2, "0");
+    const ts00 = (dt) => ymd(dt) + "T00:00:00Z";
+    const tsTime = (dt, hh, mm) =>
+      ymd(dt) + "T" + String(hh).padStart(2, "0") + ":" +
+      String(mm).padStart(2, "0") + ":00";
+
+    const PROCESS_DEFS = [
+      { name: "Quenching & Tempering",       temp: 580, hardness: "58-62 HRC", hUnit: "HRC", hVal: 60 },
+      { name: "Annealing",                    temp: 850, hardness: "60-64 HRC", hUnit: "HRC", hVal: 62 },
+      { name: "Carburizing",                  temp: 820, hardness: "55-60 HRC", hUnit: "HRC", hVal: 58 },
+      { name: "Normalizing",                  temp: 750, hardness: "40-45 HRC", hUnit: "HRC", hVal: 43 },
+      { name: "Full Annealing",               temp: 870, hardness: "45-50 HRC", hUnit: "HRC", hVal: 48 },
+      { name: "Stress Relief Annealing",      temp: 830, hardness: "50-55 HRC", hUnit: "HRC", hVal: 53 },
+      { name: "Spheroidizing Annealing",      temp: 820, hardness: "700-750 HV", hUnit: "HV", hVal: 725 },
+    ];
+
+    const CUSTOMERS = [
+      { id: 1, kode_customer: "CUST-2026-001", nama_customer: "PT Toyota Motor Manufacturing Indonesia", alamat: "Jl. Raya Jakarta-Bogor KM 42, Cibinong", pic: "Budi Santoso", phone: "021-8791234", email: "budi.santoso@toyota-indonesia.co.id", status: S.ACTIVE, created_at: "2026-01-15T00:00:00Z", updated_at: "2026-01-15T00:00:00Z" },
+      { id: 2, kode_customer: "CUST-2026-002", nama_customer: "PT Astra Honda Motor", alamat: "Jl. Laksda Yos Sudarso KM 7, Sunter", pic: "Andi Wijaya", phone: "021-6534567", email: "andi.wijaya@astra-honda.co.id", status: S.ACTIVE, created_at: "2026-01-20T00:00:00Z", updated_at: "2026-01-20T00:00:00Z" },
+      { id: 3, kode_customer: "CUST-2026-003", nama_customer: "PT Yamaha Motor Manufacturing Indonesia", alamat: "Jl. Siliwangi No.88, Bandung", pic: "Citra Dewi", phone: "022-7812345", email: "citra.dewi@yamaha-indonesia.co.id", status: S.ACTIVE, created_at: "2026-02-01T00:00:00Z", updated_at: "2026-02-01T00:00:00Z" },
+      { id: 4, kode_customer: "CUST-2026-004", nama_customer: "PT Mitsubishi Motors Indonesia", alamat: "Jl. Gatot Subroto KM 12, Cakung", pic: "Dewi Lestari", phone: "021-4678901", email: "dewi.lestari@mitsubishi-indonesia.co.id", status: S.ACTIVE, created_at: "2026-02-10T00:00:00Z", updated_at: "2026-02-10T00:00:00Z" },
+      { id: 5, kode_customer: "CUST-2026-005", nama_customer: "PT Suzuki Indomobil Motor", alamat: "Jl. Raya Serpong KM 9, Cikupa", pic: "Eka Putra", phone: "021-5987654", email: "eka.putra@suzuki-indomobil.co.id", status: S.ACTIVE, created_at: "2026-02-15T00:00:00Z", updated_at: "2026-02-15T00:00:00Z" },
+      { id: 6, kode_customer: "CUST-2026-006", nama_customer: "PT Hino Motors Indonesia", alamat: "Jl. Letjen MT. Haryono Kav 50-51, Jakarta", pic: "Fajar Wibowo", phone: "021-7890123", email: "fajar.wibowo@hino-indonesia.co.id", status: S.ACTIVE, created_at: "2026-02-20T00:00:00Z", updated_at: "2026-02-20T00:00:00Z" },
+      { id: 7, kode_customer: "CUST-2026-007", nama_customer: "PT Isuzu Indonesia", alamat: "Jl. Raya Poris Plawad Indah, Jakarta", pic: "Gita Sari", phone: "021-5566778", email: "gita.sari@isuzu-indonesia.co.id", status: S.ACTIVE, created_at: "2026-03-01T00:00:00Z", updated_at: "2026-03-01T00:00:00Z" },
+      { id: 8, kode_customer: "CUST-2026-008", nama_customer: "PT Daihatsu Indonesia", alamat: "Jl. MH. Thamrin No. 12, Jakarta", pic: "Hari Saputra", phone: "021-3344556", email: "hari.saputra@daihatsu-indonesia.co.id", status: S.ACTIVE, created_at: "2026-03-10T00:00:00Z", updated_at: "2026-03-10T00:00:00Z" },
+      { id: 9, kode_customer: "CUST-2026-009", nama_customer: "PT Nissan Indonesia", alamat: "Jl. Raya Buncit No. 88, Jakarta", pic: "Indra Wijaya", phone: "021-7788990", email: "indra.wijaya@nissan-indonesia.co.id", status: S.ACTIVE, created_at: "2026-03-15T00:00:00Z", updated_at: "2026-03-15T00:00:00Z" },
+      { id: 10, kode_customer: "CUST-2026-010", nama_customer: "PT BMW Indonesia", alamat: "Jl. Jend. Sudirman Kav 74, Jakarta", pic: "Julia Murni", phone: "021-2233445", email: "julia.murni@bmw.co.id", status: S.ACTIVE, created_at: "2026-03-20T00:00:00Z", updated_at: "2026-03-20T00:00:00Z" },
+    ];
+
+    const PART_DEFS = [
+      { id: 1,  customerId: 1, nomor: "HT-2026-001", nama: "Crankshaft A",       berat: 2.5, target_hardness: "58-62 HRC",  temp: 580, proc: "Quenching & Tempering",     route: { heat_treatment: true, qc_check: true, shotblast: true,  anti_rust: true  } },
+      { id: 2,  customerId: 1, nomor: "HT-2026-002", nama: "Gear Housing A",     berat: 3.2, target_hardness: "60-64 HRC",  temp: 850, proc: "Annealing",                 route: { heat_treatment: true, qc_check: true, shotblast: true,  anti_rust: false } },
+      { id: 3,  customerId: 2, nomor: "HT-2026-003", nama: "Gear Shaft B",       berat: 1.8, target_hardness: "55-60 HRC",  temp: 820, proc: "Carburizing",               route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: true  } },
+      { id: 4,  customerId: 2, nomor: "HT-2026-004", nama: "Piston Ring B",      berat: 0.5, target_hardness: "700-750 HV", temp: 650, proc: "Annealing",                 route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false } },
+      { id: 5,  customerId: 3, nomor: "HT-2026-005", nama: "Camshaft Pro",       berat: 4.0, target_hardness: "45-50 HRC",  temp: 870, proc: "Full Annealing",            route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false } },
+      { id: 6,  customerId: 3, nomor: "HT-2026-006", nama: "Connecting Rod C",   berat: 2.1, target_hardness: "50-55 HRC",  temp: 830, proc: "Stress Relief Annealing",     route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false } },
+      { id: 7,  customerId: 4, nomor: "HT-2026-007", nama: "Piston Rod X",       berat: 3.5, target_hardness: "58-62 HRC",  temp: 820, proc: "Carburizing",               route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false } },
+      { id: 8,  customerId: 4, nomor: "HT-2026-008", nama: "Gear Component X",   berat: 2.8, target_hardness: "55-60 HRC",  temp: 820, proc: "Spheroidizing Annealing",     route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false } },
+      { id: 9,  customerId: 5, nomor: "HT-2026-009", nama: "Valve Stem Z",       berat: 1.2, target_hardness: "40-45 HRC",  temp: 750, proc: "Normalizing",               route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false } },
+      { id: 10, customerId: 5, nomor: "HT-2026-010", nama: "Housing Component Z",berat: 3.0, target_hardness: "50-55 HRC",  temp: 580, proc: "Quenching & Tempering",     route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false } },
+    ];
+
+    const EXTRA_PART_NAMES = [
+      "Bearing Shell", "Shaft Coupling", "Gear Wheel", "Valve Guide", "Clutch Plate",
+      "Flywheel Ring", "Turbocharger", "Exhaust Valve", "Injector Pump", "Fuel Line",
+      "Oil Pipe", "Belt Tensioner", "Roller Bearing", "Seal Ring", "Spring Retainer",
+      "Link Rod", "Bracket Mount", "Housing Cover", "Sensor Holder", "Lock Pin",
+    ];
+    const EXTRA_PART_WEIGHTS = [1.5, 2.0, 1.0, 0.8, 3.0, 2.2, 4.5, 2.5, 1.2, 3.5];
+    for (let i = 11; i <= 30; i++) {
+      const def = PROCESS_DEFS[(i - 11) % 7];
+      const custId = Math.floor((i - 1) / 3) + 1;
+      const nameIdx = (i - 11) % 20;
+      PART_DEFS.push({
+        id: i,
+        customerId: custId,
+        nomor: "HT-2026-" + String(i).padStart(3, "0"),
+        nama: EXTRA_PART_NAMES[nameIdx],
+        berat: EXTRA_PART_WEIGHTS[nameIdx % 10],
+        target_hardness: def.hardness,
+        temp: def.temp,
+        proc: def.name,
+        route: i % 3 === 0
+          ? { heat_treatment: true, qc_check: true, shotblast: true,  anti_rust: true  }
+          : { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false },
+      });
+    }
+
+    const parts = PART_DEFS.map((p) => ({
+      id: p.id,
+      customer_id: p.customerId,
+      nomor_part: p.nomor,
+      nama_part: p.nama,
+      berat_part: p.berat,
+      satuan_berat: "KG",
+      target_hardness: p.target_hardness,
+      standard_temperature: p.temp,
+      process_type: p.proc,
+      standard_process_route: p.route,
+      status: S.ACTIVE,
+      created_at: "2026-01-15T00:00:00Z",
+      updated_at: "2026-01-15T00:00:00Z",
+    }));
+
+    const OPERATORS = ["Operator Produksi 01", "Operator Produksi 02", "Operator Produksi 03", "Operator Produksi 04", "Operator Produksi 05"];
+    const MACHINE_OPS = ["Operator Mesin 01", "Operator Mesin 02", "Operator Mesin 03", "Operator Mesin 04", "Operator Mesin 05"];
+    const INSPECTORS = ["Inspector QC 01", "Inspector QC 02", "Inspector QC 03"];
+    const LEADERS = ["Leader QC 01", "Leader QC 02", "Leader QC 03"];
+    const SUPERVISORS = ["Supervisor QC 01", "Supervisor QC 02", "Supervisor QC 03"];
+    const PENGIRIM = ["Operator Pengiriman 01", "Operator Pengiriman 02"];
+
+    const partById = {};
+    parts.forEach((p) => { partById[p.id] = p; });
+
+    const materials = [];
+    const productions = [];
+    const qcs = [];
+    const tracking = [];
+    const deliveries = [];
+
+    let pSeq = 101;
+    let qSeq = 201;
+    let tSeq = 301;
+    let dSeq = 401;
+
+    const dateFor = (idx) => {
+      const month = ((idx - 1) % 12) + 1;
+      const day = ((idx - 1) % 28) + 1;
+      return addDays(2026, month, day, 0);
+    };
+
+    const mkMaterial = (idx, kode, part, route, statusProses, incomingDate) => ({
+      id: idx,
+      kode: kode,
+      qr_code: kode,
+      customer_id: part.customer_id,
+      part_id: part.id,
+      nomor_surat_jalan: "SJ-2026-" + String(idx).padStart(4, "0"),
+      lot_no: "LOT-HT-" + String(idx).padStart(4, "0"),
+      material_charge: "MC-26" + String(idx).padStart(3, "0"),
+      status_part: "Masspro",
+      qty: 50,
+      berat_part_snapshot: part.berat_part,
+      berat_total_part: part.berat_part * 50,
+      tanggal_masuk: ymd(incomingDate),
+      keterangan: "Material " + kode + " (" + part.process_type + ")",
+      remarks: "",
+      process_type: part.process_type,
+      diinput_oleh: "Operator Incoming 0" + ((idx % 5) + 1),
+      status_proses: statusProses,
+      process_route: route,
+      created_at: ts00(incomingDate),
+      updated_at: ts00(incomingDate),
+    });
+
+    const mkProduction = (idx, matId, kode, part, jenis, status, result, prodDate, opts) => {
+      const temp = opts.temp;
+      const tv = temp !== null && temp !== undefined
+        ? db.validateTemperature(temp, part.standard_temperature, TOL)
+        : { min: null, max: null, deviation: null, result: null };
+      const opIdx = idx % 5;
+      const isFinish = status === "FINISH" || status === "FINISH_NG";
+      const isNG = result === "NG";
+      return {
+        id: pSeq,
+        material_id: matId,
+        incoming_id: matId,
+        tracking_id: 300 + matId,
+        kode: kode,
+        status: status,
+        production_status: status,
+        process_result: result,
+        visual_check_result: result === "" ? "" : "OK",
+        visual_check_note: "",
+        visual_check_operator: isFinish ? OPERATORS[opIdx] : (result === "" ? "" : OPERATORS[opIdx]),
+        start_scan_at: isFinish ? tsTime(prodDate, 8, 0) : (result === "" ? "" : tsTime(prodDate, 8, 0)),
+        start_scan_by: isFinish ? OPERATORS[opIdx] : (result === "" ? "" : OPERATORS[opIdx]),
+        machine_start_at: isFinish ? tsTime(prodDate, 8, 10) : (result === "" ? "" : tsTime(prodDate, 8, 10)),
+        machine_start_by: isFinish ? MACHINE_OPS[opIdx] : (result === "" ? "" : MACHINE_OPS[opIdx]),
+        finish_scan_at: isFinish ? tsTime(prodDate, 10, 30) : "",
+        finish_scan_by: isFinish ? OPERATORS[opIdx] : "",
+        process_ng_note: isNG ? "Suhu aktual di luar toleransi (Standar: " + part.standard_temperature + " C +/-" + TOL + ")" : "",
+        machine_finish_at: isFinish ? tsTime(prodDate, 10, 35) : "",
+        machine_finish_by: isFinish ? MACHINE_OPS[opIdx] : "",
+        tanggal_proses: result === "" ? "" : ymd(prodDate),
+        jenis_treatment: jenis,
+        remarks: result === "" ? "Menunggu proses produksi"
+          : isNG ? "Part NG setelah proses"
+          : (jenis === "Shotblast" ? "Shotblast selesai"
+          : (jenis === "Anti Rust" ? "Anti-Rust selesai" : "Proses selesai normal")),
+        created_at: ts00(prodDate),
+        updated_at: ts00(prodDate),
+        standard_temperature_snapshot: temp !== null && temp !== undefined ? part.standard_temperature : null,
+        temperature_tolerance_snapshot: temp !== null && temp !== undefined ? TOL : null,
+        actual_temperature: temp !== null && temp !== undefined ? temp : null,
+        temperature_min: tv.min,
+        temperature_max: tv.max,
+        temperature_deviation: tv.deviation,
+        temperature_result: tv.result,
+        temperature_recorded_at: temp !== null && temp !== undefined ? tsTime(prodDate, 10, 30) : null,
+        temperature_recorded_by: temp !== null && temp !== undefined ? MACHINE_OPS[opIdx] : null,
+      };
+    };
+
+    const mkQc = (idx, matId, prodId, hasil, qcDate, def) => {
+      const isOK = hasil === "OK";
+      const opIdx = idx % 3;
+      const inspIdx = idx % 3;
+      const ldIdx = idx % 3;
+      const svIdx = idx % 3;
+      const qcDateStr = ymd(qcDate);
+      return {
+        id: qSeq,
+        production_id: prodId,
+        material_id: matId,
+        hardness: isOK ? String(def.hVal) : String(def.hVal - 20),
+        satuan_hardness: def.hUnit,
+        hasil: hasil,
+        microstructure: isOK ? "Fine pearlite + ferrite" : null,
+        remarks: isOK ? "Hasil hardness sesuai target" : "Hasil hardness di luar target",
+        inspector: INSPECTORS[inspIdx],
+        tanggal_inspector: qcDateStr,
+        catatan: isOK ? "" : "Hardness di bawah target",
+        user_id: inspIdx + 1,
+        created_at: ts00(qcDate),
+        updated_at: ts00(qcDate),
+        leader_judgement: isOK ? "OK" : null,
+        leader_name: isOK ? LEADERS[ldIdx] : null,
+        leader_date: isOK ? qcDateStr : null,
+        leader_signature: isOK ? "sig_leader_" + ldIdx : null,
+        supervisor_judgement: isOK ? "OK" : null,
+        supervisor_name: isOK ? SUPERVISORS[svIdx] : null,
+        supervisor_date: isOK ? ymd(addDays(qcDate.getFullYear(), qcDate.getMonth() + 1, qcDate.getDate(), 1)) : null,
+        supervisor_signature: isOK ? "sig_supervisor_" + svIdx : null,
+        supervisor_notes: "",
+      };
+    };
+
+    const mkTracking = (idx, matId, prodId, delId) => ({
+      id: 300 + matId,
+      material_id: matId,
+      production_id: prodId,
+      delivery_id: delId,
+      remarks: "Tracking material " + (matId + "M"),
+      created_at: ts00(dateFor(matId)),
+      updated_at: ts00(dateFor(matId)),
+    });
+
+    /* ---- 70 HT materials (1M-70M, 10 per process type, 7 types) ---- */
+    const HT_STATE_PATTERNS = [
+      /* cycle A (idx 0-4 within each group of 10) */
+      { label: "WAITING", sp: "WAITING", ps: "WAITING", pr: "", qc: false, qh: null, tempOff: null },
+      { label: "PROCESS", sp: "PROCESS", ps: "PROCESS", pr: "", qc: false, qh: null, tempOff: null },
+      { label: "FIN_OK",  sp: "FINISH",  ps: "FINISH",  pr: "OK", qc: true,  qh: "OK", tempOff: 0 },
+      { label: "FIN_NG",  sp: "FINISH_NG", ps: "FINISH_NG", pr: "NG", qc: true, qh: "NG", tempOff: 100 },
+      { label: "FIN_OK",  sp: "FINISH",  ps: "FINISH",  pr: "OK", qc: true, qh: "OK", tempOff: -10 },
+      /* cycle B (idx 5-9) */
+      { label: "WAITING", sp: "WAITING", ps: "WAITING", pr: "", qc: false, qh: null, tempOff: null },
+      { label: "PROCESS", sp: "PROCESS", ps: "PROCESS", pr: "", qc: false, qh: null, tempOff: null },
+      { label: "FIN_OK",  sp: "FINISH",  ps: "FINISH",  pr: "OK", qc: true, qh: "OK", tempOff: 0 },
+      { label: "FIN_NG",  sp: "FINISH_NG", ps: "FINISH_NG", pr: "NG", qc: true, qh: "NG", tempOff: 100 },
+      { label: "FIN_OK_QCNG", sp: "FINISH", ps: "FINISH", pr: "OK", qc: true, qh: "NG", tempOff: -5 },
+    ];
+
+    const PART_BY_TYPE = [1, 2, 3, 9, 5, 6, 8];
+
+    for (let t = 0; t < 7; t++) {
+      const def = PROCESS_DEFS[t];
+      const part = partById[PART_BY_TYPE[t]];
+      const stdTemp = part.standard_temperature;
+
+      for (let s = 0; s < 10; s++) {
+        const matIdx = t * 10 + s + 1;
+        const kode = matIdx + "M";
+        const state = HT_STATE_PATTERNS[s];
+        const inDate = dateFor(matIdx);
+        const prodDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 1);
+        const qcDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 3);
+
+        const material = mkMaterial(matIdx, kode, part,
+          { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false },
+          state.sp, inDate);
+        materials.push(material);
+
+        const actualTemp = state.tempOff !== null ? stdTemp + state.tempOff : null;
+        const prod = mkProduction(matIdx, matIdx, kode, part, def.name,
+          state.ps, state.pr, prodDate, { temp: actualTemp });
+        productions.push(prod);
+
+        if (state.qc) {
+          const qc = mkQc(matIdx, matIdx, prod.id, state.qh, qcDate, def);
+          qcs.push(qc);
+        }
+
+        tracking.push(mkTracking(matIdx, matIdx, prod.id, null));
+      }
+    }
+
+    /* ---- 10 ShotBlast materials (71M-80M): HT done, QC PASS, ShotBlast PROCESS ---- */
+    for (let i = 0; i < 10; i++) {
+      const matIdx = 71 + i;
+      const kode = matIdx + "M";
+      const part = partById[11 + (i % 20)];
+      const def = PROCESS_DEFS[PROCESS_DEFS.findIndex((p) => p.name === part.process_type)];
+      const stdTemp = part.standard_temperature;
+      const inDate = dateFor(matIdx);
+      const prodDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 1);
+      const qcDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 3);
+
+      const material = mkMaterial(matIdx, kode, part,
+        { heat_treatment: true, qc_check: true, shotblast: true, anti_rust: false },
+        "PROCESS", inDate);
+      materials.push(material);
+
+      /* HT FINISH + OK */
+      const htProd = mkProduction(matIdx, matIdx, kode, part, def.name,
+        "FINISH", "OK", prodDate, { temp: stdTemp });
+      productions.push(htProd);
+
+      /* ShotBlast PROCESS */
+      const sbProd = mkProduction(matIdx, matIdx, kode, part, "Shotblast",
+        "PROCESS", "", prodDate, { temp: null });
+      productions.push(sbProd);
+
+      /* QC OK with approval */
+      const qc = mkQc(matIdx, matIdx, htProd.id, "OK", qcDate, def);
+      qcs.push(qc);
+
+      tracking.push(mkTracking(matIdx, matIdx, sbProd.id, null));
+    }
+
+    /* ---- 10 Anti-Rust materials (81M-90M): full route, Anti-Rust PROCESS ---- */
+    for (let i = 0; i < 10; i++) {
+      const matIdx = 81 + i;
+      const kode = matIdx + "M";
+      const part = partById[21 + (i % 10)];
+      const def = PROCESS_DEFS[PROCESS_DEFS.findIndex((p) => p.name === part.process_type)];
+      const stdTemp = part.standard_temperature;
+      const inDate = dateFor(matIdx);
+      const prodDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 1);
+      const sbDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 2);
+      const qcDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 4);
+
+      const material = mkMaterial(matIdx, kode, part,
+        { heat_treatment: true, qc_check: true, shotblast: true, anti_rust: true },
+        "PROCESS", inDate);
+      materials.push(material);
+
+      /* HT FINISH + OK */
+      const htProd = mkProduction(matIdx, matIdx, kode, part, def.name,
+        "FINISH", "OK", prodDate, { temp: stdTemp });
+      productions.push(htProd);
+
+      /* ShotBlast FINISH + OK */
+      const sbProd = mkProduction(matIdx, matIdx, kode, part, "Shotblast",
+        "FINISH", "OK", sbDate, { temp: null });
+      productions.push(sbProd);
+
+      /* Anti-Rust PROCESS */
+      const arProd = mkProduction(matIdx, matIdx, kode, part, "Anti Rust",
+        "PROCESS", "", sbDate, { temp: null });
+      productions.push(arProd);
+
+      /* QC OK with approval */
+      const qc = mkQc(matIdx, matIdx, htProd.id, "OK", qcDate, def);
+      qcs.push(qc);
+
+      tracking.push(mkTracking(matIdx, matIdx, arProd.id, null));
+    }
+
+    /* ---- 5 Ready Delivery materials (91M-95M): all routes done, QC OK, no delivery ---- */
+    for (let i = 0; i < 5; i++) {
+      const matIdx = 91 + i;
+      const kode = matIdx + "M";
+      const part = partById[1 + (i % 10)];
+      const def = PROCESS_DEFS[PROCESS_DEFS.findIndex((p) => p.name === part.process_type)];
+      const stdTemp = part.standard_temperature;
+      const inDate = dateFor(matIdx);
+      const prodDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 1);
+      const sbDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 2);
+      const arDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 3);
+      const qcDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 4);
+
+      const material = mkMaterial(matIdx, kode, part,
+        { heat_treatment: true, qc_check: true, shotblast: true, anti_rust: true },
+        "FINISH", inDate);
+      materials.push(material);
+
+      /* HT FINISH + OK */
+      const htProd = mkProduction(matIdx, matIdx, kode, part, def.name,
+        "FINISH", "OK", prodDate, { temp: stdTemp });
+      productions.push(htProd);
+
+      /* ShotBlast FINISH + OK */
+      const sbProd = mkProduction(matIdx, matIdx, kode, part, "Shotblast",
+        "FINISH", "OK", sbDate, { temp: null });
+      productions.push(sbProd);
+
+      /* Anti-Rust FINISH + OK */
+      const arProd = mkProduction(matIdx, matIdx, kode, part, "Anti Rust",
+        "FINISH", "OK", arDate, { temp: null });
+      productions.push(arProd);
+
+      /* QC OK with approval */
+      const qc = mkQc(matIdx, matIdx, htProd.id, "OK", qcDate, def);
+      qcs.push(qc);
+
+      tracking.push(mkTracking(matIdx, matIdx, arProd.id, null));
+    }
+
+    /* ---- 5 Delivered materials (96M-100M): full route done + delivery ---- */
+    for (let i = 0; i < 5; i++) {
+      const matIdx = 96 + i;
+      const kode = matIdx + "M";
+      const part = partById[6 + (i % 5)];
+      const def = PROCESS_DEFS[PROCESS_DEFS.findIndex((p) => p.name === part.process_type)];
+      const stdTemp = part.standard_temperature;
+      const inDate = dateFor(matIdx);
+      const prodDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 1);
+      const sbDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 2);
+      const arDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 3);
+      const qcDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 4);
+      const delDate = addDays(inDate.getFullYear(), inDate.getMonth() + 1, inDate.getDate(), 5);
+
+      const material = mkMaterial(matIdx, kode, part,
+        { heat_treatment: true, qc_check: true, shotblast: true, anti_rust: true },
+        "FINISH", inDate);
+      materials.push(material);
+
+      /* HT FINISH + OK */
+      const htProd = mkProduction(matIdx, matIdx, kode, part, def.name,
+        "FINISH", "OK", prodDate, { temp: stdTemp });
+      productions.push(htProd);
+
+      /* ShotBlast FINISH + OK */
+      const sbProd = mkProduction(matIdx, matIdx, kode, part, "Shotblast",
+        "FINISH", "OK", sbDate, { temp: null });
+      productions.push(sbProd);
+
+      /* Anti-Rust FINISH + OK */
+      const arProd = mkProduction(matIdx, matIdx, kode, part, "Anti Rust",
+        "FINISH", "OK", arDate, { temp: null });
+      productions.push(arProd);
+
+      /* QC OK with full approval */
+      const qc = mkQc(matIdx, matIdx, htProd.id, "OK", qcDate, def);
+      qcs.push(qc);
+
+      /* Delivery */
+      const delivery = {
+        id: dSeq,
+        production_id: arProd.id,
+        material_id: matIdx,
+        customer_id: part.customer_id,
+        tanggal_kirim: ymd(delDate),
+        qty_kirim: 50,
+        nama_pengirim: PENGIRIM[i % 2],
+        status: "Delivered",
+        catatan: "Delivery customer berhasil",
+        user_id: 1,
+        remarks: "",
+        created_at: ts00(delDate),
+        updated_at: ts00(delDate),
+      };
+      deliveries.push(delivery);
+
+      tracking.push(mkTracking(matIdx, matIdx, arProd.id, dSeq));
+      dSeq++;
+    }
+
+    /* ---- 12 monthly targets ---- */
+    const targets = [];
+    for (let m = 1; m <= 12; m++) {
+      targets.push({
+        id: m,
+        year: 2026,
+        month: m,
+        target_berat_output: 5000 + m * 500,
+        created_at: "2026-" + String(m).padStart(2, "0") + "-01T00:00:00Z",
+        updated_at: "2026-" + String(m).padStart(2, "0") + "-01T00:00:00Z",
+      });
+    }
+
+    localStorage.setItem("ht_customers", JSON.stringify(customers));
+    localStorage.setItem("ht_parts", JSON.stringify(parts));
+    localStorage.setItem("ht_materials", JSON.stringify(materials));
+    localStorage.setItem("ht_productions", JSON.stringify(productions));
+    localStorage.setItem("ht_qcs", JSON.stringify(qcs));
+    localStorage.setItem("ht_tracking", JSON.stringify(tracking));
+    localStorage.setItem("ht_deliveries", JSON.stringify(deliveries));
+    localStorage.setItem("ht_targets", JSON.stringify(targets));
+  },

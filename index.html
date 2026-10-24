@@ -303,20 +303,18 @@
 
             <!-- Tata Letak KPI -->
             <div class="ht-kpi-layout" id="kpiLayout">
-              <div class="ht-kpi-grid" id="kpiGrid">
-                <!-- Baris KPI Utama: Pemilih Bulan + Target + 4 KPI -->
-                <div class="ht-kpi-main-row" id="kpiMainRow">
-                <!-- Pemilih Bulan -->
-                <div class="ht-kpi-card ht-kpi-month kpiEntranceDelay1" id="monthPickerCard">
-                  <div class="ht-kpi-container">
-                    <p class="ht-kpi-label">Bulan Ini</p>
-                    <div class="ht-kpi-icon-box">
+              <!-- Kolom kiri: Filter Periode + Target -->
+              <div class="ht-kpi-sidebar" id="kpiSidebar">
+                <!-- Filter Periode -->
+                <div class="ht-kpi-period-filter kpiEntranceDelay1" id="periodFilterCard">
+                  <div class="ht-kpi-filter-container">
+                    <span class="ht-kpi-filter-icon">
                       <img
                         src="assets/icons/filter.svg"
                         alt="Bulan"
                         class="icon"
                       />
-                    </div>
+                    </span>
                     <div class="ht-kpi-month-selects">
                       <select
                         id="kpiMonthSelect"
@@ -337,13 +335,6 @@
                   <div class="ht-kpi-container">
                     <div class="ht-kpi-target-header">
                       <p class="ht-kpi-label">Target Berat Output</p>
-                      <div class="ht-kpi-icon-box">
-                        <img
-                          src="assets/icons/weight.svg"
-                          alt="Target"
-                          class="icon"
-                        />
-                      </div>
                       <button
                         id="targetEditBtn"
                         class="ht-btn ht-btn-ghost ht-btn-sm"
@@ -364,7 +355,10 @@
                     </div>
                   </div>
                 </div>
+              </div>
 
+              <!-- Baris KPI: Total Input, Total Output, Total Berat Input, Total Berat Output -->
+              <div class="ht-kpi-main-row" id="kpiMainRow">
                 <!-- Total Input -->
                 <div class="ht-kpi-card accent kpiEntranceDelay3" id="kpiCardTotalInput">
                   <div class="ht-kpi-container">
@@ -427,9 +421,9 @@
                     <h3 class="ht-kpi-value" id="kpiTotalBeratOutput">0</h3>
                     <span class="ht-kpi-description">KG</span>
                   </div>
+                </div>
               </div>
             </div>
-          </div>
         </div>
 
             <!-- Modal Edit Target -->

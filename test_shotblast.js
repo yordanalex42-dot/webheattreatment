@@ -157,7 +157,7 @@ function setupFresh() {
 /* ---- Extract and run the shotblast.html inline script ---- */
 function extractShotblastScript() {
   const html = fs.readFileSync(path.join(__dirname, "shotblast.html"), "utf8");
-  const match = html.match(/<script>\n([\s\S]*?)\n    <\/script>/);
+  const match = html.match(/<script[^>]*>\r?\n([\s\S]*?)\r?\n\s*<\/script>/);
   if (!match) throw new Error("Could not find inline script in shotblast.html");
   return match[1];
 }
@@ -256,55 +256,55 @@ assert(functionExistsInScript("updateNGNoteVisibility"), "G1-T3: updateNGNoteVis
 console.log("\n=== TEST GROUP 2: DB layer for Shotblast ===\n");
 setupFresh();
 
-// Material 1001 (20260001I) has Shotblast in route, HT FINISH+OK, QC PASS
-const mat1001 = DB.findByKode("20260001I");
-assert(mat1001 !== null, "G2-T1: Material 20260001I found by findByKode", "kode=" + (mat1001 ? mat1001.kode : "null"));
-assert(mat1001 && mat1001.process_route && mat1001.process_route.shotblast === true, "G2-T2: Material 20260001I has shotblast=true in route", "route=" + JSON.stringify(mat1001 && mat1001.process_route));
+// Material 71M (1M in old format) has Shotblast in route, HT FINISH+OK, QC PASS
+const mat1001 = DB.findByKode("71M");
+assert(mat1001 !== null, "G2-T1: Material 71M found by findByKode", "kode=" + (mat1001 ? mat1001.kode : "null"));
+assert(mat1001 && mat1001.process_route && mat1001.process_route.shotblast === true, "G2-T2: Material 71M has shotblast=true in route", "route=" + JSON.stringify(mat1001 && mat1001.process_route));
 
 // HT production for material 1001
 const htProd1001 = DB.getProcessProduction(mat1001, "HT");
-assert(htProd1001 !== null, "G2-T3: HT production found for 20260001I", "status=" + (htProd1001 ? htProd1001.production_status : "null"));
+assert(htProd1001 !== null, "G2-T3: HT production found for 71M", "status=" + (htProd1001 ? htProd1001.production_status : "null"));
 assert(htProd1001 && htProd1001.production_status === "FINISH" && htProd1001.process_result === "OK", "G2-T4: HT production is FINISH+OK", "status=" + htProd1001.production_status + " result=" + htProd1001.process_result);
 
 // Shotblast production for material 1001 should be null (not yet started)
 const sbProd1001 = DB.getProcessProduction(mat1001, "SHOTBLAST");
-assert(sbProd1001 === null, "G2-T5: Shotblast production is null (not yet started) for 20260001I", "val=" + (sbProd1001 ? "found" : "null"));
+assert(sbProd1001 === null, "G2-T5: Shotblast production is null (not yet started) for 71M", "val=" + (sbProd1001 ? "found" : "null"));
 
 // QC gate for material 1001
 const gate1001 = DB.checkQualityGate(mat1001);
-assert(gate1001.qcStatus === "PASS", "G2-T6: QC status is PASS for 20260001I", "qcStatus=" + gate1001.qcStatus);
+assert(gate1001.qcStatus === "PASS", "G2-T6: QC status is PASS for 71M", "qcStatus=" + gate1001.qcStatus);
 
-// Material 1004 (20260004I) - no shotblast in route
-const mat1004 = DB.findByKode("20260004I");
-assert(mat1004 !== null, "G2-T7: Material 20260004I found", "");
-assert(mat1004 && mat1004.process_route && mat1004.process_route.shotblast === false, "G2-T8: Material 20260004I has shotblast=false in route", "");
+// Material 1004 (4M) - no shotblast in route
+const mat1004 = DB.findByKode("4M");
+assert(mat1004 !== null, "G2-T7: Material 4M found", "");
+assert(mat1004 && mat1004.process_route && mat1004.process_route.shotblast === false, "G2-T8: Material 4M has shotblast=false in route", "");
 
 // Material 1004 - HT is FINISH_NG
 const htProd1004 = DB.getProcessProduction(mat1004, "HT");
-assert(htProd1004 !== null && htProd1004.production_status === "FINISH_NG", "G2-T9: Material 20260004I HT is FINISH_NG", "status=" + htProd1004.production_status);
+assert(htProd1004 !== null && htProd1004.production_status === "FINISH_NG", "G2-T9: Material 4M HT is FINISH_NG", "status=" + htProd1004.production_status);
 
 // Material 1004 - QC is NG
 const gate1004 = DB.checkQualityGate(mat1004);
-assert(gate1004.qcStatus === "NG", "G2-T10: Material 20260004I QC is NG", "qcStatus=" + gate1004.qcStatus);
+assert(gate1004.qcStatus === "NG", "G2-T10: Material 4M QC is NG", "qcStatus=" + gate1004.qcStatus);
 
 // ---- Test 3: Test loadMaterialById logic (using DB functions directly) ----
 console.log("\n=== TEST GROUP 3: loadMaterialById logic ===\n");
 setupFresh();
 
 // Test finding by kode
-const foundByKode = DB.findByKode("20260001I") || DB.findMaterial("20260001I");
-assert(foundByKode !== null, "G3-T1: Material found by kode '20260001I'", "");
+const foundByKode = DB.findByKode("71M") || DB.findMaterial("71M");
+assert(foundByKode !== null, "G3-T1: Material found by kode '71M'", "");
 
 // Test finding by numeric ID
-const foundById = DB.findByKode("1001") || DB.findMaterial("1001");
-assert(foundById !== null, "G3-T2: Material found by numeric id '1001'", "found=" + (foundById ? foundById.kode : "null"));
+const foundById = DB.findByKode("1") || DB.findMaterial("1");
+assert(foundById !== null, "G3-T2: Material found by numeric id '1'", "found=" + (foundById ? foundById.kode : "null"));
 
 // Test kode with leading/trailing spaces (findByKode trims)
-const foundByTrimmedKode = DB.findByKode("  20260001I  ") || DB.findMaterial("  20260001I  ");
+const foundByTrimmedKode = DB.findByKode("  71M  ") || DB.findMaterial("  71M  ");
 assert(foundByTrimmedKode !== null, "G3-T3: Material found with spaces around kode (findByKode trims)", "");
 
 // Test findMaterial with spaces (does NOT trim) - this is the fallback
-const foundByMaterialTrimmed = DB.findByKode("20260001I");
+const foundByMaterialTrimmed = DB.findByKode("71M");
 assert(foundByMaterialTrimmed !== null, "G3-T4: findByKode finds clean kode", "");
 
 // Test not found
@@ -320,9 +320,9 @@ console.log("\n=== TEST GROUP 4: Shotblast eligibility validation ===\n");
 setupFresh();
 
 // Material 1001: should be eligible (shotblast=true, HT FINISH+OK, QC PASS)
-const mat = DB.findByKode("20260001I");
+const mat = DB.findByKode("71M");
 const route = mat.process_route;
-assert(route.shotblast === true, "G4-T1: Material 20260001I route has shotblast=true", "");
+assert(route.shotblast === true, "G4-T1: Material 71M route has shotblast=true", "");
 
 const htP = DB.getProcessProduction(mat, "HT");
 assert(htP && htP.production_status === "FINISH" && htP.process_result === "OK", "G4-T2: HT production is FINISH+OK (passes first gate)", "");
@@ -331,28 +331,28 @@ const qc = DB.checkQualityGate(mat);
 assert(qc.qcStatus === "PASS", "G4-T3: QC status is PASS (passes second gate)", "");
 
 // Material 1004: should NOT be eligible (shotblast=false)
-const mat4 = DB.findByKode("20260004I");
+const mat4 = DB.findByKode("4M");
 if (mat4 && mat4.process_route) {
-  assert(mat4.process_route.shotblast !== true, "G4-T4: Material 20260004I route has shotblast != true (blocked by route)", "");
+  assert(mat4.process_route.shotblast !== true, "G4-T4: Material 4M route has shotblast != true (blocked by route)", "");
 }
 
 // Material 1004: HT is FINISH_NG (blocked by HT)
 const htP4 = DB.getProcessProduction(mat4, "HT");
 if (htP4) {
-  assert(htP4.production_status === "FINISH_NG", "G4-T5: Material 20260004I HT is FINISH_NG (blocked by HT status)", "status=" + htP4.production_status);
+  assert(htP4.production_status === "FINISH_NG", "G4-T5: Material 4M HT is FINISH_NG (blocked by HT status)", "status=" + htP4.production_status);
 }
 
 // Material 1006: HT is PROCESS (blocked by HT in progress)
-const mat6 = DB.findByKode("20260006I");
+const mat6 = DB.findByKode("7M");
 const htP6 = DB.getProcessProduction(mat6, "HT");
 if (htP6) {
-  assert(htP6.production_status === "PROCESS", "G4-T6: Material 20260006I HT is PROCESS (blocked by HT in progress)", "");
+  assert(htP6.production_status === "PROCESS", "G4-T6: Material 7M HT is PROCESS (blocked by HT in progress)", "");
 }
 
 // ---- Test 5: Simulate confirmMasukProses - no duplicate records ----
 setupFresh();
 
-const matTest = DB.findByKode("20260001I");
+const matTest = DB.findByKode("71M");
 const existingShotblast = DB.getProcessProduction(matTest, "SHOTBLAST");
 assert(existingShotblast === null, "G5-T1: No existing Shotblast production before entry", "");
 
@@ -409,7 +409,7 @@ console.log("\n=== TEST GROUP 6: Confirm selesai proses ===\n");
 setupFresh();
 
 // Re-create the full scenario: enter shotblast process then finish it
-const matTest2 = DB.findByKode("20260001I");
+const matTest2 = DB.findByKode("71M");
 DB.insert("productions", {
   material_id: matTest2.id,
   incoming_id: matTest2.id,
@@ -472,14 +472,14 @@ assert(global.localStorage.getItem("ht_tracking") !== null, "G7-T7: ht_tracking 
 assert(global.localStorage.getItem("ht_qcs") !== null, "G7-T8: ht_qcs key exists for QC validation", "");
 
 // Verify HT production key mapping
-const htProd = DB.getProcessProduction(DB.findByKode("20260001I"), "HT");
+const htProd = DB.getProcessProduction(DB.findByKode("71M"), "HT");
 assert(htProd && htProd.id !== undefined, "G7-T9: HT production found for Shotblast validation", "id=" + (htProd ? htProd.id : "null"));
-const htProd2 = DB.getProcessProduction(DB.findByKode("20260001I"), "HEAT_TREATMENT");
+const htProd2 = DB.getProcessProduction(DB.findByKode("71M"), "HEAT_TREATMENT");
 assert(htProd2 !== null && htProd2.id === htProd.id, "G7-T10: 'HT' and 'Heat Treatment' both resolve to same production", "");
 
 // Verify no data was reset/lost after operations
 const allMats = DB.get("materials");
-assert(allMats.length === 10, "G7-T11: All 10 materials still present (no data reset)", "count=" + allMats.length);
+assert(allMats.length === 100, "G7-T11: All 100 materials still present (no data reset)", "count=" + allMats.length);
 const allProds = DB.get("productions");
 assert(allProds.length >= 7, "G7-T12: Production records preserved", "count=" + allProds.length);
 
@@ -488,14 +488,14 @@ console.log("\n=== TEST GROUP 8: Edge cases ===\n");
 setupFresh();
 
 // parseScanId logic
-const id1 = "20260001I".includes("id=") ? "20260001I".split("id=")[1].split("&")[0] : "20260001I".split("/").pop();
-assert(id1 === "20260001I", "G8-T1: parseScanId returns clean kode when no id= or /", "got=" + id1);
+const id1 = "71M".includes("id=") ? "71M".split("id=")[1].split("&")[0] : "71M".split("/").pop();
+assert(id1 === "71M", "G8-T1: parseScanId returns clean kode when no id= or /", "got=" + id1);
 
-const id2 = "http://test.com/material?id=20260001I".split("id=")[1].split("&")[0];
-assert(id2 === "20260001I", "G8-T2: parseScanId extracts id from URL query", "got=" + id2);
+const id2 = "http://test.com/material?id=71M".split("id=")[1].split("&")[0];
+assert(id2 === "71M", "G8-T2: parseScanId extracts id from URL query", "got=" + id2);
 
-const id3 = "path/to/20260001I".split("/").pop();
-assert(id3 === "20260001I", "G8-T3: parseScanId returns last path segment", "got=" + id3);
+const id3 = "path/to/71M".split("/").pop();
+assert(id3 === "71M", "G8-T3: parseScanId returns last path segment", "got=" + id3);
 
 // Test _normalizeProcessKey for various inputs
 assert(DB._normalizeProcessKey("Shotblast") === "SHOTBLAST", "G8-T4: normalize 'Shotblast' -> 'SHOTBLAST'", "");
@@ -505,7 +505,7 @@ assert(DB._normalizeProcessKey("HT") === "HT", "G8-T7: normalize 'HT' -> 'HT'", 
 assert(DB._normalizeProcessKey("heat treatment") === "HT", "G8-T8: normalize 'heat treatment' -> 'HT' (case insens)", "");
 
 // Test that Shotblast production jenis_treatment stored as "Shotblast" (case sensitive match)
-const testMat = DB.findByKode("20260001I");
+const testMat = DB.findByKode("71M");
 const testProd = {
   material_id: testMat.id,
   jenis_treatment: "Shotblast",
@@ -549,7 +549,7 @@ console.log("\n=== TEST GROUP 10: Full eligibility flow ===\n");
 
 // Material 1001: eligible for Shotblast
 setupFresh();
-const mat1 = DB.findByKode("20260001I");
+const mat1 = DB.findByKode("71M");
 let eligible = true;
 let reason = "";
 
@@ -570,33 +570,33 @@ if (!mat1.process_route || !mat1.process_route.shotblast) {
     else if (gate.qcStatus !== "PASS") { eligible = false; reason = "QC belum dilakukan."; }
   }
 }
-assert(eligible, "G10-T1: Material 20260001I is ELIGIBLE for Shotblast", "reason=" + reason);
+assert(eligible, "G10-T1: Material 71M is ELIGIBLE for Shotblast", "reason=" + reason);
 
 // Material 1004: NOT eligible (no shotblast in route + HT is NG + QC is NG)
 setupFresh();
-const mat4_elig = DB.findByKode("20260004I");
+const mat4_elig = DB.findByKode("4M");
 let elig4 = true;
 let reason4 = "";
 if (!mat4_elig.process_route || !mat4_elig.process_route.shotblast) {
   elig4 = false;
   reason4 = "Part tidak memiliki proses Shotblast pada route ini.";
 }
-assert(!elig4, "G10-T2: Material 20260004I is NOT ELIGIBLE (no shotblast route)", "reason=" + reason4);
+assert(!elig4, "G10-T2: Material 4M is NOT ELIGIBLE (no shotblast route)", "reason=" + reason4);
 
 // Material 1005: eligible? (shotblast=false in route)
 setupFresh();
-const mat5 = DB.findByKode("20260005I");
+const mat5 = DB.findByKode("5M");
 let elig5 = true;
 let reason5 = "";
 if (!mat5.process_route || !mat5.process_route.shotblast) {
   elig5 = false;
   reason5 = "Part tidak memiliki proses Shotblast pada route ini.";
 }
-assert(!elig5, "G10-T3: Material 20260005I is NOT ELIGIBLE (no shotblast route)", "reason=" + reason5);
+assert(!elig5, "G10-T3: Material 5M is NOT ELIGIBLE (no shotblast route)", "reason=" + reason5);
 
 // Material 1002: eligible? (shotblast=true, HT FINISH+OK, QC PASS)
 setupFresh();
-const mat2 = DB.findByKode("20260002I");
+const mat2 = DB.findByKode("72M");
 let elig2 = true;
 let reason2 = "";
 if (!mat2.process_route || !mat2.process_route.shotblast) {
@@ -610,7 +610,7 @@ if (!mat2.process_route || !mat2.process_route.shotblast) {
     if (gate2.qcStatus !== "PASS") { elig2 = false; reason2 = "QC not PASS: " + gate2.qcStatus; }
   }
 }
-assert(elig2, "G10-T4: Material 20260002I IS ELIGIBLE for Shotblast", "reason=" + reason2);
+assert(elig2, "G10-T4: Material 72M IS ELIGIBLE for Shotblast", "reason=" + reason2);
 
 // ---- Test 11: localStorage key prefix consistency ----
 console.log("\n=== TEST GROUP 11: localStorage key prefix ===\n");

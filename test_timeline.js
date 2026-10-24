@@ -30,7 +30,6 @@ const dbCode = fs.readFileSync(path.join(__dirname, "js", "db.js"), "utf8").repl
 const DB = new Function("localStorage", dbCode + "\n; return DB;")(global.localStorage);
 DB.init();
 DB.migrate();
-DB.migrate48Items();
 
 // Add mock materials for scenarios not covered by seed data
 localStorage.setItem("ht_materials", JSON.stringify([...DB.get("materials"),
@@ -48,10 +47,12 @@ localStorage.setItem("ht_materials", JSON.stringify([...DB.get("materials"),
 localStorage.setItem("ht_productions", JSON.stringify([...DB.get("productions"),
   { id: 99941, material_id: 9994, status: "FINISH", production_status: "FINISH", process_result: "OK", visual_check_result: "OK", start_scan_at: "2026-09-01T08:00:00", finish_scan_at: "2026-09-01T10:00:00", machine_start_by: "Operator Mesin 01", jenis_treatment: "Heat Treatment", tanggal_proses: "2026-09-01", machine_finish_at: "2026-09-01T10:05:00" },
   { id: 99942, material_id: 9994, status: "PROCESS", production_status: "PROCESS", process_result: "", jenis_treatment: "Shotblast", start_scan_at: "2026-09-02T08:00:00", machine_start_by: "Operator Mesin 02", tanggal_proses: "2026-09-02" },
-  { id: 999131, material_id: 99913, status: "WAITING", production_status: "WAITING", process_result: "", jenis_treatment: "Heat Treatment", tanggal_proses: "2026-10-01" }
+  { id: 999131, material_id: 99913, status: "WAITING", production_status: "WAITING", process_result: "", jenis_treatment: "Heat Treatment", tanggal_proses: "2026-10-01" },
+  { id: 99961, material_id: 9996, status: "FINISH", production_status: "FINISH", process_result: "OK", visual_check_result: "OK", start_scan_at: "2026-09-15T08:00:00", finish_scan_at: "2026-09-15T10:00:00", machine_start_by: "Operator Mesin 01", machine_finish_at: "2026-09-15T10:05:00", jenis_treatment: "Carburizing", tanggal_proses: "2026-09-15", standard_temperature_snapshot: 820, temperature_tolerance_snapshot: 15, actual_temperature: 820, temperature_min: 805, temperature_max: 835, temperature_deviation: 0, temperature_result: "OK", temperature_recorded_at: "2026-09-15T10:00:00", temperature_recorded_by: "Operator Mesin 01" }
 ]));
 localStorage.setItem("ht_qcs", JSON.stringify([...DB.get("qcs"),
-  { id: 9994, material_id: 9994, production_id: 99941, hasil: "OK", hardness: "60", satuan_hardness: "HRC", inspector: "Inspector 01", tanggal_inspector: "2026-09-01T10:00:00" }
+  { id: 9994, material_id: 9994, production_id: 99941, hasil: "OK", hardness: "60", satuan_hardness: "HRC", inspector: "Inspector 01", tanggal_inspector: "2026-09-01T10:00:00" },
+  { id: 9997, material_id: 9996, production_id: 99961, hasil: "OK", hardness: "58", satuan_hardness: "HRC", inspector: "Inspector 01", tanggal_inspector: "2026-09-15T10:00:00", leader_judgement: "OK", leader_name: "Leader QC 01", leader_date: "2026-09-15", leader_signature: "sig_l1", supervisor_judgement: "OK", supervisor_name: "Supervisor QC 01", supervisor_date: "2026-09-16", supervisor_signature: "sig_s1", supervisor_notes: "" }
 ]));
 
 /* Add mock Parts for Target Hardness verification */
@@ -77,11 +78,16 @@ localStorage.setItem("ht_materials", JSON.stringify([...DB.get("materials"),
     berat_total_part: 10, diinput_oleh: "Operator Test",
     process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: false },
     status_proses: "FINISH" },
-  { id: 99913, kode: "TEST13", part_id: 1, customer_id: 1,
-    tanggal_masuk: "2026-10-01", nomor_surat_jalan: "SJ-TEST13", qty: 30,
-    berat_total_part: 75, diinput_oleh: "Operator Test",
-    process_route: undefined,
-    status_proses: "WAITING" }
+   { id: 99913, kode: "TEST13", part_id: 1, customer_id: 1,
+     tanggal_masuk: "2026-10-01", nomor_surat_jalan: "SJ-TEST13", qty: 30,
+     berat_total_part: 75, diinput_oleh: "Operator Test",
+     process_route: undefined,
+     status_proses: "WAITING" },
+   { id: 9996, kode: "TEST7", part_id: 3, customer_id: 2,
+     tanggal_masuk: "2026-09-15", nomor_surat_jalan: "SJ-TEST7", qty: 50,
+     berat_total_part: 90, diinput_oleh: "Operator Test",
+     process_route: { heat_treatment: true, qc_check: true, shotblast: false, anti_rust: true },
+     status_proses: "FINISH" }
 ]));
 
 global.document = mockDocument();
@@ -187,12 +193,12 @@ run("37M");
 run("1M");
 
 // Scenario 7: Material tidak memerlukan Shotblast, tetapi memerlukan Anti Rust
-// 20260003I: route {ht,qc,!sb,ar}
-run("20260003I");
+// TEST7 (mock): route {ht,qc,!sb,ar}
+run("TEST7");
 
 // Scenario 8: Material tidak memerlukan Anti Rust, tetapi memerlukan Shotblast
-// 20260002I: route {ht,qc,sb,!ar}
-run("20260002I");
+// 71M: route {ht,qc,sb,!ar}, HT FINISH, QC OK, ShotBlast PROCESS
+run("71M");
 
 // Scenario 9: Material memiliki hasil QC NG
 // 4M: HT FINISH_NG, QC NG
@@ -203,8 +209,8 @@ run("4M");
 run("3M");
 
 // Scenario 11: Material sudah Delivery, Qty Out berbeda dari Qty Incoming
-// 20260001I: delivered, qty_kirim=50, qty=50, route {ht,qc,sb,ar}
-run("20260001I");
+// 96M: delivered, qty_kirim=50, qty=50, route {ht,qc,sb,ar}
+run("96M");
 
 // Scenario 12: Data proses belum lengkap
 // 2M: HT PROCESS, no QC

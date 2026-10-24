@@ -412,6 +412,13 @@ const HTDashboard = {
 
       if (qcStatus === "NG") return "QC - NG";
 
+      // Material belum memulai proses produksi sama sekali → INCOMING
+      const hasStartedProcess = history.some((h) =>
+        !["QC", "QC_CHECK"].includes(h.process) &&
+        h.status !== "NOT_STARTED" && h.status !== "WAITING"
+      );
+      if (!hasStartedProcess) return "INCOMING";
+
       if (currentProcess && !routeCompleted) return "PROSES PRODUKSI";
 
       if (qcStatus === "NOT_CHECKED" || qcStatus === null) return "QC";
@@ -523,7 +530,8 @@ const HTDashboard = {
       // abaikan
     }
 
-    const persentase = target > 0 ? Math.round((totalBeratOutput / target) * 100) : null;
+    const monthlyOutput = this._getMonthlyDeliveryWeight(year, month);
+    const persentase = target > 0 ? Math.round((monthlyOutput / target) * 100) : null;
 
     if (this._el.kpiTotalInput) this._el.kpiTotalInput.textContent = totalInput;
     if (this._el.kpiTotalOutput) this._el.kpiTotalOutput.textContent = totalOutput;
@@ -531,7 +539,7 @@ const HTDashboard = {
     if (this._el.kpiTotalBeratOutput) this._el.kpiTotalBeratOutput.textContent = this._formatWeight(totalBeratOutput);
 
     // Render kartu info target
-    this._renderTargetCard(target, totalBeratOutput, persentase);
+    this._renderTargetCard(target, monthlyOutput, persentase);
   },
 
   renderProcessDonutChart() {
@@ -776,6 +784,30 @@ const HTDashboard = {
     return dateWeightMap;
   },
 
+  _getMonthlyDeliveryWeight(year, month) {
+    const { deliveries, materials } = this._data;
+    const materialById = {};
+    materials.forEach(m => { materialById[m.id] = m; });
+
+    const monthPrefix = `${year}-${String(month).padStart(2, '0')}`;
+    let totalWeight = 0;
+
+    deliveries.forEach(d => {
+      if (d.status !== DB.STATUSES.DELIVERY_DELIVERED) return;
+      const dateStr = d.tanggal_kirim;
+      if (!dateStr || !dateStr.startsWith(monthPrefix)) return;
+
+      const material = materialById[d.material_id];
+      if (!material) return;
+
+      const beratPerPart = parseFloat(material.berat_part_snapshot) || 0;
+      const qtyKirim = parseFloat(d.qty_kirim) || 0;
+      totalWeight += qtyKirim * beratPerPart;
+    });
+
+    return totalWeight;
+  },
+
   renderProductionChart() {
     const ctx = this._el.dailyChartCtx;
     const emptyEl = this._el.dailyChartEmpty;
@@ -813,7 +845,7 @@ const HTDashboard = {
         data: {
           labels: labels,
           datasets: [{
-            label: "Output Produksi (KG)",
+            label: "Output Delivery (KG)",
             data: data,
             backgroundColor: theme.toRgba(theme.primary, 0.75),
             hoverBackgroundColor: theme.primary,
@@ -856,7 +888,7 @@ const HTDashboard = {
           labels: labels,
           datasets: [
             {
-              label: "Output Aktual (KG)",
+              label: "Output Delivery (KG)",
               data: data,
               backgroundColor: theme.primary,
               hoverBackgroundColor: theme.primary,
