@@ -289,6 +289,7 @@
                 <div class="ht-modal-body">
                   <input type="hidden" id="qcProductionId" />
                   <input type="hidden" id="qcId" />
+                  <input type="hidden" id="qcIdBefore" />
 
                   <!-- Report Header -->
                   <div class="ht-ir-report-header">
@@ -342,37 +343,34 @@
                     </div>
                   </div>
 
-                  <!-- Inspection Stage -->
+                  <!-- Before HT Inspector -->
                   <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
                     <div class="ht-card-header">
-                      <h3 class="ht-card-title">Inspection Stage</h3>
+                      <h3 class="ht-card-title">Before Heat Treatment - Inspector</h3>
                     </div>
-                    <div class="ht-form-group">
-                      <label class="ht-form-label">Pilih Tahap Pemeriksaan <span class="ht-required">*</span></label>
-                      <div class="ht-ir-stage-radio">
-                        <label class="ht-radio-label">
+                    <div class="ht-form">
+                      <div class="ht-form-row">
+                        <div class="ht-form-group">
+                          <label class="ht-form-label" for="irInspectorNameBefore">Nama Inspector</label>
                           <input
-                            type="radio"
-                            name="inspectionStage"
-                            id="stageBefore"
-                            value="before"
-                            class="ht-radio"
-                            onchange="onStageChange()"
+                            type="text"
+                            id="irInspectorNameBefore"
+                            class="ht-form-input"
+                            placeholder="Nama Inspector"
                           />
-                          <span class="ht-radio-text">Before Heat Treatment</span>
-                        </label>
-                        <label class="ht-radio-label">
+                        </div>
+                        <div class="ht-form-group">
+                          <label class="ht-form-label" for="irInspectionDateBefore">Tanggal Pemeriksaan</label>
                           <input
-                            type="radio"
-                            name="inspectionStage"
-                            id="stageAfter"
-                            value="after"
-                            class="ht-radio"
-                            onchange="onStageChange()"
+                            type="date"
+                            id="irInspectionDateBefore"
+                            class="ht-form-input"
                           />
-                          <span class="ht-radio-text">After Heat Treatment</span>
-                        </label>
+                        </div>
                       </div>
+                      <p class="ht-hint mt-2">
+                        Isi nama inspector dan tanggal sebelum heat treatment dilakukan.
+                      </p>
                     </div>
                   </div>
 
@@ -402,33 +400,42 @@
                       <table class="ht-table ht-table-sm">
                         <thead>
                           <tr>
-                            <th>Test Piece</th>
-                            <th>Surface (HRC)</th>
-                            <th>Core (HRC)</th>
+                            <th rowspan="2">Test Piece</th>
+                            <th colspan="2">Before Heat Treatment</th>
+                            <th colspan="2">After Heat Treatment</th>
+                          </tr>
+                          <tr>
+                            <th>Surface</th>
+                            <th>Core</th>
+                            <th>Surface</th>
+                            <th>Core</th>
                           </tr>
                         </thead>
-                        <tbody id="measurementTableBody">
-                          <tr><td>1</td><td><input type="number" step="0.1" id="surface-1" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-1" class="ir-measure-input"></td></tr>
-                          <tr><td>2</td><td><input type="number" step="0.1" id="surface-2" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-2" class="ir-measure-input"></td></tr>
-                          <tr><td>3</td><td><input type="number" step="0.1" id="surface-3" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-3" class="ir-measure-input"></td></tr>
-                          <tr><td>4</td><td><input type="number" step="0.1" id="surface-4" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-4" class="ir-measure-input"></td></tr>
-                          <tr><td>5</td><td><input type="number" step="0.1" id="surface-5" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-5" class="ir-measure-input"></td></tr>
-                          <tr><td>6</td><td><input type="number" step="0.1" id="surface-6" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-6" class="ir-measure-input"></td></tr>
-                          <tr><td>7</td><td><input type="number" step="0.1" id="surface-7" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-7" class="ir-measure-input"></td></tr>
-                          <tr><td>8</td><td><input type="number" step="0.1" id="surface-8" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-8" class="ir-measure-input"></td></tr>
-                          <tr><td>9</td><td><input type="number" step="0.1" id="surface-9" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-9" class="ir-measure-input"></td></tr>
-                          <tr><td>10</td><td><input type="number" step="0.1" id="surface-10" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-10" class="ir-measure-input"></td></tr>
-                          <tr><td>11</td><td><input type="number" step="0.1" id="surface-11" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-11" class="ir-measure-input"></td></tr>
-                          <tr><td>12</td><td><input type="number" step="0.1" id="surface-12" class="ir-measure-input"></td><td><input type="number" step="0.1" id="core-12" class="ir-measure-input"></td></tr>
+                        <tbody id="measurementTableBody"><tr><td>1</td><td><input type="number" step="0.1" id="before-surface-1" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-1" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-1" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-1" class="ir-measure-input"></td></tr>
+<tr><td>2</td><td><input type="number" step="0.1" id="before-surface-2" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-2" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-2" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-2" class="ir-measure-input"></td></tr>
+<tr><td>3</td><td><input type="number" step="0.1" id="before-surface-3" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-3" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-3" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-3" class="ir-measure-input"></td></tr>
+<tr><td>4</td><td><input type="number" step="0.1" id="before-surface-4" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-4" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-4" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-4" class="ir-measure-input"></td></tr>
+<tr><td>5</td><td><input type="number" step="0.1" id="before-surface-5" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-5" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-5" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-5" class="ir-measure-input"></td></tr>
+<tr><td>6</td><td><input type="number" step="0.1" id="before-surface-6" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-6" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-6" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-6" class="ir-measure-input"></td></tr>
+<tr><td>7</td><td><input type="number" step="0.1" id="before-surface-7" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-7" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-7" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-7" class="ir-measure-input"></td></tr>
+<tr><td>8</td><td><input type="number" step="0.1" id="before-surface-8" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-8" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-8" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-8" class="ir-measure-input"></td></tr>
+<tr><td>9</td><td><input type="number" step="0.1" id="before-surface-9" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-9" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-9" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-9" class="ir-measure-input"></td></tr>
+<tr><td>10</td><td><input type="number" step="0.1" id="before-surface-10" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-10" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-10" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-10" class="ir-measure-input"></td></tr>
+<tr><td>11</td><td><input type="number" step="0.1" id="before-surface-11" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-11" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-11" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-11" class="ir-measure-input"></td></tr>
+<tr><td>12</td><td><input type="number" step="0.1" id="before-surface-12" class="ir-measure-input"></td><td><input type="number" step="0.1" id="before-core-12" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-surface-12" class="ir-measure-input"></td><td><input type="number" step="0.1" id="after-core-12" class="ir-measure-input"></td></tr>
                           <tr class="summary">
                             <td>Average</td>
-                            <td id="avgSurface">—</td>
-                            <td id="avgCore">—</td>
+                            <td id="avgBeforeSurface">—</td>
+                            <td id="avgBeforeCore">—</td>
+                            <td id="avgAfterSurface">—</td>
+                            <td id="avgAfterCore">—</td>
                           </tr>
                           <tr class="summary">
                             <td>R (Max − Min)</td>
-                            <td id="rSurface">—</td>
-                            <td id="rCore">—</td>
+                            <td id="rBeforeSurface">—</td>
+                            <td id="rBeforeCore">—</td>
+                            <td id="rAfterSurface">—</td>
+                            <td id="rAfterCore">—</td>
                           </tr>
                         </tbody>
                       </table>
@@ -438,25 +445,25 @@
                   <!-- Inspector Section -->
                   <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
                     <div class="ht-card-header">
-                      <h3 class="ht-card-title">Inspected by</h3>
+                      <h3 class="ht-card-title">Inspected by (After Heat Treatment)</h3>
                       <p class="ht-card-subtitle">Jabatan: Inspector</p>
                     </div>
                     <div class="ht-form">
                       <div class="ht-form-row">
                         <div class="ht-form-group">
-                          <label class="ht-form-label" for="irInspectorName">Nama Inspector</label>
+                          <label class="ht-form-label" for="irInspectorNameAfter">Nama Inspector</label>
                           <input
                             type="text"
-                            id="irInspectorName"
+                            id="irInspectorNameAfter"
                             class="ht-form-input"
                             placeholder="Nama Inspector"
                           />
                         </div>
                         <div class="ht-form-group">
-                          <label class="ht-form-label" for="irInspectionDate">Tanggal Pemeriksaan</label>
+                          <label class="ht-form-label" for="irInspectionDateAfter">Tanggal Pemeriksaan</label>
                           <input
                             type="date"
-                            id="irInspectionDate"
+                            id="irInspectionDateAfter"
                             class="ht-form-input"
                           />
                         </div>
@@ -670,7 +677,6 @@
       const session = Auth.getSession();
       let currentMaterial = null;
       let currentProduction = null;
-      let currentStage = "after";
       let signatureData = null;
       let saveInProgress = false;
 
@@ -864,10 +870,11 @@
         const customer = DB.findCustomerById(material.customer_id);
 
         /* Reset form state for new material */
-        currentStage = "after";
         signatureData = null;
-        document.getElementById("stageBefore").checked = false;
-        document.getElementById("stageAfter").checked = true;
+        document.getElementById("irInspectorNameBefore").value = "";
+        document.getElementById("irInspectionDateBefore").value = "";
+        document.getElementById("irInspectorNameAfter").value = "";
+        document.getElementById("irInspectionDateAfter").value = "";
 
         /* Populate part info */
         document.getElementById("irControlNumber").textContent = material.kode || "-";
@@ -949,73 +956,113 @@
       /* ---- Measurement table ---- */
       function clearMeasurementTable() {
         for (var i = 1; i <= 12; i++) {
-          document.getElementById("surface-" + i).value = "";
-          document.getElementById("core-" + i).value = "";
+          document.getElementById("before-surface-" + i).value = "";
+          document.getElementById("before-core-" + i).value = "";
+          document.getElementById("after-surface-" + i).value = "";
+          document.getElementById("after-core-" + i).value = "";
         }
-        document.getElementById("avgSurface").textContent = "—";
-        document.getElementById("avgCore").textContent = "—";
-        document.getElementById("rSurface").textContent = "—";
-        document.getElementById("rCore").textContent = "—";
+        document.getElementById("avgBeforeSurface").textContent = "—";
+        document.getElementById("avgBeforeCore").textContent = "—";
+        document.getElementById("avgAfterSurface").textContent = "—";
+        document.getElementById("avgAfterCore").textContent = "—";
+        document.getElementById("rBeforeSurface").textContent = "—";
+        document.getElementById("rBeforeCore").textContent = "—";
+        document.getElementById("rAfterSurface").textContent = "—";
+        document.getElementById("rAfterCore").textContent = "—";
       }
 
       function bindMeasurementInputs() {
-        for (var i = 1; i <= 12; i++) {
-          var s = document.getElementById("surface-" + i);
-          var c = document.getElementById("core-" + i);
-          if (s) s.addEventListener("input", calculateAverages);
-          if (c) c.addEventListener("input", calculateAverages);
+        var prefixes = ["before-surface", "before-core", "after-surface", "after-core"];
+        for (var p = 0; p < prefixes.length; p++) {
+          for (var i = 1; i <= 12; i++) {
+            var el = document.getElementById(prefixes[p] + "-" + i);
+            if (el) {
+              el.addEventListener("input", calculateAverages);
+              el.addEventListener("keydown", handleMeasurementKeyDown);
+            }
+          }
         }
       }
 
-      function loadMeasurementValues(surfaceValues, coreValues) {
+      function loadMeasurementValues(beforeSurfaceValues, beforeCoreValues, afterSurfaceValues, afterCoreValues) {
         for (var i = 0; i < 12; i++) {
-          if (surfaceValues && surfaceValues[i] !== undefined && surfaceValues[i] !== null) {
-            document.getElementById("surface-" + (i + 1)).value = surfaceValues[i];
+          if (beforeSurfaceValues && beforeSurfaceValues[i] !== undefined && beforeSurfaceValues[i] !== null) {
+            document.getElementById("before-surface-" + (i + 1)).value = beforeSurfaceValues[i];
           }
-          if (coreValues && coreValues[i] !== undefined && coreValues[i] !== null) {
-            document.getElementById("core-" + (i + 1)).value = coreValues[i];
+          if (beforeCoreValues && beforeCoreValues[i] !== undefined && beforeCoreValues[i] !== null) {
+            document.getElementById("before-core-" + (i + 1)).value = beforeCoreValues[i];
+          }
+          if (afterSurfaceValues && afterSurfaceValues[i] !== undefined && afterSurfaceValues[i] !== null) {
+            document.getElementById("after-surface-" + (i + 1)).value = afterSurfaceValues[i];
+          }
+          if (afterCoreValues && afterCoreValues[i] !== undefined && afterCoreValues[i] !== null) {
+            document.getElementById("after-core-" + (i + 1)).value = afterCoreValues[i];
           }
         }
         calculateAverages();
       }
 
       function calculateAverages() {
-        var surfaceValues = [];
-        var coreValues = [];
+        var colIds = ["before-surface", "before-core", "after-surface", "after-core"];
+        var avgIds = ["avgBeforeSurface", "avgBeforeCore", "avgAfterSurface", "avgAfterCore"];
+        var rIds = ["rBeforeSurface", "rBeforeCore", "rAfterSurface", "rAfterCore"];
 
-        for (var i = 1; i <= 12; i++) {
-          var sv = document.getElementById("surface-" + i).value;
-          var cv = document.getElementById("core-" + i).value;
-          if (sv) {
-            var sNum = parseFloat(sv);
-            if (!isNaN(sNum)) surfaceValues.push(sNum);
+        for (var c = 0; c < colIds.length; c++) {
+          var vals = [];
+          for (var i = 1; i <= 12; i++) {
+            var v = document.getElementById(colIds[c] + "-" + i).value;
+            if (v) {
+              var num = parseFloat(v);
+              if (!isNaN(num)) vals.push(num);
+            }
           }
-          if (cv) {
-            var cNum = parseFloat(cv);
-            if (!isNaN(cNum)) coreValues.push(cNum);
+          var avg = vals.length > 0
+            ? (vals.reduce(function (a, b) { return a + b; }, 0) / vals.length).toFixed(2)
+            : "—";
+          var r = vals.length > 0
+            ? (Math.max.apply(null, vals) - Math.min.apply(null, vals)).toFixed(2)
+            : "—";
+          document.getElementById(avgIds[c]).textContent = avg;
+          document.getElementById(rIds[c]).textContent = r;
+        }
+      }
+
+      /* ---- Enter key navigation: vertical-first column ordering ---- */
+      function handleMeasurementKeyDown(e) {
+        if (e.key !== "Enter") return;
+
+        var colIds = ["before-surface", "before-core", "after-surface", "after-core"];
+        var prefixes = colIds.map(function (p) { return p + "-"; });
+        var currentId = e.target.id;
+        var colIdx = -1;
+        var rowIdx = -1;
+
+        for (var c = 0; c < colIds.length; c++) {
+          var match = currentId.match(new RegExp("^" + colIds[c] + "-(\\d+)$"));
+          if (match) {
+            colIdx = c;
+            rowIdx = parseInt(match[1], 10);
+            break;
           }
         }
+        if (colIdx === -1) return;
 
-        /* Average */
-        var surfaceAvg = surfaceValues.length > 0
-          ? (surfaceValues.reduce(function (a, b) { return a + b; }, 0) / surfaceValues.length).toFixed(2)
-          : "—";
-        var coreAvg = coreValues.length > 0
-          ? (coreValues.reduce(function (a, b) { return a + b; }, 0) / coreValues.length).toFixed(2)
-          : "—";
-
-        /* R (Max - Min) */
-        var surfaceR = surfaceValues.length > 0
-          ? (Math.max.apply(null, surfaceValues) - Math.min.apply(null, surfaceValues)).toFixed(2)
-          : "—";
-        var coreR = coreValues.length > 0
-          ? (Math.max.apply(null, coreValues) - Math.min.apply(null, coreValues)).toFixed(2)
-          : "—";
-
-        document.getElementById("avgSurface").textContent = surfaceAvg;
-        document.getElementById("avgCore").textContent = coreAvg;
-        document.getElementById("rSurface").textContent = surfaceR;
-        document.getElementById("rCore").textContent = coreR;
+        e.preventDefault();
+        var nextRow = rowIdx + 1;
+        var nextCol = colIdx;
+        if (nextRow > 12) {
+          nextRow = 1;
+          nextCol = colIdx + 1;
+        }
+        if (nextCol >= colIds.length) {
+          return;
+        }
+        var nextId = colIds[nextCol] + "-" + nextRow;
+        var nextEl = document.getElementById(nextId);
+        if (nextEl) {
+          nextEl.focus();
+          nextEl.select();
+        }
       }
 
       /* ---- Signature canvas ---- */
@@ -1118,25 +1165,23 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
-      /* ---- Inspection stage ---- */
-      function onStageChange() {
-        var before = document.getElementById("stageBefore").checked;
-        var after = document.getElementById("stageAfter").checked;
-        currentStage = after ? "after" : "before";
-        loadExistingQC();
-      }
-
-      /* ---- Load existing QC for current material + stage ---- */
+      /* ---- Load existing QC: both Before and After ---- */
       function loadExistingQC() {
         clearMeasurementTable();
-        var qc = null;
+        var beforeQc = null;
+        var afterQc = null;
         if (currentMaterial) {
-          qc = findQCByStage(currentMaterial.id, currentStage);
+          beforeQc = findQCByStage(currentMaterial.id, "before");
+          afterQc = findQCByStage(currentMaterial.id, "after");
         }
 
+        /* Reset all inputs */
         document.getElementById("qcId").value = "";
-        document.getElementById("irInspectorName").value = "";
-         document.getElementById("irInspectionDate").value = "";
+        document.getElementById("qcIdBefore").value = "";
+        document.getElementById("irInspectorNameBefore").value = "";
+        document.getElementById("irInspectionDateBefore").value = "";
+        document.getElementById("irInspectorNameAfter").value = "";
+        document.getElementById("irInspectionDateAfter").value = "";
         clearSignature();
 
         /* Leader QC info */
@@ -1149,28 +1194,45 @@
         document.getElementById("irSupervisorDate").textContent = "-";
         document.getElementById("irSupervisorNotes").textContent = "-";
 
-        if (qc) {
-          document.getElementById("qcId").value = qc.id;
-          document.getElementById("irInspectorName").value = qc.inspector || "";
-          document.getElementById("irInspectionDate").value = (qc.tanggal_inspector || "").slice(0, 10);
+        var beforeSurfaceValues = [];
+        var beforeCoreValues = [];
+        var afterSurfaceValues = [];
+        var afterCoreValues = [];
+
+        /* Before QC */
+        if (beforeQc) {
+          document.getElementById("qcIdBefore").value = beforeQc.id;
+          document.getElementById("irInspectorNameBefore").value = beforeQc.inspector || "";
+          document.getElementById("irInspectionDateBefore").value = (beforeQc.tanggal_inspector || "").slice(0, 10);
+          var beforeExt = parseQCRemarks(beforeQc);
+          if (beforeExt) {
+            beforeSurfaceValues = beforeExt.surface_values || [];
+            beforeCoreValues = beforeExt.core_values || [];
+          }
+        }
+
+        /* After QC */
+        if (afterQc) {
+          document.getElementById("qcId").value = afterQc.id;
+          document.getElementById("irInspectorNameAfter").value = afterQc.inspector || "";
+          document.getElementById("irInspectionDateAfter").value = (afterQc.tanggal_inspector || "").slice(0, 10);
 
           /* Populate Leader QC review display */
-          var leaderJudgement = qc.leader_judgement;
+          var leaderJudgement = afterQc.leader_judgement;
           document.getElementById("irLeaderJudgement").textContent = leaderJudgement
             ? (leaderJudgement === "OK" ? "OK" : "NG")
             : "-";
-          document.getElementById("irLeaderName").textContent = qc.leader_name || "-";
-          document.getElementById("irLeaderDate").textContent = qc.leader_date ? qc.leader_date.slice(0, 10) : "-";
+          document.getElementById("irLeaderName").textContent = afterQc.leader_name || "-";
+          document.getElementById("irLeaderDate").textContent = afterQc.leader_date ? afterQc.leader_date.slice(0, 10) : "-";
 
           /* Populate Supervisor QC display */
-          var supervisorJudgement = qc.supervisor_judgement;
-          document.getElementById("irSupervisorName").textContent = qc.supervisor_name || "-";
-          document.getElementById("irSupervisorDate").textContent = qc.supervisor_date ? qc.supervisor_date.slice(0, 10) : "-";
-          document.getElementById("irSupervisorNotes").textContent = qc.supervisor_notes || "-";
+          document.getElementById("irSupervisorName").textContent = afterQc.supervisor_name || "-";
+          document.getElementById("irSupervisorDate").textContent = afterQc.supervisor_date ? afterQc.supervisor_date.slice(0, 10) : "-";
+          document.getElementById("irSupervisorNotes").textContent = afterQc.supervisor_notes || "-";
 
-          var ext = parseQCRemarks(qc);
-          if (ext) {
-            signatureData = ext.signature || null;
+          var afterExt = parseQCRemarks(afterQc);
+          if (afterExt) {
+            signatureData = afterExt.signature || null;
             if (signatureData) {
               var canvas = document.getElementById("signatureCanvas");
               if (canvas) {
@@ -1183,137 +1245,172 @@
                 img.src = signatureData;
               }
             }
-            loadMeasurementValues(ext.surface_values, ext.core_values);
+            afterSurfaceValues = afterExt.surface_values || [];
+            afterCoreValues = afterExt.core_values || [];
           }
         }
+
+        loadMeasurementValues(beforeSurfaceValues, beforeCoreValues, afterSurfaceValues, afterCoreValues);
       }
 
-      /* ---- Save inspection report ---- */
+
+      /* ---- Save inspection report (Before + After) ---- */
       function saveInspectionReport() {
         if (saveInProgress) return;
         saveInProgress = true;
 
         try {
-          /* Validasi stage */
-          var before = document.getElementById("stageBefore").checked;
-          var after = document.getElementById("stageAfter").checked;
-          if (!before && !after) {
-            HTUI.toast("Pilih tahap pemeriksaan (Before atau After Heat Treatment).", "error");
-            saveInProgress = false;
-            return;
-          }
-          var stage = after ? "after" : "before";
-
-          /* Validasi inspector */
-          var inspector = document.getElementById("irInspectorName").value.trim();
-          if (!inspector) {
-            HTUI.toast("Nama Inspector wajib diisi!", "error");
-            saveInProgress = false;
-            return;
-          }
-
-          var inspectionDate = document.getElementById("irInspectionDate").value;
-          if (!inspectionDate) {
-            HTUI.toast("Tanggal Pemeriksaan wajib diisi!", "error");
-            saveInProgress = false;
-            return;
-          }
-
-          /* Kumpulkan nilai Surface dan Core */
-          var surfaceValues = [];
-          var coreValues = [];
+          /* Kumpulkan nilai Before dan After dari tabel gabungan */
+          var beforeSurfaceValues = [];
+          var beforeCoreValues = [];
+          var afterSurfaceValues = [];
+          var afterCoreValues = [];
           for (var i = 1; i <= 12; i++) {
-            var sv = document.getElementById("surface-" + i).value;
-            var cv = document.getElementById("core-" + i).value;
-            surfaceValues.push(sv ? parseFloat(sv) : null);
-            coreValues.push(cv ? parseFloat(cv) : null);
+            var bsv = document.getElementById("before-surface-" + i).value;
+            var bcv = document.getElementById("before-core-" + i).value;
+            var asv = document.getElementById("after-surface-" + i).value;
+            var acv = document.getElementById("after-core-" + i).value;
+            beforeSurfaceValues.push(bsv ? parseFloat(bsv) : null);
+            beforeCoreValues.push(bcv ? parseFloat(bcv) : null);
+            afterSurfaceValues.push(asv ? parseFloat(asv) : null);
+            afterCoreValues.push(acv ? parseFloat(acv) : null);
           }
 
-          /* Validasi minimal: setidaknya 1 nilai di-input */
-          var validSurface = surfaceValues.filter(function (v) { return v !== null && !isNaN(v); });
-          var validCore = coreValues.filter(function (v) { return v !== null && !isNaN(v); });
-          if (validSurface.length === 0 && validCore.length === 0) {
-            HTUI.toast("Masukkan setidaknya satu nilai hardness.", "error");
+          /* Validasi minimal: setidakangan 1 nilai di-input */
+          var validBeforeSurface = beforeSurfaceValues.filter(function (v) { return v !== null && !isNaN(v); });
+          var validBeforeCore = beforeCoreValues.filter(function (v) { return v !== null && !isNaN(v); });
+          var validAfterSurface = afterSurfaceValues.filter(function (v) { return v !== null && !isNaN(v); });
+          var validAfterCore = afterCoreValues.filter(function (v) { return v !== null && !isNaN(v); });
+          if (validBeforeSurface.length === 0 && validBeforeCore.length === 0 &&
+              validAfterSurface.length === 0 && validAfterCore.length === 0) {
+            HTUI.toast("Masukkan setidakangan satu nilai hardness.", "error");
             saveInProgress = false;
             return;
           }
 
-          /* Hitung Average untuk hasil penyimpanan */
-          var surfaceAvg = validSurface.length > 0
-            ? (validSurface.reduce(function (a, b) { return a + b; }, 0) / validSurface.length).toFixed(2)
-            : null;
-          var coreAvg = validCore.length > 0
-            ? (validCore.reduce(function (a, b) { return a + b; }, 0) / validCore.length).toFixed(2)
-            : null;
-
-          /* Nilai rata-rata keseluruhan hanya untuk kolom legacy qcs.hardness.
-             Penentuan hasil part tidak boleh memakai gabungan Surface + Core. */
-          var allValid = validSurface.concat(validCore);
-          var overallAvg = allValid.length > 0
-            ? (allValid.reduce(function (a, b) { return a + b; }, 0) / allValid.length).toFixed(2)
-            : null;
-
-          /* Nilai target harus jelas format dan satuannya; input form saat ini HRC. */
-          var targetEl = document.getElementById("irTargetHardness");
-          var targetHardness = targetEl ? targetEl.textContent : "-";
-          var surfaceAverageValue = validSurface.length > 0
-            ? validSurface.reduce(function (a, b) { return a + b; }, 0) / validSurface.length
-            : null;
-          var coreAverageValue = validCore.length > 0
-            ? validCore.reduce(function (a, b) { return a + b; }, 0) / validCore.length
-            : null;
-          var surfaceResult = surfaceAverageValue === null
-            ? "UNDETERMINED"
-            : evaluateHardness(targetHardness, surfaceAverageValue, "HRC");
-          var coreResult = coreAverageValue === null
-            ? "UNDETERMINED"
-            : evaluateHardness(targetHardness, coreAverageValue, "HRC");
-
-          /* Jika salah satu sisi NG, keseluruhan part tetap NG.
-             Status OK hanya jika Surface dan Core sama-sama dapat dinilai dan OK. */
-          var hasil = (surfaceResult === "NG" || coreResult === "NG")
-            ? "NG"
-            : (surfaceResult === "OK" && coreResult === "OK" ? "OK" : "BELUM DAPAT DITENTUKAN");
-
-          var existingQC = null;
-          var existingQcId = document.getElementById("qcId").value;
-          if (existingQcId) {
-            existingQC = DB.get("qcs").find(function (q) {
-              return String(q.id) === String(existingQcId);
-            }) || null;
+          /* Validasi inspector After (wajib  After HT adalah inspeksi utama) */
+          var afterInspector = document.getElementById("irInspectorNameAfter").value.trim();
+          if (!afterInspector) {
+            HTUI.toast("Nama Inspector (After HT) wajib diisi!", "error");
+            saveInProgress = false;
+            return;
           }
-          var remarks = buildQCRemarks(
-            stage,
-            surfaceValues,
-            coreValues,
-            signatureData,
-            existingQC ? existingQC.remarks : null,
-            surfaceResult,
-            coreResult
-          );
+          var afterDate = document.getElementById("irInspectionDateAfter").value;
+          if (!afterDate) {
+            HTUI.toast("Tanggal Pemeriksaan (After HT) wajib diisi!", "error");
+            saveInProgress = false;
+            return;
+          }
 
+          /* Validasi inspector Before (wajib bila ada nilai before) */
+          var hasBeforeValues = validBeforeSurface.length > 0 || validBeforeCore.length > 0;
+          var beforeInspector = document.getElementById("irInspectorNameBefore").value.trim();
+          var beforeDate = document.getElementById("irInspectionDateBefore").value;
+          if (hasBeforeValues) {
+            if (!beforeInspector) {
+              HTUI.toast("Nama Inspector (Before HT) wajib diisi bila ada nilai pengukungan Before.", "error");
+              saveInProgress = false;
+              return;
+            }
+            if (!beforeDate) {
+              HTUI.toast("Tanggal Pemeriksaan (Before HT) wajib diisi bila ada nilai pengukungan Before.", "error");
+              saveInProgress = false;
+              return;
+            }
+          }
+
+          /* Production ID */
           var productionId = document.getElementById("qcProductionId").value;
           productionId = productionId ? parseInt(productionId, 10) : (currentProduction ? currentProduction.id : null);
 
-          var qcId = document.getElementById("qcId").value;
-          var data = {
-            production_id: productionId,
-            material_id: currentMaterial ? currentMaterial.id : "",
-            hardness: overallAvg != null ? String(overallAvg) : "",
-            satuan_hardness: "HRC",
-            hasil: hasil,
-            microstructure: null,
-            remarks: remarks,
-            inspector: inspector,
-            tanggal_inspector: inspectionDate,
-            catatan: "",
-          };
+          /* Target hardness (dari master Part) */
+          var targetEl = document.getElementById("irTargetHardness");
+          var targetHardness = targetEl ? targetEl.textContent : "-";
 
-          if (qcId) {
-            DB.update("qcs", qcId, data);
-          } else {
-            DB.insert("qcs", data);
+          /* ---- Helper: hitung average, hasil OK/NG ---- */
+          function computeStats(values) {
+            var valid = values.filter(function (v) { return v !== null && !isNaN(v); });
+            var avgValue = valid.length > 0
+              ? valid.reduce(function (a, b) { return a + b; }, 0) / valid.length
+              : null;
+            var result = avgValue === null
+              ? "UNDETERMINED"
+              : evaluateHardness(targetHardness, avgValue, "HRC");
+            return {
+              validCount: valid.length,
+              avgValue: avgValue,
+              result: result,
+            };
           }
+
+          /* ---- Helper: simpan QC record ---- */
+          function saveQcRecord(qcId, stage, surfaceValues, coreValues, inspector, date, signature, existingQc) {
+            var svStats = computeStats(surfaceValues);
+            var cvStats = computeStats(coreValues);
+            var hasil = (svStats.result === "NG" || cvStats.result === "NG")
+              ? "NG"
+              : (svStats.result === "OK" && cvStats.result === "OK" ? "OK" : "BELUM DAPAT DITENTUKAN");
+            var allValid = svStats.validCount > 0
+              ? surfaceValues.filter(function (v) { return v !== null && !isNaN(v); })
+              : [];
+            allValid = allValid.concat(cvStats.validCount > 0
+              ? coreValues.filter(function (v) { return v !== null && !isNaN(v); })
+              : []);
+            var overallAvg = allValid.length > 0
+              ? (allValid.reduce(function (a, b) { return a + b; }, 0) / allValid.length).toFixed(2)
+              : null;
+
+            var remarks = buildQCRemarks(
+              stage,
+              surfaceValues,
+              coreValues,
+              signature,
+              existingQc ? existingQc.remarks : null,
+              svStats.result,
+              cvStats.result
+            );
+
+            var data = {
+              production_id: productionId,
+              material_id: currentMaterial ? currentMaterial.id : "",
+              hardness: overallAvg != null ? String(overallAvg) : "",
+              satuan_hardness: "HRC",
+              hasil: hasil,
+              microstructure: null,
+              remarks: remarks,
+              inspector: inspector,
+              tanggal_inspector: date,
+              catatan: "",
+            };
+
+            if (qcId) {
+              DB.update("qcs", qcId, data);
+            } else {
+              DB.insert("qcs", data);
+            }
+          }
+
+          /* ---- Before QC ---- */
+          if (hasBeforeValues) {
+            var beforeQcId = document.getElementById("qcIdBefore").value;
+            var existingBeforeQc = null;
+            if (beforeQcId) {
+              existingBeforeQc = DB.get("qcs").find(function (q) {
+                return String(q.id) === String(beforeQcId);
+              }) || null;
+            }
+            saveQcRecord(beforeQcId, "before", beforeSurfaceValues, beforeCoreValues, beforeInspector, beforeDate, null, existingBeforeQc);
+          }
+
+          /* ---- After QC ---- */
+          var afterQcId = document.getElementById("qcId").value;
+          var existingAfterQc = null;
+          if (afterQcId) {
+            existingAfterQc = DB.get("qcs").find(function (q) {
+              return String(q.id) === String(afterQcId);
+            }) || null;
+          }
+          saveQcRecord(afterQcId, "after", afterSurfaceValues, afterCoreValues, afterInspector, afterDate, signatureData, existingAfterQc);
 
           HTUI.toast("Inspection Report berhasil disimpan!", "success");
           closeQcModal();
