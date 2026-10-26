@@ -423,191 +423,289 @@ const RCF = {
   },
 
   /* ---- Generate document HTML ----
-     Layout industri: Header, Metadata, Inspection Info + Schematics,
-     Hardness Results, Standards/Criteria, Signatures. */
+      Redesign: Header, Info Panels, Hardness Table, Approval Panels, Footer. */
   generateDocumentHtml(material, qc, judg, ext, production) {
     var part = material.part_id ? DB.findPartById(material.part_id) : null;
     var customer = material.customer_id ? DB.findCustomerById(material.customer_id) : null;
     var reportNo = this.state.reportNumber || "-";
     var satuan = (ext && ext.satuan_hardness) || (qc && qc.satuan_hardness) || "HRC";
 
-    /* Before QC */
+    /* Before QC data */
     var beforeQc = this._getBeforeQc(material);
     var beforeExt = beforeQc ? DB._parseQCRemarks(beforeQc) : null;
 
-    /* Surface / core values (after QC) */
-    var surfaceValues = (ext && ext.surface_values) || [];
-    var coreValues = (ext && ext.core_values) || [];
-    var surfaceStats = this.calcStats(surfaceValues);
-    var coreStats = this.calcStats(coreValues);
+    /* Before / After values */
+    var beforeSv = (beforeExt && beforeExt.surface_values) || [];
+    var beforeCv = (beforeExt && beforeExt.core_values) || [];
+    var afterSv = (ext && ext.surface_values) || [];
+    var afterCv = (ext && ext.core_values) || [];
 
-    /* Helper untuk nilai atau "—" */
+    /* Stats per column */
+    var bsSvStats = this.calcStats(beforeSv);
+    var bsCvStats = this.calcStats(beforeCv);
+    var aftSvStats = this.calcStats(afterSv);
+    var aftCvStats = this.calcStats(afterCv);
+
+    /* Target hardness */
+    var targetHardness = (part && part.target_hardness) ? part.target_hardness : "";
+    var targetDisplay = targetHardness ? targetHardness + " " + satuan : "-";
+
+    /* Result badge */
+    var hasil = (qc && qc.hasil) ? String(qc.hasil).toUpperCase() : "PENDING";
+    var resultBadgeClass = hasil === "OK" ? "ir-result-ok" : hasil === "NG" ? "ir-result-ng" : "ir-result-pending";
+
+    /* Result badge HTML for table + info panel */
+    var resultBadge = '<span class="ir-tiny-badge ' + resultBadgeClass + '">' + hasil + '</span>';
+    var resultCard = '<div class="ir-result-card ' + resultBadgeClass + '">'
+      + '<span class="ir-result-icon">' + (hasil === "OK" ? '✓' : hasil === "NG" ? '✗' : '○') + '</span>'
+      + '<span class="ir-result-text">' + hasil + '</span>'
+      + '</div>';
+
+    /* Signature helper */
+    var sigImg = function (sig) {
+      if (!sig) return '<span class="ir-sig-placeholder">Belum ditandatangani</span>';
+      return '<img src="' + sig + '" class="ir-sig-image" alt="Tanda Tangan" />';
+    };
+
+    /* Dates */
+    var productionDate = (material && material.tanggal_masuk) ? formatDateLong(material.tanggal_masuk) : "-";
+    var reportDate = (qc && qc.tanggal_inspector) ? formatDateLong(qc.tanggal_inspector) : "-";
+
+    /* QR code URL — points to this app's inspection-report page with material code */
+    var reportUrl = "";
+    try {
+      if (typeof window !== "undefined") {
+        var origin = window.location.protocol + "//" + window.location.host;
+        var basePath = window.location.pathname.replace(/[^\/]*$/, "");
+        reportUrl = origin + basePath + "inspection-report.html?kode=" + encodeURIComponent(material.kode || "");
+      }
+    } catch (e) { reportUrl = ""; }
+    this.state.reportUrl = reportUrl;
+
+    /* QR label */
+    var qrLabel = reportUrl ? '<span class="ir-qr-label">Scan for Digital Report</span>' : '<span class="ir-qr-label">Scan untuk Laporan Digital</span>';
+
+    /* Helpers */
     var f = this._fmt.bind(this);
     var fd = this._fmtDate.bind(this);
 
     /* Build hardness table rows (12 rows) */
-    var surfaceRows = "";
-    var maxRows = Math.max(surfaceValues.length, coreValues.length, 12);
-    for (var i = 0; i < maxRows; i++) {
-      var sv = (i < surfaceValues.length && surfaceValues[i] != null) ? surfaceValues[i] : "-";
-      var cv = (i < coreValues.length && coreValues[i] != null) ? coreValues[i] : "-";
-      surfaceRows += '<tr>' +
-        '<td>' + (i + 1) + '</td>' +
-        '<td class="mono">' + sv + '</td>' +
-        '<td class="mono">' + cv + '</td>' +
-      '</tr>';
+    var tableRows = "";
+    for (var i = 0; i < 12; i++) {
+      var bsv = (i < beforeSv.length && beforeSv[i] != null) ? beforeSv[i] : "-";
+      var bcv = (i < beforeCv.length && beforeCv[i] != null) ? beforeCv[i] : "-";
+      var asv = (i < afterSv.length && afterSv[i] != null) ? afterSv[i] : "-";
+      var acv = (i < afterCv.length && afterCv[i] != null) ? afterCv[i] : "-";
+      tableRows += '<tr>'
+        + '<td class="ir-cell-num">' + (i + 1) + '</td>'
+        + '<td class="ir-cell-tp mono">TP ' + (i + 1) + '</td>'
+        + '<td class="ir-cell-val mono">' + f(bsv) + '</td>'
+        + '<td class="ir-cell-val mono">' + f(bcv) + '</td>'
+        + '<td class="ir-cell-val mono">' + f(asv) + '</td>'
+        + '<td class="ir-cell-val mono">' + f(acv) + '</td>'
+        + '<td class="ir-cell-result">' + resultBadge + '</td>'
+        + '</tr>';
     }
 
-    /* Stats rows */
-    var surfaceAvgStr = surfaceStats.avg != null ? surfaceStats.avg : "-";
-    var coreAvgStr = coreStats.avg != null ? coreStats.avg : "-";
-    var surfaceRStr = surfaceStats.r != null ? surfaceStats.r : "-";
-    var coreRStr = coreStats.r != null ? coreStats.r : "-";
+    /* Average summary row */
+    var avgRow = '<tr class="ir-summary-row">'
+      + '<td class="ir-summary-label">Average</td>'
+      + '<td class="ir-summary-empty"></td>'
+      + '<td class="ir-cell-val mono">' + f(bsSvStats.avg) + '</td>'
+      + '<td class="ir-cell-val mono">' + f(bsCvStats.avg) + '</td>'
+      + '<td class="ir-cell-val mono">' + f(aftSvStats.avg) + '</td>'
+      + '<td class="ir-cell-val mono">' + f(aftCvStats.avg) + '</td>'
+      + '<td class="ir-summary-empty"></td>'
+      + '</tr>';
 
-    /* Target hardness */
-    var targetHardness = (part && part.target_hardness) ? part.target_hardness : "—";
+    /* Range summary row */
+    var rangeRow = '<tr class="ir-summary-row">'
+      + '<td class="ir-summary-label">Range (R)</td>'
+      + '<td class="ir-summary-empty"></td>'
+      + '<td class="ir-cell-val mono">' + f(bsSvStats.r) + '</td>'
+      + '<td class="ir-cell-val mono">' + f(bsCvStats.r) + '</td>'
+      + '<td class="ir-cell-val mono">' + f(aftSvStats.r) + '</td>'
+      + '<td class="ir-cell-val mono">' + f(aftCvStats.r) + '</td>'
+      + '<td class="ir-summary-empty"></td>'
+      + '</tr>';
 
-    /* Result badge */
-    var hasil = (qc && qc.hasil) ? qc.hasil.toUpperCase() : "—";
-    var resultClass = (qc && qc.hasil === "OK") ? "ir-result-ok" : "ir-result-ng";
-    var resultBadge = '<span class="ir-result-badge ' + resultClass + '">' + hasil + '</span>';
-
-    /* Temperature info */
-    var tempActual = production.actual_temperature != null ? production.actual_temperature + "°C" : "—";
-    var tempMin = production.temperature_min != null ? production.temperature_min + "°C" : "—";
-    var tempMax = production.temperature_max != null ? production.temperature_max + "°C" : "—";
-
-    /* Microstructure */
-    var microstructure = (qc && qc.microstructure) ? qc.microstructure : "—";
-
-    /* Build the document */
     var html = '<div class="ir-document">' +
 
       /* ---- Header ---- */
-      '<div class="ir-header">' +
-        '<div class="ir-header-logo">' +
-          '<img src="assets/logo/logo baru.svg" alt="PT CHUNETSU INDONESIA" />' +
-        '</div>' +
-        '<div class="ir-company-block">' +
-          '<p class="ir-company-name">PT CHUNETSU INDONESIA</p>' +
-          '<p class="ir-dept-name">HEAT TREATMENT DEPARTMENT</p>' +
-          '<p class="ir-doc-title">QUALITY RECORD — INSPECTION SHEET</p>' +
-        '</div>' +
-        '<div class="ir-report-no">No. ' + f(reportNo) + '</div>' +
-      '</div>' +
+      '<div class="ir-header">'
+        + '<div class="ir-header-title-col">'
+          + '<div class="ir-header-logo">'
+            + '<img src="assets/logo/logo baru.svg" alt="PT CHUNETSU INDONESIA" />'
+          + '</div>'
+          + '<div class="ir-company-block">'
+            + '<p class="ir-company-name">PT CHUNETSU INDONESIA</p>'
+            + '<p class="ir-dept-name">HEAT TREATMENT &amp; SURFACE ENGINEERING</p>'
+            + '<p class="ir-tagline">QUALITY TODAY | RELIABILITY TOMORROW</p>'
+          + '</div>'
+        + '</div>'
+        + '<div class="ir-header-title-col ir-header-title-center">'
+          + '<div class="ir-report-badge">'
+            + '<span class="ir-report-title">INSPECTION REPORT</span>'
+            + '<span class="ir-report-subtitle">HARDNESS TEST<br>(Before &amp; After Heat Treatment)</span>'
+          + '</div>'
+        + '</div>'
+        + '<div class="ir-header-title-col ir-header-title-right">'
+          + '<div class="ir-qr-wrapper">'
+            + '<div class="ir-qr-code" id="docQrCode" data-url="' + reportUrl + '"></div>'
+            + qrLabel
+            + '<span class="ir-report-id">No. ' + f(reportNo) + '</span>'
+          + '</div>'
+        + '</div>'
+      + '</div>'
 
-      /* ---- Metadata ---- */
-      '<div class="ir-meta">' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Report No.</span><span class="ir-meta-value mono">' + f(reportNo) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Inspection Date</span><span class="ir-meta-value">' + fd(qc && qc.tanggal_inspector) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Customer</span><span class="ir-meta-value">' + f(customer ? customer.nama_customer : null) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Work Order No.</span><span class="ir-meta-value mono">' + f(material.nomor_surat_jalan) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Control Number</span><span class="ir-meta-value mono">' + f(material.kode) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Part Name</span><span class="ir-meta-value">' + f(part ? part.nama_part : null) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Part Number</span><span class="ir-meta-value mono">' + f(part ? part.nomor_part : null) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Material Grade</span><span class="ir-meta-value mono">' + f(material.material_charge) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Heat Number / Batch</span><span class="ir-meta-value mono">' + f(material.lot_no) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Quantity (pcs)</span><span class="ir-meta-value mono">' + f(material.qty || 0) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Process Type</span><span class="ir-meta-value">' + f(production.jenis_treatment || material.process_type) + '</span></div>' +
-        '<div class="ir-meta-item"><span class="ir-meta-label">Hardness Scale</span><span class="ir-meta-value mono">' + f(satuan) + '</span></div>' +
-      '</div>' +
+      /* ---- Info Panel ---- */
+      + '<div class="ir-info-panel">'
+        + '<div class="ir-panel">'
+          + '<div class="ir-panel-header">'
+            + '<span class="ir-panel-icon">📋</span>'
+            + '<h4 class="ir-panel-title">Part Information</h4>'
+          + '</div>'
+          + '<div class="ir-panel-grid">'
+            + '<div class="ir-panel-item"><span class="ir-panel-label">Part Name</span><span class="ir-panel-value">' + f(part ? part.nama_part : null) + '</span></div>'
+            + '<div class="ir-panel-item"><span class="ir-panel-label">Part Number</span><span class="ir-panel-value mono">' + f(part ? part.nomor_part : null) + '</span></div>'
+            + '<div class="ir-panel-item"><span class="ir-panel-label">Material Grade</span><span class="ir-panel-value mono">' + f(material.material_charge) + '</span></div>'
+            + '<div class="ir-panel-item"><span class="ir-panel-label">Heat Treatment</span><span class="ir-panel-value">' + f(production ? production.jenis_treatment : null) + '</span></div>'
+          + '</div>'
+        + '</div>'
+        + '<div class="ir-panel">'
+          + '<div class="ir-panel-header">'
+            + '<span class="ir-panel-icon">📦</span>'
+            + '<h4 class="ir-panel-title">Production Information</h4>'
+          + '</div>'
+          + '<div class="ir-panel-grid">'
+            + '<div class="ir-panel-item"><span class="ir-panel-label">Control Number</span><span class="ir-panel-value mono">' + f(material.kode) + '</span></div>'
+            + '<div class="ir-panel-item"><span class="ir-panel-label">Lot / Batch</span><span class="ir-panel-value mono">' + f(material.lot_no) + '</span></div>'
+            + '<div class="ir-panel-item"><span class="ir-panel-label">Production Date</span><span class="ir-panel-value">' + fd(material.tanggal_masuk) + '</span></div>'
+            + '<div class="ir-panel-item"><span class="ir-panel-label">Report Date</span><span class="ir-panel-value">' + fd(qc && qc.tanggal_inspector ? qc.tanggal_inspector : null) + '</span></div>'
+          + '</div>'
+        + '</div>'
+        + '<div class="ir-panel ir-panel-result">'
+          + '<div class="ir-panel-header">'
+            + '<span class="ir-panel-icon">✅</span>'
+            + '<h4 class="ir-panel-title">Inspection Result</h4>'
+          + '</div>'
+          + resultCard
+          + '<div class="ir-remarks-row">'
+            + '<span class="ir-remarks-label">Remarks:</span>'
+            + '<span class="ir-remarks-value">' + f(qc && qc.catatan ? qc.catatan : null) + '</span>'
+          + '</div>'
+        + '</div>'
+      + '</div>'
 
-      /* ---- A. Inspection Info + Schematics ---- */
-      '<div class="ir-section">' +
-        '<span class="ir-section-title">A. INSPECTION INFORMATION</span>' +
-        '<div class="ir-inspection-info">' +
-          '<div>' +
-            '<div class="ir-inspection-meta">' +
-              '<div class="ir-meta-item"><span class="ir-meta-label">Before HT — Inspector</span><span class="ir-meta-value">' + f(beforeQc ? beforeQc.inspector : null) + '</span></div>' +
-              '<div class="ir-meta-item"><span class="ir-meta-label">Before HT — Date</span><span class="ir-meta-value">' + fd(beforeQc ? beforeQc.tanggal_inspector : null) + '</span></div>' +
-              '<div class="ir-meta-item"><span class="ir-meta-label">After HT — Inspector</span><span class="ir-meta-value">' + f(qc ? qc.inspector : null) + '</span></div>' +
-              '<div class="ir-meta-item"><span class="ir-meta-label">After HT — Date</span><span class="ir-meta-value">' + fd(qc ? qc.tanggal_inspector : null) + '</span></div>' +
-              '<div class="ir-meta-item"><span class="ir-meta-label">Microstructure</span><span class="ir-meta-value">' + f(microstructure) + '</span></div>' +
-              '<div class="ir-meta-item"><span class="ir-meta-label">Process Temp. (actual)</span><span class="ir-meta-value mono">' + f(tempActual) + '</span></div>' +
-              '<div class="ir-meta-item"><span class="ir-meta-label">Temp. Range (min–max)</span><span class="ir-meta-value mono">' + f(tempMin) + ' — ' + f(tempMax) + '</span></div>' +
-              '<div class="ir-meta-item"><span class="ir-meta-label">Process Result</span><span class="ir-meta-value">' + f(production ? production.process_result : null) + '</span></div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="ir-schematic">' +
-            this._schematicSvg("surface") +
-            '<span class="ir-schematic-label">Surface Measurement Points</span>' +
-          '</div>' +
-          '<div class="ir-schematic">' +
-            this._schematicSvg("core") +
-            '<span class="ir-schematic-label">Core Measurement Points</span>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
+      /* ---- Hardness Test Table ---- */
+      + '<div class="ir-table-section">'
+        + '<h4 class="ir-table-title">HARDNESS TEST RESULTS</h4>'
+        + '<div class="ir-table-wrap">'
+          + '<table class="ir-hardness-table">'
+            + '<thead>'
+              + '<tr class="ir-thead-main">'
+                + '<th>No.</th>'
+                + '<th>Test Piece</th>'
+                + '<th colspan="2">Before Heat Treatment</th>'
+                + '<th colspan="2">After Heat Treatment</th>'
+                + '<th>Average (' + satuan + ')</th>'
+                + '<th>Range (R)</th>'
+                + '<th>Result</th>'
+              + '</tr>'
+              + '<tr class="ir-thead-sub">'
+                + '<th></th>'
+                + '<th></th>'
+                + '<th>Surface</th>'
+                + '<th>Core</th>'
+                + '<th>Surface</th>'
+                + '<th>Core</th>'
+                + '<th>-</th>'
+                + '<th>-</th>'
+                + '<th></th>'
+              + '</tr>'
+            + '</thead>'
+            + '<tbody>'
+              + tableRows
+              + avgRow
+              + rangeRow
+            + '</tbody>'
+          + '</table>'
+        + '</div>'
+      + '</div>'
 
-      /* ---- B. Hardness Results ---- */
-      '<div class="ir-section">' +
-        '<span class="ir-section-title">B. HARDENSS RESULTS</span>' +
-        '<table class="ir-hardness-table">' +
-          '<thead><tr><th>No.</th><th>Surface Hardness (' + satuan + ')</th><th>Core Hardness (' + satuan + ')</th></tr></thead>' +
-          '<tbody>' + surfaceRows + '</tbody>' +
-        '</table>' +
-        '<div class="ir-stats-row">' +
-          '<div class="ir-meta-item"><span class="ir-meta-label">Average Surface</span><span class="ir-meta-value mono">' + f(surfaceAvgStr) + '</span></div>' +
-          '<div class="ir-meta-item"><span class="ir-meta-label">Average Core</span><span class="ir-meta-value mono">' + f(coreAvgStr) + '</span></div>' +
-          '<div class="ir-meta-item"><span class="ir-meta-label">R Surface (Max−Min)</span><span class="ir-meta-value mono">' + f(surfaceRStr) + '</span></div>' +
-          '<div class="ir-meta-item"><span class="ir-meta-label">R Core (Max−Min)</span><span class="ir-meta-value mono">' + f(coreRStr) + '</span></div>' +
-        '</div>' +
-      '</div>' +
+      /* ---- Standards & Criteria ---- */
+        + '<table class="ir-standards-table">'
+          + '<tr><td class="ir-std-label">Target Hardness</td><td class="ir-std-value mono">' + f(targetDisplay) + '</td>'
+            + '<td class="ir-std-label">Hardness Unit</td><td class="ir-std-value mono">' + f(satuan) + '</td></tr>'
+          + '<tr><td class="ir-std-label">Hardness Criterion</td><td class="ir-std-value">Per ASME B18.2.1 / ASTM A310</td>'
+            + '<td class="ir-std-label">Measurement Method</td><td class="ir-std-value">Rockwell / Vickers Hardness Tester</td></tr>'
+        + '</table>'
+      + '</div>'
 
-      /* ---- C. Standards & Criteria ---- */
-      '<div class="ir-section">' +
-        '<span class="ir-section-title">C. STANDARDS &amp; CRITERIA</span>' +
-        '<div class="ir-standards">' +
-          '<table class="ir-standards-table">' +
-            '<tr><td class="ir-standards-label">Target Hardness</td><td class="ir-standards-value mono">' + f(targetHardness) + '</td></tr>' +
-            '<tr><td class="ir-standards-label">Hardness Unit</td><td class="ir-standards-value mono">' + f(satuan) + '</td></tr>' +
-            '<tr><td class="ir-standards-label">Hardness Criterion</td><td class="ir-standards-value">Per ASME B18.2.1 / ASTM A310</td></tr>' +
-            '<tr><td class="ir-standards-label">Measurement Method</td><td class="ir-standards-value">Rockwell / Vickers Hardness Tester</td></tr>' +
-            '<tr><td class="ir-standards-label">Final Inspection Result</td><td class="ir-standards-value">' + resultBadge + '</td></tr>' +
-          '</table>' +
-        '</div>' +
-      '</div>' +
+      /* ---- Approval Sections ---- */
+      + '<div class="ir-approval-section">'
+        + '<div class="ir-approval-card">'
+          + '<div class="ir-approval-header">'
+            + '<span class="ir-approval-icon">🔍</span>'
+            + '<span class="ir-approval-role">INSPECTED BY</span>'
+          + '</div>'
+          + '<div class="ir-approval-name">' + f(qc ? qc.inspector : null) + '</div>'
+          + '<div class="ir-approval-date">' + fd(qc && qc.tanggal_inspector ? qc.tanggal_inspector : null) + '</div>'
+          + '<div class="ir-signature-box">' + sigImg(ext ? ext.signature : null) + '</div>'
+          + '<span class="ir-approval-title">Inspector QC</span>'
+          + '<span class="ir-approval-badge ' + (judg && judg.inspectorHasil === "OK" ? "ir-badge-ok" : "ir-badge-incomplete") + '">'
+            + (judg && judg.inspectorHasil === "OK" ? "OK" : "Belum Lengkap") + '</span>'
+        + '</div>'
+        + '<div class="ir-approval-card">'
+          + '<div class="ir-approval-header">'
+            + '<span class="ir-approval-icon">⚖️</span>'
+            + '<span class="ir-approval-role">REVIEWED BY</span>'
+          + '</div>'
+          + '<div class="ir-approval-name">' + f(qc ? qc.leader_name : null) + '</div>'
+          + '<div class="ir-approval-date">' + fd(qc && qc.leader_date ? qc.leader_date : null) + '</div>'
+          + '<div class="ir-signature-box">' + sigImg(qc ? qc.leader_signature : null) + '</div>'
+          + '<span class="ir-approval-title">Leader QC</span>'
+          + '<span class="ir-approval-badge ' + (judg && judg.leaderJudgement === "OK" ? "ir-badge-ok" : "ir-badge-incomplete") + '">'
+            + (judg && judg.leaderJudgement === "OK" ? "OK" : "Belum Lengkap") + '</span>'
+        + '</div>'
+        + '<div class="ir-approval-card">'
+          + '<div class="ir-approval-header">'
+            + '<span class="ir-approval-icon">📋</span>'
+            + '<span class="ir-approval-role">APPROVED BY</span>'
+          + '</div>'
+          + '<div class="ir-approval-name">' + f(qc ? qc.supervisor_name : null) + '</div>'
+          + '<div class="ir-approval-date">' + fd(qc && qc.supervisor_date ? qc.supervisor_date : null) + '</div>'
+          + '<div class="ir-signature-box">' + sigImg(qc ? qc.supervisor_signature : null) + '</div>'
+          + '<span class="ir-approval-title">Supervisor QC</span>'
+          + '<span class="ir-approval-badge ' + (judg && judg.supervisorJudgement === "OK" ? "ir-badge-ok" : "ir-badge-incomplete") + '">'
+            + (judg && judg.supervisorJudgement === "OK" ? "OK" : "Belum Lengkap") + '</span>'
+        + '</div>'
+      + '</div>'
 
-      /* ---- D. Signatures ---- */
-      '<div class="ir-section">' +
-        '<span class="ir-section-title">D. APPROVAL &amp; SIGNATURES</span>' +
-        '<div class="ir-signatures">' +
-          '<div class="ir-sig-cell">' +
-            '<p class="ir-sig-name">INSPECTED BY</p>' +
-            '<p class="ir-sig-title">Inspector QC</p>' +
-            this._sigImg(ext ? ext.signature : null) +
-            '<p class="ir-sig-name">' + f(qc ? qc.inspector : null) + '</p>' +
-            '<p class="ir-sig-date">' + fd(qc ? qc.tanggal_inspector : null) + '</p>' +
-          '</div>' +
-          '<div class="ir-sig-cell">' +
-            '<p class="ir-sig-name">REVIEWED BY</p>' +
-            '<p class="ir-sig-title">Leader QC</p>' +
-            this._sigImg(qc ? qc.leader_signature : null) +
-            '<p class="ir-sig-name">' + f(qc ? qc.leader_name : null) + '</p>' +
-            '<p class="ir-sig-date">' + fd(qc ? qc.leader_date : null) + '</p>' +
-          '</div>' +
-          '<div class="ir-sig-cell">' +
-            '<p class="ir-sig-name">APPROVED BY</p>' +
-            '<p class="ir-sig-title">Supervisor QC</p>' +
-            this._sigImg(qc ? qc.supervisor_signature : null) +
-            '<p class="ir-sig-name">' + f(qc ? qc.supervisor_name : null) + '</p>' +
-            '<p class="ir-sig-date">' + fd(qc ? qc.supervisor_date : null) + '</p>' +
-          '</div>' +
-        '</div>' +
-        (qc && qc.supervisor_notes ? '<div class="ir-sup-notes"><strong>Supervisor Notes:</strong> ' + qc.supervisor_notes + '</div>' : '') +
-      '</div>' +
+      /* ---- Supervisor Notes ---- */
+      + (qc && qc.supervisor_notes ? '<div class="ir-sup-notes"><strong>Supervisor Notes:</strong> ' + qc.supervisor_notes + '</div>' : '')
 
-      '<div class="ir-footer">' +
-        '<p>PT CHUNETSU INDONESIA — Heat Treatment Department | Quality Record — Inspection Sheet</p>' +
-        '<div class="ir-footer-qr" id="docQrCode"></div>' +
-      '</div>' +
-    '</div>';
+      /* ---- Footer ---- */
+      + '<div class="ir-footer">'
+        + '<div class="ir-footer-left">'
+          + '<img src="assets/icons/doc-icon.svg" alt="" class="icon mr-1" style="width:14px;height:14px;vertical-align:middle;opacity:0.6;" />'
+          + '<span>This report is generated automatically by the QC System.</span>'
+          + '<span>PT CHUNETSU INDONESIA</span>'
+        + '</div>'
+        + '<div class="ir-footer-right">'
+          + '<span class="ir-footer-report-id">No. ' + f(reportNo) + '</span>'
+          + '<span class="ir-footer-page">Page 1 of 1</span>'
+        + '</div>'
+      + '</div>'
+
+    + '</div>';
 
     return html;
   },
 
   /* ---- Show document preview ---- */
   showPreview() {
+    var self = this;
     var material = this.state.currentMaterial;
     var qc = this.state.currentQc;
     var judge = this.state.currentJudge;
@@ -615,19 +713,21 @@ const RCF = {
     var production = DB.getProcessProduction(material, "HT") || {};
 
     var html = this.generateDocumentHtml(material, qc, judge, ext, production);
+    var cssText = this._getInlineCss();
     var body = document.getElementById("documentPreviewBody");
-    body.innerHTML = html;
+    body.innerHTML = '<style>' + cssText + '</style>' + html;
 
     /* Generate QR code for the document */
     setTimeout(function () {
       var qrDiv = document.getElementById("docQrCode");
       if (qrDiv && typeof QRCode !== "undefined") {
         qrDiv.innerHTML = "";
+        var qrUrl = self.state.reportUrl || material.kode || "";
         new QRCode(qrDiv, {
-          text: material.kode || "",
+          text: qrUrl,
           width: 80,
           height: 80,
-          colorDark: "#0F172A",
+          colorDark: "#0B3150",
           colorLight: "#ffffff",
         });
       }
@@ -676,76 +776,123 @@ const RCF = {
   },
 
   /* ---- Generate complete HTML document for print window ----
-     All CSS is inlined so it resolves in the about:blank print window. */
+  /* ---- Inline CSS used for both print window and preview modal ---- */
+  _getInlineCss() {
+    return [
+      '@page { size: A4 landscape; margin: 0mm; }',
+      'html,body { margin:0; padding:0; background:#fff !important; overflow:hidden; font-family:"Inter",Arial,Helvetica,sans-serif; color:#18364F; box-sizing:border-box; }',
+      '* { -webkit-print-color-adjust:exact !important; color-adjust:exact !important; }',
+      '.ir-document { font-family:"Inter",Arial,Helvetica,sans-serif; font-size:9px; line-height:1.4; color:#18364F; width:297mm; min-height:210mm; margin:0 auto; padding:8mm; background:#fff; box-sizing:border-box; border:none; position:relative; }',
+      '/* ===== Header ===== */',
+      '.ir-header { display:grid; grid-template-columns:1fr 1fr 1fr; align-items:center; gap:4mm; padding-bottom:4mm; border-bottom:2px solid #123F63; }',
+      '.ir-header-title-col { display:flex; align-items:center; justify-content:center; }',
+      '.ir-header-title-center { justify-content:center; }',
+      '.ir-header-title-right { justify-content:flex-end; }',
+      '.ir-header-logo { width:34mm; height:18mm; flex-shrink:0; display:flex; align-items:center; justify-content:center; }',
+      '.ir-header-logo img { max-width:100%; max-height:100%; }',
+      '.ir-company-block { display:flex; flex-direction:column; }',
+      '.ir-company-name { font-size:12px; font-weight:700; color:#123F63; margin:0; }',
+      '.ir-dept-name { font-size:8px; color:#60778C; margin:0; }',
+      '.ir-tagline { font-size:7px; color:#60778C; font-style:italic; margin:0; }',
+      '.ir-report-badge { background:#0B3150; color:#fff; padding:4mm 6mm; border-radius:3mm; text-align:center; }',
+      '.ir-report-title { font-size:9px; font-weight:700; letter-spacing:1px; }',
+      '.ir-report-subtitle { font-size:6px; margin-top:1px; opacity:0.85; }',
+      '/* ===== QR Code ===== */',
+      '.ir-qr-wrapper { display:flex; flex-direction:column; align-items:center; gap:1px; }',
+      '.ir-qr-code { width:14mm; height:14mm; background:#fff; border:1px solid #C7D9E8; border-radius:2mm; }',
+      '.ir-qr-label { font-size:5px; color:#60778C; text-align:center; }',
+      '.ir-report-id { font-size:5px; color:#60778C; font-family:monospace; }',
+      '/* ===== Info Panel ===== */',
+      '.ir-info-panel { display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm; margin-bottom:6mm; align-items:start; }',
+      '@media print { .ir-info-panel { grid-template-columns:1fr 1fr 1fr; } }',
+      '.ir-panel { background:#fff; border:1px solid #C7D9E8; border-radius:3mm; padding:3mm; display:flex; flex-direction:column; height:100%; box-sizing:border-box; min-height:18mm; }',
+      '.ir-panel-result { background:#F4F7FA; }',
+      '.ir-panel-header { display:flex; align-items:center; gap:1mm; margin-bottom:2mm; flex-shrink:0; }',
+      '.ir-panel-icon { font-size:8px; }',
+      '.ir-panel-title { font-size:7px; font-weight:700; color:#123F63; margin:0; text-transform:uppercase; letter-spacing:0.05em; }',
+      '.ir-panel-grid { display:grid; grid-template-columns:1fr; gap:1.5mm; flex:1; }',
+      '.ir-panel-item { display:flex; flex-direction:column; gap:0.5mm; }',
+      '.ir-panel-label { font-size:6px; color:#60778C; font-weight:600; }',
+      '.ir-panel-value { font-size:7px; font-weight:600; color:#18364F; word-break:break-word; }',
+      '.ir-panel-value.mono { font-family:monospace; }',
+      '/* ===== Result Card ===== */',
+      '.ir-result-card { display:flex; align-items:center; gap:1mm; padding:2mm 3mm; border-radius:2mm; font-weight:700; font-size:8px; text-transform:uppercase; letter-spacing:0.5px; margin-top:1mm; }',
+      '.ir-result-ok { color:#20B879; background:#E6F4EA; border:1px solid #20B879; }',
+      '.ir-result-ng { color:#DC3545; background:#FDECEC; border:1px solid #DC3545; }',
+      '.ir-result-pending { color:#60778C; background:#EEF1F5; border:1px solid #C7D9E8; }',
+      '.ir-result-icon { font-size:8px; }',
+      '.ir-result-text { margin-left:1mm; }',
+      '.ir-remarks-row { margin-top:2mm; font-size:6px; color:#60778C; }',
+      '.ir-remarks-label { font-weight:600; }',
+      '.ir-remarks-value { margin-left:1mm; }',
+      '/* ===== Hardness Table ===== */',
+      '.ir-table-section { margin-bottom:5mm; }',
+      '.ir-table-title { font-size:8px; font-weight:700; color:#123F63; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2mm; }',
+      '.ir-table-wrap { overflow-x:auto; }',
+      '.ir-hardness-table { width:100%; border-collapse:collapse; font-size:8px; table-layout:auto; }',
+      '.ir-hardness-table th { padding:2px 3px; text-align:center; font-weight:700; }',
+      '.ir-hardness-table td { padding:2px 3px; text-align:center; }',
+      '.ir-thead-main th { background:#0B3150; color:#fff; font-size:7px; }',
+      '.ir-thead-sub th { background:#2E6E9E; color:#fff; font-size:6px; }',
+      '.ir-thead-sub th:first-child, .ir-thead-sub th:nth-child(2) { background:#DCEAF6; color:#123F63; }',
+      '.ir-hardness-table tbody tr:nth-child(odd) { background:#fff; }',
+      '.ir-hardness-table tbody tr:nth-child(even) { background:#F4F7FA; }',
+      '.ir-cell-num { font-weight:600; color:#123F63; width:5mm; }',
+      '.ir-cell-tp { width:10mm; }',
+      '.ir-cell-val { width:11mm; }',
+      '.ir-cell-result { width:9mm; }',
+      '.ir-summary-row td { border-top:1px solid #C7D9E8; }',
+      '.ir-summary-label { font-weight:700; color:#123F63; text-align:left; width:16mm; }',
+      '.ir-summary-empty { width:5mm; }',
+      '.ir-tiny-badge { display:inline-block; padding:0.5mm 2mm; border-radius:1.5mm; font-size:6px; font-weight:700; text-transform:uppercase; }',
+      '.ir-tiny-badge.ok { color:#20B879; background:#E6F4EA; border:1px solid #20B879; }',
+      '.ir-tiny-badge.ng { color:#DC3545; background:#FDECEC; border:1px solid #DC3545; }',
+      '.ir-tiny-badge.pending { color:#60778C; background:#EEF1F5; border:1px solid #C7D9E8; }',
+      '/* ===== Standards ===== */',
+      '.ir-standards { border:1px solid #C7D9E8; border-radius:3mm; margin-bottom:6mm; overflow:hidden; }',
+      '.ir-standards-table { width:100%; border-collapse:collapse; font-size:8px; }',
+      '.ir-standards-table td { padding:2mm 3mm; border-bottom:1px solid #C7D9E8; }',
+      '.ir-standards-table td:last-child { border-bottom:none; }',
+      '.ir-std-label { width:30%; color:#60778C; font-weight:600; }',
+      '.ir-std-value { width:70%; color:#18364F; font-weight:600; }',
+      '.ir-std-value.mono { font-family:monospace; }',
+      '/* ===== Approval ===== */',
+      '.ir-approval-section { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-bottom:6mm; }',
+      '.ir-approval-card { background:#fff; border:1px solid #C7D9E8; border-radius:3mm; padding:3mm; display:flex; flex-direction:column; align-items:center; text-align:center; }',
+      '.ir-approval-header { display:flex; align-items:center; gap:1mm; margin-bottom:2mm; }',
+      '.ir-approval-icon { font-size:7px; }',
+      '.ir-approval-role { font-size:6px; font-weight:700; color:#0B3150; letter-spacing:0.5px; }',
+      '.ir-approval-name { font-size:7px; font-weight:700; color:#18364F; margin:1mm 0; }',
+      '.ir-approval-date { font-size:6px; color:#60778C; margin-bottom:1mm; }',
+      '.ir-signature-box { width:100%; height:8mm; border:1px dashed #C7D9E8; border-radius:2mm; display:flex; align-items:center; justify-content:center; margin-bottom:1mm; background:#F4F7FA; }',
+      '.ir-sig-image { max-height:6mm; max-width:26mm; }',
+      '.ir-sig-placeholder { font-size:5px; color:#60778C; }',
+      '.ir-approval-title { font-size:6px; color:#2E6E9E; font-weight:600; margin-bottom:1mm; }',
+      '.ir-approval-badge { display:inline-block; padding:0.5mm 3mm; border-radius:1.5mm; font-size:6px; font-weight:700; text-transform:uppercase; }',
+      '.ir-badge-ok { color:#20B879; background:#E6F4EA; border:1px solid #20B879; }',
+      '.ir-badge-incomplete { color:#DC3545; background:#FDECEC; border:1px solid #DC3545; }',
+      '/* ===== Supervisor Notes ===== */',
+      '.ir-sup-notes { font-size:6px; color:#18364F; padding:2mm 3mm; background:#F4F7FA; border:1px solid #C7D9E8; border-radius:2mm; margin-bottom:6mm; }',
+      '/* ===== Footer ===== */',
+      '.ir-footer { display:flex; justify-content:space-between; align-items:center; padding-top:2mm; border-top:1px solid #C7D9E8; font-size:6px; color:#60778C; }',
+      '.ir-footer-left { display:flex; align-items:center; gap:1mm; }',
+      '.ir-footer-left span { display:inline; }',
+      '.ir-footer-right { display:flex; align-items:center; gap:3mm; }',
+      '.ir-footer-report-id { font-family:monospace; font-weight:600; color:#60778C; }',
+      '.ir-footer-page { color:#60778C; }',
+      '/* ===== Print & Responsive ===== */',
+      '@media print { html,body { background:#fff !important; } .ir-document { padding:6mm; width:297mm; height:210mm; } .ir-info-panel { grid-template-columns:1fr 1fr 1fr; } .ir-approval-section { grid-template-columns:repeat(3,1fr); } }',
+      '@media screen and (max-width:768px) { .ir-header { grid-template-columns:1fr; text-align:center; } .ir-header-title-col { justify-content:center; } .ir-info-panel { grid-template-columns:1fr; gap:2mm; } .ir-approval-section { grid-template-columns:1fr; gap:2mm; } }',
+    ].join("\n");
+  },
+
+  /* ---- Generate complete HTML document for print window ----
+      All CSS is inlined so it resolves in the about:blank print window. */
   generateInlineDocument(material, qc, judge, ext, production) {
     var docContent = this.generateDocumentHtml(material, qc, judge, ext, production);
     var reportNo = this.state.reportNumber || "-";
-
-    var css = [
-      '@page { size: A4 landscape; margin: 0mm; }',
-      'html,body { margin:0; padding:0; background:#fff !important; overflow:hidden; font-family:Arial,Helvetica,sans-serif; color:#0f172a; box-sizing:border-box; }',
-      '* { -webkit-print-color-adjust:exact !important; color-adjust:exact !important; }',
-      '.ir-document { font-family:Arial,Helvetica,sans-serif; font-size:9px; line-height:1.4; color:#0f172a; width:297mm; min-height:210mm; margin:0 auto; padding:4mm; background:#fff; box-sizing:border-box; border:none; }',
-      '.ir-header { display:flex; align-items:center; gap:10px; margin-bottom:6mm; padding-bottom:4mm; border-bottom:2px solid #0f172a; }',
-      '.ir-header-logo { width:36mm; height:36mm; flex-shrink:0; display:flex; align-items:center; justify-content:center; border:1px solid #d1d9e6; padding:4px; }',
-      '.ir-header-logo img { max-width:100%; max-height:100%; }',
-      '.ir-company-block { flex:1; }',
-      '.ir-company-name { font-size:14px; font-weight:700; color:#0f172a; margin:0; }',
-      '.ir-dept-name { font-size:10px; color:#64748b; margin:1px 0; }',
-      '.ir-doc-title { font-size:12px; font-weight:700; color:#0f172a; margin-top:2px; }',
-      '.ir-report-no { font-size:9px; font-family:monospace; font-weight:600; color:#64748b; text-align:right; flex-shrink:0; }',
-      '.ir-meta { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; margin-bottom:6mm; border:1px solid #d1d9e6; background:#f1f5f9; }',
-      '.ir-meta-item { display:flex; flex-direction:column; padding:2px 4px; border-right:1px solid #d1d9e6; border-bottom:1px solid #d1d9e6; background:#fff; }',
-      '.ir-meta-item:nth-child(4n) { border-right:none; }',
-      '.ir-meta-item:last-child { border-bottom:none; }',
-      '.ir-meta-label { font-size:8px; color:#64748b; font-weight:600; margin-bottom:1px; }',
-      '.ir-meta-value { font-size:9px; font-weight:600; color:#0f172a; }',
-      '.ir-meta-value.mono { font-family:monospace; }',
-      '.ir-section { margin-bottom:6mm; }',
-      '.ir-section-title { font-size:10px; font-weight:700; color:#0f172a; margin-bottom:2mm; padding:1px 4px; background:#f1f5f9; border-left:3px solid #0f172a; display:inline-block; }',
-      '.ir-inspection-info { display:grid; grid-template-columns:1fr auto auto; gap:4mm; align-items:start; margin-bottom:6mm; }',
-      '.ir-inspection-info div:first-child { width:100%; }',
-      '.ir-inspection-meta { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; border:1px solid #d1d9e6; background:#f1f5f9; }',
-      '.ir-inspection-meta .ir-meta-item { border-right:1px solid #d1d9e6; border-bottom:1px solid #d1d9e6; background:#fff; }',
-      '.ir-inspection-meta .ir-meta-item:nth-child(2n) { border-right:none; }',
-      '.ir-inspection-meta .ir-meta-item:last-child { border-bottom:none; }',
-      '.ir-schematic { width:50mm; height:50mm; flex-shrink:0; display:flex; flex-direction:column; align-items:center; }',
-      '.ir-schematic svg { width:100%; height:auto; display:block; }',
-      '.ir-schematic-label { font-size:8px; color:#64748b; text-align:center; margin-top:1mm; }',
-      '.ir-hardness-table { width:100%; border-collapse:collapse; font-size:9px; margin-bottom:4mm; }',
-      '.ir-hardness-table th,.ir-hardness-table td { border:1px solid #d1d9e6; padding:2px 4px; text-align:center; }',
-      '.ir-hardness-table th { background:#f1f5f9; font-weight:700; color:#0f172a; font-size:8px; }',
-      '.ir-hardness-table td.mono { font-family:monospace; font-weight:600; }',
-      '.ir-stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; margin-top:4mm; border:1px solid #d1d9e6; background:#f1f5f9; }',
-      '.ir-stats-row .ir-meta-item { border-right:1px solid #d1d9e6; border-bottom:1px solid #d1d9e6; background:#fff; }',
-      '.ir-stats-row .ir-meta-item:nth-child(4n) { border-right:none; }',
-      '.ir-stats-row .ir-meta-item:last-child { border-bottom:none; }',
-      '.ir-standards { border:1px solid #d1d9e6; background:#f1f5f9; margin-bottom:6mm; }',
-      '.ir-standards-table { width:100%; border-collapse:collapse; font-size:9px; }',
-      '.ir-standards-table td { padding:2px 4px; border-bottom:1px solid #d1d9e6; }',
-      '.ir-standards-table td:last-child { border-bottom:none; }',
-      '.ir-standards-label { font-size:8px; color:#64748b; font-weight:600; width:30%; }',
-      '.ir-standards-value { font-size:9px; font-weight:600; color:#0f172a; width:70%; }',
-      '.ir-standards-value.mono { font-family:monospace; }',
-      '.ir-result-badge { display:inline-block; padding:1px 8px; border-radius:2px; font-size:9px; font-weight:700; font-family:monospace; }',
-      '.ir-result-ok { color:#15803d; border:1px solid #16a34a; background:#dcfce7; }',
-      '.ir-result-ng { color:#b91c1c; border:1px solid #ef4444; background:#fee2e2; }',
-      '.ir-signatures { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:4mm; border:1px solid #d1d9e6; }',
-      '.ir-sig-cell { display:flex; flex-direction:column; align-items:center; text-align:center; padding:4mm 2mm; border-right:1px solid #d1d9e6; border-bottom:1px solid #d1d9e6; background:#fff; }',
-      '.ir-sig-cell:nth-child(3n) { border-right:none; }',
-      '.ir-sig-cell:last-child { border-bottom:none; }',
-      '.ir-sig-line { width:100%; height:1px; background:#d1d9e6; margin:6mm 0 3mm 0; }',
-      '.ir-sig-image { max-height:12mm; max-width:30mm; display:block; margin:2mm 0; }',
-      '.ir-sig-placeholder { display:inline-block; padding:3mm 2mm; border:1px dashed #d1d9e6; font-size:8px; color:#64748b; text-align:center; margin:2mm 0; }',
-      '.ir-sig-name { font-size:9px; font-weight:600; margin:1mm 0; }',
-      '.ir-sig-title { font-size:8px; color:#64748b; margin:1mm 0; }',
-      '.ir-sig-date { font-size:8px; color:#64748b; margin:1mm 0; }',
-      '.ir-sup-notes { font-size:8px; color:#0f172a; margin-top:2mm; padding:2mm 4px; background:#f1f5f9; }',
-      '.ir-footer { margin-top:6mm; padding-top:2mm; border-top:1px solid #d1d9e6; font-size:7px; color:#64748b; text-align:center; }',
-      '.ir-footer-qr { display:inline-block; width:16mm; height:16mm; background:#fff; border:1px solid #d1d9e6; padding:1mm; vertical-align:middle; margin-right:3mm; }',
-      '@media print { html,body { margin:0; padding:0; background:#fff !important; overflow:hidden; font-family:Arial,Helvetica,sans-serif; } .ir-document { border:none; padding:4mm; width:297mm; height:210mm; box-sizing:border-box; } body { background:#fff !important; } }',
-      '.ht-sidebar,.ht-header,.ht-ir-actions,.ht-ir-scanner-row,.ht-ir-summary-grid,.ht-ir-approval-flow,.ht-ir-issue-list,.ht-ir-status-badge,.ht-empty-icon { display:none !important; }',
-    ].join(" ");
+    var reportUrl = this.state.reportUrl || "";
+    var css = this._getInlineCss();
 
     var html = '<!doctype html><html><head>' +
       '<meta charset="UTF-8">' +
@@ -754,17 +901,21 @@ const RCF = {
       '</head><body>' +
       docContent +
       '<script>' +
-        'window.addEventListener("DOMContentLoaded", function() {' +
-          'var qrDiv = document.getElementById("docQrCode");' +
-          'if (qrDiv && typeof parent.QRCode !== "undefined") {' +
-            'qrDiv.innerHTML = "";' +
-            'new parent.QRCode(qrDiv, {' +
-              'text: "' + (material.kode || "") + '",' +
-              'width: 60, height: 60, colorDark: "#0F172A", colorLight: "#ffffff"' +
-            '});' +
-          '}' +
-        '});' +
-      '</script>' +
+        'var url = "' + reportUrl + '";' +
+        'if (url) {' +
+          'var qrDivs = document.querySelectorAll("#docQrCode");' +
+          'qrDivs.forEach(function(el) {' +
+            'el.innerHTML = "";' +
+            'if (typeof parent.QRCode !== "undefined") {' +
+              'new parent.QRCode(el, { text: url, width: 56, height: 56, colorDark: "#0B3150", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });' +
+            '} else if (typeof QRCode !== "undefined") {' +
+              'new QRCode(el, { text: url, width: 56, height: 56, colorDark: "#0B3150", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });' +
+            '} else {' +
+              'el.innerHTML = "<span style=\"font-size:5px;color:#DC3545\">QR Code unavailable</span>";' +
+            '}' +
+          '});' +
+        '}' +
+      '<\/script>' +
       '</body></html>';
 
     return html;
