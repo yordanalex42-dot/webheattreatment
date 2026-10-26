@@ -114,6 +114,11 @@
   padding: 2px 4px;
 }
 
+.ht-ir-measurement-table input::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
+}
+
 .ht-ir-measurement-table .ht-table-row.summary td {
   background: var(--surface-muted);
   font-weight: 600;

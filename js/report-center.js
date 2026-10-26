@@ -380,13 +380,13 @@ const RCF = {
 
   /* ---- Format nilai: tampilkan "—" untuk null / undefined / kosong ---- */
   _fmt(v) {
-    if (v === null || v === undefined || v === "") return "—";
+    if (v === null || v === undefined || v === "") return "-";
     return v;
   },
 
   /* ---- Format tanggal ---- */
   _fmtDate(d) {
-    if (!d) return "—";
+    if (!d) return "-";
     return formatDateLong(d);
   },
 
@@ -428,7 +428,7 @@ const RCF = {
   generateDocumentHtml(material, qc, judg, ext, production) {
     var part = material.part_id ? DB.findPartById(material.part_id) : null;
     var customer = material.customer_id ? DB.findCustomerById(material.customer_id) : null;
-    var reportNo = this.state.reportNumber || "—";
+    var reportNo = this.state.reportNumber || "-";
     var satuan = (ext && ext.satuan_hardness) || (qc && qc.satuan_hardness) || "HRC";
 
     /* Before QC */
@@ -449,8 +449,8 @@ const RCF = {
     var surfaceRows = "";
     var maxRows = Math.max(surfaceValues.length, coreValues.length, 12);
     for (var i = 0; i < maxRows; i++) {
-      var sv = (i < surfaceValues.length && surfaceValues[i] != null) ? surfaceValues[i] : "—";
-      var cv = (i < coreValues.length && coreValues[i] != null) ? coreValues[i] : "—";
+      var sv = (i < surfaceValues.length && surfaceValues[i] != null) ? surfaceValues[i] : "-";
+      var cv = (i < coreValues.length && coreValues[i] != null) ? coreValues[i] : "-";
       surfaceRows += '<tr>' +
         '<td>' + (i + 1) + '</td>' +
         '<td class="mono">' + sv + '</td>' +
@@ -459,10 +459,10 @@ const RCF = {
     }
 
     /* Stats rows */
-    var surfaceAvgStr = surfaceStats.avg != null ? surfaceStats.avg : "—";
-    var coreAvgStr = coreStats.avg != null ? coreStats.avg : "—";
-    var surfaceRStr = surfaceStats.r != null ? surfaceStats.r : "—";
-    var coreRStr = coreStats.r != null ? coreStats.r : "—";
+    var surfaceAvgStr = surfaceStats.avg != null ? surfaceStats.avg : "-";
+    var coreAvgStr = coreStats.avg != null ? coreStats.avg : "-";
+    var surfaceRStr = surfaceStats.r != null ? surfaceStats.r : "-";
+    var coreRStr = coreStats.r != null ? coreStats.r : "-";
 
     /* Target hardness */
     var targetHardness = (part && part.target_hardness) ? part.target_hardness : "—";
@@ -679,7 +679,7 @@ const RCF = {
      All CSS is inlined so it resolves in the about:blank print window. */
   generateInlineDocument(material, qc, judge, ext, production) {
     var docContent = this.generateDocumentHtml(material, qc, judge, ext, production);
-    var reportNo = this.state.reportNumber || "—";
+    var reportNo = this.state.reportNumber || "-";
 
     var css = [
       '@page { size: A4 landscape; margin: 0mm; }',
