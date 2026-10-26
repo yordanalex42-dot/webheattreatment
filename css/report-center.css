@@ -339,14 +339,15 @@
 /* ===== Dokumen Inspection Report (professional, A4 print) ===== */
 .ir-document {
   font-family: "Inter", sans-serif;
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.4;
   color: #0f172a;
-  max-width: 800px;
+  max-width: 297mm;
+  width: 100%;
   margin: 0 auto;
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 40px;
+  padding: 20px;
   background: white;
   box-sizing: border-box;
 }
@@ -626,7 +627,20 @@
 }
 
 /* ===== Print styles ===== */
+@page {
+  size: A4 landscape;
+  margin: 0mm;
+}
+
 @media print {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    overflow: hidden;
+  }
+
   .ht-sidebar,
   .ht-header,
   .ht-ir-actions,
@@ -646,6 +660,9 @@
     padding: 0;
     margin: 0;
     max-width: none;
+    width: 297mm;
+    height: 210mm;
+    box-sizing: border-box;
     page-break-after: auto;
   }
 

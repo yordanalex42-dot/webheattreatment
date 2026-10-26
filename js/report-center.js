@@ -590,9 +590,9 @@ const RCF = {
       '<title>Inspection Report - ' + reportNo + '</title>' +
       cssLinks.map(function (href) { return '<link rel="stylesheet" href="' + href + '" />'; }).join("") +
       '<style>' +
-        '@page { size: A4; margin: 20mm; }' +
-        'body { font-family: "Inter", sans-serif; background: white; color: #0f172a; }' +
-        '.ir-document { max-width: 100%; }' +
+        '@page { size: A4 landscape; margin: 0mm; }' +
+        'body { font-family: "Inter", sans-serif; background: white; color: #0f172a; margin: 0; padding: 0; }' +
+        '.ir-document { max-width: 100%; width: 297mm; height: 210mm; box-sizing: border-box; }' +
         '.ir-sig-image { max-height: 80px; max-width: 180px; }' +
         '.ht-sidebar, .ht-header, .ir-actions { display: none !important; }' +
       '</style>' +
