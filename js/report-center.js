@@ -348,160 +348,141 @@ const RCF = {
     var part = material.part_id ? DB.findPartById(material.part_id) : null;
     var customer = material.customer_id ? DB.findCustomerById(material.customer_id) : null;
     var reportNo = this.state.reportNumber;
-
     var surfaceValues = (ext && ext.surface_values) || [];
     var coreValues = (ext && ext.core_values) || [];
-    var validSurface = surfaceValues.filter(function (v) { return v != null && !isNaN(v); });
-    var validCore = coreValues.filter(function (v) { return v != null && !isNaN(v); });
+    var satuan = (qc && qc.satuan_hardness) || "HRC";
+    var targetHardness = part && part.target_hardness ? part.target_hardness : "BELUM DAPAT DITENTUKAN";
 
-    var surfaceAvg = validSurface.length > 0
-      ? (validSurface.reduce(function (a, b) { return a + b; }, 0) / validSurface.length).toFixed(1)
-      : "-";
-    var coreAvg = validCore.length > 0
-      ? (validCore.reduce(function (a, b) { return a + b; }, 0) / validCore.length).toFixed(1)
-      : "-";
-
-    var hardnessValues = validSurface.length > 0 ? surfaceAvg : (validCore.length > 0 ? coreAvg : "-");
-    var satuan = qc.satuan_hardness || "HRC";
-
-    /* Format signature image helper */
-    var sigImg = function (sig) {
-      if (!sig) return '<span class="ir-sig-placeholder">Tidak tersedia</span>';
-      return '<img src="' + sig + '" class="ir-sig-image" alt="Tanda Tangan" />';
+    /* Escape text from local data before placing it in the document. */
+    var esc = function (value) {
+      return String(value == null || value === "" ? "-" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     };
-
-    /* Format date */
-    var fmtDate = function (d) {
-      if (!d) return "-";
-      return formatDateLong(d);
+    var fmtDate = function (value) {
+      return value ? esc(formatDateLong(value)) : "-";
     };
-
-    /* Build surface values table rows */
-    var surfaceRows = "";
+    var sigImg = function (signature) {
+      if (!signature) return '<span class="ir-sig-placeholder">Tanda tangan tidak tersedia</span>';
+      return '<img src="' + signature + '" class="ir-sig-image" alt="Tanda tangan" />';
+    };
+    var numericValues = function (values) {
+      return values.filter(function (value) {
+        return value !== null && value !== undefined && value !== "" && isFinite(Number(value));
+      }).map(Number);
+    };
+    var average = function (values) {
+      var nums = numericValues(values);
+      return nums.length ? (nums.reduce(function (sum, value) { return sum + value; }, 0) / nums.length).toFixed(1) : "-";
+    };
+    var range = function (values) {
+      var nums = numericValues(values);
+      return nums.length ? (Math.max.apply(null, nums) - Math.min.apply(null, nums)).toFixed(1) : "-";
+    };
+    var surfaceAvg = average(surfaceValues);
+    var coreAvg = average(coreValues);
+    var surfaceRange = range(surfaceValues);
+    var coreRange = range(coreValues);
+    var rows = "";
     for (var i = 0; i < 12; i++) {
-      var sv = (i < surfaceValues.length && surfaceValues[i] != null) ? surfaceValues[i] : "-";
-      var cv = (i < coreValues.length && coreValues[i] != null) ? coreValues[i] : "-";
-      surfaceRows += '<tr><td class="ir-td-center">' + (i + 1) + '</td><td class="ir-td-center">' + sv + '</td><td class="ir-td-center">' + cv + '</td></tr>';
+      var surface = surfaceValues[i] !== undefined && surfaceValues[i] !== null && surfaceValues[i] !== "" ? esc(surfaceValues[i]) : "-";
+      var core = coreValues[i] !== undefined && coreValues[i] !== null && coreValues[i] !== "" ? esc(coreValues[i]) : "-";
+      rows += '<tr><td class="ir-td-center">' + (i + 1) + '</td><td class="ir-td-center mono">' + surface + '</td><td class="ir-td-center mono">' + core + '</td></tr>';
     }
 
-    /* Build specification / drawing info from part */
-    var specInfo = part ? (part.nomor_part || "-") : "-";
-    var drawingNo = part ? (part.nomor_part || "-") : "-";
-    var materialGrade = material.material_charge || "-";
-    var hardnessScale = satuan || "HRC";
+    var processName = (production && production.jenis_treatment) || material.process_type || "-";
+    var inspectionStage = (ext && ext.stage === "before") ? "Before Heat Treatment" : "After Heat Treatment";
+    var resultClass = qc.hasil === "OK" ? "ir-result-ok" : (qc.hasil === "NG" ? "ir-result-ng" : "ir-result-pending");
+    var inspectorName = qc.inspector || "-";
+    var leaderName = qc.leader_name || "-";
+    var supervisorName = qc.supervisor_name || "-";
+    var leaderJudgement = qc.leader_judgement || "BELUM DISETUJUI";
+    var supervisorJudgement = qc.supervisor_judgement || "BELUM DISETUJUI";
 
-    /* QR code container */
-    var qrContainerId = "docQrCode";
-    var qrCode = material.kode || "-";
-
-    /* Temperature info */
-    var tempActual = production.actual_temperature || "-";
-    var tempRecord = production.temperature_result || "-";
-    var tempMin = production.temperature_min || "-";
-    var tempMax = production.temperature_max || "-";
-
-    /* Build the document */
-    var html = '<div class="ir-document">' +
+    return '<div class="ir-document">' +
       '<div class="ir-doc-header">' +
-        '<div class="ir-company-logo">' +
-          '<img src="assets/logo/logo baru.svg" alt="PT CHUNETSU INDONESIA" class="ir-logo" />' +
-        '</div>' +
+        '<div class="ir-company-logo"><img src="assets/logo/logo baru.svg" alt="PT CHUNETSU INDONESIA" class="ir-logo" /></div>' +
         '<div class="ir-company-info">' +
           '<h1 class="ir-company-name">PT CHUNETSU INDONESIA</h1>' +
           '<p class="ir-dept-name">HEAT TREATMENT DEPARTMENT</p>' +
-          '<p class="ir-doc-title">FINAL INSPECTION REPORT</p>' +
+          '<p class="ir-doc-title">HARDNESS INSPECTION REPORT</p>' +
         '</div>' +
       '</div>' +
 
-      '<div class="ir-doc-meta">' +
-        '<table class="ir-meta-table">' +
-          '<tr><td class="ir-meta-label">Report No.</td><td class="ir-meta-value">' + reportNo + '</td>' +
-          '<td class="ir-meta-label">Inspection Date</td><td class="ir-meta-value">' + fmtDate(qc.tanggal_inspector) + '</td></tr>' +
-          '<tr><td class="ir-meta-label">Customer</td><td class="ir-meta-value">' + (customer ? customer.nama_customer : "-") + '</td>' +
-          '<td class="ir-meta-label">Work Order No.</td><td class="ir-meta-value">' + (material.nomor_surat_jalan || "-") + '</td></tr>' +
-          '<tr><td class="ir-meta-label">Control Number / Material Code</td><td class="ir-meta-value mono">' + (material.kode || "-") + '</td>' +
-          '<td class="ir-meta-label">Part Name</td><td class="ir-meta-value">' + (part ? part.nama_part : "-") + '</td></tr>' +
-          '<tr><td class="ir-meta-label">Material Grade</td><td class="ir-meta-value mono">' + materialGrade + '</td>' +
-          '<td class="ir-meta-label">Heat Number / Batch</td><td class="ir-meta-value mono">' + (material.lot_no || "-") + '</td></tr>' +
-          '<tr><td class="ir-meta-label">Quantity</td><td class="ir-meta-value">' + (material.qty || 0) + '</td>' +
-          '<td class="ir-meta-label">Specification / Drawing No.</td><td class="ir-meta-value mono">' + specInfo + '</td></tr>' +
-          '<tr><td class="ir-meta-label">Jenis Proses</td><td class="ir-meta-value">' + (production.jenis_treatment || material.process_type || "-") + '</td>' +
-          '<td class="ir-meta-label">Hardness Scale</td><td class="ir-meta-value">' + hardnessScale + '</td></tr>' +
-        '</table>' +
-      '</div>' +
+      '<section class="ir-form-section">' +
+        '<h2 class="ir-section-title">Informasi Part</h2>' +
+        '<div class="ir-form-info-grid">' +
+          '<div class="ir-form-info-item"><span>Control Number</span><strong class="mono">' + esc(material.kode) + '</strong></div>' +
+          '<div class="ir-form-info-item"><span>Customer</span><strong>' + esc(customer ? customer.nama_customer : "-") + '</strong></div>' +
+          '<div class="ir-form-info-item"><span>Part Name</span><strong>' + esc(part ? part.nama_part : "-") + '</strong></div>' +
+          '<div class="ir-form-info-item"><span>Part No.</span><strong class="mono">' + esc(part ? part.nomor_part : "-") + '</strong></div>' +
+          '<div class="ir-form-info-item"><span>Lot Number</span><strong class="mono">' + esc(material.lot_no) + '</strong></div>' +
+          '<div class="ir-form-info-item"><span>Material Charge</span><strong class="mono">' + esc(material.material_charge) + '</strong></div>' +
+          '<div class="ir-form-info-item"><span>Status Part</span><strong>' + esc(material.status_part) + '</strong></div>' +
+          '<div class="ir-form-info-item"><span>Jenis Proses</span><strong>' + esc(processName) + '</strong></div>' +
+          '<div class="ir-form-info-item"><span>Quantity (pcs)</span><strong>' + esc(material.qty || 0) + '</strong></div>' +
+        '</div>' +
+      '</section>' +
 
-      '<div class="ir-section">' +
-        '<h2 class="ir-section-title">A. Hasil Pemeriksaan Hardness</h2>' +
+      '<section class="ir-form-section">' +
+        '<h2 class="ir-section-title">Inspection Stage</h2>' +
+        '<div class="ir-stage-value">' + esc(inspectionStage) + '</div>' +
+      '</section>' +
+
+      '<section class="ir-form-section">' +
+        '<h2 class="ir-section-title">Target Hardness</h2>' +
+        '<div class="ir-target-value">' + esc(targetHardness) + '</div>' +
+        '<p class="ir-form-hint">Nilai target berasal dari master data Part.</p>' +
+      '</section>' +
+
+      '<section class="ir-form-section">' +
+        '<h2 class="ir-section-title">Hasil Pengukuran Hardness</h2>' +
         '<table class="ir-hardsness-table">' +
-          '<thead><tr><th class="ir-th">No.</th><th class="ir-th">Surface Hardness</th><th class="ir-th">Core Hardness</th><th class="ir-th">Satuan</th></tr></thead>' +
-          '<tbody>' + surfaceRows + '</tbody>' +
-          '<tfoot>' +
-            '<tr><td class="ir-td-center" colspan="1"><strong>Rata-rata</strong></td>' +
-            '<td class="ir-td-center mono"><strong>' + surfaceAvg + '</strong></td>' +
-            '<td class="ir-td-center mono"><strong>' + coreAvg + '</strong></td>' +
-            '<td class="ir-td-center"><strong>' + satuan + '</strong></td></tr>' +
-          '</tfoot>' +
+          '<thead><tr><th class="ir-th">Test Piece</th><th class="ir-th">Surface (' + esc(satuan) + ')</th><th class="ir-th">Core (' + esc(satuan) + ')</th></tr></thead>' +
+          '<tbody>' + rows +
+            '<tr class="ir-summary-row"><td>Average</td><td class="mono">' + surfaceAvg + '</td><td class="mono">' + coreAvg + '</td></tr>' +
+            '<tr class="ir-summary-row"><td>R (Max − Min)</td><td class="mono">' + surfaceRange + '</td><td class="mono">' + coreRange + '</td></tr>' +
+          '</tbody>' +
         '</table>' +
         '<div class="ir-hardness-summary">' +
-          '<p>Nilai Hardness Aktual (rata-rata): <strong class="mono">' + hardnessValues + ' ' + satuan + '</strong></p>' +
-          '<p>Target Hardness: <strong>' + (part && part.target_hardness ? part.target_hardness : "-") + '</strong></p>' +
-          '<p>Hasil Akhir Inspeksi: <strong class="mono ' + (qc.hasil === "OK" ? "ir-result-ok" : "ir-result-ng") + '">' + (qc.hasil || "-") + '</strong></p>' +
-          (qc.catatan ? '<p>Catatan Inspeksi: ' + qc.catatan + '</p>' : '') +
+          '<p>Hasil Akhir Inspeksi: <strong class="mono ' + resultClass + '">' + esc(qc.hasil || "BELUM DITENTUKAN") + '</strong></p>' +
+          (qc.catatan ? '<p>Catatan Inspeksi: ' + esc(qc.catatan) + '</p>' : '') +
         '</div>' +
-      '</div>' +
+      '</section>' +
 
-      '<div class="ir-section">' +
-        '<h2 class="ir-section-title">B. Persetujuan dan Tanda Tangan</h2>' +
-        '<table class="ir-signature-table">' +
-          '<tr>' +
-            '<td class="ir-sig-cell">' +
-              '<p class="ir-sig-label"><strong>Inspected By — Inspector QC</strong></p>' +
-              sigImg(ext ? ext.signature : null) +
-              '<p class="ir-sig-name">' + (qc.inspector || "-") + '</p>' +
-              '<p class="ir-sig-title">Inspector QC</p>' +
-              '<p class="ir-sig-date">' + fmtDate(qc.tanggal_inspector) + '</p>' +
-            '</td>' +
-            '<td class="ir-sig-cell">' +
-              '<p class="ir-sig-label"><strong>Reviewed By — Leader QC</strong></p>' +
-              sigImg(qc.leader_signature) +
-              '<p class="ir-sig-name">' + (qc.leader_name || "-") + '</p>' +
-              '<p class="ir-sig-title">Leader QC</p>' +
-              '<p class="ir-sig-date">' + fmtDate(qc.leader_date) + '</p>' +
-            '</td>' +
-            '<td class="ir-sig-cell">' +
-              '<p class="ir-sig-label"><strong>Approved By — Supervisor QC</strong></p>' +
-              sigImg(qc.supervisor_signature) +
-              '<p class="ir-sig-name">' + (qc.supervisor_name || "-") + '</p>' +
-              '<p class="ir-sig-title">Supervisor QC</p>' +
-              '<p class="ir-sig-date">' + fmtDate(qc.supervisor_date) + '</p>' +
-            '</td>' +
-          '</tr>' +
-        '</table>' +
-        (qc.supervisor_notes ? '<p class="ir-sup-notes"><strong>Catatan Supervisor:</strong> ' + qc.supervisor_notes + '</p>' : '') +
-      '</div>' +
-
-      '<div class="ir-section">' +
-        '<h2 class="ir-section-title">C. Informasi Tambahan</h2>' +
-        '<table class="ir-info-table">' +
-          '<tr><td class="ir-info-label">Microstructure</td><td class="ir-info-value">' + (qc.microstructure || "-") + '</td>' +
-          '<td class="ir-info-label">Material Charge</td><td class="ir-info-value mono">' + (material.material_charge || "-") + '</td></tr>' +
-          '<tr><td class="ir-info-label">No. Surat Jalan</td><td class="ir-info-value mono">' + (material.nomor_surat_jalan || "-") + '</td>' +
-          '<td class="ir-info-label">Berat Part</td><td class="ir-info-value">' + (material.berat_part_snapshot ? material.berat_part_snapshot + " " + (material.satuan_berat || "KG") : "-") + '</td></tr>' +
-          '<tr><td class="ir-info-label">Suhu Aktual</td><td class="ir-info-value mono">' + tempActual + '°C</td>' +
-          '<td class="ir-info-label">Rentang Suhu</td><td class="ir-info-value mono">' + tempMin + '°C - ' + tempMax + '°C</td></tr>' +
-        '</table>' +
-      '</div>' +
+      '<section class="ir-form-section">' +
+        '<h2 class="ir-section-title">Inspected by</h2>' +
+        '<div class="ir-approval-grid">' +
+          '<div class="ir-approval-card">' +
+            '<h3>Inspector QC</h3>' +
+            '<div class="ir-signature-area">' + sigImg(ext ? ext.signature : null) + '</div>' +
+            '<strong>' + esc(inspectorName) + '</strong><span>Inspector</span><small>' + fmtDate(qc.tanggal_inspector) + '</small>' +
+            '<b class="ir-judgement ' + resultClass + '">' + esc(qc.hasil || "BELUM DITENTUKAN") + '</b>' +
+          '</div>' +
+          '<div class="ir-approval-card">' +
+            '<h3>Leader QC Review</h3>' +
+            '<div class="ir-signature-area">' + sigImg(qc.leader_signature) + '</div>' +
+            '<strong>' + esc(leaderName) + '</strong><span>Leader QC</span><small>' + fmtDate(qc.leader_date) + '</small>' +
+            '<b class="ir-judgement">' + esc(leaderJudgement) + '</b>' +
+          '</div>' +
+          '<div class="ir-approval-card">' +
+            '<h3>Approved by</h3>' +
+            '<div class="ir-signature-area">' + sigImg(qc.supervisor_signature) + '</div>' +
+            '<strong>' + esc(supervisorName) + '</strong><span>QC Supervisor</span><small>' + fmtDate(qc.supervisor_date) + '</small>' +
+            '<b class="ir-judgement">' + esc(supervisorJudgement) + '</b>' +
+          '</div>' +
+        '</div>' +
+        (qc.supervisor_notes ? '<p class="ir-sup-notes"><strong>Catatan Supervisor:</strong> ' + esc(qc.supervisor_notes) + '</p>' : '') +
+      '</section>' +
 
       '<div class="ir-doc-footer">' +
-        '<p class="ir-footer-text">Dokumen ini adalah laporan inspeksi final yang sah dan telah disetujui secara resmi.</p>' +
-        '<div class="ir-footer-qr">' +
-          '<div id="' + qrContainerId + '" class="ir-footer-qr-code"></div>' +
-          '<p class="ir-footer-qr-label">Kode Material: ' + qrCode + '</p>' +
-        '</div>' +
+        '<p class="ir-footer-text">Laporan inspeksi ini menampilkan data pemeriksaan dan persetujuan yang tersimpan pada sistem.</p>' +
+        '<div class="ir-footer-qr"><div id="docQrCode" class="ir-footer-qr-code"></div><p class="ir-footer-qr-label">Control Number: ' + esc(material.kode) + '</p></div>' +
       '</div>' +
     '</div>';
-
-    return html;
   },
 
   /* ---- Show document preview ---- */
