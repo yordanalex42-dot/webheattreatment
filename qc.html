@@ -400,7 +400,7 @@
                             <td id="avgAfterCore">-</td>
                           </tr>
                           <tr class="summary">
-                            <td>R (Max − Min)</td>
+                            <td>R (Max - Min)</td>
                             <td id="rBeforeSurface">-</td>
                             <td id="rBeforeCore">-</td>
                             <td id="rAfterSurface">-</td>
@@ -411,11 +411,11 @@
                     </div>
                   </div>
 
-                  <!-- Inspector Section -->
-                  <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
+                  <!-- Inspector QC -->
+                  <div class="ht-card ht-card-flat fade-in ht-ir-approval-card" style="margin-top: 16px">
                     <div class="ht-card-header">
-                      <h3 class="ht-card-title">Inspected by (After Heat Treatment)</h3>
-                      <p class="ht-card-subtitle">Jabatan: Inspector</p>
+                      <h3 class="ht-card-title">Inspector QC</h3>
+                      <p class="ht-card-subtitle">Nama inspector dan tanggal (After Heat Treatment)</p>
                     </div>
                     <div class="ht-form">
                       <div class="ht-form-row">
@@ -456,40 +456,40 @@
                     </div>
                   </div>
 
-                   <!-- Leader QC Review (read-only on Inspector page) -->
-                   <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
-                     <div class="ht-card-header">
-                       <h3 class="ht-card-title">Leader QC Review</h3>
-                       <p class="ht-card-subtitle">Judgement dan tanda tangan Leader QC</p>
-                     </div>
-                     <div class="ht-ir-locked-section">
-                       <div class="ht-ir-locked-overlay">
-                         <img src="assets/icons/warning.svg" alt="" class="icon" />
-                         <span>Persetujuan Leader QC dilakukan pada halaman Leader QC.</span>
-                       </div>
-                       <div class="ht-info-grid">
-                         <div class="ht-info-item">
-                           <span class="ht-info-label">Judgement</span>
-                           <span class="ht-info-value" id="irLeaderJudgement">-</span>
-                         </div>
-                         <div class="ht-info-item">
-                           <span class="ht-info-label">Nama Leader QC</span>
-                           <span class="ht-info-value" id="irLeaderName">-</span>
-                         </div>
-                         <div class="ht-info-item">
-                           <span class="ht-info-label">Tanggal Judgement</span>
-                           <span class="ht-info-value" id="irLeaderDate">-</span>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
+                   <!-- Leader QC -->
+                  <div class="ht-card ht-card-flat fade-in ht-ir-approval-card" style="margin-top: 16px">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">Leader QC</h3>
+                      <p class="ht-card-subtitle">Judgement dan tanda tangan Leader QC</p>
+                    </div>
+                    <div class="ht-ir-locked-section">
+                      <div class="ht-ir-locked-overlay">
+                        <img src="assets/icons/warning.svg" alt="" class="icon" />
+                        <span>Persetujuan Leader QC dilakukan pada halaman Leader QC.</span>
+                      </div>
+                      <div class="ht-info-grid">
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Judgement</span>
+                          <span class="ht-info-value" id="irLeaderJudgement">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Nama Leader QC</span>
+                          <span class="ht-info-value" id="irLeaderName">-</span>
+                        </div>
+                        <div class="ht-info-item">
+                          <span class="ht-info-label">Tanggal Judgement</span>
+                          <span class="ht-info-value" id="irLeaderDate">-</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-                   <!-- QC Supervisor (Locked) -->
-                   <div class="ht-card ht-card-flat fade-in" style="margin-top: 16px">
-                     <div class="ht-card-header">
-                       <h3 class="ht-card-title">Approved by</h3>
-                       <p class="ht-card-subtitle">Jabatan: QC Supervisor</p>
-                     </div>
+                  <!-- QC Supervisor -->
+                  <div class="ht-card ht-card-flat fade-in ht-ir-approval-card" style="margin-top: 16px">
+                    <div class="ht-card-header">
+                      <h3 class="ht-card-title">QC Supervisor</h3>
+                      <p class="ht-card-subtitle">Persetujuan dan catatan QC Supervisor</p>
+                    </div>
                     <div class="ht-ir-locked-section">
                       <div class="ht-ir-locked-overlay">
                         <img src="assets/icons/warning.svg" alt="" class="icon" />
@@ -512,7 +512,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="ht-modal-footer">
+                   <div class="ht-modal-footer">
                   <button
                     type="button"
                     onclick="closeQcModal()"

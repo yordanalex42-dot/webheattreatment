@@ -177,7 +177,36 @@
 
 .ht-ir-locked-overlay .icon {
   width: 16px;
-  height: 16px;
+   height: 16px;
+ }
+
+/* ===== Shared approval card styles (Inspector QC, Leader QC, QC Supervisor) ===== */
+.ht-ir-approval-card {
+  border: 1.5px solid var(--border);
+}
+
+.ht-ir-approval-card .ht-card-header h3.ht-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ht-ir-approval-card .ht-card-subtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.ht-ir-approval-card .ht-form-label,
+.ht-ir-approval-card .ht-info-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ht-ir-approval-card .ht-info-grid {
+  gap: 12px;
 }
 
 /* ===== Modal lebar ===== */
