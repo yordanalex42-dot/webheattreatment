@@ -1,7 +1,7 @@
 # Project Guidelines
 
 ## Inspection Report – Landscape Redesign
-The "Inspection Report – Hardness Test" (`js/report-center.js` → `_getInlineCss()` + `generateDocumentHtml()`,
+The "Inspection Report – Hardness Test" (`js/report-center.js` → `generateDocumentHtml()` + `generateInlineDocument()`,
 rendered into an `about:blank` print window via `inspection-report.html`) is A4 **landscape**
 (`@page { size: A4 landscape }`, page box `297mm × 210mm`).
 
@@ -28,4 +28,4 @@ table with 12 Test Pieces + 1 Average row, derived Toleransi/Metode, 3 approval 
 ## Notes
 - `js/inspection-report.js` is **dead code** (not referenced by `inspection-report.html`); do not revive it.
 - `css/report-center.css` is the on-screen preview style loaded by `inspection-report.html`; the printed
-  report uses the inline CSS returned by `RCF._getInlineCss()`. Keep both landscape and consistent.
+  report uses the inline CSS embedded in `RCF.generateInlineDocument()`. Keep both landscape and consistent.
