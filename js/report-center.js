@@ -429,6 +429,7 @@ const RCF = {
     var customer = material.customer_id ? DB.findCustomerById(material.customer_id) : null;
     var reportNo = this.state.reportNumber || "-";
     var satuan = (ext && ext.satuan_hardness) || (qc && qc.satuan_hardness) || "HRC";
+    var treatment = (production && production.jenis_treatment) ? production.jenis_treatment : (part ? part.process_type : "-");
 
     /* Before QC data */
     var beforeQc = this._getBeforeQc(material);
@@ -446,19 +447,86 @@ const RCF = {
     var aftSvStats = this.calcStats(afterSv);
     var aftCvStats = this.calcStats(afterCv);
 
-    /* Target hardness */
+    /* Target hardness (actual value from master Part) */
     var targetHardness = (part && part.target_hardness) ? part.target_hardness : "";
-    var targetDisplay = targetHardness ? targetHardness + " " + satuan : "-";
+    var targetDisplay = targetHardness ? targetHardness : "-";
+
+    /* Toleransi + Metode Pengujian — derived solely from actual system data
+       (part.target_hardness range & qc.satuan_hardness unit). The hardness
+       acceptance range is the same band the QC uses for OK/NG, so no values
+       are invented outside the data. */
+    var parseHardnessRange = function (target) {
+      if (!target) return null;
+      var text = String(target).trim().toUpperCase();
+      var u = String(satuan || "HRC").toUpperCase();
+      var unitMatch = text.match(/\b(HRC|HV|HBW?|HRA|HRB)\b/);
+      var unit = unitMatch ? unitMatch[1] : u;
+      var rangeMatch = text.match(/(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)/);
+      if (rangeMatch) {
+        var a = parseFloat(rangeMatch[1]), b = parseFloat(rangeMatch[2]);
+        if (isFinite(a) && isFinite(b)) {
+          return { min: Math.min(a, b), max: Math.max(a, b), nominal: (a + b) / 2, tol: Math.abs(b - a) / 2, unit: unit };
+        }
+      }
+      var singleMatch = text.match(/(\d+(?:\.\d+)?)/);
+      if (!rangeMatch && singleMatch && isFinite(parseFloat(singleMatch[1]))) {
+        var s = parseFloat(singleMatch[1]);
+        return { min: s, max: s, nominal: s, tol: 0, unit: unit };
+      }
+      return null;
+    };
+    var hr = parseHardnessRange(targetHardness);
+    var toleranceDisplay = "-";
+    if (hr) {
+      toleranceDisplay = (hr.tol > 0)
+        ? hr.nominal.toFixed(0) + " \u00b1 " + hr.tol.toFixed(0) + " " + hr.unit
+        : hr.nominal.toFixed(0) + " " + hr.unit;
+    }
+    var satuanNorm = String(satuan || "").toUpperCase();
+    var methodDisplay =
+      satuanNorm === "HRC" ? "Rockwell C Hardness (HRC)" :
+      satuanNorm === "HV" ? "Vickers Hardness (HV)" :
+      (satuanNorm === "HBW" || satuanNorm === "HB") ? "Brinell Hardness (" + satuanNorm + ")" :
+      satuanNorm === "HRA" ? "Rockwell A Hardness (HRA)" :
+      satuanNorm === "HRB" ? "Rockwell B Hardness (HRB)" :
+      (satuan ? (satuan + " Hardness Test") : "-");
+
+    /* Inline SVG icons (navy / green) — self-contained so they resolve in the
+       about:blank print window where external icon paths cannot load. */
+    var ic = function (n) {
+      var d = {
+        doc: '<rect x="8.5" y="2.75" width="7" height="3.5" rx="1.25"/><path d="M15.25 4.75H18a2 2 0 0 1 2 2v12.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6.75a2 2 0 0 1 2-2h2.75"/><path d="m9.25 13.75 2 2 3.5-3.5"/>',
+        check: '<circle cx="12" cy="12" r="9"/><path d="m8.25 12.25 2.6 2.6 5.15-5.4"/>',
+        table: '<path d="M3.75 6h16.5"/><path d="M3.75 10h16.5"/><path d="M3.75 14h16.5"/><path d="M3.75 18h16.5"/><circle cx="8.25" cy="7.5" r="0.85"/>',
+        user: '<path d="M19.5 20.5v-1.75a4 4 0 0 0-4-4h-7a4 4 0 0 0-4 4v1.75"/><circle cx="12" cy="7.75" r="3.75"/>',
+        gavel: '<path d="M3.75 18.25a9 9 0 1 1 16.5 0"/><path d="m12 18.25 4.25-4.75"/><circle cx="12" cy="18.25" r="0.85"/>',
+        clipboard: '<path d="M3.75 6.75a2 2 0 0 1 2-2H9a2.75 2.75 0 0 1 5.5 0h3.25a2 2 0 0 1 2 2v13.5a2 2 0 0 1-2 2H5.75a2 2 0 0 1-2-2V6.75z"/><path d="M12 3.25a1.5 1.5 0 0 0-1.5 1.5V6h3V4.75A1.5 1.5 0 0 0 12 3.25z"/>'
+      };
+      var color = n === "check" ? "#0A9B67" : "#0B3B69";
+      var p = d[n];
+      if (!p) return "";
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
+    };
 
     /* Result badge */
     var hasil = (qc && qc.hasil) ? String(qc.hasil).toUpperCase() : "PENDING";
     var resultBadgeClass = hasil === "OK" ? "ir-result-ok" : hasil === "NG" ? "ir-result-ng" : "ir-result-pending";
 
-    /* Result badge HTML for table + info panel */
+    /* Status description derived from the actual inspection result */
+    var resultDesc = hasil === "OK"
+      ? "Hasil pengujian hardness sesuai dengan standar yang ditentukan."
+      : hasil === "NG"
+      ? "Hasil pengujian hardness tidak sesuai dengan standar yang ditentukan."
+      : "Hasil inspeksi belum lengkap.";
+
+    /* Result badge HTML for the table */
     var resultBadge = '<span class="ir-tiny-badge ' + resultBadgeClass + '">' + hasil + '</span>';
+    /* Result status bar for the Inspection Result panel */
+    var resultIcon = hasil === "OK" ? '✓' : hasil === "NG" ? '✗' : '●';
     var resultCard = '<div class="ir-result-card ' + resultBadgeClass + '">'
-      + '<span class="ir-result-icon">' + (hasil === "OK" ? '✓' : hasil === "NG" ? '✗' : '○') + '</span>'
+      + '<span class="ir-result-icon">' + resultIcon + '</span>'
       + '<span class="ir-result-text">' + hasil + '</span>'
+      + '<span class="ir-result-desc">' + resultDesc + '</span>'
       + '</div>';
 
     /* Signature helper */
@@ -483,11 +551,35 @@ const RCF = {
     this.state.reportUrl = reportUrl;
 
     /* QR label */
-    var qrLabel = reportUrl ? '<span class="ir-qr-label">Scan for Digital Report</span>' : '<span class="ir-qr-label">Scan untuk Laporan Digital</span>';
+    var qrLabel = '<span class="ir-qr-label">Scan QR for Report</span>';
+
+    /* Logo absolute URL — the report renders in an about:blank print window
+       where relative asset paths cannot resolve. */
+    var logoUrl = "assets/logo/logo baru.svg";
+    try {
+      if (typeof window !== "undefined" && window.location) {
+        logoUrl = window.location.protocol + "//" + window.location.host + window.location.pathname.replace(/[^\/]*$/, "") + "assets/logo/logo baru.svg";
+      }
+    } catch (e) { logoUrl = "assets/logo/logo baru.svg"; }
 
     /* Helpers */
     var f = this._fmt.bind(this);
     var fd = this._fmtDate.bind(this);
+
+    /* Extra part fields (sourced only from real system data — no invention) */
+    var tanggalMasuk = (material.tanggal_masuk) ? formatDateLong(material.tanggal_masuk) : null;
+    var tanggalHT = (production && production.tanggal_proses) ? formatDateLong(production.tanggal_proses) : null;
+    var operatorName = (production && (production.finish_scan_by || production.start_scan_by)) || null;
+    var beratDisplay = "-";
+    var _beratVal = (material && material.berat_part_snapshot) ? material.berat_part_snapshot : (part && part.berat_part ? part.berat_part : null);
+    var _satuanBerat = (part && part.satuan_berat) ? part.satuan_berat : "";
+    if (_beratVal != null && _beratVal !== "") beratDisplay = _beratVal + (_satuanBerat ? " " + _satuanBerat : "");
+
+    /* Panel label/value builder */
+    var panelItem = function (label, value, mono) {
+      return '<div class="ir-panel-item"><span class="ir-panel-label">' + label + '</span>'
+        + '<span class="ir-panel-value' + (mono ? ' mono' : '') + '">' + f(value) + '</span></div>';
+    };
 
     /* Build hardness table rows (12 rows) */
     var tableRows = "";
@@ -531,25 +623,23 @@ const RCF = {
 
     var html = '<div class="ir-document">' +
 
-      /* ---- Header ---- */
+      /* ---- Header: Logo | Title | QR Code ---- */
       '<div class="ir-header">'
-        + '<div class="ir-header-title-col">'
-          + '<div class="ir-header-logo">'
-            + '<img src="assets/logo/logo baru.svg" alt="PT CHUNETSU INDONESIA" />'
-          + '</div>'
+        + '<div class="ir-header-left">'
+          + '<img src="' + logoUrl + '" alt="PT CHUNETSU INDONESIA" class="ir-logo" />'
           + '<div class="ir-company-block">'
             + '<p class="ir-company-name">PT CHUNETSU INDONESIA</p>'
             + '<p class="ir-dept-name">HEAT TREATMENT &amp; SURFACE ENGINEERING</p>'
-            + '<p class="ir-tagline">QUALITY TODAY | RELIABILITY TOMORROW</p>'
           + '</div>'
         + '</div>'
-        + '<div class="ir-header-title-col ir-header-title-center">'
+        + '<div class="ir-header-center">'
           + '<div class="ir-report-badge">'
             + '<span class="ir-report-title">INSPECTION REPORT</span>'
-            + '<span class="ir-report-subtitle">HARDNESS TEST<br>(Before &amp; After Heat Treatment)</span>'
+            + '<span class="ir-report-subtitle">HARDNESS TEST</span>'
+            + '<span class="ir-report-sub">(Before &amp; After Heat Treatment)</span>'
           + '</div>'
         + '</div>'
-        + '<div class="ir-header-title-col ir-header-title-right">'
+        + '<div class="ir-header-right">'
           + '<div class="ir-qr-wrapper">'
             + '<div class="ir-qr-code" id="docQrCode" data-url="' + reportUrl + '"></div>'
             + qrLabel
@@ -558,139 +648,173 @@ const RCF = {
         + '</div>'
       + '</div>'
 
-      /* ---- Info Panel ---- */
+      /* ---- Informasi Part (two-column field layout) ---- */
       + '<div class="ir-info-panel">'
-        + '<div class="ir-panel">'
+        + '<div class="ir-panel ir-panel-part">'
           + '<div class="ir-panel-header">'
-            + '<span class="ir-panel-icon">📋</span>'
-            + '<h4 class="ir-panel-title">Part Information</h4>'
+            + ic('doc')
+            + '<h4 class="ir-panel-title">INFORMASI PART</h4>'
           + '</div>'
-          + '<div class="ir-panel-grid">'
-            + '<div class="ir-panel-item"><span class="ir-panel-label">Part Name</span><span class="ir-panel-value">' + f(part ? part.nama_part : null) + '</span></div>'
-            + '<div class="ir-panel-item"><span class="ir-panel-label">Part Number</span><span class="ir-panel-value mono">' + f(part ? part.nomor_part : null) + '</span></div>'
-            + '<div class="ir-panel-item"><span class="ir-panel-label">Material Grade</span><span class="ir-panel-value mono">' + f(material.material_charge) + '</span></div>'
-            + '<div class="ir-panel-item"><span class="ir-panel-label">Heat Treatment</span><span class="ir-panel-value">' + f(production ? production.jenis_treatment : null) + '</span></div>'
-          + '</div>'
-        + '</div>'
-        + '<div class="ir-panel">'
-          + '<div class="ir-panel-header">'
-            + '<span class="ir-panel-icon">📦</span>'
-            + '<h4 class="ir-panel-title">Production Information</h4>'
-          + '</div>'
-          + '<div class="ir-panel-grid">'
-            + '<div class="ir-panel-item"><span class="ir-panel-label">Control Number</span><span class="ir-panel-value mono">' + f(material.kode) + '</span></div>'
-            + '<div class="ir-panel-item"><span class="ir-panel-label">Lot / Batch</span><span class="ir-panel-value mono">' + f(material.lot_no) + '</span></div>'
-            + '<div class="ir-panel-item"><span class="ir-panel-label">Production Date</span><span class="ir-panel-value">' + fd(material.tanggal_masuk) + '</span></div>'
-            + '<div class="ir-panel-item"><span class="ir-panel-label">Report Date</span><span class="ir-panel-value">' + fd(qc && qc.tanggal_inspector ? qc.tanggal_inspector : null) + '</span></div>'
+          + '<div class="ir-panel-body">'
+            + '<div class="ir-panel-grid">'
+              + '<div class="ir-panel-col">'
+                + panelItem('Control Number', material.kode, true)
+                + panelItem('Part Name', part ? part.nama_part : null)
+                + panelItem('Part Number', part ? part.nomor_part : null, true)
+                + panelItem('Lot Number', material.lot_no, true)
+                + panelItem('Material Charge', material.material_charge, true)
+                + panelItem('Material Grade', (material.material_grade || null), true)
+                + panelItem('Jenis Proses', treatment)
+              + '</div>'
+              + '<div class="ir-panel-col">'
+                + panelItem('Status Part', material.status_part)
+                + panelItem('Customer', customer ? customer.nama_customer : null)
+                + panelItem('Tanggal Masuk', tanggalMasuk)
+                + panelItem('Tanggal HT', tanggalHT)
+                + panelItem('Operator', operatorName)
+                + panelItem('Berat', (beratDisplay !== "-" ? beratDisplay : null), true)
+              + '</div>'
+            + '</div>'
           + '</div>'
         + '</div>'
         + '<div class="ir-panel ir-panel-result">'
           + '<div class="ir-panel-header">'
-            + '<span class="ir-panel-icon">✅</span>'
-            + '<h4 class="ir-panel-title">Inspection Result</h4>'
+            + ic('check')
+            + '<h4 class="ir-panel-title">INSPECTION RESULT</h4>'
           + '</div>'
-          + resultCard
-          + '<div class="ir-remarks-row">'
-            + '<span class="ir-remarks-label">Remarks:</span>'
-            + '<span class="ir-remarks-value">' + f(qc && qc.catatan ? qc.catatan : null) + '</span>'
+          + '<div class="ir-panel-body">'
+            + resultCard
+            + '<div class="ir-result-meta">'
+              + '<div class="ir-meta-item"><span class="ir-meta-label">Inspection Date</span><span class="ir-meta-value">' + fd(qc && qc.tanggal_inspector ? qc.tanggal_inspector : null) + '</span></div>'
+              + '<div class="ir-meta-item"><span class="ir-meta-label">Quantity</span><span class="ir-meta-value mono">' + f((material.qty || 0) + ' ' + (material.status_part || "")) + '</span></div>'
+            + '</div>'
+            + '<div class="ir-remarks-row"><span class="ir-remarks-label">Remarks:</span><span class="ir-remarks-value">' + f(qc && qc.catatan ? qc.catatan : null) + '</span></div>'
           + '</div>'
         + '</div>'
       + '</div>'
 
-      /* ---- Hardness Test Table ---- */
-      + '<div class="ir-table-section">'
-        + '<h4 class="ir-table-title">HARDNESS TEST RESULTS</h4>'
-        + '<div class="ir-table-wrap">'
-          + '<table class="ir-hardness-table">'
-            + '<thead>'
-              + '<tr class="ir-thead-main">'
-                + '<th>No.</th>'
-                + '<th>Test Piece</th>'
-                + '<th colspan="2">Before Heat Treatment</th>'
-                + '<th colspan="2">After Heat Treatment</th>'
-                + '<th>Average (' + satuan + ')</th>'
-                + '<th>Range (R)</th>'
-                + '<th>Result</th>'
-              + '</tr>'
-              + '<tr class="ir-thead-sub">'
-                + '<th></th>'
-                + '<th></th>'
-                + '<th>Surface</th>'
-                + '<th>Core</th>'
-                + '<th>Surface</th>'
-                + '<th>Core</th>'
-                + '<th>-</th>'
-                + '<th>-</th>'
-                + '<th></th>'
-              + '</tr>'
-            + '</thead>'
-            + '<tbody>'
-              + tableRows
-              + avgRow
-              + rangeRow
-            + '</tbody>'
+      /* ---- STANDAR HARDNESS (three horizontal columns) ---- */
+      + '<div class="ir-standards-section ir-panel">'
+        + '<div class="ir-panel-header">'
+          + ic('table')
+          + '<h4 class="ir-panel-title">STANDAR HARDNESS</h4>'
+        + '</div>'
+        + '<div class="ir-panel-body">'
+          + '<table class="ir-standards-table">'
+            + '<tr class="ir-standards-row">'
+              + '<td class="ir-std-cell"><span class="ir-std-label">Target Hardness</span><span class="ir-std-value mono">' + targetDisplay + '</span></td>'
+              + '<td class="ir-std-divider"></td>'
+              + '<td class="ir-std-cell"><span class="ir-std-label">Toleransi</span><span class="ir-std-value mono">' + toleranceDisplay + '</span></td>'
+              + '<td class="ir-std-divider"></td>'
+              + '<td class="ir-std-cell"><span class="ir-std-label">Metode Pengujian</span><span class="ir-std-value">' + methodDisplay + '</span></td>'
+            + '</tr>'
           + '</table>'
         + '</div>'
       + '</div>'
 
-      /* ---- Standards & Criteria ---- */
-        + '<table class="ir-standards-table">'
-          + '<tr><td class="ir-std-label">Target Hardness</td><td class="ir-std-value mono">' + f(targetDisplay) + '</td>'
-            + '<td class="ir-std-label">Hardness Unit</td><td class="ir-std-value mono">' + f(satuan) + '</td></tr>'
-          + '<tr><td class="ir-std-label">Hardness Criterion</td><td class="ir-std-value">Per ASME B18.2.1 / ASTM A310</td>'
-            + '<td class="ir-std-label">Measurement Method</td><td class="ir-std-value">Rockwell / Vickers Hardness Tester</td></tr>'
-        + '</table>'
+      /* ---- NILAI HARDNESS (main measurement table) ---- */
+      + '<div class="ir-table-section ir-panel">'
+        + '<div class="ir-panel-header">'
+          + ic('table')
+          + '<h4 class="ir-panel-title">NILAI HARDNESS</h4>'
+        + '</div>'
+        + '<div class="ir-panel-body">'
+          + '<div class="ir-table-wrap">'
+            + '<table class="ir-hardness-table">'
+              + '<thead>'
+                + '<tr class="ir-thead-main">'
+                  + '<th>No.</th>'
+                  + '<th>Test Piece</th>'
+                  + '<th colspan="2">Before Heat Treatment</th>'
+                  + '<th colspan="2">After Heat Treatment</th>'
+                  + '<th>Hasil</th>'
+                + '</tr>'
+                + '<tr class="ir-thead-sub">'
+                  + '<th></th>'
+                  + '<th></th>'
+                  + '<th>Surface (' + satuan + ')</th>'
+                  + '<th>Core (' + satuan + ')</th>'
+                  + '<th>Surface (' + satuan + ')</th>'
+                  + '<th>Core (' + satuan + ')</th>'
+                  + '<th></th>'
+                + '</tr>'
+              + '</thead>'
+              + '<tbody>'
+                + tableRows
+                + avgRow
+                + rangeRow
+              + '</tbody>'
+            + '</table>'
+          + '</div>'
+        + '</div>'
       + '</div>'
 
       /* ---- Approval Sections ---- */
       + '<div class="ir-approval-section">'
         + '<div class="ir-approval-card">'
           + '<div class="ir-approval-header">'
-            + '<span class="ir-approval-icon">🔍</span>'
-            + '<span class="ir-approval-role">INSPECTED BY</span>'
+          + '<span class="ir-approval-icon">' + ic('user') + '</span>'
+          + '<span class="ir-approval-role">INSPECTED BY</span>'
           + '</div>'
-          + '<div class="ir-approval-name">' + f(qc ? qc.inspector : null) + '</div>'
-          + '<div class="ir-approval-date">' + fd(qc && qc.tanggal_inspector ? qc.tanggal_inspector : null) + '</div>'
           + '<div class="ir-signature-box">' + sigImg(ext ? ext.signature : null) + '</div>'
+          + '<div class="ir-sig-line"></div>'
+          + '<div class="ir-sig-name-row"><span class="ir-approval-name">' + f(qc ? qc.inspector : null) + '</span><span class="ir-sig-hint">Nama &amp; Tanda Tangan</span></div>'
           + '<span class="ir-approval-title">Inspector QC</span>'
           + '<span class="ir-approval-badge ' + (judg && judg.inspectorHasil === "OK" ? "ir-badge-ok" : "ir-badge-incomplete") + '">'
             + (judg && judg.inspectorHasil === "OK" ? "OK" : "Belum Lengkap") + '</span>'
+          + '<div class="ir-sig-date-row"><span class="ir-sig-date-label">Tanggal</span><span class="ir-sig-date-value">' + fd(qc && qc.tanggal_inspector ? qc.tanggal_inspector : null) + '</span></div>'
         + '</div>'
-        + '<div class="ir-approval-card">'
-          + '<div class="ir-approval-header">'
-            + '<span class="ir-approval-icon">⚖️</span>'
-            + '<span class="ir-approval-role">REVIEWED BY</span>'
+          + '<div class="ir-approval-card">'
+            + '<div class="ir-approval-header">'
+              + '<span class="ir-approval-icon">' + ic('gavel') + '</span>'
+              + '<span class="ir-approval-role">REVIEWED BY</span>'
+            + '</div>'
+            + '<div class="ir-signature-box">' + sigImg(qc ? qc.leader_signature : null) + '</div>'
+            + '<div class="ir-sig-line"></div>'
+            + '<div class="ir-sig-name-row"><span class="ir-approval-name">' + f(qc ? qc.leader_name : null) + '</span><span class="ir-sig-hint">Nama &amp; Tanda Tangan</span></div>'
+            + '<span class="ir-approval-title">Leader QC</span>'
+            + '<span class="ir-approval-badge ' + (judg && judg.leaderJudgement === "OK" ? "ir-badge-ok" : "ir-badge-incomplete") + '">'
+              + (judg && judg.leaderJudgement === "OK" ? "OK" : "Belum Lengkap") + '</span>'
+            + '<div class="ir-sig-date-row"><span class="ir-sig-date-label">Tanggal</span><span class="ir-sig-date-value">' + fd(qc && qc.leader_date ? qc.leader_date : null) + '</span></div>'
           + '</div>'
-          + '<div class="ir-approval-name">' + f(qc ? qc.leader_name : null) + '</div>'
-          + '<div class="ir-approval-date">' + fd(qc && qc.leader_date ? qc.leader_date : null) + '</div>'
-          + '<div class="ir-signature-box">' + sigImg(qc ? qc.leader_signature : null) + '</div>'
-          + '<span class="ir-approval-title">Leader QC</span>'
-          + '<span class="ir-approval-badge ' + (judg && judg.leaderJudgement === "OK" ? "ir-badge-ok" : "ir-badge-incomplete") + '">'
-            + (judg && judg.leaderJudgement === "OK" ? "OK" : "Belum Lengkap") + '</span>'
-        + '</div>'
-        + '<div class="ir-approval-card">'
-          + '<div class="ir-approval-header">'
-            + '<span class="ir-approval-icon">📋</span>'
-            + '<span class="ir-approval-role">APPROVED BY</span>'
+          + '<div class="ir-approval-card">'
+            + '<div class="ir-approval-header">'
+              + '<span class="ir-approval-icon">' + ic('clipboard') + '</span>'
+              + '<span class="ir-approval-role">APPROVED BY</span>'
+            + '</div>'
+            + '<div class="ir-signature-box">' + sigImg(qc ? qc.supervisor_signature : null) + '</div>'
+            + '<div class="ir-sig-line"></div>'
+            + '<div class="ir-sig-name-row"><span class="ir-approval-name">' + f(qc ? qc.supervisor_name : null) + '</span><span class="ir-sig-hint">Nama &amp; Tanda Tangan</span></div>'
+            + '<span class="ir-approval-title">Supervisor QC</span>'
+            + '<span class="ir-approval-badge ' + (judg && judg.supervisorJudgement === "OK" ? "ir-badge-ok" : "ir-badge-incomplete") + '">'
+              + (judg && judg.supervisorJudgement === "OK" ? "OK" : "Belum Lengkap") + '</span>'
+            + '<div class="ir-sig-date-row"><span class="ir-sig-date-label">Tanggal</span><span class="ir-sig-date-value">' + fd(qc && qc.supervisor_date ? qc.supervisor_date : null) + '</span></div>'
           + '</div>'
-          + '<div class="ir-approval-name">' + f(qc ? qc.supervisor_name : null) + '</div>'
-          + '<div class="ir-approval-date">' + fd(qc && qc.supervisor_date ? qc.supervisor_date : null) + '</div>'
-          + '<div class="ir-signature-box">' + sigImg(qc ? qc.supervisor_signature : null) + '</div>'
-          + '<span class="ir-approval-title">Supervisor QC</span>'
-          + '<span class="ir-approval-badge ' + (judg && judg.supervisorJudgement === "OK" ? "ir-badge-ok" : "ir-badge-incomplete") + '">'
-            + (judg && judg.supervisorJudgement === "OK" ? "OK" : "Belum Lengkap") + '</span>'
-        + '</div>'
       + '</div>'
 
-      /* ---- Supervisor Notes ---- */
+      /* ---- Supervisor Notes (supporting info from system) ---- */
       + (qc && qc.supervisor_notes ? '<div class="ir-sup-notes"><strong>Supervisor Notes:</strong> ' + qc.supervisor_notes + '</div>' : '')
+
+      /* ---- Catatan (notes space) ---- */
+      + '<div class="ir-notes-section">'
+        + '<h4 class="ir-notes-title">CATATAN</h4>'
+        + '<div class="ir-notes-box">'
+          + '<div class="ir-notes-label">Catatan Pemeriksaan:</div>'
+          + '<div class="ir-notes-lines">'
+            + '<div class="ir-note-line wide"></div>'
+            + '<div class="ir-note-line wide"></div>'
+            + '<div class="ir-note-line mid"></div>'
+            + '<div class="ir-note-line wide"></div>'
+            + '<div class="ir-note-line short"></div>'
+            + '<div class="ir-note-line wide"></div>'
+          + '</div>'
+        + '</div>'
+      + '</div>'
 
       /* ---- Footer ---- */
       + '<div class="ir-footer">'
         + '<div class="ir-footer-left">'
-          + '<img src="assets/icons/doc-icon.svg" alt="" class="icon mr-1" style="width:14px;height:14px;vertical-align:middle;opacity:0.6;" />'
-          + '<span>This report is generated automatically by the QC System.</span>'
-          + '<span>PT CHUNETSU INDONESIA</span>'
+          + '<span>This report is generated automatically by the QC System | PT CHUNETSU INDONESIA</span>'
         + '</div>'
         + '<div class="ir-footer-right">'
           + '<span class="ir-footer-report-id">No. ' + f(reportNo) + '</span>'
@@ -776,103 +900,128 @@ const RCF = {
   },
 
   /* ---- Generate complete HTML document for print window ----
-  /* ---- Inline CSS used for both print window and preview modal ---- */
+  /* ---- Inline CSS used for both print window and preview modal ----
+       All colors use the company's blue palette (#0B3150 deep, #123F63 navy).
+       The document renders in an about:blank print window where design-token
+       variables are unavailable, so hex values are used directly. */
   _getInlineCss() {
     return [
       '@page { size: A4 landscape; margin: 0mm; }',
       'html,body { margin:0; padding:0; background:#fff !important; overflow:hidden; font-family:"Inter",Arial,Helvetica,sans-serif; color:#18364F; box-sizing:border-box; }',
       '* { -webkit-print-color-adjust:exact !important; color-adjust:exact !important; }',
-      '.ir-document { font-family:"Inter",Arial,Helvetica,sans-serif; font-size:9px; line-height:1.4; color:#18364F; width:297mm; min-height:210mm; margin:0 auto; padding:8mm; background:#fff; box-sizing:border-box; border:none; position:relative; }',
+      '.ir-document { font-family:"Inter",Arial,Helvetica,sans-serif; font-size:10px; line-height:1.4; color:#18364F; width:297mm; height:210mm; margin:0 auto; padding:10mm; background:#fff; box-sizing:border-box; border:none; position:relative; }',
       '/* ===== Header ===== */',
-      '.ir-header { display:grid; grid-template-columns:1fr 1fr 1fr; align-items:center; gap:4mm; padding-bottom:4mm; border-bottom:2px solid #123F63; }',
-      '.ir-header-title-col { display:flex; align-items:center; justify-content:center; }',
-      '.ir-header-title-center { justify-content:center; }',
-      '.ir-header-title-right { justify-content:flex-end; }',
-      '.ir-header-logo { width:34mm; height:18mm; flex-shrink:0; display:flex; align-items:center; justify-content:center; }',
-      '.ir-header-logo img { max-width:100%; max-height:100%; }',
+      '.ir-header { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:5mm; padding-bottom:5mm; border-bottom:2px solid #123F63; }',
+      '.ir-header-left { display:flex; align-items:center; gap:2mm; }',
+      '.ir-logo { width:20mm; height:auto; flex-shrink:0; }',
       '.ir-company-block { display:flex; flex-direction:column; }',
-      '.ir-company-name { font-size:12px; font-weight:700; color:#123F63; margin:0; }',
+      '.ir-company-name { font-size:10px; font-weight:700; color:#123F63; margin:0; }',
       '.ir-dept-name { font-size:8px; color:#60778C; margin:0; }',
-      '.ir-tagline { font-size:7px; color:#60778C; font-style:italic; margin:0; }',
-      '.ir-report-badge { background:#0B3150; color:#fff; padding:4mm 6mm; border-radius:3mm; text-align:center; }',
-      '.ir-report-title { font-size:9px; font-weight:700; letter-spacing:1px; }',
-      '.ir-report-subtitle { font-size:6px; margin-top:1px; opacity:0.85; }',
+      '.ir-header-center { display:flex; justify-content:center; }',
+      '.ir-report-badge { background:#0B3150; color:#fff; padding:3mm 8mm; border-radius:3mm; text-align:center; }',
+      '.ir-report-title { font-size:10px; font-weight:800; letter-spacing:1px; display:block; }',
+      '.ir-report-subtitle { font-size:7px; margin-top:1px; opacity:0.85; display:block; }',
+      '.ir-report-sub { font-size:5.5px; margin-top:0.5px; opacity:0.75; display:block; }',
+      '.ir-header-right { display:flex; flex-direction:column; align-items:flex-end; gap:1mm; }',
       '/* ===== QR Code ===== */',
-      '.ir-qr-wrapper { display:flex; flex-direction:column; align-items:center; gap:1px; }',
-      '.ir-qr-code { width:14mm; height:14mm; background:#fff; border:1px solid #C7D9E8; border-radius:2mm; }',
+      '.ir-qr-wrapper { display:flex; flex-direction:column; align-items:center; gap:0.5mm; }',
+      '.ir-qr-code { width:18mm; height:18mm; background:#fff; border:1px solid #C7D9E8; border-radius:2mm; }',
       '.ir-qr-label { font-size:5px; color:#60778C; text-align:center; }',
       '.ir-report-id { font-size:5px; color:#60778C; font-family:monospace; }',
       '/* ===== Info Panel ===== */',
-      '.ir-info-panel { display:grid; grid-template-columns:1fr 1fr 1fr; gap:3mm; margin-bottom:6mm; align-items:start; }',
-      '@media print { .ir-info-panel { grid-template-columns:1fr 1fr 1fr; } }',
-      '.ir-panel { background:#fff; border:1px solid #C7D9E8; border-radius:3mm; padding:3mm; display:flex; flex-direction:column; height:100%; box-sizing:border-box; min-height:18mm; }',
+      '.ir-info-panel { display:grid; grid-template-columns:1fr 1fr; gap:5mm; margin-bottom:6mm; align-items:start; }',
+      '.ir-panel { background:#fff; border:1px solid #C7D9E8; border-radius:3mm; padding:3mm; display:flex; flex-direction:column; box-sizing:border-box; min-height:20mm; }',
       '.ir-panel-result { background:#F4F7FA; }',
       '.ir-panel-header { display:flex; align-items:center; gap:1mm; margin-bottom:2mm; flex-shrink:0; }',
-      '.ir-panel-icon { font-size:8px; }',
+      '.ir-panel-icon { font-size:7px; }',
       '.ir-panel-title { font-size:7px; font-weight:700; color:#123F63; margin:0; text-transform:uppercase; letter-spacing:0.05em; }',
-      '.ir-panel-grid { display:grid; grid-template-columns:1fr; gap:1.5mm; flex:1; }',
+      '.ir-panel-body { flex:1; display:flex; flex-direction:column; gap:1px; }',
+      '.ir-panel-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5mm; }',
+      '.ir-panel-col { display:flex; flex-direction:column; gap:0.5mm; }',
       '.ir-panel-item { display:flex; flex-direction:column; gap:0.5mm; }',
       '.ir-panel-label { font-size:6px; color:#60778C; font-weight:600; }',
       '.ir-panel-value { font-size:7px; font-weight:600; color:#18364F; word-break:break-word; }',
-      '.ir-panel-value.mono { font-family:monospace; }',
+      '.ir-panel-value.mono { font-family:"Courier New",monospace; }',
       '/* ===== Result Card ===== */',
-      '.ir-result-card { display:flex; align-items:center; gap:1mm; padding:2mm 3mm; border-radius:2mm; font-weight:700; font-size:8px; text-transform:uppercase; letter-spacing:0.5px; margin-top:1mm; }',
-      '.ir-result-ok { color:#20B879; background:#E6F4EA; border:1px solid #20B879; }',
-      '.ir-result-ng { color:#DC3545; background:#FDECEC; border:1px solid #DC3545; }',
+      '.ir-result-card { display:inline-flex; align-items:center; gap:1mm; padding:1.5mm 3mm; border-radius:2mm; font-weight:700; font-size:8px; text-transform:uppercase; letter-spacing:0.5px; }',
+      '.ir-result-ok { color:#1a7f52; background:#E6F4EA; border:1px solid #20B879; }',
+      '.ir-result-ng { color:#b91c1c; background:#FDECEC; border:1px solid #DC3545; }',
       '.ir-result-pending { color:#60778C; background:#EEF1F5; border:1px solid #C7D9E8; }',
       '.ir-result-icon { font-size:8px; }',
       '.ir-result-text { margin-left:1mm; }',
+      '.ir-result-desc { font-size:5.5px; color:#60778C; margin-left:3mm; opacity:0.8; }',
+      '.ir-result-meta { display:grid; grid-template-columns:1fr 1fr; gap:1px; margin-top:2mm; font-size:6.5px; }',
+      '.ir-result-meta .ir-meta-label { color:#60778C; font-weight:600; }',
+      '.ir-result-meta .ir-meta-value { color:#18364F; font-family:"Courier New",monospace; font-weight:700; }',
       '.ir-remarks-row { margin-top:2mm; font-size:6px; color:#60778C; }',
       '.ir-remarks-label { font-weight:600; }',
-      '.ir-remarks-value { margin-left:1mm; }',
+      '.ir-remarks-value { margin-left:1mm; color:#18364F; }',
+      '/* ===== Section titles ===== */',
+      '.ir-section-title { font-size:8px; font-weight:700; color:#123F63; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2mm; padding-bottom:1mm; border-bottom:1px solid #C7D9E8; }',
+      '.ir-table-title { font-size:8px; font-weight:700; color:#123F63; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2mm; }',
       '/* ===== Hardness Table ===== */',
       '.ir-table-section { margin-bottom:5mm; }',
-      '.ir-table-title { font-size:8px; font-weight:700; color:#123F63; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2mm; }',
       '.ir-table-wrap { overflow-x:auto; }',
-      '.ir-hardness-table { width:100%; border-collapse:collapse; font-size:8px; table-layout:auto; }',
-      '.ir-hardness-table th { padding:2px 3px; text-align:center; font-weight:700; }',
-      '.ir-hardness-table td { padding:2px 3px; text-align:center; }',
-      '.ir-thead-main th { background:#0B3150; color:#fff; font-size:7px; }',
+      '.ir-hardness-table { width:100%; border-collapse:collapse; font-size:8px; table-layout:fixed; }',
+      '.ir-hardness-table th, .ir-hardness-table td { padding:2px 3px; text-align:center; border:1px solid #C7D9E8; }',
+      '.ir-thead-main th { background:#0B3150; color:#fff; font-size:6.5px; }',
       '.ir-thead-sub th { background:#2E6E9E; color:#fff; font-size:6px; }',
       '.ir-thead-sub th:first-child, .ir-thead-sub th:nth-child(2) { background:#DCEAF6; color:#123F63; }',
       '.ir-hardness-table tbody tr:nth-child(odd) { background:#fff; }',
       '.ir-hardness-table tbody tr:nth-child(even) { background:#F4F7FA; }',
-      '.ir-cell-num { font-weight:600; color:#123F63; width:5mm; }',
-      '.ir-cell-tp { width:10mm; }',
-      '.ir-cell-val { width:11mm; }',
-      '.ir-cell-result { width:9mm; }',
+      '.ir-cell-num { font-weight:600; color:#123F63; width:6mm; }',
+      '.ir-cell-tp { width:18mm; }',
+      '.ir-cell-val { width:20mm; }',
+      '.ir-cell-result { width:14mm; }',
       '.ir-summary-row td { border-top:1px solid #C7D9E8; }',
-      '.ir-summary-label { font-weight:700; color:#123F63; text-align:left; width:16mm; }',
-      '.ir-summary-empty { width:5mm; }',
+      '.ir-summary-label { font-weight:700; color:#123F63; text-align:left; width:24mm; }',
+      '.ir-summary-empty { width:6mm; }',
       '.ir-tiny-badge { display:inline-block; padding:0.5mm 2mm; border-radius:1.5mm; font-size:6px; font-weight:700; text-transform:uppercase; }',
-      '.ir-tiny-badge.ok { color:#20B879; background:#E6F4EA; border:1px solid #20B879; }',
-      '.ir-tiny-badge.ng { color:#DC3545; background:#FDECEC; border:1px solid #DC3545; }',
+      '.ir-tiny-badge.ok { color:#1a7f52; background:#E6F4EA; border:1px solid #20B879; }',
+      '.ir-tiny-badge.ng { color:#b91c1c; background:#FDECEC; border:1px solid #DC3545; }',
       '.ir-tiny-badge.pending { color:#60778C; background:#EEF1F5; border:1px solid #C7D9E8; }',
       '/* ===== Standards ===== */',
-      '.ir-standards { border:1px solid #C7D9E8; border-radius:3mm; margin-bottom:6mm; overflow:hidden; }',
+      '.ir-standards-section { margin-bottom:6mm; }',
+      '.ir-standards { border:1px solid #C7D9E8; border-radius:3mm; overflow:hidden; margin-bottom:6mm; }',
       '.ir-standards-table { width:100%; border-collapse:collapse; font-size:8px; }',
-      '.ir-standards-table td { padding:2mm 3mm; border-bottom:1px solid #C7D9E8; }',
-      '.ir-standards-table td:last-child { border-bottom:none; }',
-      '.ir-std-label { width:30%; color:#60778C; font-weight:600; }',
-      '.ir-std-value { width:70%; color:#18364F; font-weight:600; }',
-      '.ir-std-value.mono { font-family:monospace; }',
-      '/* ===== Approval ===== */',
+      '.ir-standards-table td { padding:3mm 5mm; border-bottom:1px solid #C7D9E8; font-family:"Inter",Arial,sans-serif; }',
+      '.ir-standards-table tr:last-child td { border-bottom:none; }',
+      '.ir-std-label { width:30%; color:#60778C; font-weight:600; font-size:7px; }',
+      '.ir-std-value { width:70%; color:#18364F; font-weight:600; font-size:8px; }',
+      '.ir-std-value.mono { font-family:"Courier New",monospace; }',
+      '/* ===== Signatures ===== */',
       '.ir-approval-section { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-bottom:6mm; }',
-      '.ir-approval-card { background:#fff; border:1px solid #C7D9E8; border-radius:3mm; padding:3mm; display:flex; flex-direction:column; align-items:center; text-align:center; }',
+      '.ir-approval-card { background:#fff; border:1px solid #C7D9E8; border-radius:3mm; padding:3mm 2mm; display:flex; flex-direction:column; align-items:center; text-align:center; box-sizing:border-box; }',
       '.ir-approval-header { display:flex; align-items:center; gap:1mm; margin-bottom:2mm; }',
-      '.ir-approval-icon { font-size:7px; }',
+      '.ir-approval-icon { display:inline-flex; align-items:center; justify-content:center; width:10px; height:10px; flex-shrink:0; }',
+      '.ir-approval-icon svg { width:10px; height:10px; }',
       '.ir-approval-role { font-size:6px; font-weight:700; color:#0B3150; letter-spacing:0.5px; }',
-      '.ir-approval-name { font-size:7px; font-weight:700; color:#18364F; margin:1mm 0; }',
-      '.ir-approval-date { font-size:6px; color:#60778C; margin-bottom:1mm; }',
-      '.ir-signature-box { width:100%; height:8mm; border:1px dashed #C7D9E8; border-radius:2mm; display:flex; align-items:center; justify-content:center; margin-bottom:1mm; background:#F4F7FA; }',
-      '.ir-sig-image { max-height:6mm; max-width:26mm; }',
+      '.ir-approval-name { font-size:7px; font-weight:700; color:#18364F; }',
+      '.ir-sig-line { width:100%; height:0.5px; border-bottom:0.5px solid #C7D9E8; margin:1mm 0; }',
+      '.ir-sig-name-row { display:flex; align-items:center; justify-content:space-between; width:100%; margin:1mm 0 0.5mm; }',
+      '.ir-sig-hint { font-size:5px; color:#60778C; }',
+      '.ir-sig-date-row { display:flex; align-items:center; justify-content:space-between; width:100%; margin-top:0.5mm; }',
+      '.ir-sig-date-label { font-size:5px; color:#60778C; }',
+      '.ir-sig-date-value { font-size:5px; font-weight:700; color:#18364F; }',
+      '.ir-signature-box { width:100%; height:10mm; border:1px dashed #C7D9E8; border-radius:2mm; display:flex; align-items:center; justify-content:center; margin-bottom:1mm; background:#F4F7FA; box-sizing:border-box; }',
+      '.ir-sig-image { max-height:7mm; max-width:100%; }',
       '.ir-sig-placeholder { font-size:5px; color:#60778C; }',
-      '.ir-approval-title { font-size:6px; color:#2E6E9E; font-weight:600; margin-bottom:1mm; }',
+      '.ir-approval-title { font-size:6px; color:#2E6E9E; font-weight:600; margin-bottom:1px; }',
       '.ir-approval-badge { display:inline-block; padding:0.5mm 3mm; border-radius:1.5mm; font-size:6px; font-weight:700; text-transform:uppercase; }',
-      '.ir-badge-ok { color:#20B879; background:#E6F4EA; border:1px solid #20B879; }',
-      '.ir-badge-incomplete { color:#DC3545; background:#FDECEC; border:1px solid #DC3545; }',
+      '.ir-badge-ok { color:#1a7f52; background:#E6F4EA; border:1px solid #20B879; }',
+      '.ir-badge-incomplete { color:#b91c1c; background:#FDECEC; border:1px solid #DC3545; }',
       '/* ===== Supervisor Notes ===== */',
-      '.ir-sup-notes { font-size:6px; color:#18364F; padding:2mm 3mm; background:#F4F7FA; border:1px solid #C7D9E8; border-radius:2mm; margin-bottom:6mm; }',
+      '.ir-sup-notes { font-size:6px; color:#18364F; padding:2mm 4mm; background:#F4F7FA; border:1px solid #C7D9E8; border-radius:2mm; margin-bottom:6mm; }',
+      '/* ===== Notes ===== */',
+      '.ir-notes-section { margin-bottom:6mm; }',
+      '.ir-notes-title { font-size:7px; font-weight:700; color:#123F63; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2mm; }',
+      '.ir-notes-box { border:1px dashed #C7D9E8; border-radius:3mm; padding:3mm; background:#F4F7FA; }',
+      '.ir-notes-label { font-size:6px; font-weight:700; color:#123F63; margin-bottom:2mm; }',
+      '.ir-notes-lines { display:flex; flex-direction:column; gap:2.5mm; }',
+      '.ir-note-line { height:1px; background:#C7D9E8; }',
+      '.ir-note-line.wide { width:100%; }',
+      '.ir-note-line.mid { width:75%; }',
+      '.ir-note-line.short { width:50%; }',
       '/* ===== Footer ===== */',
       '.ir-footer { display:flex; justify-content:space-between; align-items:center; padding-top:2mm; border-top:1px solid #C7D9E8; font-size:6px; color:#60778C; }',
       '.ir-footer-left { display:flex; align-items:center; gap:1mm; }',
@@ -881,8 +1030,8 @@ const RCF = {
       '.ir-footer-report-id { font-family:monospace; font-weight:600; color:#60778C; }',
       '.ir-footer-page { color:#60778C; }',
       '/* ===== Print & Responsive ===== */',
-      '@media print { html,body { background:#fff !important; } .ir-document { padding:6mm; width:297mm; height:210mm; } .ir-info-panel { grid-template-columns:1fr 1fr 1fr; } .ir-approval-section { grid-template-columns:repeat(3,1fr); } }',
-      '@media screen and (max-width:768px) { .ir-header { grid-template-columns:1fr; text-align:center; } .ir-header-title-col { justify-content:center; } .ir-info-panel { grid-template-columns:1fr; gap:2mm; } .ir-approval-section { grid-template-columns:1fr; gap:2mm; } }',
+      '@media print { html,body { background:#fff !important; } .ir-document { padding:10mm; width:297mm; height:210mm; box-sizing:border-box; } .ir-info-panel { grid-template-columns:1fr 1fr; } .ir-approval-section { grid-template-columns:repeat(3,1fr); } }',
+      '@media screen and (max-width:768px) { .ir-header { grid-template-columns:1fr; text-align:center; } .ir-info-panel { grid-template-columns:1fr; gap:2mm; } .ir-approval-section { grid-template-columns:1fr; gap:2mm; } }',
     ].join("\n");
   },
 

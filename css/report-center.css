@@ -51,11 +51,20 @@
 }
 
 .ht-qr-frame {
+  position: static;
   width: 100%;
+  max-width: none;
+  margin: 0;
   min-height: 200px;
   border: 1px dashed var(--border);
   border-radius: var(--radius-sm);
+  overflow: visible;
   background: var(--surface);
+}
+
+.ht-qr-frame::after {
+  content: none;
+  border: none;
 }
 
 /* ===== Summary grid ===== */
@@ -325,23 +334,25 @@
 
 /* ===== Document preview modal ===== */
 .ht-modal-document {
-  max-width: 90vw;
-  width: 100%;
-  padding: 16px;
+  width: 90vw;
+  max-width: 1450px;
+  max-height: 90vh;
+  padding: 0;
 }
 
 @media (max-width: 768px) {
   .ht-modal-document {
-    padding: 8px;
+    width: 95vw;
+    max-width: calc(100vw - 32px);
   }
 }
 
-/* ===== Industrial Quality Record / Inspection Sheet (A4 landscape) ===== */
+/* ===== Industrial Quality Record / Inspection Sheet (A4 Landscape) ===== */
 :root {
   --ir-page-width: 297mm;
   --ir-page-height: 210mm;
-  --ir-page-padding: 4mm;
-  --ir-font-size: 9px;
+  --ir-page-padding: 10mm;
+  --ir-font-size: 10px;
   --ir-line-height: 1.4;
 }
 
@@ -351,7 +362,7 @@
   line-height: var(--ir-line-height);
   color: var(--text-primary);
   width: var(--ir-page-width);
-  min-height: var(--ir-page-height);
+  height: var(--ir-page-height);
   margin: 0 auto;
   padding: var(--ir-page-padding);
   background: white;
@@ -362,377 +373,622 @@
 
 /* ---- Header ---- */
 .ir-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 6mm;
-  padding-bottom: 4mm;
-  border-bottom: 2px solid var(--text-primary);
+  gap: 5mm;
+  padding-bottom: 5mm;
+  border-bottom: 2px solid var(--primary-hover);
 }
 
-.ir-header-logo {
-  width: 36mm;
-  height: 36mm;
+.ir-header-left {
+  display: flex;
+  align-items: center;
+  gap: 2mm;
+}
+
+.ir-logo {
+  width: 20mm;
+  height: auto;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-  padding: 4px;
-}
-
-.ir-header-logo img {
-  max-width: 100%;
-  max-height: 100%;
 }
 
 .ir-company-block {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .ir-company-name {
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--primary-hover);
   margin: 0;
 }
 
 .ir-dept-name {
-  font-size: 10px;
-  color: var(--text-secondary);
-  margin: 1px 0;
-}
-
-.ir-doc-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-top: 2px;
-}
-
-.ir-report-no {
-  font-size: 9px;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-align: right;
-  flex-shrink: 0;
-}
-
-/* ---- Metadata ---- */
-.ir-meta {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  margin-bottom: 6mm;
-  border: 1px solid var(--border);
-  background: var(--surface-muted);
-}
-
-.ir-meta-item {
-  display: flex;
-  flex-direction: column;
-  padding: 2px 4px;
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: white;
-}
-
-.ir-meta-item:nth-child(4n) {
-  border-right: none;
-}
-
-.ir-meta-item:last-child {
-  border-bottom: none;
-}
-
-.ir-meta-label {
   font-size: 8px;
   color: var(--text-secondary);
-  font-weight: 600;
-  margin-bottom: 1px;
+  margin: 0;
 }
 
-.ir-meta-value {
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.ir-meta-value.mono {
-  font-family: var(--font-mono);
-}
-
-/* ---- Section ---- */
-.ir-section {
-  margin-bottom: 6mm;
-}
-
-.ir-section-title {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 2mm;
-  padding: 1px 4px;
-  background: var(--surface-muted);
-  border-left: 3px solid var(--text-primary);
-  display: inline-block;
-}
-
-/* ---- Inspection Info ---- */
-.ir-inspection-info {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 4mm;
-  align-items: start;
-  margin-bottom: 6mm;
-}
-
-.ir-inspection-meta {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1px;
-  border: 1px solid var(--border);
-  background: var(--surface-muted);
-}
-
-.ir-inspection-meta .ir-meta-item {
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: white;
-}
-
-.ir-inspection-meta .ir-meta-item:nth-child(2n) {
-  border-right: none;
-}
-
-.ir-inspection-meta .ir-meta-item:last-child {
-  border-bottom: none;
-}
-
-/* ---- Schematic SVG ---- */
-.ir-schematic {
-  width: 50mm;
-  height: 50mm;
-  flex-shrink: 0;
+.ir-header-center {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 
-.ir-schematic svg {
-  width: 100%;
-  height: auto;
+.ir-report-badge {
+  background: var(--primary-hover);
+  color: var(--text-inverse);
+  padding: 3mm 8mm;
+  border-radius: 3mm;
+  text-align: center;
+}
+
+.ir-report-title {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
   display: block;
 }
 
-.ir-schematic-label {
-  font-size: 8px;
-  color: var(--text-secondary);
-  text-align: center;
-  margin-top: 1mm;
+.ir-report-subtitle {
+  font-size: 7px;
+  margin-top: 1px;
+  opacity: 0.85;
+  display: block;
 }
 
-/* ---- Hardness Results Table ---- */
+.ir-report-sub {
+  font-size: 5.5px;
+  margin-top: 0.5px;
+  opacity: 0.75;
+  display: block;
+}
+
+.ir-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1mm;
+}
+
+/* ---- QR Code ---- */
+.ir-qr-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5mm;
+}
+
+.ir-qr-code {
+  width: 18mm;
+  height: 18mm;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2mm;
+}
+
+.ir-qr-label {
+  font-size: 5px;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.ir-report-id {
+  font-size: 5px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* ---- Info Panel ---- */
+.ir-info-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5mm;
+  margin-bottom: 6mm;
+  align-items: start;
+}
+
+.ir-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3mm;
+  padding: 3mm;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 20mm;
+}
+
+.ir-panel-result {
+  background: var(--surface-hover);
+}
+
+.ir-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 1mm;
+  margin-bottom: 2mm;
+  flex-shrink: 0;
+}
+
+.ir-panel-title {
+  font-size: 7px;
+  font-weight: 700;
+  color: var(--primary-hover);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ir-panel-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ir-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5mm;
+}
+
+.ir-panel-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5mm;
+}
+
+.ir-panel-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5mm;
+}
+
+.ir-panel-label {
+  font-size: 6px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.ir-panel-value {
+  font-size: 7px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.ir-panel-value.mono {
+  font-family: var(--font-mono);
+}
+
+/* ---- Result Card ---- */
+.ir-result-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 1mm;
+  padding: 1.5mm 3mm;
+  border-radius: 2mm;
+  font-weight: 700;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ir-result-ok {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+}
+
+.ir-result-ng {
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+}
+
+.ir-result-pending {
+  color: var(--text-secondary);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+}
+
+.ir-result-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-top: 2mm;
+  font-size: 6.5px;
+}
+
+.ir-result-meta .ir-meta-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.ir-result-meta .ir-meta-value {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.ir-remarks-row {
+  margin-top: 2mm;
+  font-size: 6px;
+  color: var(--text-secondary);
+}
+
+.ir-remarks-label {
+  font-weight: 600;
+}
+
+.ir-remarks-value {
+  margin-left: 1mm;
+  color: var(--text-primary);
+}
+
+/* ---- Hardness Table ---- */
+.ir-table-section {
+  margin-bottom: 5mm;
+}
+
+.ir-table-wrap {
+  overflow-x: auto;
+}
+
 .ir-hardness-table {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--ir-font-size);
-  margin-bottom: 4mm;
+  table-layout: fixed;
 }
 
 .ir-hardness-table th,
 .ir-hardness-table td {
   border: 1px solid var(--border);
-  padding: 2px 4px;
+  padding: 2px 3px;
   text-align: center;
-  font-family: Arial, Helvetica, sans-serif;
 }
 
-.ir-hardness-table th {
-  background: var(--surface-muted);
+.ir-thead-main th {
+  background: var(--primary-hover);
+  color: var(--text-inverse);
+  font-size: 6.5px;
   font-weight: 700;
-  color: var(--text-primary);
-  font-size: 8px;
 }
 
-.ir-hardness-table td.mono {
-  font-family: var(--font-mono);
+.ir-thead-sub th {
+  background: var(--primary);
+  color: var(--text-inverse);
+  font-size: 6px;
+  font-weight: 700;
+}
+
+.ir-thead-sub th:first-child,
+.ir-thead-sub th:nth-child(2) {
+  background: var(--primary-soft);
+  color: var(--primary-hover);
+}
+
+.ir-hardness-table tbody tr:nth-child(odd) {
+  background: var(--surface);
+}
+
+.ir-hardness-table tbody tr:nth-child(even) {
+  background: var(--surface-hover);
+}
+
+.ir-cell-num {
   font-weight: 600;
+  color: var(--primary-hover);
+  width: 6mm;
 }
 
-.ir-hardness-table td.center {
-  text-align: center;
+.ir-cell-tp {
+  width: 18mm;
 }
 
-.ir-hardness-table tfoot td {
-  background: var(--surface-muted);
+.ir-cell-val {
+  width: 20mm;
+}
+
+.ir-cell-result {
+  width: 14mm;
+}
+
+.ir-summary-row td {
+  border-top: 1px solid var(--border);
+}
+
+.ir-summary-label {
   font-weight: 700;
-  font-size: 8px;
+  color: var(--primary-hover);
+  text-align: left;
+  width: 24mm;
 }
 
-.ir-stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  margin-top: 4mm;
-  border: 1px solid var(--border);
+.ir-summary-empty {
+  width: 6mm;
+}
+
+.ir-tiny-badge {
+  display: inline-block;
+  padding: 0.5mm 2mm;
+  border-radius: 1.5mm;
+  font-size: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ir-tiny-badge.ok {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+}
+
+.ir-tiny-badge.ng {
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+}
+
+.ir-tiny-badge.pending {
+  color: var(--text-secondary);
   background: var(--surface-muted);
+  border: 1px solid var(--border);
 }
 
-.ir-stats-row .ir-meta-item {
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: white;
+/* ---- Standards ---- */
+.ir-standards-section {
+  margin-bottom: 6mm;
 }
 
-.ir-stats-row .ir-meta-item:nth-child(4n) {
-  border-right: none;
-}
-
-.ir-stats-row .ir-meta-item:last-child {
-  border-bottom: none;
-}
-
-/* ---- Standards / Criteria ---- */
 .ir-standards {
   border: 1px solid var(--border);
-  background: var(--surface-muted);
+  border-radius: 3mm;
+  overflow: hidden;
   margin-bottom: 6mm;
 }
 
 .ir-standards-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--ir-font-size);
+  font-size: 8px;
 }
 
 .ir-standards-table td {
-  padding: 2px 4px;
+  padding: 3mm 5mm;
   border-bottom: 1px solid var(--border);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-base);
 }
 
-.ir-standards-table td:last-child {
+.ir-standards-table tr:last-child td {
   border-bottom: none;
 }
 
-.ir-standards-label {
-  font-size: 8px;
+.ir-std-label {
+  width: 30%;
   color: var(--text-secondary);
   font-weight: 600;
-  width: 30%;
+  font-size: 7px;
 }
 
-.ir-standards-value {
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--text-primary);
+.ir-std-value {
   width: 70%;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 8px;
 }
 
-.ir-standards-value.mono {
+.ir-std-value.mono {
   font-family: var(--font-mono);
-}
-
-/* ---- Result badge ---- */
-.ir-result-badge {
-  display: inline-block;
-  padding: 1px 8px;
-  border-radius: 2px;
-  font-size: 9px;
-  font-weight: 700;
-  font-family: var(--font-mono);
-}
-
-.ir-result-ok {
-  color: var(--success-text);
-  border: 1px solid var(--success);
-  background: var(--success-bg);
-}
-
-.ir-result-ng {
-  color: var(--danger-text);
-  border: 1px solid var(--danger);
-  background: var(--danger-bg);
 }
 
 /* ---- Signatures ---- */
-.ir-signatures {
+.ir-approval-section {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  margin-top: 4mm;
-  border: 1px solid var(--border);
+  margin-bottom: 6mm;
 }
 
-.ir-sig-cell {
+.ir-approval-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3mm;
+  padding: 3mm 2mm;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 4mm 2mm;
-  border-right: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: white;
+  box-sizing: border-box;
 }
 
-.ir-sig-cell:nth-child(3n) {
-  border-right: none;
+.ir-approval-header {
+  display: flex;
+  align-items: center;
+  gap: 1mm;
+  margin-bottom: 2mm;
 }
 
-.ir-sig-cell:last-child {
-  border-bottom: none;
+.ir-approval-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+.ir-approval-icon svg {
+  width: 10px;
+  height: 10px;
+}
+
+.ir-approval-role {
+  font-size: 6px;
+  font-weight: 700;
+  color: var(--primary-hover);
+  letter-spacing: 0.5px;
+}
+
+.ir-approval-name {
+  font-size: 7px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .ir-sig-line {
   width: 100%;
-  height: 1px;
-  background: var(--border);
-  margin: 6mm 0 3mm 0;
+  height: 0.5px;
+  border-bottom: 0.5px solid var(--border);
+  margin: 1mm 0;
+}
+
+.ir-sig-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 1mm 0 0.5mm;
+}
+
+.ir-sig-hint {
+  font-size: 5px;
+  color: var(--text-tertiary);
+}
+
+.ir-sig-date-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 0.5mm;
+}
+
+.ir-sig-date-label {
+  font-size: 5px;
+  color: var(--text-tertiary);
+}
+
+.ir-sig-date-value {
+  font-size: 5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.ir-signature-box {
+  width: 100%;
+  height: 10mm;
+  border: 1px dashed var(--border);
+  border-radius: 2mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1mm;
+  background: var(--surface-hover);
+  box-sizing: border-box;
 }
 
 .ir-sig-image {
-  max-height: 12mm;
-  max-width: 30mm;
-  display: block;
-  margin: 2mm 0;
+  max-height: 7mm;
+  max-width: 100%;
 }
 
 .ir-sig-placeholder {
-  display: inline-block;
-  padding: 3mm 2mm;
-  border: 1px dashed var(--border);
-  font-size: 8px;
-  color: var(--text-secondary);
-  text-align: center;
-  margin: 2mm 0;
+  font-size: 5px;
+  color: var(--text-tertiary);
 }
 
-.ir-sig-name {
-  font-size: 9px;
+.ir-approval-title {
+  font-size: 6px;
+  color: var(--primary);
   font-weight: 600;
-  margin: 1mm 0;
+  margin-bottom: 1px;
 }
 
-.ir-sig-title {
-  font-size: 8px;
-  color: var(--text-secondary);
-  margin: 1mm 0;
+.ir-approval-badge {
+  display: inline-block;
+  padding: 0.5mm 3mm;
+  border-radius: 1.5mm;
+  font-size: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-.ir-sig-date {
-  font-size: 8px;
-  color: var(--text-secondary);
-  margin: 1mm 0;
+.ir-badge-ok {
+  color: var(--success-text);
+  background: var(--success-bg);
+  border: 1px solid var(--success);
 }
 
+.ir-badge-incomplete {
+  color: var(--danger-text);
+  background: var(--danger-bg);
+  border: 1px solid var(--danger);
+}
+
+/* ---- Supervisor Notes ---- */
 .ir-sup-notes {
-  font-size: 8px;
+  font-size: 6px;
   color: var(--text-primary);
-  margin-top: 2mm;
-  padding: 2mm 4px;
-  background: var(--surface-muted);
+  padding: 2mm 4mm;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: 2mm;
+  margin-bottom: 6mm;
+}
+
+/* ---- Notes ---- */
+.ir-notes-section {
+  margin-bottom: 6mm;
+}
+
+.ir-notes-title {
+  font-size: 7px;
+  font-weight: 700;
+  color: var(--primary-hover);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2mm;
+}
+
+.ir-notes-box {
+  border: 1px dashed var(--border);
+  border-radius: 3mm;
+  padding: 3mm;
+  background: var(--surface-hover);
+}
+
+.ir-notes-label {
+  font-size: 6px;
+  font-weight: 700;
+  color: var(--primary-hover);
+  margin-bottom: 2mm;
+}
+
+.ir-notes-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5mm;
+}
+
+.ir-note-line {
+  height: 1px;
+  background: var(--border);
+}
+
+.ir-note-line.wide {
+  width: 100%;
+}
+
+.ir-note-line.mid {
+  width: 75%;
+}
+
+.ir-note-line.short {
+  width: 50%;
 }
 
 /* ---- Footer ---- */
@@ -740,20 +996,9 @@
   margin-top: 6mm;
   padding-top: 2mm;
   border-top: 1px solid var(--border);
-  font-size: 7px;
+  font-size: 6px;
   color: var(--text-secondary);
   text-align: center;
-}
-
-.ir-footer-qr {
-  display: inline-block;
-  width: 16mm;
-  height: 16mm;
-  background: white;
-  border: 1px solid var(--border);
-  padding: 1mm;
-  vertical-align: middle;
-  margin-right: 3mm;
 }
 
 /* ===== Print styles ===== */
@@ -777,6 +1022,24 @@
     font-family: Arial, Helvetica, sans-serif;
   }
 
+  .ir-document {
+    border: none;
+    border-radius: 0;
+    padding: 10mm;
+    margin: 0;
+    max-width: none;
+    width: var(--ir-page-width);
+    height: var(--ir-page-height);
+    box-sizing: border-box;
+    page-break-after: auto;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  /* Hide app chrome when printing from the main page (printable report is
+     still produced via the about:blank print window). */
   .ht-sidebar,
   .ht-header,
   .ht-ir-actions,
@@ -788,22 +1051,5 @@
   .ht-ir-status-badge,
   .ht-empty-icon {
     display: none !important;
-  }
-
-  .ir-document {
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    margin: 0;
-    max-width: none;
-    width: var(--ir-page-width);
-    height: var(--ir-page-height);
-    box-sizing: border-box;
-    padding: var(--ir-page-padding);
-    page-break-after: auto;
-  }
-
-  body {
-    background: white !important;
   }
 }

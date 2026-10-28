@@ -46,6 +46,15 @@
   z-index: 1;
 }
 
+/* Wrapper panel kanan: kartu login + footer */
+.ht-login-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 /* ============================================================
    PANEL KIRI — Branding Industri
    ============================================================ */
@@ -489,6 +498,30 @@
 }
 
 /* ============================================================
+   FOOTER — Copyright & Alamat Perusahaan
+   ============================================================ */
+
+.ht-login-footer {
+  text-align: center;
+  margin-top: 14px;
+  padding: 0 16px;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  position: relative;
+  z-index: 1;
+}
+
+.ht-login-copyright {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.ht-login-address {
+  margin: 3px 0 0;
+  line-height: 1.4;
+}
+
+/* ============================================================
    RESPONSIF
    ============================================================ */
 
@@ -575,6 +608,10 @@
 
   .ht-login-hint {
     margin-top: 22px;
+  }
+
+  .ht-login-footer {
+    padding: 12px 16px;
   }
 }
 
