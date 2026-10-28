@@ -15,12 +15,12 @@ class MemoryStorage {
 global.localStorage = new MemoryStorage();
 
 // Load DB
-const dbCode = fs.readFileSync(path.join(__dirname, "js", "db.js"), "utf8");
+const dbCode = fs.readFileSync(path.join(__dirname, "..", "js", "db.js"), "utf8");
 const DB = new Function("localStorage", dbCode + "\n; return DB;")(global.localStorage);
 DB.init();
 
 // Load date-format globals (function declarations are scoped to the eval, capture & expose)
-const dfCode = fs.readFileSync(path.join(__dirname, "js", "date-format.js"), "utf8");
+const dfCode = fs.readFileSync(path.join(__dirname, "..", "js", "date-format.js"), "utf8");
 const df = new Function(dfCode + "\n; return { formatDateLong: formatDateLong, formatDateLongWithTime: formatDateLongWithTime, HTDateFormat: HTDateFormat };")();
 global.formatDateLong = df.formatDateLong;
 global.formatDateLongWithTime = df.formatDateLongWithTime;
@@ -34,7 +34,7 @@ global.HTDateFormat = global.HTDateFormat;
 global.document = { getElementById:function(){return null;}, addEventListener:function(){} };
 
 // Load RCF from report-center.js (references DB, formatDateLong, HTDateFormat, HTUI, QRCode as globals)
-const rcCode = fs.readFileSync(path.join(__dirname, "js", "report-center.js"), "utf8");
+const rcCode = fs.readFileSync(path.join(__dirname, "..", "js", "report-center.js"), "utf8");
 const deps = ["DB","formatDateLong","HTDateFormat","HTUI","QRCode","window","document"];
 const factory = new Function(...deps, rcCode + "\n; return RCF;");
 const RCF = factory(DB, global.formatDateLong, global.HTDateFormat, global.HTUI, global.QRCode, global.window, global.document);
@@ -94,8 +94,8 @@ const css = RCF._getInlineCss();
 
 // Build snapshot
 const docHtml = '<!doctype html><html><head><meta charset="UTF-8"><title>Snapshot</title><style>' + css + '</style></head><body>' + html + '</body></html>';
-fs.writeFileSync(path.join(__dirname, "out_snapshot.html"), docHtml);
-console.log("snapshot written:", path.join(__dirname,"out_snapshot.html"));
+fs.writeFileSync(path.join(__dirname, "..", "out_snapshot.html"), docHtml);
+console.log("snapshot written:", path.join(__dirname,"..","out_snapshot.html"));
 
 // Assertions
 const isLandscape = /A4\s+landscape/i.test(css);

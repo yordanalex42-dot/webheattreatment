@@ -320,96 +320,91 @@
               <div class="ht-tracking-layout">
                 <!-- Left column (30-32%) -->
                 <div class="ht-tracking-left">
-                  <!-- Card 1: Identitas pekerjaan -->
-                  <div class="ht-card">
-                    <div class="ht-card-header">
-                      <h3 class="ht-card-title">Identitas Pekerjaan</h3>
-                    </div>
-                    <div class="ht-tracking-identity-grid">
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Customer</span>
-                        <span class="ht-info-value" id="trackCustomer">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Nama Part</span>
-                        <span class="ht-info-value" id="trackNamaPart">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Status Part</span>
-                        <span class="ht-info-value" id="trackStatusPart">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Nomor Part</span>
-                        <span class="ht-info-value mono" id="trackNoPart">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Control Number</span>
-                        <span class="ht-info-value mono ht-info-value-big" id="trackKode">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Lot Number</span>
-                        <span class="ht-info-value mono" id="trackLot">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Charge Number</span>
-                        <span class="ht-info-value mono" id="trackCharge">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Process Name</span>
-                        <span class="ht-info-value" id="trackProcessType">-</span>
-                      </div>
-                    </div>
-                  </div>
+            <!-- Card: Data Material -->
+            <div class="ht-card">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Data Material</h3>
+              </div>
+              <!-- Bagian A: Control Number + Customer + Status Part -->
+              <div class="ht-material-main">
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Control Number</span>
+                  <span class="ht-info-value mono ht-info-value-big" id="trackKode">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Customer</span>
+                  <span class="ht-info-value" id="trackCustomer">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Status Part</span>
+                  <span class="ht-info-value" id="trackStatusPart">-</span>
+                </div>
+              </div>
+              <!-- Bagian B: 4-column detail grid -->
+              <div class="ht-material-grid">
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Nama Part</span>
+                  <span class="ht-info-value" id="trackNamaPart">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Nomor Part</span>
+                  <span class="ht-info-value mono" id="trackNoPart">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Lot Number</span>
+                  <span class="ht-info-value mono" id="trackLot">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Charge Number</span>
+                  <span class="ht-info-value mono" id="trackCharge">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Process Name</span>
+                  <span class="ht-info-value" id="trackProcessType">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Tanggal Incoming</span>
+                  <span class="ht-info-value" id="trackTanggalMasuk">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Inspector</span>
+                  <span class="ht-info-value" id="trackInspector">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Target Hardness</span>
+                  <span class="ht-info-value mono" id="trackTargetHardness">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">No Surat Jalan</span>
+                  <span class="ht-info-value mono" id="trackSJ">-</span>
+                </div>
+                <div class="ht-info-item">
+                  <span class="ht-info-label">Delivery Date</span>
+                  <span class="ht-info-value" id="trackDeliveryDate">-</span>
+                </div>
+                <div class="ht-info-item ht-info-item-wide">
+                  <span class="ht-info-label">Remarks</span>
+                  <span class="ht-info-value" id="trackRemarks">-</span>
+                </div>
+              </div>
+            </div>
 
-                  <!-- Card 2: Kuantitas part -->
-                  <div class="ht-card">
-                    <div class="ht-card-header">
-                      <h3 class="ht-card-title">Kuantitas Part</h3>
-                    </div>
-                    <table class="ht-table ht-table-sm">
-                      <thead>
-                        <tr>
-                          <th>Alur</th>
-                          <th>Qty (pcs)</th>
-                          <th>Weight (kg)</th>
-                        </tr>
-                      </thead>
-                      <tbody id="trackingQtyTableBody"></tbody>
-                    </table>
-                  </div>
-
-                  <!-- Card 3: Tanggal & catatan -->
-                  <div class="ht-card">
-                    <div class="ht-card-header">
-                      <h3 class="ht-card-title">Tanggal &amp; Catatan</h3>
-                    </div>
-                    <div class="ht-tracking-dates-grid">
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Tanggal Incoming</span>
-                        <span class="ht-info-value" id="trackTanggalMasuk">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Inspector</span>
-                        <span class="ht-info-value" id="trackInspector">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Target Hardness</span>
-                        <span class="ht-info-value mono" id="trackTargetHardness">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">No Surat Jalan</span>
-                        <span class="ht-info-value mono" id="trackSJ">-</span>
-                      </div>
-                      <div class="ht-info-item">
-                        <span class="ht-info-label">Delivery Date</span>
-                        <span class="ht-info-value" id="trackDeliveryDate">-</span>
-                      </div>
-                      <div class="ht-info-item ht-info-item-wide">
-                        <span class="ht-info-label">Remarks</span>
-                        <span class="ht-info-value" id="trackRemarks">-</span>
-                      </div>
-                    </div>
-                  </div>
+            <!-- Card 2: Kuantitas part -->
+            <div class="ht-card">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Kuantitas Part</h3>
+              </div>
+              <table class="ht-table ht-table-sm">
+                <thead>
+                  <tr>
+                    <th>Alur</th>
+                    <th>Qty (pcs)</th>
+                    <th>Weight (kg)</th>
+                  </tr>
+                </thead>
+                <tbody id="trackingQtyTableBody"></tbody>
+              </table>
+            </div>
                 </div>
 
                 <!-- Right column: Timeline -->
@@ -417,7 +412,7 @@
                    <div class="ht-card">
                      <div class="ht-card-header">
                        <div class="ht-card-header-title-group">
-                         <h3 class="ht-card-title">Timeline Proses</h3>
+                          <h3 class="ht-card-title">Timeline Status Produksi</h3>
                          <p class="ht-card-subtitle">Waktu aktual mengikuti waktu yang tersimpan di aplikasi</p>
                        </div>
                      </div>
@@ -575,6 +570,7 @@
         clearSearchError();
         renderTracking(material);
       }
+      var PROCESS_ORDER = ["HT", "SHOTBLAST", "ANTI_RUST"];
       var STEP_LABELS = {
         INCOMING: "INCOMING",
         HT: "HEAT TREATMENT",

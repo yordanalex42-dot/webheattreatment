@@ -1,13 +1,14 @@
 // Final structural verification of the redesign.
 const fs = require("fs");
-const h = fs.readFileSync("tracking.html", "utf8");
+const path = require("path");
+const h = fs.readFileSync(path.join(__dirname, "..", "tracking.html"), "utf8");
 const m = h.match(/<script>([\s\S]*?)<\/script>/);
 const inline = m[1];
 let ob = 0, cb = 0;
 for (const ch of inline) { if (ch === "{") ob++; if (ch === "}") cb++; }
 console.log("inline braces {=", ob, "}=", cb, "balanced=", ob === cb);
 
-const css = fs.readFileSync("css/components.css", "utf8");
+const css = fs.readFileSync(path.join(__dirname, "..", "css", "components.css"), "utf8");
 let o2 = 0, c2 = 0;
 for (const ch of css) { if (ch === "{") o2++; if (ch === "}") c2++; }
 console.log("css braces {=", o2, "}=", c2, "balanced=", o2 === c2);

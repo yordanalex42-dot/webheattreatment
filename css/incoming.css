@@ -1,0 +1,149 @@
+/* ===== Searchable dropdown (combobox) — Incoming form ===== */
+.ht-search-select {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+.ht-search-select .ht-search-input {
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+.ht-search-select .ht-search-listbox {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  max-height: 224px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  margin-top: -1px;
+}
+.ht-search-select .ht-search-listbox .ht-search-item {
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ht-search-select .ht-search-listbox .ht-search-item:hover,
+.ht-search-select .ht-search-listbox .ht-search-item.ht-search-active {
+  background: var(--primary-light);
+  color: var(--primary-hover);
+  font-weight: 600;
+}
+.ht-search-select .ht-search-listbox .ht-search-item.ht-search-disabled {
+  color: var(--text-tertiary);
+  font-style: italic;
+  cursor: default;
+}
+
+/* ===== Incoming page: centered add button ===== */
+.ht-add-btn-center {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+.ht-btn-add-incoming {
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 12px 32px;
+  font-size: 15px;
+  border-radius: var(--radius-md);
+  border: none;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  transition:
+    background-color 0.15s ease,
+    transform 0.02s ease;
+}
+.ht-btn-add-incoming:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+}
+.ht-btn-add-incoming:active {
+  transform: translateY(0) scale(0.98);
+}
+.ht-btn-add-incoming:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+.ht-btn-add-incoming .icon {
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+  filter: brightness(0) invert(1);
+}
+
+/* ===== Incoming form modal ===== */
+.incoming-modal-width {
+  max-width: 800px;
+  max-height: 88vh;
+}
+
+/* Ikon putih pada tombol sekunder di modal QR Code */
+#qrModal .ht-btn-secondary .icon,
+#saveResultModal .ht-btn-secondary .icon {
+  filter: brightness(0) invert(1);
+}
+
+/* Alignment: Control Number di kiri, tombol di kanan, same row */
+#formModalOverlay .ht-modal-footer .ht-kode-bar {
+  width: 100%;
+  justify-content: space-between;
+  margin-top: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+#formModalOverlay .ht-modal-footer .ht-kode-bar .ht-kode-info {
+  flex: 0 0 auto;
+}
+
+/* ===== Incoming table: scroll + spacing + sticky header ===== */
+.incoming-table-wrapper {
+  max-height: 60vh;
+  overflow: auto;
+  border-radius: var(--radius-lg);
+}
+.incoming-table-wrapper .ht-table {
+  font-size: 13px;
+  min-width: max-content;
+}
+.incoming-table-wrapper .ht-table th {
+  padding: 12px 16px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  background: var(--surface-hover);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  white-space: nowrap;
+}
+.incoming-table-wrapper .ht-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.incoming-table-wrapper .ht-table tbody tr:nth-child(even) {
+  background: var(--surface);
+}
+.incoming-table-wrapper .ht-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+.incoming-table-wrapper .ht-table tbody tr:last-child td {
+  border-bottom: none;
+}

@@ -13,20 +13,20 @@ function mockDocument() {
   return { getElementById(id) { if (!domElements[id]) domElements[id] = { _tag:id,innerHTML:"",textContent:"",classList:{_c:new Set(),add(c){this._c.add(c);},remove(c){this._c.delete(c);},contains(c){return this._c.has(c);},toggle(c,f){if(f===true)this._c.add(c);else if(f===false)this._c.delete(c);else{this._c.has(c)?this._c.delete(c):this._c.add(c);}},},appendChild(c){return c;},setAttribute(n,v){this[n]=v;},getAttribute(n){return this[n]||null;} }; return domElements[id]; }, createElement(t){return mockDocument().getElementById("_"+t);} };
 }
 global.localStorage = new MemoryStorage();
-const dbCode = fs.readFileSync(path.join(__dirname,"js","db.js"),"utf8").replace("const DB","var DB");
+const dbCode = fs.readFileSync(path.join(__dirname,"..","js","db.js"),"utf8").replace("const DB","var DB");
 const DB = new Function("localStorage", dbCode + "\n; return DB;")(global.localStorage);
 DB.init();
 global.document = mockDocument();
 global.Auth = { getSession: () => ({name:"user"}) };
-const df = fs.readFileSync(path.join(__dirname,"js","date-format.js"),"utf8");
-const html = fs.readFileSync(path.join(__dirname,"tracking.html"),"utf8");
+const df = fs.readFileSync(path.join(__dirname,"..","js","date-format.js"),"utf8");
+const html = fs.readFileSync(path.join(__dirname,"..","tracking.html"),"utf8");
 const inline = (html.match(/<script>([\s\S]*?)<\/script>/)||[])[1]||"";
 const code = df + "\n" + inline + "\n";
 const HTUI = { requireAuth: () => true };
 const fn = new Function("DB","document","HTUI","window", code + "\n; return { buildTimeline: buildTimeline, renderTimeline: renderTimeline };");
 const api = fn(DB, global.document, HTUI, { addEventListener(){} });
 
-const m = DB.findByKode("20260002I"); // no anti-rust
+const m = DB.findByKode("1M"); // no anti-rust
 const part = DB.findPartById(m.part_id);
 const customer = DB.findCustomerById(m.customer_id);
 const qcs = DB.get("qcs").filter(q => String(q.material_id) === String(m.id));

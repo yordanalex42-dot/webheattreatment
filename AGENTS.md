@@ -18,11 +18,11 @@ node --check js/report-center.js
 node --check js/db.js
 
 # Layout + data invariants (landscape, sections, derived standards, table shape)
-node verify_report_landscape.js
+node tests/verify_report_landscape.js
 ```
 
-`verify_report_landscape.js` seeds an in-memory DB, renders the document, writes a print-preview snapshot
-(`out_snapshot.html`), and asserts: A4 landscape, 297×210mm page box, all report sections present, 7-column
+`tests/verify_report_landscape.js` seeds an in-memory DB, renders the document, writes a print-preview snapshot
+(`out_snapshot.html` at project root), and asserts: A4 landscape, 297×210mm page box, all report sections present, 7-column
 table with 12 Test Pieces + 1 Average row, derived Toleransi/Metode, 3 approval cards, 6 note lines.
 
 ## Notes
