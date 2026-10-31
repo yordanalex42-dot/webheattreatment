@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Final Inspection Report - Sistem Informasi Produksi Heat Treatment</title>
+    <title>Inspection Report - Sistem Informasi Produksi Heat Treatment</title>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="css/global.css" />
@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
     <link rel="stylesheet" href="css/inspection-report.css" />
-    <link rel="stylesheet" href="css/report-center.css" />
   </head>
   <body>
     <div class="ht-app-shell">
@@ -165,20 +164,11 @@
               </a>
             </div>
           </div>
-
           <div class="nav-section">
             <p class="nav-section_title ht-nav-section-title">Quality Control</p>
             <a href="qc.html" class="ht-nav-link">
-              <img
-                src="assets/icons/quality-control.svg"
-                alt="Input Data"
-                class="sidebar-menu-icon"
-              />
+              <img src="assets/icons/quality-control.svg" alt="Input Data" class="sidebar-menu-icon" />
               Input Data
-            </a>
-            <a href="inspection-report.html" class="ht-nav-link active">
-              <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
-              Inspection Report
             </a>
             <a href="leader-qc.html" class="ht-nav-link">
               <img src="assets/icons/gavel.svg" alt="Leader QC" class="sidebar-menu-icon" />
@@ -187,6 +177,10 @@
             <a href="supervisor-qc.html" class="ht-nav-link">
               <img src="assets/icons/user.svg" alt="Supervisor QC" class="sidebar-menu-icon" />
               Supervisor QC
+            </a>
+            <a href="inspection-report.html" class="ht-nav-link active">
+              <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
+              Inspection Report
             </a>
           </div>
           <div class="nav-section">
@@ -222,6 +216,196 @@
       </aside>
 
       <main class="ht-main">
+        <header class="ht-header">
+          <div class="ht-header-left">
+            <nav class="ht-breadcrumb" aria-label="Breadcrumb">
+              <span class="ht-breadcrumb-item">Dashboard</span>
+              <span class="ht-breadcrumb-separator">/</span>
+              <span class="ht-breadcrumb-item ht-breadcrumb-current">Inspection Report</span>
+            </nav>
+            <h1 class="ht-page-title">Inspection Report</h1>
+            <p class="ht-page-description">
+              Cari dan cetak laporan inspeksi berdasarkan data hardness
+              dan judgement QC yang telah disimpan.
+            </p>
+          </div>
+          <div class="ht-header-right">
+            <span class="ht-header-date" id="currentDate"></span>
+          </div>
+        </header>
+
+        <div class="ht-content">
+          <div class="ht-content-max">
+
+            <!-- Access Guard (Admin only) -->
+            <div id="accessGuard" class="hidden">
+              <div class="ht-card fade-in">
+                <div class="ht-card-body text-center" style="padding: 48px 24px;">
+                  <img src="assets/icons/empty-state.svg" alt="" class="ht-empty-icon" />
+                  <h3 class="ht-empty-title">Akses Ditolak</h3>
+                  <p class="ht-empty-text">
+                    Halaman Inspection Report hanya dapat diakses oleh role Admin.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scanner + Search Panel -->
+            <section class="ht-card fade-in" id="searchPanel">
+              <div class="ht-card-header">
+                <h3 class="ht-card-title">Scan QR Code Material</h3>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex-1">
+                  <div class="flex gap-2 mb-2">
+                    <button
+                      type="button"
+                      id="btnScanQR"
+                      class="ht-btn ht-btn-primary ht-btn-sm hidden"
+                      aria-label="Mulai pemindaian QR Code"
+                    >
+                      <img
+                        src="assets/icons/qr-scan.svg"
+                        alt="QR"
+                        class="icon mr-1"
+                      />
+                      Scan QR Code
+                    </button>
+                  </div>
+                  <div id="qr-reader" class="ht-qr-frame"></div>
+                  <p id="qrError" class="ht-error-text hidden mt-2"></p>
+                  <button
+                    type="button"
+                    id="btnRetryCamera"
+                    class="ht-btn ht-btn-primary ht-btn-sm hidden mt-2"
+                    aria-label="Coba lagi kamera"
+                  >
+                    <img src="assets/icons/refresh.svg" alt="Coba lagi" class="icon mr-1" />
+                    Coba Lagi Kamera
+                  </button>
+                  <p class="ht-hint text-center mt-3">
+                    Arahkan kamera ke QR Code material
+                  </p>
+                </div>
+                <div class="space-y-2">
+                  <p class="ht-hint">Atau masukkan kode secara manual:</p>
+                  <div class="flex gap-2">
+                    <input
+                      type="text"
+                      id="materialCodeInput"
+                      class="ht-form-input flex-1"
+                      placeholder="Masukkan kode material (contoh: 1M, 20260004I)"
+                      aria-label="Nomor kode material"
+                      autocomplete="off"
+                    />
+                    <button
+                      type="button"
+                      id="btnSearch"
+                      class="ht-btn ht-btn-primary ht-btn-sm"
+                      aria-label="Cari"
+                    >
+                      <img src="assets/icons/search.svg" alt="Cari" class="icon mr-1" />
+                      Cari
+                    </button>
+                  </div>
+                  <p id="searchError" class="hidden ht-error-text mt-2"></p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Inspection Report Content (hidden until search) -->
+            <section id="reportPanel" class="hidden">
+              <div class="ht-ir-report-actions mt-4 flex gap-2">
+                <button
+                  type="button"
+                  id="btnPrint"
+                  class="ht-btn ht-btn-secondary-outlined"
+                  aria-label="Print laporan"
+                >
+                  <img src="assets/icons/print.svg" alt="Print" class="icon mr-1" />
+                  Print
+                </button>
+                <button
+                  type="button"
+                  id="btnDownloadPdf"
+                  class="ht-btn ht-btn-success"
+                  aria-label="Unduh PDF"
+                >
+                  <img src="assets/icons/download.svg" alt="Download" class="icon mr-1" />
+                  Download PDF
+                </button>
+              </div>
+
+              <!-- Judgement Notification -->
+              <div id="judgementNotification" class="ht-ir-judgment-notification hidden">
+                <img src="assets/icons/warning.svg" alt="Warning" class="ht-ir-judgment-icon" />
+                <div class="ht-ir-judgment-content">
+                  <p id="judgementNotificationText" class="ht-ir-judgment-title"></p>
+                  <ul id="judgementNotificationDetail" class="ht-ir-judgment-detail"></ul>
+                </div>
+              </div>
+
+              <!-- Part Info Card -->
+              <section class="ht-card fade-in mt-3" id="partInfoCard">
+                <div class="ht-card-header">
+                  <h3 class="ht-card-title">Informasi Part</h3>
+                </div>
+                <div class="ht-card-body">
+                  <div class="ht-info-grid" id="partInfoGrid">
+                    <!-- populated by JS -->
+                  </div>
+                </div>
+              </section>
+
+              <!-- Hardness Table Card -->
+              <section class="ht-card fade-in mt-3" id="hardnessTableCard">
+                <div class="ht-card-header">
+                  <h3 class="ht-card-title">Tabel Hasil Hardness</h3>
+                </div>
+                <div class="ht-card-body">
+                  <div class="ht-table-responsive" id="hardnessTableWrapper">
+                    <!-- populated by JS -->
+                  </div>
+                </div>
+              </section>
+
+              <!-- Judgement Card -->
+              <section class="ht-card fade-in mt-3" id="judgementCard">
+                <div class="ht-card-header">
+                  <h3 class="ht-card-title">Judgement dan Approval</h3>
+                </div>
+                <div class="ht-card-body">
+                  <div class="ht-ir-judgement-grid" id="judgementGrid">
+                    <!-- populated by JS -->
+                  </div>
+                </div>
+              </section>
+            </section>
+
+            <!-- Not Found State -->
+            <div id="notFoundState" class="hidden mt-3">
+              <div class="ht-ir-not-found">
+                <img src="assets/icons/warning.svg" alt="Warning" class="ht-ir-not-found-icon" />
+                <div class="ht-ir-not-found-text">
+                  <h3 class="ht-ir-not-found-title">Material Tidak Ditemukan</h3>
+                  <p class="ht-ir-not-found-desc">
+                    Kode material yang Anda cari tidak terdaftar dalam sistem.
+                    Periksa kembali kode tersebut atau hubungi tim Incoming.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  id="btnClearSearch"
+                  class="ht-btn ht-btn-secondary ht-btn-sm"
+                  aria-label="Cari lagi"
+                >
+                  Cari Lagi
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </main>
     </div>
 
@@ -229,14 +413,21 @@
     <script src="js/auth.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/date-format.js"></script>
-    <script src="js/report-center.js"></script>
+    <script src="js/inspection-report.js"></script>
     <script>
       DB.init();
       DB.migrate();
       if (!HTUI.requireAuth()) {
         throw new Error("redirecting");
       }
-      RCF.init();
+      if (!Auth.hasRole(Auth.ROLES.ADMINISTRATOR)) {
+        document.getElementById("accessGuard").classList.remove("hidden");
+        document.getElementById("searchPanel").classList.add("hidden");
+        document.getElementById("reportPanel").classList.add("hidden");
+        document.getElementById("notFoundState").classList.add("hidden");
+        throw new Error("Akses ditolak: role Administrator diperlukan.");
+      }
+      IR.init();
     </script>
   </body>
 </html>

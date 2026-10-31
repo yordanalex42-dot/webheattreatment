@@ -1,18 +1,241 @@
 /* ============================================================
    Inspection Report — Gaya khusus modul
    Melengkapi global.css, dashboard.css, components.css,
-   tables.css, forms.css, dan report-center.css yang sudah ada.
+   tables.css, forms.css, dan icons.css yang sudah ada.
    ============================================================ */
 
-/* ===== Print styles untuk halaman utama =====
-   Menyembunyikan elemen UI ketika mencetak dari halaman utama.
-   (Dokumen final dicetak dari jendela preview terpisah.) */
+/* ===== Notifikasi Material Tidak Ditemukan (compact horizontal alert) ===== */
+.ht-ir-not-found {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 100%;
+}
+
+.ht-ir-not-found .ht-ir-not-found-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--danger-text);
+}
+
+.ht-ir-not-found .ht-ir-not-found-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin: 0;
+  color: var(--danger-text);
+}
+
+.ht-ir-not-found .ht-ir-not-found-desc {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* ===== Notifikasi Belum Ada Judgement (amber alert) ===== */
+.ht-ir-judgment-notification {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 100%;
+}
+
+.ht-ir-judgment-notification .ht-ir-judgment-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--warning-text);
+  margin-top: 2px;
+}
+
+.ht-ir-judgment-notification .ht-ir-judgment-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin: 0 0 6px 0;
+  color: var(--warning-text);
+}
+
+.ht-ir-judgment-notification .ht-ir-judgment-detail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ht-ir-judgment-notification .ht-ir-judgment-detail li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--warning-text);
+}
+
+.ht-ir-judgment-notification .ht-ir-judgment-detail .label {
+  font-weight: 500;
+  color: var(--warning-text);
+}
+
+.ht-ir-judgment-notification .ht-ir-judgment-detail .badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ht-ir-judgment-notification .ht-ir-judgment-detail .badge-ok {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 0.5px solid rgba(16, 185, 129, 0.3);
+}
+
+.ht-ir-judgment-notification .ht-ir-judgment-detail .badge-ng {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border: 0.5px solid rgba(239, 68, 68, 0.3);
+}
+
+.ht-ir-judgment-notification .ht-ir-judgment-detail .badge-pending {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border: 0.5px solid rgba(245, 158, 11, 0.3);
+}
+
+/* ===== Aksi laporan (Print / Download PDF) ===== */
+.ht-ir-report-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ===== Grid judgement (Inspector / Leader / Supervisor) ===== */
+.ht-ir-judgement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.ht-ir-judgement-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  background: var(--surface);
+}
+
+.ht-ir-judgement-item h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ht-ir-judgement-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.ht-ir-judgement-row .label {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ht-ir-judgement-row .value {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ht-ir-judgement-status-ok {
+  color: #166534;
+}
+
+.ht-ir-judgement-status-ng {
+  color: #991b1b;
+}
+
+.ht-ir-judgement-status-pending {
+  color: #475569;
+}
+
+/* ===== Signature image in judgement item ===== */
+.ht-ir-sig-img {
+  max-width: 140px;
+  max-height: 60px;
+  object-fit: contain;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+}
+
+.sig-pending {
+  font-size: 11px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ===== Tabel hardness ===== */
+.ht-ir-hardness-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.ht-ir-hardness-table th {
+  background: var(--surface-muted);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11px;
+  padding: 8px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.ht-ir-hardness-table td {
+  padding: 8px;
+  text-align: center;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+.ht-ir-hardness-table td:first-child {
+  font-weight: 600;
+  color: #475569;
+}
+
+.ht-ir-hardness-table tr.summary td {
+  background: var(--surface-muted);
+  font-weight: 700;
+}
+
+/* ===== Print styles (A4 Portrait) ===== */
 @media print {
-  .ht-sidebar { display: none !important; }
-  .ht-header-right { display: none !important; }
-  .ht-filter-bar { display: none !important; }
-  .ht-card-header .flex.items-center.gap-2 { display: none !important; }
-  .ht-action-group { display: none !important; }
+  .ht-sidebar, .ht-header, .ht-ir-report-actions, .ht-action-group, .hidden {
+    display: none !important;
+  }
 
   .ht-main {
     margin-left: 0 !important;
@@ -38,38 +261,17 @@
   body {
     background: var(--surface) !important;
   }
-}
 
-/* ============================================================
-   DOKUMEN PREVIEW — A4 report (dirender di jendela terpisah)
-   Semua style di-inline pada dokumen yang dibangkitkan JS,
-   sehingga tidak memengaruhi halaman utama.
-   ============================================================ */
-
-/* ===== Responsif tabel di perangkat kecil (halaman utama) ===== */
-@media (max-width: 768px) {
-  .ht-table {
-    font-size: 11px;
+  .ht-qr-frame {
+    display: none !important;
   }
 
-  .ht-table th,
-  .ht-table td {
-    padding: 8px 10px;
+  .ht-hint, .ht-error-text {
+    display: none !important;
   }
 }
 
-@media (max-width: 480px) {
-  .ht-table {
-    font-size: 10px;
-  }
-
-  .ht-table th,
-  .ht-table td {
-    padding: 6px 8px;
-  }
-
-  .ht-action-group.compact .ht-action-btn {
-    width: 22px;
-    height: 20px;
-  }
+@page {
+  size: A4 portrait;
+  margin: 10mm;
 }

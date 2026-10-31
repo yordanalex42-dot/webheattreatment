@@ -121,10 +121,6 @@
               <img src="assets/icons/quality-control.svg" alt="Input Data" class="sidebar-menu-icon" />
               Input Data
             </a>
-            <a href="inspection-report.html" class="ht-nav-link">
-              <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
-              Inspection Report
-            </a>
             <a href="leader-qc.html" class="ht-nav-link active">
               <img src="assets/icons/gavel.svg" alt="Leader QC" class="sidebar-menu-icon" />
               Leader QC
@@ -132,6 +128,10 @@
             <a href="supervisor-qc.html" class="ht-nav-link">
               <img src="assets/icons/user.svg" alt="Supervisor QC" class="sidebar-menu-icon" />
               Supervisor QC
+            </a>
+            <a href="inspection-report.html" class="ht-nav-link">
+              <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
+              Inspection Report
             </a>
           </div>
           <div class="nav-section">
@@ -290,7 +290,7 @@
                     <div class="ht-form-group">
                       <label class="ht-form-label">Tanda Tangan Leader QC</label>
                       <div class="ht-ir-signature-canvas">
-                        <canvas id="leaderSignatureCanvas" width="500" height="150"></canvas>
+                        <canvas id="leaderSignatureCanvas" width="500" height="150" style="touch-action:none"></canvas>
                       </div>
                       <div class="ht-ir-signature-actions">
                         <button type="button" id="btnClearLeaderSignature" class="ht-btn ht-btn-secondary-outlined ht-btn-sm">
@@ -557,51 +557,55 @@
           img.src = leaderSignatureData;
         }
 
-        if (!canvas._leaderSigBound) {
-          canvas.addEventListener("mousedown", leaderSigStart);
-          canvas.addEventListener("mousemove", leaderSigContinue);
-          canvas.addEventListener("mouseup", leaderSigStop);
-          canvas.addEventListener("mouseleave", leaderSigStop);
-          canvas.addEventListener("touchstart", leaderSigTouchStart);
-          canvas.addEventListener("touchmove", leaderSigTouchMove);
-          canvas.addEventListener("touchend", leaderSigStop);
-          canvas._leaderSigBound = true;
-        }
+      if (!canvas._leaderSigBound) {
+        canvas.addEventListener("pointerdown", leaderSigStart);
+        canvas.addEventListener("pointermove", leaderSigContinue);
+        canvas.addEventListener("pointerup", leaderSigStop);
+        canvas.addEventListener("pointerleave", leaderSigStop);
+        canvas.addEventListener("pointercancel", leaderSigStop);
+        canvas._leaderSigBound = true;
+      }
       }
 
       var leaderDrawing = false;
+      var leaderPointerId = null;
       function leaderSigStart(e) {
         leaderDrawing = true;
+        leaderPointerId = e.pointerId;
+        e.preventDefault();
         var canvas = e.target;
+        canvas.setPointerCapture(e.pointerId);
         var ctx = canvas.getContext("2d");
         var rect = canvas.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        var x = (e.clientX - rect.left) * scaleX;
+        var y = (e.clientY - rect.top) * scaleY;
         ctx.beginPath();
         ctx.moveTo(x, y);
       }
       function leaderSigContinue(e) {
         if (!leaderDrawing) return;
+        if (e.pointerId !== leaderPointerId) return;
         e.preventDefault();
         var canvas = e.target;
         var ctx = canvas.getContext("2d");
         var rect = canvas.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        var x = (e.clientX - rect.left) * scaleX;
+        var y = (e.clientY - rect.top) * scaleY;
         ctx.lineTo(x, y);
         ctx.stroke();
       }
       function leaderSigStop(e) {
         if (!leaderDrawing) return;
+        if (e.pointerId !== leaderPointerId) return;
         leaderDrawing = false;
+        leaderPointerId = null;
         var canvas = e.target;
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
         leaderSignatureData = canvas.toDataURL("image/png");
-      }
-      function leaderSigTouchStart(e) {
-        if (e.touches && e.touches.length > 0) leaderSigStart({ target: e.target, clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
-      }
-      function leaderSigTouchMove(e) {
-        if (e.touches && e.touches.length > 0) leaderSigContinue({ target: e.target, touches: e.touches });
       }
 
       function clearLeaderSignature() {

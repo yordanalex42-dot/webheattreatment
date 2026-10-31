@@ -1,2063 +1,947 @@
 /* ============================================================
-   HT-InspectionReport — Modul Inspection Report
-   PT CHUNETSU INDONESIA — Sistem Informasi Produksi Heat Treatment
-
-   Penyimpanan: localStorage 'ht_inspection_reports'
-   (terpisah dari DB.tables / DB.SCHEMAS — tidak mengganggu
-    migrasi, seed, atau data produksi yang sudah ada.)
-
-   Alur status:
-     Draft → Pending Approval → Approved | Rejected
-     Rejected → Edit (revisi) → Draft → Pending Approval
-
-   Batasan aplikasi browser-only:
-     - Hanya role "Administrator" yang tersedia di js/auth.js.
-     - Approval dilakukan oleh user yang sedang login (dari session).
-     - Nama approver diambil dari session, bukan dari input bebas.
-     - Di lingkungan produksi dengan role terpisah (Operator/Supervisor),
-       kontrol tambahan perlu ditambahkan di sisi server.
+   Inspection Report — Modul laporan inspeksi untuk Admin
+   Memeriksa material via Scan QR Code atau Control Number,
+   lalu menampilkan laporan hardness dan judgement QC.
    ============================================================ */
 
-const HTInspectionReport = {
-  STORAGE_KEY: "ht_inspection_reports",
-
-  STATUSES: {
-    DRAFT: "Draft",
-    PENDING: "Pending Approval",
-    APPROVED: "Approved",
-    REJECTED: "Rejected",
-  },
-
-  JUDGEMENT: {
-    OK: "OK",
-    NG: "NG",
-  },
-
-  HARNESS_UNITS: ["HRC", "HV", "HB"],
-
+const IR = {
   state: {
-    searchQuery: "",
-    statusFilter: "all",
-    dateFilter: "",
-    pageSize: 25,
-    currentPage: 1,
-    currentReport: null,
-    isEditMode: false,
+    currentMaterial: null,
+    currentPart: null,
+    currentCustomer: null,
+    currentProduction: null,
+    afterQc: null,
+    beforeQc: null,
+    html5QrCode: null,
+    isScanning: false,
+    cameraAutoStarted: false,
+    cameraPermissionDenied: false,
+    cameraNotAvailable: false,
   },
 
-  _el: {},
-
+  /* ---- Inisialisasi halaman ---- */
   init() {
-    this._cacheElements();
-    this._bindEvents();
-    this._bindModalClose();
-    this.renderSummary();
-    this.renderTable();
+    this.bindEvents();
+    /* Scanner diaktifkan otomatis saat halaman dibuka (Admin only). */
+    this.startAutoCamera();
   },
 
-  /* ----------------------------------------------------------
-     Cache DOM elements
-     ---------------------------------------------------------- */
-  _cacheElements() {
-    this._el = {
-      totalKpi: document.getElementById("kpiTotalReports"),
-      draftKpi: document.getElementById("kpiDraft"),
-      pendingKpi: document.getElementById("kpiPending"),
-      approvedKpi: document.getElementById("kpiApproved"),
-      rejectedKpi: document.getElementById("kpiRejected"),
-      searchInput: document.getElementById("reportSearchInput"),
-      statusFilter: document.getElementById("reportStatusFilter"),
-      dateFilter: document.getElementById("reportDateFilter"),
-      resetBtn: document.getElementById("reportResetBtn"),
-      pageSizeSelect: document.getElementById("reportPageSize"),
-      tableBody: document.getElementById("reportTableBody"),
-      pagination: document.getElementById("reportPagination"),
-      pageInfo: document.getElementById("reportPageInfo"),
-      totalItems: document.getElementById("reportTotalItems"),
-      prevPage: document.getElementById("reportPrevPage"),
-      nextPage: document.getElementById("reportNextPage"),
-      pageNumbers: document.getElementById("reportPageNumbers"),
-      createBtn: document.getElementById("btnCreateReport"),
-      formModal: document.getElementById("reportFormModal"),
-      formTitle: document.getElementById("reportFormTitle"),
-      formSubtitle: document.getElementById("reportFormSubtitle"),
-       formEl: document.getElementById("reportForm"),
-      materialSelect: document.getElementById("reportControlNumber"),
-      customerDisplay: document.getElementById("reportCustomer"),
-      nomorPartDisplay: document.getElementById("reportNomorPart"),
-      namaPartDisplay: document.getElementById("reportNamaPart"),
-      qtyDisplay: document.getElementById("reportQty"),
-      processTypeDisplay: document.getElementById("reportProcessType"),
-      targetHardnessDisplay: document.getElementById("reportTargetHardness"),
-      materialWarning: document.getElementById("reportMaterialWarning"),
-      hardnessInput: document.getElementById("reportHardnessActual"),
-      hardnessUnitSelect: document.getElementById("reportHardnessUnit"),
-      inspectionDateInput: document.getElementById("reportInspectionDate"),
-      inspectorInput: document.getElementById("reportInspector"),
-      inspectorNotesTextarea: document.getElementById("reportInspectorNotes"),
-      summaryBox: document.getElementById("reportSummaryBox"),
-      saveDraftBtn: document.getElementById("btnSaveDraft"),
-      sendApprovalBtn: document.getElementById("btnSendApproval"),
-      closeFormBtn: document.getElementById("btnCloseForm"),
-      cancelFormBtn: document.getElementById("btnCancelForm"),
-      approvalModal: document.getElementById("approvalModal"),
-      approvalReportNum: document.getElementById("approvalReportNumber"),
-      approvalCustomer: document.getElementById("approvalCustomer"),
-      approvalControlNum: document.getElementById("approvalControlNumber"),
-      approvalPartNo: document.getElementById("approvalNomorPart"),
-      approvalPartName: document.getElementById("approvalNamaPart"),
-      approvalQty: document.getElementById("approvalQty"),
-      approvalProcess: document.getElementById("approvalProcessType"),
-      approvalTarget: document.getElementById("approvalTargetHardness"),
-      approvalActual: document.getElementById("approvalHardnessActual"),
-      approvalUnit: document.getElementById("approvalHardnessUnit"),
-      approvalInspector: document.getElementById("approvalInspector"),
-      approvalInspectorDate: document.getElementById("approvalInspectorDate"),
-      approvalInspectorNotes: document.getElementById("approvalInspectorNotes"),
-      approvalNotesTextarea: document.getElementById("approvalNotes"),
-      approveBtn: document.getElementById("btnApproveReport"),
-      rejectBtn: document.getElementById("btnRejectReport"),
-      closeApprovalBtn: document.getElementById("btnCloseApproval"),
-      detailModal: document.getElementById("reportDetailModal"),
-      detailBody: document.getElementById("reportDetailBody"),
-      closeDetailBtn: document.getElementById("btnCloseDetail"),
-      closeDetailFooterBtn: document.getElementById("btnCloseDetailFooter"),
-    };
-  },
+  /* ---- Event binding ---- */
+  bindEvents() {
+    const self = this;
 
-  /* ----------------------------------------------------------
-     Storage (localStorage — terpisah dari DB.tables)
-     ---------------------------------------------------------- */
-  getReports() {
-    try {
-      return JSON.parse(localStorage.getItem(this.STORAGE_KEY) || "[]");
-    } catch (e) {
-      console.error("[IR] Failed to read reports:", e);
-      return [];
+    const btnScanQR = document.getElementById("btnScanQR");
+    if (btnScanQR) btnScanQR.addEventListener("click", function () { self.toggleScanner(); });
+
+    const btnRetryCamera = document.getElementById("btnRetryCamera");
+    if (btnRetryCamera) btnRetryCamera.addEventListener("click", function () { self.retryCamera(); });
+
+    const btnSearch = document.getElementById("btnSearch");
+    if (btnSearch) btnSearch.addEventListener("click", function () { self.searchMaterial(); });
+
+    const btnClear = document.getElementById("btnClearSearch");
+    if (btnClear) btnClear.addEventListener("click", function () { self.resetSearch(); });
+
+    const input = document.getElementById("materialCodeInput");
+    if (input) {
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); self.searchMaterial(); }
+      });
     }
+
+    const btnPrint = document.getElementById("btnPrint");
+    if (btnPrint) btnPrint.addEventListener("click", function () { self.printReport(); });
+
+    const btnPdf = document.getElementById("btnDownloadPdf");
+    if (btnPdf) btnPdf.addEventListener("click", function () { self.downloadPdf(); });
+
+    /* Hentikan kamera saat meninggalkan halaman */
+    window.addEventListener("beforeunload", function () { self.stopScanner(); });
+    window.addEventListener("pagehide", function () { self.stopScanner(); });
+
+    /* Restart kamera saat halaman kembali aktif jika sebelumnya scanning */
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible" && self.state.isScanning && !self.state.html5QrCode) {
+        self.startScanner();
+      }
+    });
   },
 
-  _persist(reports) {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(reports));
+  /* ---- QR Scanner ---- */
+  startAutoCamera() {
+    if (this.state.cameraAutoStarted) return;
+    this.state.cameraAutoStarted = true;
+
+    const btnScan = document.getElementById("btnScanQR");
+    const btnRetry = document.getElementById("btnRetryCamera");
+    if (btnScan) btnScan.classList.add("hidden");
+    if (btnRetry) btnRetry.classList.add("hidden");
+
+    this.startScanner();
   },
 
-  saveReport(report) {
-    const reports = this.getReports();
-    const idx = reports.findIndex((r) => r.id === report.id);
-    if (idx !== -1) {
-      reports[idx] = report;
+  toggleScanner() {
+    if (this.state.isScanning && this.state.html5QrCode) {
+      this.stopScanner();
     } else {
-      reports.push(report);
+      this.state.cameraPermissionDenied = false;
+      this.state.cameraNotAvailable = false;
+      const errEl = document.getElementById("qrError");
+      if (errEl) { errEl.classList.add("hidden"); errEl.textContent = ""; }
+      const btnRetry = document.getElementById("btnRetryCamera");
+      if (btnRetry) btnRetry.classList.add("hidden");
+      this.startScanner();
     }
-    this._persist(reports);
-    return report;
   },
 
-  updateReport(id, updates) {
-    const reports = this.getReports();
-    const idx = reports.findIndex((r) => r.id === id);
-    if (idx !== -1) {
-      const merged = { ...reports[idx], ...updates, updated_at: new Date().toISOString() };
-      reports[idx] = merged;
-      this._persist(reports);
-      return merged;
+  startScanner() {
+    if (this.state.isScanning) return;
+    if (!window.Html5Qrcode) {
+      this.state.cameraNotAvailable = true;
+      const scannerContainer = document.getElementById("qr-reader");
+      if (scannerContainer) {
+        scannerContainer.innerHTML = '<div style="width:100%;height:200px;background:#000;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:#888;font-size:13px;">Kamera tidak tersedia di browser ini. Gunakan pencarian manual.</div>';
+      }
+      const errEl = document.getElementById("qrError");
+      if (errEl) { errEl.textContent = "Kamera tidak dapat digunakan di browser ini."; errEl.classList.remove("hidden"); }
+      const btnScan = document.getElementById("btnScanQR");
+      const btnRetry = document.getElementById("btnRetryCamera");
+      if (btnScan) btnScan.classList.remove("hidden");
+      if (btnRetry) btnRetry.classList.remove("hidden");
+      return;
     }
+    this.state.html5QrCode = HTUI.createScanner("qr-reader");
+    if (!this.state.html5QrCode) {
+      this.state.cameraNotAvailable = true;
+      const btnScan = document.getElementById("btnScanQR");
+      const btnRetry = document.getElementById("btnRetryCamera");
+      if (btnScan) btnScan.classList.remove("hidden");
+      if (btnRetry) btnRetry.classList.remove("hidden");
+      return;
+    }
+    const self = this;
+    const scanner = this.state.html5QrCode;
+    scanner
+      .start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 240, height: 240 } },
+        function (decodedText) {
+          scanner.stop().then(() => { scanner.clear(); }).catch(() => {});
+          if (self.state.isScanning) {
+            self.state.isScanning = false;
+            self._updateScannerUI();
+            const id = HTUI.parseScanId(decodedText);
+            if (id) {
+              document.getElementById("materialCodeInput").value = id;
+              self.searchMaterial();
+            }
+          }
+        },
+        function (err) {
+          console.warn("[scanner]", err);
+        },
+      )
+      .catch(function (err) {
+        console.error("[scanner] start failed:", err);
+        self.state.isScanning = false;
+        self.state.cameraPermissionDenied = true;
+        self.state.html5QrCode = null;
+        const errEl = document.getElementById("qrError");
+        if (errEl) { errEl.textContent = "Akses kamera ditolak. Izinkan akses kamera untuk memindai QR Code."; errEl.classList.remove("hidden"); }
+        const btnScan = document.getElementById("btnScanQR");
+        const btnRetry = document.getElementById("btnRetryCamera");
+        if (btnScan) btnScan.classList.remove("hidden");
+        if (btnRetry) btnRetry.classList.remove("hidden");
+      });
+    this.state.isScanning = true;
+    this.state.cameraPermissionDenied = false;
+    this.state.cameraNotAvailable = false;
+    this._updateScannerUI();
+  },
+
+  retryCamera() {
+    this.state.cameraPermissionDenied = false;
+    this.state.cameraNotAvailable = false;
+    const errEl = document.getElementById("qrError");
+    if (errEl) { errEl.classList.add("hidden"); errEl.textContent = ""; }
+    const btnRetry = document.getElementById("btnRetryCamera");
+    if (btnRetry) btnRetry.classList.add("hidden");
+    const btnScan = document.getElementById("btnScanQR");
+    if (btnScan) btnScan.classList.add("hidden");
+    const scannerContainer = document.getElementById("qr-reader");
+    if (scannerContainer) scannerContainer.innerHTML = "";
+    this.state.html5QrCode = null;
+    this.state.isScanning = false;
+    this.startScanner();
+  },
+
+  stopScanner() {
+    HTUI.stopScanner(this.state.html5QrCode);
+    this.state.html5QrCode = null;
+    this.state.isScanning = false;
+    this._updateScannerUI();
+    const scannerContainer = document.getElementById("qr-reader");
+    if (scannerContainer) {
+      scannerContainer.innerHTML = "";
+    }
+    const errEl = document.getElementById("qrError");
+    if (errEl) { errEl.classList.add("hidden"); errEl.textContent = ""; }
+    const btnScan = document.getElementById("btnScanQR");
+    const btnRetry = document.getElementById("btnRetryCamera");
+    if (btnScan) btnScan.classList.remove("hidden");
+    if (btnRetry) btnRetry.classList.add("hidden");
+  },
+
+  _updateScannerUI() {
+    const scanning = !!this.state.isScanning;
+    const btnScan = document.getElementById("btnScanQR");
+    const btnRetry = document.getElementById("btnRetryCamera");
+    if (btnScan) {
+      btnScan.classList.toggle("hidden", scanning);
+      btnScan.disabled = scanning;
+      btnScan.textContent = scanning ? "Sedang Membuka Kamera..." : "Scan QR Code";
+    }
+    if (btnRetry) btnRetry.classList.add("hidden");
+  },
+
+  /* ---- Pencarian material ---- */
+  searchMaterial() {
+    const input = document.getElementById("materialCodeInput");
+    if (!input) return;
+    const kode = String(input.value || "").trim();
+    if (!kode) {
+      HTUI.toast("Masukkan kode material terlebih dahulu.", "warning");
+      return;
+    }
+
+    const material = DB.findByKode(kode);
+    if (!material) {
+      this.showNotFound();
+      HTUI.toast("Control Number tidak ditemukan: " + kode, "error");
+      return;
+    }
+
+    this.loadMaterialData(material);
+  },
+
+  loadMaterialData(material) {
+    this.state.currentMaterial = material;
+    this.state.currentPart = DB.findPartById(material.part_id) || null;
+    this.state.currentCustomer = DB.findCustomerById(material.customer_id) || null;
+    this.state.currentProduction = DB.getProcessProduction(material, "HT") || null;
+
+    /* Cari QC records (before dan after) */
+    this.state.afterQc = this._findQcByStage(material.id, "after");
+    this.state.beforeQc = this._findQcByStage(material.id, "before");
+
+    this.hideNotFound();
+    this.showReportPanel();
+    this.renderPartInfo();
+    this.renderHardnessTable();
+    this.renderJudgement();
+    this.showJudgementNotification();
+  },
+
+  _findQcByStage(materialId, stage) {
+    const qcs = DB.get("qcs").filter(function (q) {
+      return String(q.material_id) === String(materialId);
+    });
+    let result = null;
+    for (let i = 0; i < qcs.length; i++) {
+      const q = qcs[i];
+      const ext = this._parseRemarks(q);
+      const qStage = (ext && ext.stage) || "after";
+      if (qStage === stage) {
+        if (!result || (q.id || 0) > (result.id || 0)) {
+          result = q;
+        }
+      }
+    }
+    return result;
+  },
+
+  _parseRemarks(qc) {
+    if (!qc || !qc.remarks) return null;
+    try {
+      const parsed = JSON.parse(qc.remarks);
+      if (parsed && typeof parsed === "object" && parsed.stage !== undefined) {
+        return parsed;
+      }
+    } catch (e) { /* plain string */ }
     return null;
   },
 
-  _deleteReport(id) {
-    const reports = this.getReports().filter((r) => r.id !== id);
-    this._persist(reports);
+  /* ---- Render bagian Informasi Part ---- */
+  renderPartInfo() {
+    const m = this.state.currentMaterial;
+    const p = this.state.currentPart;
+    const c = this.state.currentCustomer;
+    const grid = document.getElementById("partInfoGrid");
+    if (!grid) return;
+
+    const rows = [];
+    rows.push(this._infoRow("Control Number / Kode Material", m.kode || "-", "mono"));
+    rows.push(this._infoRow("Customer", c ? c.nama_customer : "-"));
+    rows.push(this._infoRow("Part Name", p ? p.nama_part : "-"));
+    rows.push(this._infoRow("Part No.", p ? p.nomor_part : "-", "mono"));
+    rows.push(this._infoRow("Lot Number", m.lot_no || "-", "mono"));
+    rows.push(this._infoRow("Material Charge", m.material_charge || "-", "mono"));
+    rows.push(this._infoRow("Material Grade", p ? (p.nomor_part || "-") : "-"));
+    rows.push(this._infoRow("Status Part", m.status_part || "-"));
+    rows.push(this._infoRow("Jenis Proses", m.process_type || "-"));
+    rows.push(this._infoRow("Target Hardness", p ? p.target_hardness : "-", "mono hardness"));
+    rows.push(this._infoRow("QTY", m.qty ? m.qty.toLocaleString("id-ID") + " PCS" : "-"));
+
+    grid.innerHTML = rows.join("");
   },
 
-  getReportById(id) {
-    return this.getReports().find((r) => r.id == id) || null;
-  },
-
-  /* ----------------------------------------------------------
-     Report number generation — HIR-YYYY-NNNN
-     ---------------------------------------------------------- */
-  generateReportNumber() {
-    const year = new Date().getFullYear();
-    const reports = this.getReports();
-    let maxSeq = 0;
-    reports.forEach((r) => {
-      if (r.report_number) {
-        const match = r.report_number.match(/^HIR-(\d{4})-(\d{4})$/);
-        if (match && match[1] === String(year)) {
-          maxSeq = Math.max(maxSeq, parseInt(match[2], 10));
-        }
-      }
-    });
-    return "HIR-" + year + "-" + String(maxSeq + 1).padStart(4, "0");
-  },
-
-  _nextId() {
-    const reports = this.getReports();
-    let maxId = 0;
-    reports.forEach((r) => {
-      if (r.id && r.id > maxId) maxId = r.id;
-    });
-    return maxId + 1;
-  },
-
-  /* ----------------------------------------------------------
-     Material resolution — menggunakan DB (read-only)
-     ---------------------------------------------------------- */
-  resolveMaterial(kode) {
-    const material = DB.findByKode(kode) || DB.findMaterial(kode);
-    if (!material) return null;
-
-    const customer = DB.findCustomerById(material.customer_id);
-    const part = DB.findPartById(material.part_id);
-
-    const production = DB.get("productions").find(
-      (p) => String(p.material_id) === String(material.id),
-    );
-
-    const qcs = DB.get("qcs").filter(
-      (q) => String(q.material_id) === String(material.id),
-    );
-    const qc =
-      qcs.length > 0
-        ? qcs.reduce((latest, q) =>
-            !latest || (q.id || 0) > (latest.id || 0) ? q : latest,
-          )
-        : null;
-
-    return { material, customer, part, production, qc };
-  },
-
-  findActiveReportByControlNumber(controlNumber) {
-    const reports = this.getReports();
-    return reports.find(
-      (r) =>
-        r.control_number === controlNumber &&
-        (r.status === this.STATUSES.DRAFT ||
-          r.status === this.STATUSES.PENDING),
-    );
-  },
-
-  /* ----------------------------------------------------------
-     Auth / role helpers
-     ---------------------------------------------------------- */
-  getCurrentUser() {
-    return Auth.getSession();
-  },
-
-  isApprover() {
-    const session = this.getCurrentUser();
-    if (!session) return false;
+  _infoRow(label, value, extraClass) {
+    const cls = extraClass ? " " + extraClass : "";
     return (
-      session.role === "Administrator" || session.role === "Supervisor"
+      '<div class="ht-info-item">' +
+      '<span class="ht-info-label">' + this._escape(label) + '</span>' +
+      '<span class="ht-info-value' + cls + '">' + this._escape(value) + '</span>' +
+      '</div>'
     );
   },
 
-  isCreator(report) {
-    const session = this.getCurrentUser();
-    if (!session || !report) return false;
-    return report.created_by === session.username;
-  },
+  /* ---- Render tabel hardness (preview, konsisten dengan PDF/Print) ---- */
+  renderHardnessTable() {
+    const wrapper = document.getElementById("hardnessTableWrapper");
+    if (!wrapper) return;
 
-  _currentUserName() {
-    const session = this.getCurrentUser();
-    return session ? session.name : "";
-  },
+    const afterQc = this.state.afterQc;
+    const beforeQc = this.state.beforeQc;
 
-  _currentUserUsername() {
-    const session = this.getCurrentUser();
-    return session ? session.username : "";
-  },
+    const afterExt = afterQc ? this._parseRemarks(afterQc) : null;
+    const beforeExt = beforeQc ? this._parseRemarks(beforeQc) : null;
 
-  _currentUserRole() {
-    const session = this.getCurrentUser();
-    return session ? session.role : "";
-  },
+    const afterSurface = (afterExt && afterExt.surface_values) || [];
+    const afterCore = (afterExt && afterExt.core_values) || [];
+    const beforeSurface = (beforeExt && beforeExt.surface_values) || [];
+    const beforeCore = (beforeExt && beforeExt.core_values) || [];
 
-  /* ----------------------------------------------------------
-     Summary rendering
-     ---------------------------------------------------------- */
-  renderSummary() {
-    const reports = this.getReports();
-    const counts = {
-      total: reports.length,
-      draft: reports.filter((r) => r.status === this.STATUSES.DRAFT).length,
-      pending: reports.filter(
-        (r) => r.status === this.STATUSES.PENDING,
-      ).length,
-      approved: reports.filter(
-        (r) => r.status === this.STATUSES.APPROVED,
-      ).length,
-      rejected: reports.filter(
-        (r) => r.status === this.STATUSES.REJECTED,
-      ).length,
-    };
-
-    if (this._el.totalKpi) this._el.totalKpi.textContent = counts.total;
-    if (this._el.draftKpi) this._el.draftKpi.textContent = counts.draft;
-    if (this._el.pendingKpi) this._el.pendingKpi.textContent = counts.pending;
-    if (this._el.approvedKpi) this._el.approvedKpi.textContent = counts.approved;
-    if (this._el.rejectedKpi) this._el.rejectedKpi.textContent = counts.rejected;
-  },
-
-  /* ----------------------------------------------------------
-     Filter & table
-     ---------------------------------------------------------- */
-  getFilteredReports() {
-    const reports = this.getReports();
-    const s = this.state;
-    const search = s.searchQuery.toLowerCase();
-
-    return reports.filter((r) => {
-      if (search) {
-        const reportNum = (r.report_number || "").toLowerCase();
-        const controlNum = (r.control_number || "").toLowerCase();
-        const partName = (
-          (r.part && r.part.nama_part) ||
-          ""
-        ).toLowerCase();
-        const customerName = (
-          (r.customer && r.customer.nama_customer) ||
-          ""
-        ).toLowerCase();
-
-        if (
-          !reportNum.includes(search) &&
-          !controlNum.includes(search) &&
-          !partName.includes(search) &&
-          !customerName.includes(search)
-        ) {
-          return false;
-        }
-      }
-
-      if (s.statusFilter !== "all" && r.status !== s.statusFilter)
-        return false;
-
-      if (s.dateFilter) {
-        const reportDate = (r.report_date || "").slice(0, 10);
-        if (reportDate !== s.dateFilter) return false;
-      }
-
-      return true;
-    });
-  },
-
-  renderTable() {
-    const filtered = this.getFilteredReports();
-    const totalItems = filtered.length;
-    const start = (this.state.currentPage - 1) * this.state.pageSize;
-    const end = start + this.state.pageSize;
-    const pageData = filtered.slice(start, end);
-
-    if (this._el.totalItems)
-      this._el.totalItems.textContent = totalItems;
-    const showingStart = totalItems > 0 ? start + 1 : 0;
-    const showingEnd = Math.min(end, totalItems);
-    if (this._el.pageInfo)
-      this._el.pageInfo.textContent = showingStart + "-" + showingEnd;
-
-    const totalPages = Math.ceil(totalItems / this.state.pageSize) || 1;
-    if (this._el.prevPage)
-      this._el.prevPage.disabled = this.state.currentPage === 1;
-    if (this._el.nextPage)
-      this._el.nextPage.disabled = this.state.currentPage >= totalPages;
-
-    if (this._el.pageNumbers) {
-      let pagesHtml = "";
-      const maxVisible = 5;
-      let startPage = Math.max(
-        1,
-        this.state.currentPage - Math.floor(maxVisible / 2),
-      );
-      let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-      if (endPage - startPage + 1 < maxVisible) {
-        startPage = Math.max(1, endPage - maxVisible + 1);
-      }
-      for (let i = startPage; i <= endPage; i++) {
-        pagesHtml +=
-          '<button class="ht-btn ht-btn-sm ' +
-          (i === this.state.currentPage
-            ? "ht-btn-primary"
-            : "ht-btn-ghost") +
-          '" data-page="' +
-          i +
-          '">' +
-          i +
-          "</button>";
-      }
-      this._el.pageNumbers.innerHTML = pagesHtml;
-      const self = this;
-      this._el.pageNumbers
-        .querySelectorAll("button")
-        .forEach((btn) => {
-          btn.addEventListener("click", function () {
-            self.state.currentPage = parseInt(this.dataset.page);
-            self.renderTable();
-          });
-        });
-    }
-
-    const self = this;
-    const html = pageData
-      .map(function (r, idx) {
-        var actual =
-          r.hardness_actual !== null && r.hardness_actual !== undefined
-            ? r.hardness_actual + " " + (r.hardness_unit || "")
-            : "-";
-        var judgement = r.final_judgement
-          ? '<span class="ht-badge ' +
-            self.getJudgementBadgeClass(r.final_judgement) +
-            '">' +
-            r.final_judgement +
-            "</span>"
-          : '<span class="text-secondary">-</span>';
-
-        var actions = self._renderActions(r);
-        var reportDate = self._formatDateShort(r.report_date);
-
-        return (
-          '<tr class="ht-table-row">' +
-          '<td class="font-mono text-center">' +
-          (start + idx + 1) +
-          "</td>" +
-          '<td class="font-mono" title="' +
-          (r.report_number || "") +
-          '">' +
-          (r.report_number || "-") +
-          "</td>" +
-          '<td class="font-mono" title="' +
-          (r.control_number || "") +
-          '">' +
-          (r.control_number || "-") +
-          "</td>" +
-          '<td title="' +
-          (r.customer && r.customer.nama_customer ? r.customer.nama_customer : "") +
-          '">' +
-          (r.customer ? r.customer.nama_customer : "-") +
-          "</td>" +
-          '<td title="' +
-          (r.part && r.part.nama_part ? r.part.nama_part : "") +
-          '">' +
-          (r.part ? r.part.nama_part : "-") +
-          "</td>" +
-          '<td class="font-mono text-center">' +
-          reportDate +
-          "</td>" +
-          '<td class="font-mono">' +
-          actual +
-          "</td>" +
-          "<td>" +
-          judgement +
-          "</td>" +
-          '<td><span class="ht-badge ' +
-          self.getStatusBadgeClass(r.status) +
-          '">' +
-          r.status +
-          "</span></td>" +
-          "<td>" +
-          actions +
-          "</td>" +
-          "</tr>"
-        );
-      })
-      .join("");
-
-    if (this._el.tableBody) {
-      this._el.tableBody.innerHTML =
-        html ||
-        '<tr><td colspan="10" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Empty" class="icon"><p>Belum ada Inspection Report</p></td></tr>';
-    }
-  },
-
-  _renderActions(r) {
-    var id = r.id;
-    var btns = [];
-    var self = this;
-
-    btns.push(
-      '<button onclick="HTInspectionReport.viewReport(' +
-        id +
-        ')" class="ht-action-btn view" title="Detail" aria-label="Detail"><img src="assets/icons/eye.svg" alt="Detail" class="icon"></button>',
+    const maxPieces = Math.max(
+      afterSurface.length, afterCore.length,
+      beforeSurface.length, beforeCore.length, 12
     );
 
-    if (r.status === this.STATUSES.DRAFT) {
-      btns.push(
-        '<button onclick="HTInspectionReport.editReport(' +
-          id +
-          ')" class="ht-action-btn edit" title="Edit" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>',
-      );
-      btns.push(
-        '<button onclick="HTInspectionReport.sendForApprovalConfirm(' +
-          id +
-          ')" class="ht-action-btn" title="Kirim untuk Approval" aria-label="Kirim"><img src="assets/icons/paper-plane.svg" alt="Kirim" class="icon"></button>',
-      );
-      btns.push(
-        '<button onclick="HTInspectionReport.deleteReportConfirm(' +
-          id +
-          ')" class="ht-action-btn delete" title="Hapus" aria-label="Hapus"><img src="assets/icons/delete.svg" alt="Hapus" class="icon"></button>',
-      );
-    } else if (r.status === this.STATUSES.PENDING) {
-      if (this.isApprover()) {
-        btns.push(
-          '<button onclick="HTInspectionReport.openApproval(' +
-            id +
-            ')" class="ht-action-btn" title="Persetujuan" aria-label="Approve"><img src="assets/icons/gavel.svg" alt="Approve" class="icon"></button>',
-        );
+    const hasBefore = beforeSurface.length > 0 || beforeCore.length > 0;
+    const hasAfter = afterSurface.length > 0 || afterCore.length > 0;
+
+    /* Helper: format nilai sel tabel (null/undefined/kosong/NaN -> "-") */
+    function formatCell(val) {
+      if (val === undefined || val === null || val === "") return "-";
+      const n = Number(val);
+      if (isNaN(n)) return "-";
+      return val;
+    }
+
+    /* Build table rows - test pieces only, no average/range columns */
+    let html = '<table class="ht-ir-hardness-table">';
+    html += '<thead><tr>';
+    html += '<th>Test Piece</th>';
+    if (hasBefore) {
+      html += '<th>Before<br>Surface</th><th>Before<br>Core</th>';
+    }
+    if (hasAfter) {
+      html += '<th>After<br>Surface</th><th>After<br>Core</th>';
+    }
+    html += '</tr></thead><tbody>';
+
+    for (let i = 1; i <= maxPieces; i++) {
+      html += '<tr>';
+      html += '<td>' + i + '</td>';
+      if (hasBefore) {
+        html += '<td>' + formatCell(beforeSurface[i - 1]) + '</td>';
+        html += '<td>' + formatCell(beforeCore[i - 1]) + '</td>';
       }
-    } else if (r.status === this.STATUSES.APPROVED) {
-      btns.push(
-        '<button onclick="HTInspectionReport.previewReport(' +
-          id +
-          ')" class="ht-action-btn view" title="Preview" aria-label="Preview"><img src="assets/icons/eye.svg" alt="Preview" class="icon"></button>',
-      );
-      btns.push(
-        '<button onclick="HTInspectionReport.printReport(' +
-          id +
-          ')" class="ht-action-btn print" title="Print" aria-label="Print"><img src="assets/icons/print.svg" alt="Print" class="icon"></button>',
-      );
-      btns.push(
-        '<button onclick="HTInspectionReport.downloadPdf(' +
-          id +
-          ')" class="ht-action-btn" title="Download PDF" aria-label="PDF"><img src="assets/icons/download.svg" alt="PDF" class="icon"></button>',
-      );
-    } else if (r.status === this.STATUSES.REJECTED) {
-      btns.push(
-        '<button onclick="HTInspectionReport.editReport(' +
-          id +
-          ')" class="ht-action-btn edit" title="Edit untuk revisi" aria-label="Edit"><img src="assets/icons/edit.svg" alt="Edit" class="icon"></button>',
-      );
-      btns.push(
-        '<button onclick="HTInspectionReport.sendForApprovalConfirm(' +
-          id +
-          ')" class="ht-action-btn" title="Kirim ulang untuk approval" aria-label="Kirim"><img src="assets/icons/paper-plane.svg" alt="Kirim" class="icon"></button>',
-      );
+      if (hasAfter) {
+        html += '<td>' + formatCell(afterSurface[i - 1]) + '</td>';
+        html += '<td>' + formatCell(afterCore[i - 1]) + '</td>';
+      }
+      html += '</tr>';
     }
 
-    return '<div class="ht-action-group compact">' + btns.join("") + "</div>";
-  },
-
-  /* ----------------------------------------------------------
-      Form: create / edit
-      ---------------------------------------------------------- */
-   editReport(id) {
-     this.openFormModal(id);
-   },
-
-   openFormModal(reportId) {
-    const modal = this._el.formModal;
-    if (!modal) return;
-
-    if (reportId) {
-      const report = this.getReportById(reportId);
-      if (!report) return;
-      this.state.currentReport = report;
-      this.state.isEditMode = true;
-      this._populateForm(report);
-    } else {
-      this.state.currentReport = null;
-      this.state.isEditMode = false;
-      this._clearForm();
-    }
-
-    if (this._el.formSubtitle) {
-      this._el.formSubtitle.textContent = this.state.isEditMode
-        ? "Perbarui data laporan inspection report"
-        : "Isi data material dan hasil hardness";
-    }
-
-    this._populateMaterialSelect();
-    this._updateSummaryBox();
-    HTUI.openModal("reportFormModal");
-  },
-
-  closeFormModal() {
-    HTUI.closeModal("reportFormModal");
-  },
-
-  _populateMaterialSelect() {
-    if (!this._el.materialSelect) return;
-    const materials = DB.get("materials");
-    const self = this;
-    let html = '<option value="">Pilih Control Number...</option>';
-
-    materials
-      .slice()
-      .sort((a, b) => String(a.kode).localeCompare(String(b.kode)))
-      .forEach((m) => {
-        const part = DB.findPartById(m.part_id);
-        const cust = DB.findCustomerById(m.customer_id);
-        const partName = part ? part.nama_part : "-";
-        const custName = cust ? cust.nama_customer : "-";
-        const label =
-          (m.kode || "-") +
-          " | " +
-          partName +
-          " (" +
-          custName +
-          ") — " +
-          (m.qty || 0) +
-          " pcs";
-        html +=
-          '<option value="' +
-          (m.kode || m.id) +
-          '">' +
-          self._escapeHtml(label) +
-          "</option>";
+    /* Helper: hitung rata-rata dari array nilai (abaikan null/undefined/kosong/non-angka) */
+    function computeColAvg(arr) {
+      const valid = arr.filter(function (v) {
+        return v !== undefined && v !== null && v !== "" && !isNaN(Number(v));
       });
-
-    this._el.materialSelect.innerHTML = html;
-
-    if (this.state.isEditMode && this.state.currentReport) {
-      this._el.materialSelect.value = this.state.currentReport.control_number;
-      this._el.materialSelect.disabled = true;
-    } else {
-      this._el.materialSelect.disabled = false;
+      if (valid.length === 0) return "-";
+      return (valid.reduce(function (a, b) { return Number(a) + Number(b); }, 0) / valid.length).toFixed(2);
     }
 
-    if (this._el.materialSelect.value) {
-      this._onMaterialChange();
-    }
-  },
-
-  _onMaterialChange() {
-    var select = this._el.materialSelect;
-    var kode = select ? select.value : "";
-
-    if (!kode) {
-      this._clearMaterialInfo();
-      return;
-    }
-
-    var resolved = this.resolveMaterial(kode);
-    if (!resolved) {
-      if (this._el.materialWarning) {
-        this._el.materialWarning.innerHTML =
-          '<div class="ht-ir-role-warning"><img src="assets/icons/warning.svg" alt="" class="icon">' +
-          "Material dengan Control Number <strong>" +
-          this._escapeHtml(kode) +
-          "</strong> tidak ditemukan di database." +
-          "</div>";
-      }
-      this._clearMaterialInfo();
-      return;
-    }
-
-    var m = resolved.material;
-    var cust = resolved.customer;
-    var part = resolved.part;
-    var prod = resolved.production;
-    var qc = resolved.qc;
-
-    if (this._el.customerDisplay)
-      this._el.customerDisplay.textContent = cust
-        ? cust.nama_customer
-        : "—";
-    if (this._el.nomorPartDisplay)
-      this._el.nomorPartDisplay.textContent = part ? part.nomor_part : "—";
-    if (this._el.namaPartDisplay)
-      this._el.namaPartDisplay.textContent = part ? part.nama_part : "—";
-    if (this._el.qtyDisplay)
-      this._el.qtyDisplay.textContent = m.qty || 0;
-    if (this._el.targetHardnessDisplay)
-      this._el.targetHardnessDisplay.textContent = part
-        ? part.target_hardness || "—"
-        : "—";
-
-    var processType = "—";
-    if (prod && prod.jenis_treatment) {
-      processType = prod.jenis_treatment;
-    } else if (m.process_type) {
-      processType = m.process_type;
-    } else if (part && part.process_type) {
-      processType = part.process_type;
-    }
-    if (this._el.processTypeDisplay)
-      this._el.processTypeDisplay.textContent = processType;
-
-    var warnings = [];
-    if (!cust) warnings.push("Customer tidak ditemukan");
-    if (!part) warnings.push("Part tidak ditemukan");
-    if (!prod) warnings.push("Data produksi belum tersedia");
-    if (!qc) warnings.push("Data QC belum tersedia");
-
-    if (this._el.materialWarning) {
-      if (warnings.length > 0) {
-        this._el.materialWarning.innerHTML =
-          '<div class="ht-ir-role-warning"><img src="assets/icons/warning.svg" alt="" class="icon">' +
-          warnings.join(", ") +
-          "</div>";
-      } else {
-        this._el.materialWarning.innerHTML = "";
-      }
-    }
-
-    this._updateSummaryBox();
-  },
-
-  _clearMaterialInfo() {
-    if (this._el.customerDisplay) this._el.customerDisplay.textContent = "—";
-    if (this._el.nomorPartDisplay) this._el.nomorPartDisplay.textContent = "—";
-    if (this._el.namaPartDisplay) this._el.namaPartDisplay.textContent = "—";
-    if (this._el.qtyDisplay) this._el.qtyDisplay.textContent = "0";
-    if (this._el.processTypeDisplay)
-      this._el.processTypeDisplay.textContent = "—";
-    if (this._el.targetHardnessDisplay)
-      this._el.targetHardnessDisplay.textContent = "—";
-    if (this._el.materialWarning) this._el.materialWarning.innerHTML = "";
-  },
-
-  _populateForm(report) {
-    if (this._el.formTitle)
-      this._el.formTitle.textContent = "Edit Inspection Report";
-    if (this._el.materialSelect)
-      this._el.materialSelect.value = report.control_number || "";
-    if (this._el.hardnessInput)
-      this._el.hardnessInput.value = report.hardness_actual != null
-        ? report.hardness_actual
-        : "";
-    if (this._el.hardnessUnitSelect)
-      this._el.hardnessUnitSelect.value = report.hardness_unit || "HRC";
-    if (this._el.inspectionDateInput)
-      this._el.inspectionDateInput.value = report.inspection_date
-        ? report.inspection_date.slice(0, 10)
-        : "";
-    if (this._el.inspectorInput)
-      this._el.inspectorInput.value = report.inspector || "";
-    if (this._el.inspectorNotesTextarea)
-      this._el.inspectorNotesTextarea.value = report.inspector_notes || "";
-  },
-
-  _clearForm() {
-    if (this._el.formTitle)
-      this._el.formTitle.textContent = "Buat Inspection Report";
-    if (this._el.materialSelect) this._el.materialSelect.value = "";
-    if (this._el.hardnessInput) this._el.hardnessInput.value = "";
-    if (this._el.hardnessUnitSelect)
-      this._el.hardnessUnitSelect.value = "HRC";
-    if (this._el.inspectionDateInput)
-      this._el.inspectionDateInput.value = "";
-    if (this._el.inspectorInput)
-      this._el.inspectorInput.value = this._currentUserName();
-    if (this._el.inspectorNotesTextarea)
-      this._el.inspectorNotesTextarea.value = "";
-    this._clearMaterialInfo();
-  },
-
-  _updateSummaryBox() {
-    if (!this._el.summaryBox) return;
-    var kode = this._el.materialSelect ? this._el.materialSelect.value : "";
-    var hardness = this._el.hardnessInput
-      ? this._el.hardnessInput.value
-      : "";
-    var unit = this._el.hardnessUnitSelect
-      ? this._el.hardnessUnitSelect.value
-      : "";
-    var inspector = this._el.inspectorInput
-      ? this._el.inspectorInput.value
-      : "";
-    var inspDate = this._el.inspectionDateInput
-      ? this._el.inspectionDateInput.value
-      : "";
-
-    var resolved = kode ? this.resolveMaterial(kode) : null;
-    var customerName = resolved && resolved.customer
-      ? resolved.customer.nama_customer
-      : kode
-        ? "—"
-        : "";
-    var partName = resolved && resolved.part
-      ? resolved.part.nama_part
-      : kode
-        ? "—"
-        : "";
-    var targetHardness = resolved && resolved.part
-      ? resolved.part.target_hardness || "—"
-      : kode
-        ? "—"
-        : "";
-
-    var html = "";
-    if (kode) {
-      html +=
-        '<div class="ht-info-item">' +
-        '<span class="ht-info-label">Control Number</span>' +
-        '<span class="ht-info-value mono">' +
-        this._escapeHtml(kode) +
-        "</span>" +
-        "</div>";
-      html +=
-        '<div class="ht-info-item">' +
-        '<span class="ht-info-label">Customer</span>' +
-        '<span class="ht-info-value">' +
-        this._escapeHtml(customerName) +
-        "</span>" +
-        "</div>";
-      html +=
-        '<div class="ht-info-item">' +
-        '<span class="ht-info-label">Nama Part</span>' +
-        '<span class="ht-info-value">' +
-        this._escapeHtml(partName) +
-        "</span>" +
-        "</div>";
-      html +=
-        '<div class="ht-info-item">' +
-        '<span class="ht-info-label">Target Hardness</span>' +
-        '<span class="ht-info-value mono hardness">' +
-        this._escapeHtml(targetHardness) +
-        "</span>" +
-        "</div>";
-      html +=
-        '<div class="ht-info-item">' +
-        '<span class="ht-info-label">Hardness Actual</span>' +
-        '<span class="ht-info-value mono">' +
-        (hardness ? this._escapeHtml(hardness) + " " + this._escapeHtml(unit) : "—") +
-        "</span>" +
-        "</div>";
-      html +=
-        '<div class="ht-info-item">' +
-        '<span class="ht-info-label">Inspector</span>' +
-        '<span class="ht-info-value">' +
-        (inspector ? this._escapeHtml(inspector) : "—") +
-        "</span>" +
-        "</div>";
-      html +=
-        '<div class="ht-info-item">' +
-        '<span class="ht-info-label">Tanggal Inspeksi</span>' +
-        '<span class="ht-info-value">' +
-        (inspDate ? this._escapeHtml(inspDate) : "—") +
-        "</span>" +
-        "</div>";
-    } else {
-      html =
-        '<p class="ht-hint">Pilih Control Number untuk melihat ringkasan data.</p>';
-    }
-
-    this._el.summaryBox.innerHTML = html;
-  },
-
-  _validateForm() {
-    var kode = this._el.materialSelect
-      ? this._el.materialSelect.value
-      : "";
-    var hardness = this._el.hardnessInput
-      ? this._el.hardnessInput.value.trim()
-      : "";
-    var unit = this._el.hardnessUnitSelect
-      ? this._el.hardnessUnitSelect.value
-      : "";
-    var inspDate = this._el.inspectionDateInput
-      ? this._el.inspectionDateInput.value
-      : "";
-    var inspector = this._el.inspectorInput
-      ? this._el.inspectorInput.value.trim()
-      : "";
-
-    if (!kode) {
-      HTUI.toast("Control Number harus dipilih!", "error");
-      return false;
-    }
-
-    var resolved = this.resolveMaterial(kode);
-    if (!resolved) {
-      HTUI.toast(
-        "Material tidak ditemukan di database. Pilih Control Number yang valid.",
-        "error",
-      );
-      return false;
-    }
-
-    if (resolved.part) {
-      /* ok */
-    }
-
-    if (resolved.material && !resolved.customer) {
-      HTUI.toast(
-        "Data customer material tidak lengkap. Laporan tidak dapat dibuat dengan identitas salah.",
-        "error",
-      );
-      return false;
-    }
-
-    if (!hardness) {
-      HTUI.toast("Nilai Hardness Aktual wajib diisi!", "error");
-      return false;
-    }
-
-    var hardnessNum = parseFloat(hardness);
-    if (isNaN(hardnessNum)) {
-      HTUI.toast("Nilai Hardness harus berupa angka yang valid!", "error");
-      return false;
-    }
-
-    if (hardnessNum < 0 || hardnessNum > 1000) {
-      HTUI.toast(
-        "Nilai Hardness tidak masuk akal (rentang 0–1000). Silakan koreksi.",
-        "error",
-      );
-      return false;
-    }
-
-    if (!unit) {
-      HTUI.toast("Satuan hardness wajib dipilih!", "error");
-      return false;
-    }
-
-    if (!inspDate) {
-      HTUI.toast("Tanggal Inspeksi wajib diisi!", "error");
-      return false;
-    }
-
-    if (!inspector) {
-      HTUI.toast("Nama Inspector wajib diisi!", "error");
-      return false;
-    }
-
-    return true;
-  },
-
-  _buildReportFromForm() {
-    var kode = this._el.materialSelect.value;
-    var resolved = this.resolveMaterial(kode);
-    var m = resolved.material;
-    var part = resolved.part;
-    var cust = resolved.customer;
-    var prod = resolved.production;
-
-    var processType = "—";
-    if (prod && prod.jenis_treatment) {
-      processType = prod.jenis_treatment;
-    } else if (m.process_type) {
-      processType = m.process_type;
-    } else if (part && part.process_type) {
-      processType = part.process_type;
-    }
-
-    var now = new Date();
-    var nowISO = now.toISOString();
-    var nowDate = now.toISOString().slice(0, 10);
-
-    var existing = this.state.currentReport;
-    var reportNumber = existing ? existing.report_number : this.generateReportNumber();
-    var revision = existing ? existing.revision : 0;
-    var createdBy = existing ? existing.created_by : this._currentUserUsername();
-    var createdAt = existing ? existing.created_at : nowISO;
-
-    if (existing && existing.status === this.STATUSES.REJECTED) {
-      revision = existing.revision + 1;
-    }
-
-    var report = {
-      id: existing ? existing.id : this._nextId(),
-      report_number: reportNumber,
-      control_number: m.kode || kode,
-      material_id: m.id,
-      customer: cust
-        ? {
-            id: cust.id,
-            kode_customer: cust.kode_customer,
-            nama_customer: cust.nama_customer,
-          }
-        : null,
-      part: part
-        ? {
-            nomor_part: part.nomor_part,
-            nama_part: part.nama_part,
-            target_hardness: part.target_hardness,
-            process_type: part.process_type,
-          }
-        : null,
-      qty: m.qty || 0,
-      process_type: processType,
-      target_hardness: part ? part.target_hardness || null : null,
-      hardness_actual: parseFloat(this._el.hardnessInput.value.trim()),
-      hardness_unit: this._el.hardnessUnitSelect.value,
-      inspection_date: this._el.inspectionDateInput.value,
-      report_date: existing && existing.report_date
-        ? existing.report_date
-        : nowDate,
-      inspector: this._el.inspectorInput.value.trim(),
-      inspector_notes: this._el.inspectorNotesTextarea.value.trim(),
-      status: existing ? this.STATUSES.DRAFT : this.STATUSES.DRAFT,
-      final_judgement: existing ? existing.final_judgement : null,
-      approver: existing ? existing.approver : null,
-      approver_notes: existing ? existing.approver_notes : "",
-      approved_at: existing ? existing.approved_at : null,
-      revision: revision,
-      created_by: createdBy,
-      created_at: createdAt,
-      updated_at: nowISO,
-      history: existing ? (existing.history || []) : [],
-    };
-
-    return report;
-  },
-
-  _addHistoryEntry(report, action, by, at, notes) {
-    var hist = report.history || [];
-    hist.push({
-      action: action,
-      by: by,
-      at: at,
-      notes: notes || "",
-      status_before: report.status,
-    });
-    return hist;
-  },
-
-  saveDraft() {
-    if (!this._validateForm()) return;
-    var report = this._buildReportFromForm();
-    this.saveReport(report);
-    HTUI.toast("Draft berhasil disimpan!", "success");
-    this.closeFormModal();
-    this.renderSummary();
-    this.renderTable();
-  },
-
-  sendForApprovalFromForm() {
-    if (!this._validateForm()) return;
-    var report = this._buildReportFromForm();
-
-    var existingActive = this.findActiveReportByControlNumber(
-      report.control_number,
-    );
-    if (existingActive && (!this.state.currentReport || existingActive.id !== this.state.currentReport.id)) {
-      if (
-        !confirm(
-          "Control Number " +
-            report.control_number +
-            " sudah memiliki laporan aktif (" +
-            existingActive.status +
-            "). Buat laporan baru dengan konfirmasi?",
-        )
-      ) {
-        return;
-      }
-    }
-
-    report.status = this.STATUSES.PENDING;
-    var now = new Date().toISOString();
-    report.history = this._addHistoryEntry(
-      report,
-      "send_approval",
-      this._currentUserUsername(),
-      now,
-      "",
-    );
-
-    this.saveReport(report);
-    HTUI.toast("Laporan dikirim untuk approval!", "success");
-    this.closeFormModal();
-    this.renderSummary();
-    this.renderTable();
-  },
-
-  /* ----------------------------------------------------------
-     Workflow: send for approval (from table action)
-     ---------------------------------------------------------- */
-  sendForApprovalConfirm(id) {
-    var report = this.getReportById(id);
-    if (!report) return;
-    if (
-      report.status !== this.STATUSES.DRAFT &&
-      report.status !== this.STATUSES.REJECTED
-    )
-      return;
-
-    if (
-      !confirm(
-        "Kirim laporan " +
-          report.report_number +
-          " untuk approval?\n\nLaporan tidak dapat diubah setelah dikirim.",
-      )
-    )
-      return;
-
-    var now = new Date().toISOString();
-    var updates = {
-      status: this.STATUSES.PENDING,
-    };
-    if (report.status === this.STATUSES.REJECTED) {
-      updates.revision = (report.revision || 0) + 1;
-    }
-
-    var updated = this.updateReport(id, updates);
-    if (updated) {
-      updated.history = this._addHistoryEntry(
-        updated,
-        "send_approval",
-        this._currentUserUsername(),
-        now,
-        "",
-      );
-      this.updateReport(id, { history: updated.history });
-    }
-
-    HTUI.toast("Laporan dikirim untuk approval!", "success");
-    this.renderSummary();
-    this.renderTable();
-  },
-
-  /* ----------------------------------------------------------
-     Approval modal
-     ---------------------------------------------------------- */
-  openApproval(id) {
-    var report = this.getReportById(id);
-    if (!report) return;
-    if (report.status !== this.STATUSES.PENDING) return;
-
-    this.state.currentReport = report;
-
-    if (this._el.approvalReportNum)
-      this._el.approvalReportNum.textContent = report.report_number || "-";
-    if (this._el.approvalCustomer)
-      this._el.approvalCustomer.textContent =
-        (report.customer && report.customer.nama_customer) || "-";
-    if (this._el.approvalControlNum)
-      this._el.approvalControlNum.textContent = report.control_number || "-";
-    if (this._el.approvalPartNo)
-      this._el.approvalPartNo.textContent =
-        (report.part && report.part.nomor_part) || "-";
-    if (this._el.approvalPartName)
-      this._el.approvalPartName.textContent =
-        (report.part && report.part.nama_part) || "-";
-    if (this._el.approvalQty)
-      this._el.approvalQty.textContent = report.qty || 0;
-    if (this._el.approvalProcess)
-      this._el.approvalProcess.textContent = report.process_type || "-";
-    if (this._el.approvalTarget)
-      this._el.approvalTarget.textContent =
-        (report.target_hardness && report.target_hardness) || "-";
-    if (this._el.approvalActual)
-      this._el.approvalActual.textContent =
-        (report.hardness_actual != null
-          ? report.hardness_actual + " " + (report.hardness_unit || "")
-          : "-");
-    if (this._el.approvalUnit)
-      this._el.approvalUnit.textContent = report.hardness_unit || "-";
-    if (this._el.approvalInspector)
-      this._el.approvalInspector.textContent = report.inspector || "-";
-    if (this._el.approvalInspectorDate)
-      this._el.approvalInspectorDate.textContent =
-        this._formatDateShort(report.inspection_date) || "-";
-    if (this._el.approvalInspectorNotes)
-      this._el.approvalInspectorNotes.textContent =
-        report.inspector_notes || "(tidak ada catatan)";
-    if (this._el.approvalNotesTextarea)
-      this._el.approvalNotesTextarea.value = "";
-
-    // Reset radio
-    var radioOk = document.getElementById("judgementOk");
-    var radioNg = document.getElementById("judgementNg");
-    if (radioOk) radioOk.checked = false;
-    if (radioNg) radioNg.checked = false;
-
-    // Role warning
-    var warningBox = document.getElementById("approvalRoleWarning");
-    if (warningBox) {
-      if (this.isCreator(report)) {
-        warningBox.classList.remove("hidden");
-      } else {
-        warningBox.classList.add("hidden");
-      }
-    }
-
-    this._updateApprovalButtons();
-    HTUI.openModal("approvalModal");
-  },
-
-  closeApprovalModal() {
-    HTUI.closeModal("approvalModal");
-  },
-
-  _updateApprovalButtons() {
-    if (!this._el.approveBtn) return;
-    var judgement =
-      document.getElementById("judgementOk") &&
-      document.getElementById("judgementOk").checked
-        ? "OK"
-        : document.getElementById("judgementNg") &&
-            document.getElementById("judgementNg").checked
-          ? "NG"
-          : null;
-
-    this._el.approveBtn.disabled = !judgement;
-  },
-
-  _handleJudgementChange() {
-    this._updateApprovalButtons();
-  },
-
-  approveReport() {
-    if (!this.state.currentReport) return;
-    var report = this.state.currentReport;
-    if (report.status !== this.STATUSES.PENDING) return;
-
-    var judgement = null;
-    var radioOk = document.getElementById("judgementOk");
-    var radioNg = document.getElementById("judgementNg");
-    if (radioOk && radioOk.checked) judgement = "OK";
-    else if (radioNg && radioNg.checked) judgement = "NG";
-
-    if (!judgement) {
-      HTUI.toast("Pilih Final Judgement (OK atau NG) terlebih dahulu!", "error");
-      return;
-    }
-
-    var approverNotes = this._el.approvalNotesTextarea
-      ? this._el.approvalNotesTextarea.value.trim()
-      : "";
-
-    if (judgement === "NG" && !approverNotes) {
-      HTUI.toast(
-        "Catatan atasan wajib diisi untuk Final Judgement NG!",
-        "error",
-      );
-      return;
-    }
-
-    var now = new Date().toISOString();
-    var session = this.getCurrentUser();
-    var approverName = session ? session.name : "";
-
-    this.updateReport(report.id, {
-      status: this.STATUSES.APPROVED,
-      final_judgement: judgement,
-      approver: approverName,
-      approver_notes: approverNotes,
-      approved_at: now,
-      history: (report.history || []).concat([
-        {
-          action: "approve",
-          by: this._currentUserUsername(),
-          at: now,
-          notes: approverNotes,
-          status_before: this.STATUSES.PENDING,
-          final_judgement: judgement,
-        },
-      ]),
-    });
-
-    HTUI.toast(
-      "Laporan disetujui! Judgement: " + judgement,
-      "success",
-    );
-    this.closeApprovalModal();
-    this.renderSummary();
-    this.renderTable();
-  },
-
-  rejectReport() {
-    if (!this.state.currentReport) return;
-    var report = this.state.currentReport;
-    if (report.status !== this.STATUSES.PENDING) return;
-
-    var approverNotes = this._el.approvalNotesTextarea
-      ? this._el.approvalNotesTextarea.value.trim()
-      : "";
-
-    if (!approverNotes) {
-      HTUI.toast("Alasan penolakan wajib diisi!", "error");
-      return;
-    }
-
-    var now = new Date().toISOString();
-    var session = this.getCurrentUser();
-    var approverName = session ? session.name : "";
-
-    this.updateReport(report.id, {
-      status: this.STATUSES.REJECTED,
-      approver: approverName,
-      approver_notes: approverNotes,
-      approved_at: now,
-      history: (report.history || []).concat([
-        {
-          action: "reject",
-          by: this._currentUserUsername(),
-          at: now,
-          notes: approverNotes,
-          status_before: this.STATUSES.PENDING,
-        },
-      ]),
-    });
-
-    HTUI.toast("Laporan ditolak dan dikembalikan untuk revisi!", "warning");
-    this.closeApprovalModal();
-    this.renderSummary();
-    this.renderTable();
-  },
-
-  /* ----------------------------------------------------------
-     Delete
-      ---------------------------------------------------------- */
-   deleteReportConfirm(id) {
-    var report = this.getReportById(id);
-    if (!report) return;
-    if (
-      !confirm(
-        "Hapus laporan " + report.report_number + "?\n\nTindakan ini tidak dapat dibatalkan.",
-      )
-    )
-      return;
-    this._deleteReport(id);
-    HTUI.toast("Laporan berhasil dihapus!", "success");
-    this.renderSummary();
-    this.renderTable();
-  },
-
-  /* ----------------------------------------------------------
-     Detail view
-     ---------------------------------------------------------- */
-  viewReport(id) {
-    var report = this.getReportById(id);
-    if (!report) return;
-    this.state.currentReport = report;
-
-    if (this._el.detailBody) {
-      this._el.detailBody.innerHTML = this._renderDetailHTML(report);
-    }
-    if (this._el.detailModal) {
-      HTUI.openModal("reportDetailModal");
-    }
-  },
-
-  closeDetailModal() {
-    HTUI.closeModal("reportDetailModal");
-  },
-
-  _renderDetailHTML(report) {
-    var self = this;
-    var sb = [];
-    var statusBadge = this.getStatusBadgeClass(report.status);
-    var judgementBadge = report.final_judgement
-      ? this.getJudgementBadgeClass(report.final_judgement)
-      : "ht-badge-waiting";
-
-    sb.push('<div class="space-y-4">');
-
-    // Header
-    sb.push('<div class="ht-info-grid">');
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Report Number</span><span class="ht-info-value mono">' +
-        this._escapeHtml(report.report_number || "-") +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Control Number</span><span class="ht-info-value mono">' +
-        this._escapeHtml(report.control_number || "-") +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Status</span><span class="ht-info-value"><span class="ht-badge ' +
-        statusBadge +
-        '">' +
-        report.status +
-        "</span></span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Final Judgement</span><span class="ht-info-value">' +
-        (report.final_judgement
-          ? '<span class="ht-badge ' +
-              judgementBadge +
-              '">' +
-              report.final_judgement +
-              "</span>"
-          : '<span class="text-secondary">-</span>') +
-        "</span></div>",
-    );
-    sb.push("</div>");
-
-    // Material info
-    sb.push('<div class="ht-card fade-in" style="margin-top:16px"><div class="ht-card-header"><h3 class="ht-card-title">Informasi Material</h3></div><div class="ht-info-grid">');
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Customer</span><span class="ht-info-value">' +
-        this._escapeHtml(
-          (report.customer && report.customer.nama_customer) || "-",
-        ) +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Nomor Part</span><span class="ht-info-value mono">' +
-        this._escapeHtml(
-          (report.part && report.part.nomor_part) || "-",
-        ) +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Nama Part</span><span class="ht-info-value">' +
-        this._escapeHtml(
-          (report.part && report.part.nama_part) || "-",
-        ) +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Quantity</span><span class="ht-info-value">' +
-        (report.qty || 0) +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Jenis Proses</span><span class="ht-info-value">' +
-        this._escapeHtml(report.process_type || "-") +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Target Hardness</span><span class="ht-info-value mono hardness">' +
-        this._escapeHtml(report.target_hardness || "-") +
-        "</span></div>",
-    );
-    sb.push("</div></div>");
-
-    // Hardness results
-    sb.push('<div class="ht-card fade-in" style="margin-top:16px"><div class="ht-card-header"><h3 class="ht-card-title">Hasil Inspeksi Hardness</h3></div>');
-    sb.push(
-      '<table class="ht-table"><thead><tr><th>Parameter</th><th>Target / Spesifikasi</th><th>Hasil Aktual</th><th>Satuan</th><th>Final Judgement</th></tr></thead><tbody>',
-    );
-    sb.push(
-      '<tr><td>Hardness</td><td class="font-mono">' +
-        this._escapeHtml(report.target_hardness || "-") +
-        "</td><td class='font-mono'>" +
-        (report.hardness_actual != null ? report.hardness_actual : "-") +
-        "</td><td>" +
-        this._escapeHtml(report.hardness_unit || "-") +
-        "</td><td>" +
-        (report.final_judgement
-          ? '<span class="ht-badge ' +
-              judgementBadge +
-              '">' +
-              report.final_judgement +
-              "</span>"
-          : '<span class="text-secondary">-</span>') +
-        "</td></tr>",
-    );
-    sb.push("</tbody></table></div>");
-
-    // Catatan & approval
-    sb.push('<div class="ht-card fade-in" style="margin-top:16px"><div class="ht-card-header"><h3 class="ht-card-title">Catatan &amp; Persetujuan</h3></div><div class="ht-info-grid">');
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Tanggal Inspeksi</span><span class="ht-info-value">' +
-        this._formatDateShort(report.inspection_date) +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Nama Inspector</span><span class="ht-info-value">' +
-        this._escapeHtml(report.inspector || "-") +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item ht-info-item-wide"><span class="ht-info-label">Catatan Inspector</span><span class="ht-info-value">' +
-        this._escapeHtml(report.inspector_notes || "(tidak ada)") +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Nama Approver</span><span class="ht-info-value">' +
-        this._escapeHtml(report.approver || "-") +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item"><span class="ht-info-label">Tanggal Approval</span><span class="ht-info-value">' +
-        (report.approved_at ? this._formatDateTime(report.approved_at) : "-") +
-        "</span></div>",
-    );
-    sb.push(
-      '<div class="ht-info-item ht-info-item-wide"><span class="ht-info-label">Catatan Atasan</span><span class="ht-info-value">' +
-        this._escapeHtml(report.approver_notes || "(tidak ada)") +
-        "</span></div>",
-    );
-    sb.push("</div></div>");
-
-    // Riwayat
-    if (report.history && report.history.length > 0) {
-      sb.push('<div class="ht-card fade-in" style="margin-top:16px"><div class="ht-card-header"><h3 class="ht-card-title">Riwayat Perubahan</h3></div>');
-      sb.push('<table class="ht-table"><thead><tr><th>Waktu</th><th>Aksi</th><th>Pengguna</th><th>Catatan</th></tr></thead><tbody>');
-      report.history.forEach(function (h) {
-        sb.push(
-          "<tr><td>" +
-            (h.at ? self._formatDateTime(h.at) : "-") +
-            "</td><td>" +
-            self._escapeHtml(h.action || "-") +
-            "</td><td>" +
-            self._escapeHtml(h.by || "-") +
-            "</td><td>" +
-            self._escapeHtml(h.notes || "") +
-            "</td></tr>",
-        );
+    /* Helper: hitung range (max - min) dari array nilai */
+    function computeColRange(arr) {
+      const valid = arr.filter(function (v) {
+        return v !== undefined && v !== null && v !== "" && !isNaN(Number(v));
       });
-      sb.push("</tbody></table></div>");
+      if (valid.length === 0) return "-";
+      const nums = valid.map(function (v) { return Number(v); });
+      return (Math.max.apply(null, nums) - Math.min.apply(null, nums)).toFixed(2);
     }
 
-    sb.push("</div>");
-    return sb.join("");
+    const avgBeforeSurface = computeColAvg(beforeSurface);
+    const avgBeforeCore = computeColAvg(beforeCore);
+    const avgAfterSurface = computeColAvg(afterSurface);
+    const avgAfterCore = computeColAvg(afterCore);
+
+    const rangeBeforeSurface = computeColRange(beforeSurface);
+    const rangeBeforeCore = computeColRange(beforeCore);
+    const rangeAfterSurface = computeColRange(afterSurface);
+    const rangeAfterCore = computeColRange(afterCore);
+
+    /* Build summary rows (Average + Range) - konsisten dengan PDF/Print */
+    html += '<tr class="ir-summary-row ir-avg-row">';
+    html += '<td style="text-align:right;" colspan="1"><strong>AVERAGE</strong></td>';
+    if (hasBefore) {
+      html += '<td>' + avgBeforeSurface + '</td>';
+      html += '<td>' + avgBeforeCore + '</td>';
+    }
+    if (hasAfter) {
+      html += '<td>' + avgAfterSurface + '</td>';
+      html += '<td>' + avgAfterCore + '</td>';
+    }
+    html += '</tr>';
+
+    html += '<tr class="ir-summary-row ir-range-row">';
+    html += '<td style="text-align:right;" colspan="1"><strong>RANGE (R)</strong></td>';
+    if (hasBefore) {
+      html += '<td>' + rangeBeforeSurface + '</td>';
+      html += '<td>' + rangeBeforeCore + '</td>';
+    }
+    if (hasAfter) {
+      html += '<td>' + rangeAfterSurface + '</td>';
+      html += '<td>' + rangeAfterCore + '</td>';
+    }
+    html += '</tr>';
+
+    html += '</tbody></table>';
+    wrapper.innerHTML = html;
   },
 
-  /* ----------------------------------------------------------
-     Print & PDF (document preview)
-     ---------------------------------------------------------- */
-  previewReport(id) {
-    var report = this.getReportById(id);
-    if (!report) return;
-    if (report.status !== this.STATUSES.APPROVED) {
-      HTUI.toast(
-        "Hanya laporan yang sudah disetujui yang dapat dilihat sebagai dokumen final.",
-        "warning",
-      );
+  /* ---- Render judgement (Inspector / Leader / Supervisor) ---- */
+  renderJudgement() {
+    const grid = document.getElementById("judgementGrid");
+    if (!grid) return;
+
+    const afterQc = this.state.afterQc;
+    const items = [];
+
+    /* Inspector QC */
+    const inspHasil = afterQc ? String(afterQc.hasil || "").toUpperCase() : "";
+    items.push({
+      title: "Inspector QC",
+      name: afterQc ? (afterQc.inspector || "-") : "-",
+      date: afterQc ? this._formatDate(afterQc.tanggal_inspector) : "-",
+      status: inspHasil === "OK" ? "OK" : (inspHasil === "NG" ? "NG" : "BELUM DI-JUDGEMENT"),
+      statusClass: inspHasil === "OK" ? "ht-ir-judgement-status-ok" : (inspHasil === "NG" ? "ht-ir-judgement-status-ng" : "ht-ir-judgement-status-pending"),
+      signature: afterQc ? this._parseSignature(afterQc) : null,
+    });
+
+    /* Leader QC */
+    const leaderJudgement = afterQc ? (afterQc.leader_judgement || null) : null;
+    items.push({
+      title: "Leader QC",
+      name: afterQc ? (afterQc.leader_name || "-") : "-",
+      date: afterQc ? this._formatDate(afterQc.leader_date) : "-",
+      status: leaderJudgement === "OK" ? "OK" : (leaderJudgement === "NG" ? "NG" : "BELUM DI-JUDGEMENT"),
+      statusClass: leaderJudgement === "OK" ? "ht-ir-judgement-status-ok" : (leaderJudgement === "NG" ? "ht-ir-judgement-status-ng" : "ht-ir-judgement-status-pending"),
+      signature: afterQc ? afterQc.leader_signature : null,
+    });
+
+    /* Supervisor QC */
+    const supervisorJudgement = afterQc ? (afterQc.supervisor_judgement || null) : null;
+    items.push({
+      title: "Supervisor QC",
+      name: afterQc ? (afterQc.supervisor_name || "-") : "-",
+      date: afterQc ? this._formatDate(afterQc.supervisor_date) : "-",
+      status: supervisorJudgement === "OK" ? "OK" : (supervisorJudgement === "NG" ? "NG" : "BELUM DI-JUDGEMENT"),
+      statusClass: supervisorJudgement === "OK" ? "ht-ir-judgement-status-ok" : (supervisorJudgement === "NG" ? "ht-ir-judgement-status-ng" : "ht-ir-judgement-status-pending"),
+      signature: afterQc ? afterQc.supervisor_signature : null,
+    });
+
+    let html = "";
+    items.forEach(function (item) {
+      /* Signature row */
+      let sigHtml = "";
+      if (item.signature) {
+        sigHtml = '<div class="ht-ir-judgement-row"><span class="label">Tanda Tangan</span><span class="value sig-img-wrap"><img src="' + item.signature + '" class="ht-ir-sig-img" alt="Tanda Tangan"></span></div>';
+      } else if (item.status === "OK" || item.status === "NG") {
+        sigHtml = '<div class="ht-ir-judgement-row"><span class="label">Tanda Tangan</span><span class="value sig-pending">BELUM ADA TANDA TANGAN</span></div>';
+      }
+
+      html +=
+        '<div class="ht-ir-judgement-item">' +
+        '<h4>' + item.title + '</h4>' +
+        '<div class="ht-ir-judgement-row"><span class="label">Nama</span><span class="value">' + item.name + '</span></div>' +
+        '<div class="ht-ir-judgement-row"><span class="label">Tanggal</span><span class="value">' + item.date + '</span></div>' +
+        '<div class="ht-ir-judgement-row"><span class="label">Status</span><span class="value ' + item.statusClass + '">' + item.status + '</span></div>' +
+        sigHtml +
+        '</div>';
+    });
+    grid.innerHTML = html;
+  },
+
+  /* ---- Notifikasi jika belum ada judgement ---- */
+  showJudgementNotification() {
+    const afterQc = this.state.afterQc;
+    const notifEl = document.getElementById("judgementNotification");
+    const notifText = document.getElementById("judgementNotificationText");
+    const notifDetail = document.getElementById("judgementNotificationDetail");
+    if (!notifEl || !notifText || !notifDetail) return;
+
+    const inspHasil = afterQc ? String(afterQc.hasil || "").toUpperCase() : "";
+    const leaderJudgement = afterQc ? (afterQc.leader_judgement || null) : null;
+    const supervisorJudgement = afterQc ? (afterQc.supervisor_judgement || null) : null;
+
+    const inspMissing = inspHasil !== "OK" && inspHasil !== "NG";
+    const leaderMissing = leaderJudgement !== "OK" && leaderJudgement !== "NG";
+    const supervisorMissing = supervisorJudgement !== "OK" && supervisorJudgement !== "NG";
+
+    const anyMissing = inspMissing || leaderMissing || supervisorMissing;
+
+    if (!anyMissing) {
+      notifEl.classList.add("hidden");
+      notifText.textContent = "";
+      notifDetail.innerHTML = "";
       return;
     }
-    var html = this._generateDocumentHTML(report);
-    var printWin = window.open("", "_blank", "width=900,height=1100");
+
+    notifEl.classList.remove("hidden");
+    notifText.textContent = "PERHATIAN: Material ini belum memiliki judgement.";
+
+    let detailHtml = "<ul>";
+    if (inspMissing) {
+      detailHtml +=
+        '<li><span class="label">Inspector QC</span><span class="badge badge-pending">BELUM ADA JUDGEMENT</span></li>';
+    } else {
+      detailHtml +=
+        '<li><span class="label">Inspector QC</span><span class="badge badge-ok">' +
+        inspHasil +
+        "</span></li>";
+    }
+    if (leaderMissing) {
+      detailHtml +=
+        '<li><span class="label">Leader QC</span><span class="badge badge-pending">BELUM ADA JUDGEMENT</span></li>';
+    } else {
+      detailHtml +=
+        '<li><span class="label">Leader QC</span><span class="badge badge-ok">' +
+        leaderJudgement +
+        "</span></li>";
+    }
+    if (supervisorMissing) {
+      detailHtml +=
+        '<li><span class="label">Supervisor QC</span><span class="badge badge-pending">BELUM ADA JUDGEMENT</span></li>';
+    } else {
+      detailHtml +=
+        '<li><span class="label">Supervisor QC</span><span class="badge badge-ok">' +
+        supervisorJudgement +
+        "</span></li>";
+    }
+    detailHtml += "</ul>";
+    notifDetail.innerHTML = detailHtml;
+  },
+
+  _parseSignature(qc) {
+    const ext = this._parseRemarks(qc);
+    return ext ? ext.signature : null;
+  },
+
+  _formatDate(iso) {
+    if (!iso) return "-";
+    try {
+      return String(iso).slice(0, 10);
+    } catch (e) {
+      return "-";
+    }
+  },
+
+  _escape(text) {
+    if (text === null || text === undefined) return "";
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  },
+
+  /* ---- Tampilan panel ---- */
+  showReportPanel() {
+    document.getElementById("reportPanel").classList.remove("hidden");
+    document.getElementById("notFoundState").classList.add("hidden");
+  },
+
+  showNotFound() {
+    document.getElementById("reportPanel").classList.add("hidden");
+    document.getElementById("notFoundState").classList.remove("hidden");
+  },
+
+  hideNotFound() {
+    document.getElementById("notFoundState").classList.add("hidden");
+  },
+
+  resetSearch() {
+    const input = document.getElementById("materialCodeInput");
+    if (input) input.value = "";
+    this.state.currentMaterial = null;
+    this.state.currentPart = null;
+    this.state.currentCustomer = null;
+    this.state.currentProduction = null;
+    this.state.afterQc = null;
+    this.state.beforeQc = null;
+    this.state.html5QrCode = null;
+    this.state.isScanning = false;
+    document.getElementById("qr-reader").innerHTML = "";
+    const errEl = document.getElementById("qrError");
+    if (errEl) { errEl.classList.add("hidden"); errEl.textContent = ""; }
+    this._updateScannerUI();
+    document.getElementById("reportPanel").classList.add("hidden");
+    document.getElementById("notFoundState").classList.add("hidden");
+  },
+
+  /* ---- Print & PDF ---- */
+  printReport() {
+    const material = this.state.currentMaterial;
+    if (!material) return;
+
+    const kode = material.kode || "-";
+    const qrDataUrl = this.generateQRDataURL(kode);
+    const docHtml = this.generateDocumentHtml(qrDataUrl);
+    const fileNameBase = "Inspection_Report_" + kode.replace(/[^a-zA-Z0-9]/g, "_");
+
+    const printWin = window.open("", "_blank", "width=900,height=1100");
     if (!printWin) {
-      HTUI.toast("Pop-up diblokir. Izinkan pop-up untuk halaman ini.", "error");
+      HTUI.toast("Popup diblokir. Izinkan pop-up untuk mencetak dokumen.", "error");
       return;
     }
-    printWin.document.write(html);
+
+    printWin.document.open();
+    printWin.document.write(docHtml);
     printWin.document.close();
+
     printWin.focus();
-  },
-
-  printReport(id) {
-    var report = this.getReportById(id);
-    if (!report) return;
-    if (report.status !== this.STATUSES.APPROVED) {
-      HTUI.toast(
-        "Hanya laporan yang sudah disetujui yang dapat dicetak.",
-        "warning",
-      );
-      return;
-    }
-    var html = this._generateDocumentHTML(report);
-    var printWin = window.open("", "_blank", "width=900,height=1100");
-    if (!printWin) {
-      HTUI.toast("Pop-up diblokir. Izinkan pop-up untuk halaman ini.", "error");
-      return;
-    }
-    printWin.document.write(html);
-    printWin.document.close();
     setTimeout(function () {
-      printWin.focus();
       printWin.print();
-    }, 300);
+    }, 500);
   },
 
-  downloadPdf(id) {
-    var report = this.getReportById(id);
-    if (!report) return;
-    if (report.status !== this.STATUSES.APPROVED) {
-      HTUI.toast(
-        "Hanya laporan yang sudah disetujui yang dapat diunduh sebagai PDF.",
-        "warning",
-      );
-      return;
+  downloadPdf() {
+    /* Tidak ada library PDF — gunakan browser print (Save as PDF) */
+    this.printReport();
+  },
+
+  /* ---- Generate QR Code sebagai data URL untuk dokumen ---- */
+  generateQRDataURL(kode) {
+    if (!kode || kode === "-" || typeof QRCode === "undefined") {
+      return null;
     }
-    HTUI.toast(
-      "Silakan pilih 'Save as PDF' di dialog cetak browser untuk menyimpan sebagai PDF.",
-      "info",
-      5000,
+    try {
+      const div = document.createElement("div");
+      div.style.position = "absolute";
+      div.style.left = "-9999px";
+      div.style.top = "-9999px";
+      div.style.visibility = "hidden";
+      document.body.appendChild(div);
+
+      new QRCode(div, {
+        text: kode,
+        width: 140,
+        height: 140,
+        colorDark: "#0B3150",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H,
+      });
+
+      const canvas = div.querySelector("canvas");
+      if (!canvas) {
+        document.body.removeChild(div);
+        return null;
+      }
+
+      const dataUrl = canvas.toDataURL("image/png");
+      document.body.removeChild(div);
+      return dataUrl;
+    } catch (e) {
+      console.error("[QR] generateQRDataURL failed:", e);
+      return null;
+    }
+  },
+
+  generateDocumentHtml(qrDataUrl) {
+    const m = this.state.currentMaterial;
+    const p = this.state.currentPart;
+    const c = this.state.currentCustomer;
+    const afterQc = this.state.afterQc;
+    const beforeQc = this.state.beforeQc;
+
+    const reportDate = new Date().toISOString().slice(0, 10);
+    const kode = m.kode || "-";
+
+    const afterExt = afterQc ? this._parseRemarks(afterQc) : null;
+    const beforeExt = beforeQc ? this._parseRemarks(beforeQc) : null;
+    const afterSurface = (afterExt && afterExt.surface_values) || [];
+    const afterCore = (afterExt && afterExt.core_values) || [];
+    const beforeSurface = (beforeExt && beforeExt.surface_values) || [];
+    const beforeCore = (beforeExt && beforeExt.core_values) || [];
+
+    const maxPieces = Math.max(
+      afterSurface.length, afterCore.length,
+      beforeSurface.length, beforeCore.length, 12
     );
-    this.printReport(id);
-  },
 
-  _generateDocumentHTML(report) {
-    var logo = "assets/logo/logo baru.svg";
-    var customerName =
-      (report.customer && report.customer.nama_customer) || "-";
-    var customerKode =
-      (report.customer && report.customer.kode_customer) || "";
-    var partNo =
-      (report.part && report.part.nomor_part) || "-";
-    var partName =
-      (report.part && report.part.nama_part) || "-";
-    var targetHardness = report.target_hardness || "-";
-    var actualHardness =
-      report.hardness_actual != null ? report.hardness_actual : "-";
-    var unit = report.hardness_unit || "-";
-    var finalJudgement = report.final_judgement || "-";
-    var processType = report.process_type || "-";
-    var qty = report.qty || 0;
-    var inspector = report.inspector || "-";
-    var inspectorNotes = report.inspector_notes || "";
-    var inspectorDate = this._formatDateLong(report.inspection_date);
-    var approver = report.approver || "-";
-    var approverNotes = report.approver_notes || "";
-    var approvedAt = report.approved_at
-      ? this._formatDateTime(report.approved_at)
-      : "-";
-    var reportDate = this._formatDateLong(report.report_date);
+    const hasBefore = beforeSurface.length > 0 || beforeCore.length > 0;
+    const hasAfter = afterSurface.length > 0 || afterCore.length > 0;
 
-    var judgementClass =
-      finalJudgement === "OK" ? "judgement-ok" :
-      finalJudgement === "NG" ? "judgement-ng" : "";
-
-    var html =
-      '<!DOCTYPE html>' +
-      '<html lang="id"><head><meta charset="UTF-8">' +
-      '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
-      "<title>HARDNESS INSPECTION REPORT - " +
-      this._escapeHtml(report.report_number || "") +
-      "</title>" +
-      "<style>" +
-      this._getDocumentPrintCSS() +
-      "</style>" +
-      "</head><body>" +
-      '<div class="ht-doc-page">' +
-      '<div class="ht-doc-header">' +
-      '<img src="' + logo + '" alt="PT CHUNETSU INDONESIA" class="ht-doc-logo">' +
-      '<div class="ht-doc-company">PT CHUNETSU INDONESIA</div>' +
-      "</div>" +
-      '<div class="ht-doc-title-block">' +
-      "<h1>HARDNESS INSPECTION REPORT</h1>" +
-      '<div class="ht-doc-meta">' +
-      "<div><strong>Report Number:</strong> " +
-      this._escapeHtml(report.report_number || "-") +
-      "</div>" +
-      "<div><strong>Tanggal Laporan:</strong> " +
-      this._escapeHtml(reportDate) +
-      "</div>" +
-      "<div><strong>Tanggal Inspeksi:</strong> " +
-      this._escapeHtml(inspectorDate) +
-      "</div>" +
-      '<div><strong>Report Revision:</strong> Rev. ' +
-      (report.revision || 0) +
-      "</div>" +
-      "</div>" +
-      "</div>" +
-      '<table class="ht-doc-table">' +
-      "<thead><tr><th colspan='2'>Informasi Material</th></tr></thead>" +
-      "<tbody>" +
-      "<tr><td>Customer</td><td>" +
-      this._escapeHtml(customerName) +
-      "</td></tr>" +
-      (customerKode ? "<tr><td>Kode Customer</td><td>" +
-        this._escapeHtml(customerKode) + "</td></tr>" : "") +
-      "<tr><td>Control Number</td><td class='mono'>" +
-      this._escapeHtml(report.control_number || "-") +
-      "</td></tr>" +
-      "<tr><td>Nomor Part</td><td class='mono'>" +
-      this._escapeHtml(partNo) +
-      "</td></tr>" +
-      "<tr><td>Nama Part</td><td>" +
-      this._escapeHtml(partName) +
-      "</td></tr>" +
-      "<tr><td>Quantity</td><td>" +
-      (qty || 0) +
-      " pcs</td></tr>" +
-      "<tr><td>Jenis Proses Heat Treatment</td><td>" +
-      this._escapeHtml(processType) +
-      "</td></tr>" +
-      "</tbody>" +
-      "</table>" +
-      '<table class="ht-doc-table">' +
-      "<thead><tr><th>Parameter</th><th>Spesifikasi / Target</th><th>Hasil Aktual</th><th>Satuan</th><th>Final Judgement</th></tr></thead>" +
-      "<tbody>" +
-      "<tr>" +
-      "<td>Hardness</td>" +
-      "<td class='mono'>" +
-      this._escapeHtml(targetHardness) +
-      "</td>" +
-      "<td class='mono'>" +
-      actualHardness +
-      "</td>" +
-      "<td>" +
-      this._escapeHtml(unit) +
-      "</td>" +
-      "<td><span class='ht-doc-judgement " +
-      judgementClass +
-      "'>" +
-      this._escapeHtml(finalJudgement) +
-      "</span></td>" +
-      "</tr>" +
-      "</tbody>" +
-      "</table>";
-
-    // Catatan & approval
-    html += '<table class="ht-doc-table">';
-    html +=
-      "<thead><tr><th colspan='2'>Catatan &amp; Persetujuan</th></tr></thead>";
-    html += "<tbody>";
-    html +=
-      "<tr><td>Nama Inspector</td><td>" +
-      this._escapeHtml(inspector) +
-      "</td></tr>";
-    html +=
-      "<tr><td>Tanggal Inspeksi</td><td>" +
-      this._escapeHtml(inspectorDate) +
-      "</td></tr>";
-    if (inspectorNotes) {
-      html +=
-        "<tr><td>Catatan Inspector</td><td>" +
-        this._escapeHtml(inspectorNotes) +
-        "</td></tr>";
+    /* Helper: format nilai sel tabel (null/undefined/kosong/NaN -> "-") */
+    function formatCell(val) {
+      if (val === undefined || val === null || val === "") return "-";
+      const n = Number(val);
+      if (isNaN(n)) return "-";
+      return val;
     }
-    html +=
-      "<tr><td>Final Judgement</td><td><span class='ht-doc-judgement " +
-      judgementClass +
-      "'>" +
-      this._escapeHtml(finalJudgement) +
-      "</span></td></tr>";
-    html +=
-      "<tr><td>Nama Approver</td><td>" +
-      this._escapeHtml(approver) +
-      "</td></tr>";
-    html +=
-      "<tr><td>Jabatan</td><td>" +
-      this._escapeHtml(this._currentUserRole() || "Administrator") +
-      "</td></tr>";
-    html +=
-      "<tr><td>Tanggal Approval</td><td>" +
-      this._escapeHtml(approvedAt) +
-      "</td></tr>";
-    if (approverNotes) {
-      html +=
-        "<tr><td>Catatan Atasan</td><td>" +
-        this._escapeHtml(approverNotes) +
-        "</td></tr>";
+
+    /* Build table rows - test pieces only, no average/range columns */
+    let tableRows = "";
+    for (let i = 1; i <= maxPieces; i++) {
+      tableRows += '<tr>';
+      tableRows += '<td>' + i + '</td>';
+      if (hasBefore) {
+        tableRows += '<td>' + formatCell(beforeSurface[i - 1]) + '</td>';
+        tableRows += '<td>' + formatCell(beforeCore[i - 1]) + '</td>';
+      }
+      if (hasAfter) {
+        tableRows += '<td>' + formatCell(afterSurface[i - 1]) + '</td>';
+        tableRows += '<td>' + formatCell(afterCore[i - 1]) + '</td>';
+      }
+      tableRows += '</tr>';
     }
-    html += "</tbody></table>";
 
-    // Signature area
-    html += '<div class="ht-doc-signature">';
-    html += "<div class='ht-doc-signature-col'>";
-    html += "<p class='ht-doc-signature-title'>INSPECTOR</p>";
-    html +=
-      "<p class='ht-doc-signature-name'>" +
-      this._escapeHtml(inspector) +
-      "</p>";
-    html +=
-      "<p class='ht-doc-signature-sub'>" +
-      this._escapeHtml(inspectorDate) +
-      "</p>";
-    html += "</div>";
-    html += "<div class='ht-doc-signature-col'>";
-    html += "<p class='ht-doc-signature-title'>APPROVER</p>";
-    html +=
-      "<p class='ht-doc-signature-name'>" +
-      this._escapeHtml(approver) +
-      "</p>";
-    html +=
-      "<p class='ht-doc-signature-sub'>" +
-      this._escapeHtml(this._currentUserRole() || "Administrator") +
-      " — " +
-      this._escapeHtml(approvedAt) +
-      "</p>";
-    html += "</div>";
-    html += "</div>";
+    /* Helper: hitung rata-rata dari array nilai (abaikan null/undefined/kosong/non-angka) */
+    function computeColAvg(arr) {
+      const valid = arr.filter(function (v) {
+        return v !== undefined && v !== null && v !== "" && !isNaN(Number(v));
+      });
+      if (valid.length === 0) return "-";
+      return (valid.reduce(function (a, b) { return Number(a) + Number(b); }, 0) / valid.length).toFixed(2);
+    }
 
-    html += '<div class="ht-doc-footer">';
-    html +=
-      "<small>Dokumen ini dicetak otomatis dari Sistem Informasi Produksi Heat Treatment. " +
-      "PT CHUNETSU INDONESIA — Dokumen tidak mengandung tanda tangan digital.</small>";
-    html += "</div>";
+    /* Helper: hitung range (max - min) dari array nilai */
+    function computeColRange(arr) {
+      const valid = arr.filter(function (v) {
+        return v !== undefined && v !== null && v !== "" && !isNaN(Number(v));
+      });
+      if (valid.length === 0) return "-";
+      const nums = valid.map(function (v) { return Number(v); });
+      return (Math.max.apply(null, nums) - Math.min.apply(null, nums)).toFixed(2);
+    }
 
-    html += "</div></body></html>";
+    const avgBeforeSurface = computeColAvg(beforeSurface);
+    const avgBeforeCore = computeColAvg(beforeCore);
+    const avgAfterSurface = computeColAvg(afterSurface);
+    const avgAfterCore = computeColAvg(afterCore);
+
+    const rangeBeforeSurface = computeColRange(beforeSurface);
+    const rangeBeforeCore = computeColRange(beforeCore);
+    const rangeAfterSurface = computeColRange(afterSurface);
+    const rangeAfterCore = computeColRange(afterCore);
+
+    /* Build summary rows (Average + Range) */
+    let summaryRows = "";
+
+    /* Baris AVERAGE: sel label + sel untuk setiap kolom data yang ada */
+    summaryRows += '<tr class="ir-summary-row ir-avg-row">';
+    summaryRows += '<td style="text-align:right;" colspan="1"><strong>AVERAGE</strong></td>';
+    if (hasBefore) {
+      summaryRows += '<td>' + avgBeforeSurface + '</td>';
+      summaryRows += '<td>' + avgBeforeCore + '</td>';
+    }
+    if (hasAfter) {
+      summaryRows += '<td>' + avgAfterSurface + '</td>';
+      summaryRows += '<td>' + avgAfterCore + '</td>';
+    }
+    summaryRows += '</tr>';
+
+    /* Baris RANGE (R): sel label + sel untuk setiap kolom data yang ada */
+    summaryRows += '<tr class="ir-summary-row ir-range-row">';
+    summaryRows += '<td style="text-align:right;" colspan="1"><strong>RANGE (R)</strong></td>';
+    if (hasBefore) {
+      summaryRows += '<td>' + rangeBeforeSurface + '</td>';
+      summaryRows += '<td>' + rangeBeforeCore + '</td>';
+    }
+    if (hasAfter) {
+      summaryRows += '<td>' + rangeAfterSurface + '</td>';
+      summaryRows += '<td>' + rangeAfterCore + '</td>';
+    }
+    summaryRows += '</tr>';
+
+    /* Judgement statuses */
+    const inspHasil = afterQc ? String(afterQc.hasil || "").toUpperCase() : "";
+    const inspStatus = inspHasil === "OK" ? "OK" : (inspHasil === "NG" ? "NG" : "BELUM DI-JUDGEMENT");
+    const inspClass = inspHasil === "OK" ? "status-ok" : (inspHasil === "NG" ? "status-ng" : "status-pending");
+    const leaderJudgement = afterQc ? (afterQc.leader_judgement || null) : null;
+    const leaderStatus = leaderJudgement === "OK" ? "OK" : (leaderJudgement === "NG" ? "NG" : "BELUM DI-JUDGEMENT");
+    const leaderClass = leaderJudgement === "OK" ? "status-ok" : (leaderJudgement === "NG" ? "status-ng" : "status-pending");
+    const supervisorJudgement = afterQc ? (afterQc.supervisor_judgement || null) : null;
+    const supervisorStatus = supervisorJudgement === "OK" ? "OK" : (supervisorJudgement === "NG" ? "NG" : "BELUM DI-JUDGEMENT");
+    const supervisorClass = supervisorJudgement === "OK" ? "status-ok" : (supervisorJudgement === "NG" ? "status-ng" : "status-pending");
+
+    /* Signature images (data URL) */
+    const inspSignature = afterExt ? afterExt.signature : null;
+    const leaderSignature = afterQc ? afterQc.leader_signature : null;
+    const supervisorSignature = afterQc ? afterQc.supervisor_signature : null;
+
+    /* Helper: signature HTML */
+    function sigHtml(sig, hasJudgement) {
+      if (sig) {
+        return '<div class="judge-row"><span class="label">Tanda Tangan</span><span class="value"><img src="' + sig + '" class="judge-sig-img" alt="Tanda Tangan"></span></div>';
+      } else if (hasJudgement) {
+        return '<div class="judge-row"><span class="label">Tanda Tangan</span><span class="value sig-pending-doc">BELUM ADA TANDA TANGAN</span></div>';
+      }
+      return "";
+    }
+
+    const beforeCols = (beforeSurface.length > 0 || beforeCore.length > 0)
+      ? '<th>Before Surface</th><th>Before Core</th>'
+      : '';
+    const afterCols = (afterSurface.length > 0 || afterCore.length > 0)
+      ? '<th>After Surface</th><th>After Core</th>'
+      : '';
+
+    const partInfoRows = [
+      ["Control Number / Kode Material", m.kode || "-"],
+      ["Customer", c ? c.nama_customer : "-"],
+      ["Part Name", p ? p.nama_part : "-"],
+      ["Part No.", p ? p.nomor_part : "-"],
+      ["Lot Number", m.lot_no || "-"],
+      ["Material Charge", m.material_charge || "-"],
+      ["Status Part", m.status_part || "-"],
+      ["Jenis Proses", m.process_type || "-"],
+      ["Target Hardness", p ? p.target_hardness : "-"],
+      ["QTY", m.qty ? m.qty.toLocaleString("id-ID") + " PCS" : "-"],
+    ].map(function (row) {
+      return '<tr><td style="font-weight:600;color:#475569;">' + row[0] + '</td><td>' + row[1] + '</td></tr>';
+    }).join("");
+
+    const html = [
+      '<!doctype html>',
+      '<html lang="id">',
+      '<head><meta charset="UTF-8"><title>Inspection Report - ' + kode + '</title>',
+      '<style>',
+      '@page { size: A4 portrait; margin: 12mm; }',
+      'html,body { margin:0; padding:0; background:#fff; font-family:"Inter",Arial,Helvetica,sans-serif; color:#18364F; font-size:10px; line-height:1.4; }',
+      '* { -webkit-print-color-adjust:exact !important; color-adjust:exact !important; box-sizing:border-box; }',
+      '.doc { width:210mm; margin:0 auto; padding:0; }',
+      '.header { display:flex; align-items:center; justify-content:space-between; gap:8px; border-bottom:2px solid #123F63; padding-bottom:8px; margin-bottom:12px; }',
+      '.header img { width:32px; height:32px; }',
+      '.header-center { flex:1; text-align:center; }',
+      '.header-center h1 { margin:0; font-size:16px; font-weight:800; color:#123F63; letter-spacing:1px; }',
+      '.header-center p { margin:0; font-size:9px; color:#60778C; }',
+      '.header-qr { display:flex; flex-direction:column; align-items:center; gap:4px; }',
+      '.header-qr-img { width:90px; height:90px; }',
+      '.header-qr-text { font-size:9px; font-weight:700; color:#123F63; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100px; }',
+      '.header-qr-placeholder { display:flex; flex-direction:column; align-items:center; gap:4px; font-size:8px; color:#60778C; }',
+      '.header h1 { margin:0; font-size:16px; font-weight:800; color:#123F63; letter-spacing:1px; }',
+      '.header p { margin:0; font-size:9px; color:#60778C; }',
+      '.meta { display:flex; justify-content:space-between; font-size:9px; color:#60778C; margin-bottom:12px; }',
+      '.section { margin-bottom:12px; }',
+      '.section h3 { font-size:12px; font-weight:700; color:#123F63; margin:0 0 6px 0; border-bottom:1px solid var(--border,#cbd5e1); padding-bottom:4px; }',
+      '.info-table { width:100%; border-collapse:collapse; }',
+      '.info-table td { padding:4px 6px; border:1px solid #cbd5e1; font-size:9.5px; }',
+      '.info-table td:first-child { font-weight:600; color:#475569; width:40%; background:#f8fafc; }',
+      '.hardness-table { width:100%; border-collapse:collapse; margin-top:6px; }',
+      '.hardness-table th { background:#f1f5f9; font-weight:600; color:#475569; text-transform:uppercase; letter-spacing:0.04em; font-size:8.5px; padding:5px; text-align:center; border:1px solid #cbd5e1; }',
+      '.hardness-table td { padding:5px; text-align:center; border:1px solid #cbd5e1; font-size:9px; }',
+      '.hardness-table td:first-child { font-weight:600; color:#475569; }',
+      '.ir-summary-row { font-weight:700; }',
+      '.ir-summary-row td { border:1px solid #cbd5e1; text-align:center; font-size:9px; }',
+      '.ir-summary-row td:first-child { font-weight:700; color:#123F63; }',
+      '.ir-avg-row { background:#eaf3fb; }',
+      '.ir-range-row { background:#f1f5f9; }',
+      '.judgement-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:6px; }',
+      '.judge-item { border:1px solid #cbd5e1; border-radius:4px; padding:8px; background:#f8fafc; }',
+      '.judge-item h4 { margin:0 0 6px 0; font-size:11px; font-weight:700; color:#123F63; text-transform:uppercase; letter-spacing:0.04em; }',
+      '.judge-row { display:flex; justify-content:space-between; font-size:8.5px; margin-bottom:2px; }',
+      '.judge-row .label { color:#60778C; font-weight:600; font-size:8px; text-transform:uppercase; }',
+      '.judge-row .value { font-weight:700; }',
+      '.judge-sig-img { max-width:45mm; max-height:18mm; object-fit:contain; border:0.5px solid #C7D9E8; border-radius:1mm; background:#fff; }',
+      '.sig-pending-doc { font-size:6.5px; color:#6b7280; font-style:italic; }',
+      '.status-ok { color:#166534; }',
+      '.status-ng { color:#991b1b; }',
+      '.status-pending { color:#475569; }',
+      '.footer { margin-top:16px; font-size:8px; color:#60778C; text-align:center; border-top:1px solid #cbd5e1; padding-top:6px; }',
+      '@media print { .no-print { display:none !important; } }',
+      '</style>',
+      '</head>',
+      '<body><div class="doc">',
+      '<div class="header">',
+      '<img src="assets/logo/logo baru.svg" alt="Logo">',
+      '<div class="header-center">',
+      '<h1>INSPECTION REPORT</h1>',
+      '<p>PT CHUNETSU INDONESIA &bull; Heat Treatment Department</p>',
+      '</div>',
+      (qrDataUrl
+        ? '<div class="header-qr">' +
+          '<img src="' + qrDataUrl + '" alt="QR Code" class="header-qr-img">' +
+          '<div class="header-qr-text">' + kode + '</div>' +
+          '</div>'
+        : '<div class="header-qr-placeholder">' +
+          '<div class="header-qr-text">QR Code tidak tersedia</div>' +
+          '</div>') +
+      '</div>',
+      '<div class="meta">',
+      '<span>No. Laporan: ' + kode + '</span>',
+      '<span>Tanggal: ' + reportDate + '</span>',
+      '</div>',
+
+      '<div class="section">',
+      '<h3>Informasi Part</h3>',
+      '<table class="info-table">' + partInfoRows + '</table>',
+      '</div>',
+
+      '<div class="section">',
+      '<h3>Tabel Hasil Hardness</h3>',
+      '<table class="hardness-table">',
+      '<thead><tr>',
+      '<th>Test Piece</th>' + beforeCols + afterCols,
+      '</tr></thead>',
+      '<tbody>' + tableRows + summaryRows + '</tbody>',
+      '</table>',
+      '</div>',
+
+      '<div class="section">',
+      '<h3>Judgement dan Approval</h3>',
+      '<div class="judgement-grid">',
+      '<div class="judge-item">',
+      '<h4>Inspector QC</h4>',
+      '<div class="judge-row"><span class="label">Nama</span><span class="value">' + (afterQc ? (afterQc.inspector || "-") : "-") + '</span></div>',
+      '<div class="judge-row"><span class="label">Tanggal</span><span class="value">' + (afterQc ? this._formatDate(afterQc.tanggal_inspector) : "-") + '</span></div>',
+      '<div class="judge-row"><span class="label">Status</span><span class="value ' + inspClass + '">' + inspStatus + '</span></div>',
+      sigHtml(inspSignature, inspHasil === "OK" || inspHasil === "NG"),
+      '</div>',
+      '<div class="judge-item">',
+      '<h4>Leader QC</h4>',
+      '<div class="judge-row"><span class="label">Nama</span><span class="value">' + (afterQc ? (afterQc.leader_name || "-") : "-") + '</span></div>',
+      '<div class="judge-row"><span class="label">Tanggal</span><span class="value">' + (afterQc ? this._formatDate(afterQc.leader_date) : "-") + '</span></div>',
+      '<div class="judge-row"><span class="label">Status</span><span class="value ' + leaderClass + '">' + leaderStatus + '</span></div>',
+      sigHtml(leaderSignature, leaderJudgement === "OK" || leaderJudgement === "NG"),
+      '</div>',
+      '<div class="judge-item">',
+      '<h4>Supervisor QC</h4>',
+      '<div class="judge-row"><span class="label">Nama</span><span class="value">' + (afterQc ? (afterQc.supervisor_name || "-") : "-") + '</span></div>',
+      '<div class="judge-row"><span class="label">Tanggal</span><span class="value">' + (afterQc ? this._formatDate(afterQc.supervisor_date) : "-") + '</span></div>',
+      '<div class="judge-row"><span class="label">Status</span><span class="value ' + supervisorClass + '">' + supervisorStatus + '</span></div>',
+      sigHtml(supervisorSignature, supervisorJudgement === "OK" || supervisorJudgement === "NG"),
+      '</div>',
+      '</div>',
+      '</div>',
+
+      '<div class="footer">',
+      'Dokumen ini dihasilkan dari sistem Inspection Report PT CHUNETSU INDONESIA. Data berdasarkan catatan QC yang tersimpan.',
+      '</div>',
+      '</div></body></html>',
+    ].join("\n");
 
     return html;
   },
-
-  _getDocumentPrintCSS() {
-    return (
-      "body{font-family:'Inter',sans-serif;margin:0;padding:0;font-size:12px;color:#0f172a;background:#fff}" +
-      ".ht-doc-page{width:21cm;min-height:29.7cm;margin:0 auto;padding:2cm;box-sizing:border-box;position:relative}" +
-      ".ht-doc-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}" +
-      ".ht-doc-logo{width:40px;height:40px}" +
-      ".ht-doc-company{font-size:18px;font-weight:700;color:#0f172a}" +
-      ".ht-doc-title-block{text-align:center;margin-bottom:24px}" +
-      ".ht-doc-title-block h1{font-size:22px;font-weight:700;color:#1e3a8a;letter-spacing:-0.5px;margin:0}" +
-      ".ht-doc-meta{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:8px;font-size:11px;color:#475569}" +
-      ".ht-doc-meta div{display:flex;gap:6px}" +
-      ".ht-doc-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:11px}" +
-      ".ht-doc-table thead th{text-align:left;padding:8px 10px;background:#eff6ff;font-weight:600;color:#1e3a8a;border-bottom:2px solid #2563eb}" +
-      ".ht-doc-table td{padding:6px 10px;border-bottom:1px solid #e2e8f0}" +
-      ".ht-doc-table td.mono{font-family:'Courier New',monospace;font-weight:600}" +
-      ".ht-doc-judgement{display:inline-block;padding:2px 10px;border-radius:999px;font-size:10px;font-weight:700;white-space:nowrap}" +
-      ".judgement-ok{background:#dcfce7;color:#166534;border:0.5px solid rgba(16,185,129,0.3)}" +
-      ".judgement-ng{background:#fee2e2;color:#991b1b;border:0.5px solid rgba(239,68,68,0.3)}" +
-      ".ht-doc-signature{display:flex;justify-content:space-between;margin-top:24px;border-top:2px solid #cbd5e1;padding-top:20px}" +
-      ".ht-doc-signature-col{text-align:center;flex:1}" +
-      ".ht-doc-signature-title{font-size:11px;text-transform:uppercase;font-weight:700;color:#475569;margin-bottom:4px}" +
-      ".ht-doc-signature-name{font-size:13px;font-weight:600;color:#0f172a;margin:4px 0}" +
-      ".ht-doc-signature-sub{font-size:10px;color:#64748b}" +
-      ".ht-doc-footer{text-align:center;margin-top:20px;font-size:9px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:10px}" +
-      "@media print{body{margin:0} .ht-doc-page{padding:1.5cm} .ht-doc-signature{break-inside:avoid}}" +
-      "@page{size:A4;margin:2cm}"
-    );
-  },
-
-  /* ----------------------------------------------------------
-     Event binding
-     ---------------------------------------------------------- */
-  _bindEvents() {
-    if (this._el.createBtn) {
-      this._el.createBtn.addEventListener("click", () => {
-        this.openFormModal();
-      });
-    }
-     this._bindFilterEvents();
-    this._bindFormEvents();
-    this._bindApprovalEvents();
-    this._bindDetailEvents();
-  },
-
-  _bindFilterEvents() {
-    if (this._el.searchInput) {
-      this._el.searchInput.addEventListener("input", (e) => {
-        this.state.searchQuery = e.target.value;
-        this.state.currentPage = 1;
-        this.renderTable();
-      });
-    }
-    if (this._el.statusFilter) {
-      this._el.statusFilter.addEventListener("change", (e) => {
-        this.state.statusFilter = e.target.value;
-        this.state.currentPage = 1;
-        this.renderTable();
-      });
-    }
-    if (this._el.dateFilter) {
-      this._el.dateFilter.addEventListener("change", (e) => {
-        this.state.dateFilter = e.target.value;
-        this.state.currentPage = 1;
-        this.renderTable();
-      });
-    }
-    if (this._el.resetBtn) {
-      this._el.resetBtn.addEventListener("click", () => {
-        this._resetFilters();
-      });
-    }
-    if (this._el.pageSizeSelect) {
-      this._el.pageSizeSelect.addEventListener("change", (e) => {
-        this.state.pageSize = parseInt(e.target.value, 10);
-        this.state.currentPage = 1;
-        this.renderTable();
-      });
-    }
-    if (this._el.prevPage) {
-      this._el.prevPage.addEventListener("click", () => {
-        if (this.state.currentPage > 1) {
-          this.state.currentPage--;
-          this.renderTable();
-        }
-      });
-    }
-    if (this._el.nextPage) {
-      this._el.nextPage.addEventListener("click", () => {
-        var totalPages =
-          Math.ceil(this.getFilteredReports().length / this.state.pageSize) ||
-          1;
-        if (this.state.currentPage < totalPages) {
-          this.state.currentPage++;
-          this.renderTable();
-        }
-      });
-    }
-  },
-
-  _resetFilters() {
-    this.state.searchQuery = "";
-    this.state.statusFilter = "all";
-    this.state.dateFilter = "";
-    this.state.currentPage = 1;
-    if (this._el.searchInput) this._el.searchInput.value = "";
-    if (this._el.statusFilter) this._el.statusFilter.value = "all";
-    if (this._el.dateFilter) this._el.dateFilter.value = "";
-    this.renderTable();
-  },
-
-  _bindFormEvents() {
-    if (this._el.materialSelect) {
-      this._el.materialSelect.addEventListener("change", () => {
-        this._onMaterialChange();
-      });
-    }
-    if (this._el.hardnessInput) {
-      this._el.hardnessInput.addEventListener("input", () => {
-        this._updateSummaryBox();
-      });
-    }
-    if (this._el.hardnessUnitSelect) {
-      this._el.hardnessUnitSelect.addEventListener("change", () => {
-        this._updateSummaryBox();
-      });
-    }
-    if (this._el.inspectionDateInput) {
-      this._el.inspectionDateInput.addEventListener("change", () => {
-        this._updateSummaryBox();
-      });
-    }
-    if (this._el.inspectorInput) {
-      this._el.inspectorInput.addEventListener("input", () => {
-        this._updateSummaryBox();
-      });
-    }
-    if (this._el.saveDraftBtn) {
-      this._el.saveDraftBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        this.saveDraft();
-      });
-    }
-    if (this._el.sendApprovalBtn) {
-      this._el.sendApprovalBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        this.sendForApprovalFromForm();
-      });
-    }
-    if (this._el.closeFormBtn) {
-      this._el.closeFormBtn.addEventListener("click", () => {
-        this.closeFormModal();
-      });
-    }
-    if (this._el.cancelFormBtn) {
-      this._el.cancelFormBtn.addEventListener("click", () => {
-        this.closeFormModal();
-      });
-    }
-  },
-
-  _bindApprovalEvents() {
-    var radioOk = document.getElementById("judgementOk");
-    var radioNg = document.getElementById("judgementNg");
-    if (radioOk) {
-      radioOk.addEventListener("change", () => this._handleJudgementChange());
-    }
-    if (radioNg) {
-      radioNg.addEventListener("change", () => this._handleJudgementChange());
-    }
-    if (this._el.approvalNotesTextarea) {
-      this._el.approvalNotesTextarea.addEventListener("input", () => {
-        this._updateApprovalButtons();
-      });
-    }
-    if (this._el.approveBtn) {
-      this._el.approveBtn.addEventListener("click", () => {
-        this.approveReport();
-      });
-    }
-    if (this._el.rejectBtn) {
-      this._el.rejectBtn.addEventListener("click", () => {
-        this.rejectReport();
-      });
-    }
-     if (this._el.closeApprovalBtn) {
-       this._el.closeApprovalBtn.addEventListener("click", () => {
-         this.closeApprovalModal();
-       });
-     }
-   },
-
-   _bindDetailEvents() {
-     if (this._el.closeDetailBtn) {
-       this._el.closeDetailBtn.addEventListener("click", () => {
-         this.closeDetailModal();
-       });
-     }
-     if (this._el.closeDetailFooterBtn) {
-       this._el.closeDetailFooterBtn.addEventListener("click", () => {
-         this.closeDetailModal();
-       });
-     }
-   },
-
-   _bindModalClose() {
-    var formModal = document.getElementById("reportFormModal");
-    if (formModal) {
-      formModal.addEventListener("click", (e) => {
-        if (e.target === formModal) this.closeFormModal();
-      });
-    }
-    var approvalModal = document.getElementById("approvalModal");
-    if (approvalModal) {
-      approvalModal.addEventListener("click", (e) => {
-        if (e.target === approvalModal) this.closeApprovalModal();
-      });
-    }
-    var detailModal = document.getElementById("reportDetailModal");
-    if (detailModal) {
-      detailModal.addEventListener("click", (e) => {
-        if (e.target === detailModal) this.closeDetailModal();
-      });
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        if (formModal && formModal.classList.contains("active"))
-          this.closeFormModal();
-        if (approvalModal && approvalModal.classList.contains("active"))
-          this.closeApprovalModal();
-        if (detailModal && detailModal.classList.contains("active"))
-          this.closeDetailModal();
-      }
-    });
-  },
-
-  /* ----------------------------------------------------------
-     Helpers
-     ---------------------------------------------------------- */
-  getStatusBadgeClass(status) {
-    switch (status) {
-      case this.STATUSES.DRAFT:
-        return "ht-badge-draft";
-      case this.STATUSES.PENDING:
-        return "ht-badge-pending";
-      case this.STATUSES.APPROVED:
-        return "ht-badge-approved";
-      case this.STATUSES.REJECTED:
-        return "ht-badge-rejected";
-      default:
-        return "ht-badge-waiting";
-    }
-  },
-
-  getJudgementBadgeClass(judgement) {
-    if (judgement === "OK") return "ht-badge-ok";
-    if (judgement === "NG") return "ht-badge-ng";
-    return "ht-badge-waiting";
-  },
-
-  _formatDateShort(dateStr) {
-    if (!dateStr) return "-";
-    var d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr.slice(0, 10);
-    var day = String(d.getDate()).padStart(2, "0");
-    var month = String(d.getMonth() + 1).padStart(2, "0");
-    var year = d.getFullYear();
-    return day + "/" + month + "/" + year;
-  },
-
-  _formatDateLong(dateStr) {
-    if (!dateStr) return "-";
-    return formatDateLongFromISO
-      ? formatDateLongFromISO(dateStr)
-      : dateStr.slice(0, 10);
-  },
-
-  _formatDateTime(isoStr) {
-    if (!isoStr) return "-";
-    return formatDateLongWithTime
-      ? formatDateLongWithTime(isoStr)
-      : isoStr;
-  },
-
-  _escapeHtml(str) {
-    if (str === null || str === undefined) return "";
-    return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  },
 };
-
-/* ============================================================
-   Auto-initialize pada DOMContentLoaded
-   ============================================================ */
-document.addEventListener("DOMContentLoaded", function () {
-  if (!HTUI.requireAuth()) return;
-  if (typeof DB !== "undefined") {
-    DB.init();
-    DB.migrate();
-  }
-  if (typeof HTDateFormat !== "undefined") {
-    HTDateFormat.init();
-  }
-  HTInspectionReport.init();
-});

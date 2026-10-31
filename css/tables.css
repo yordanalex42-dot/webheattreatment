@@ -441,22 +441,6 @@
   border-bottom: 1px solid var(--border);
 }
 
-.ht-table tbody tr:hover {
-  background: var(--surface-hover);
-}
-
-.ht-table tbody tr:nth-child(even) {
-  background: var(--surface);
-}
-
-.ht-table tbody tr:nth-child(even):hover {
-  background: var(--surface-hover);
-}
-
-.ht-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
 /* ============================================================
    GERAKAN REDUCED
    ============================================================ */

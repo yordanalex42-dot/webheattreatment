@@ -121,10 +121,6 @@
               <img src="assets/icons/quality-control.svg" alt="Input Data" class="sidebar-menu-icon" />
               Input Data
             </a>
-            <a href="inspection-report.html" class="ht-nav-link">
-              <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
-              Inspection Report
-            </a>
             <a href="leader-qc.html" class="ht-nav-link">
               <img src="assets/icons/gavel.svg" alt="Leader QC" class="sidebar-menu-icon" />
               Leader QC
@@ -132,6 +128,10 @@
             <a href="supervisor-qc.html" class="ht-nav-link active">
               <img src="assets/icons/user.svg" alt="Supervisor QC" class="sidebar-menu-icon" />
               Supervisor QC
+            </a>
+            <a href="inspection-report.html" class="ht-nav-link">
+              <img src="assets/icons/file.svg" alt="Inspection Report" class="sidebar-menu-icon" />
+              Inspection Report
             </a>
           </div>
           <div class="nav-section">
@@ -308,7 +308,7 @@
                     <div class="ht-form-group">
                       <label class="ht-form-label">Tanda Tangan Supervisor QC</label>
                       <div class="ht-ir-signature-canvas">
-                        <canvas id="supervisorSignatureCanvas" width="500" height="150"></canvas>
+                        <canvas id="supervisorSignatureCanvas" width="500" height="150" style="touch-action:none"></canvas>
                       </div>
                       <div class="ht-ir-signature-actions">
                         <button type="button" id="btnClearSupervisorSignature" class="ht-btn ht-btn-secondary-outlined ht-btn-sm">
@@ -596,50 +596,54 @@
         }
 
         if (!canvas._supervisorSigBound) {
-          canvas.addEventListener("mousedown", supervisorSigStart);
-          canvas.addEventListener("mousemove", supervisorSigContinue);
-          canvas.addEventListener("mouseup", supervisorSigStop);
-          canvas.addEventListener("mouseleave", supervisorSigStop);
-          canvas.addEventListener("touchstart", supervisorSigTouchStart);
-          canvas.addEventListener("touchmove", supervisorSigTouchMove);
-          canvas.addEventListener("touchend", supervisorSigStop);
+          canvas.addEventListener("pointerdown", supervisorSigStart);
+          canvas.addEventListener("pointermove", supervisorSigContinue);
+          canvas.addEventListener("pointerup", supervisorSigStop);
+          canvas.addEventListener("pointerleave", supervisorSigStop);
+          canvas.addEventListener("pointercancel", supervisorSigStop);
           canvas._supervisorSigBound = true;
         }
       }
 
       var supervisorDrawing = false;
+      var supervisorPointerId = null;
       function supervisorSigStart(e) {
         supervisorDrawing = true;
+        supervisorPointerId = e.pointerId;
+        e.preventDefault();
         var canvas = e.target;
+        canvas.setPointerCapture(e.pointerId);
         var ctx = canvas.getContext("2d");
         var rect = canvas.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        var x = (e.clientX - rect.left) * scaleX;
+        var y = (e.clientY - rect.top) * scaleY;
         ctx.beginPath();
         ctx.moveTo(x, y);
       }
       function supervisorSigContinue(e) {
         if (!supervisorDrawing) return;
+        if (e.pointerId !== supervisorPointerId) return;
         e.preventDefault();
         var canvas = e.target;
         var ctx = canvas.getContext("2d");
         var rect = canvas.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        var x = (e.clientX - rect.left) * scaleX;
+        var y = (e.clientY - rect.top) * scaleY;
         ctx.lineTo(x, y);
         ctx.stroke();
       }
       function supervisorSigStop(e) {
         if (!supervisorDrawing) return;
+        if (e.pointerId !== supervisorPointerId) return;
         supervisorDrawing = false;
+        supervisorPointerId = null;
         var canvas = e.target;
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
         supervisorSignatureData = canvas.toDataURL("image/png");
-      }
-      function supervisorSigTouchStart(e) {
-        if (e.touches && e.touches.length > 0) supervisorSigStart({ target: e.target, clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
-      }
-      function supervisorSigTouchMove(e) {
-        if (e.touches && e.touches.length > 0) supervisorSigContinue({ target: e.target, touches: e.touches });
       }
 
       function clearSupervisorSignature() {

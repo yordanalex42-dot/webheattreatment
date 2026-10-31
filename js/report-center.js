@@ -22,6 +22,7 @@ const RCF = {
     currentJudge: null,
     currentExt: null,
     html5QrCode: null,
+    isScanning: false,
     reportNumber: "",
   },
 
@@ -29,7 +30,8 @@ const RCF = {
   init() {
     HTDateFormat.init();
     this.bindEvents();
-    this.startScanner();
+    /* Scanner diaktifkan melalui tombol "Scan QR Code" (tidak otomatis saat
+       halaman dibuka). */
   },
 
   /* ---- Event binding ---- */
@@ -38,6 +40,12 @@ const RCF = {
 
     var btnSearch = document.getElementById("btnSearch");
     if (btnSearch) btnSearch.addEventListener("click", function () { self.searchMaterial(); });
+
+    var btnScanQR = document.getElementById("btnScanQR");
+    if (btnScanQR) btnScanQR.addEventListener("click", function () { self.toggleScanner(); });
+
+    var btnStopQR = document.getElementById("btnStopQR");
+    if (btnStopQR) btnStopQR.addEventListener("click", function () { self.stopScannerUI(); });
 
     var btnReset = document.getElementById("btnReset");
     if (btnReset) btnReset.addEventListener("click", function () { self.resetSearch(); });
@@ -69,23 +77,64 @@ const RCF = {
   },
 
   /* ---- QR Scanner ---- */
+  toggleScanner() {
+    if (this.state.isScanning && this.state.html5QrCode) {
+      this.stopScannerUI();
+    } else {
+      this.startScanner();
+    }
+  },
+
   startScanner() {
+    if (this.state.isScanning) return;
     if (!window.Html5Qrcode) {
       var scannerContainer = document.getElementById("qr-reader");
       if (scannerContainer) {
-        scannerContainer.innerHTML = '<p class="ht-hint text-center">Kamera tidak tersedia di browser ini. Gunakan pencarian manual.</p>';
+        scannerContainer.innerHTML = '<div style="width:100%;height:200px;background:#000;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:#888;font-size:13px;">Kamera tidak tersedia di browser ini. Gunakan pencarian manual.</div>';
       }
+      var errEl = document.getElementById("qrError");
+      if (errEl) { errEl.textContent = "Kamera tidak dapat digunakan di browser ini."; errEl.classList.remove("hidden"); }
       return;
     }
     this.state.html5QrCode = HTUI.createScanner("qr-reader");
     if (!this.state.html5QrCode) return;
+    var self = this;
     HTUI.startScanner(this.state.html5QrCode, function (decodedText) {
+      self.state.isScanning = false;
+      self._updateScannerUI();
       var id = HTUI.parseScanId(decodedText);
       if (id) {
         document.getElementById("materialCodeInput").value = id;
         RCF.searchMaterial();
       }
     });
+    this.state.isScanning = true;
+    this._updateScannerUI();
+  },
+
+  stopScannerUI() {
+    HTUI.stopScanner(this.state.html5QrCode);
+    this.state.html5QrCode = null;
+    this.state.isScanning = false;
+    this._updateScannerUI();
+    var scannerContainer = document.getElementById("qr-reader");
+    if (scannerContainer) {
+      scannerContainer.innerHTML = '';
+    }
+    var errEl = document.getElementById("qrError");
+    if (errEl) { errEl.classList.add("hidden"); errEl.textContent = ""; }
+  },
+
+  _updateScannerUI() {
+    var scanning = !!this.state.isScanning;
+    var btnScan = document.getElementById("btnScanQR");
+    var btnStop = document.getElementById("btnStopQR");
+    if (btnScan) {
+      btnScan.classList.toggle("hidden", scanning);
+      btnScan.disabled = scanning;
+      btnScan.textContent = scanning ? "Sedang Membuka Kamera..." : "Scan QR Code";
+    }
+    if (btnStop) btnStop.classList.toggle("hidden", !scanning);
   },
 
   /* ---- Pencarian material ---- */
@@ -539,15 +588,8 @@ const RCF = {
     var productionDate = (material && material.tanggal_masuk) ? formatDateLong(material.tanggal_masuk) : "-";
     var reportDate = (qc && qc.tanggal_inspector) ? formatDateLong(qc.tanggal_inspector) : "-";
 
-    /* QR code URL — points to this app's inspection-report page with material code */
+    /* QR code URL — halaman Inspection Report sudah dihapus, URL dikosongkan */
     var reportUrl = "";
-    try {
-      if (typeof window !== "undefined") {
-        var origin = window.location.protocol + "//" + window.location.host;
-        var basePath = window.location.pathname.replace(/[^\/]*$/, "");
-        reportUrl = origin + basePath + "inspection-report.html?kode=" + encodeURIComponent(material.kode || "");
-      }
-    } catch (e) { reportUrl = ""; }
     this.state.reportUrl = reportUrl;
 
     /* QR label */
