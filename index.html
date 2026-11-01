@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/forms.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
     <link rel="stylesheet" href="css/icons.css" />
+      <script src="js/auth.js"></script>
   </head>
   <body>
 <script>
@@ -37,7 +38,6 @@
           for (var k in ro){ if (ro.hasOwnProperty(k)) vr.push(ro[k]); }
         } catch(ex){}
       }
-      if (vr.length === 0) { vr = ['Administrator','Inspector QC','Leader QC','Supervisor QC','Operator Shotblast','Operator Anti Rust','Operator Delivery']; }
       if (vr.indexOf(s.role) === -1) { try{localStorage.removeItem(sk);}catch(ex){} window.location.replace('login.html'); return; }
     } catch(e) { try{window.location.replace('login.html');}catch(ex){} }
   })();
@@ -730,7 +730,6 @@
     </div>
 
     <script src="js/db.js"></script>
-    <script src="js/auth.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/date-format.js"></script>
     <script src="js/dashboard.js"></script>
