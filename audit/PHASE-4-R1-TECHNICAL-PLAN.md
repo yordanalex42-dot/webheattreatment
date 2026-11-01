@@ -222,3 +222,269 @@ R1.5 (Input Validation) - bisa paralel
 
 **Status:** Menunggu persetujuan untuk melanjutkan ke implementasi.
 
+# PHASE 4 REVISION — R1 TECHNICAL PLAN (UPDATED)
+
+**Date:** 2026-11-01 14:03:54  
+**Status:** PLANNING ONLY - NO IMPLEMENTATION  
+**Revision:** Based on review feedback  
+**Scope:** R1 Quick Wins - Revised
+
+---
+
+## 1. R1.1 — AUTH GUARDS (REVISED)
+
+### Current Auth Implementation Analysis (js/auth.js)
+- getSession(): const s = localStorage.getItem(this.sessionKey); return s ? JSON.parse(s) : null; 
+  - **Issue:** JSON.parse tanpa try-catch - bisa throw error jika data corrupt
+- isLoggedIn(): eturn !!this.getSession(); - bergantung pada getSession
+- Session structure: { username, name, role } (dari login)
+- Tidak ada validasi field username/role
+- Tidak ada expiry
+
+### Recommended Safe Auth Guard Pattern
+`javascript
+(function() {
+  try {
+    const raw = localStorage.getItem('ht_session');
+    if (!raw) {
+      if (window.location.pathname.split('/').pop() !== 'login.html') {
+        window.location.href = 'login.html';
+      }
+      return;
+    }
+    const session = JSON.parse(raw);
+    if (!session || !session.username || !session.role) {
+      localStorage.removeItem('ht_session');
+      if (window.location.pathname.split('/').pop() !== 'login.html') {
+        window.location.href = 'login.html';
+      }
+      return;
+    }
+    // valid session
+  } catch(e) {
+    localStorage.removeItem('ht_session');
+    if (window.location.pathname.split('/').pop() !== 'login.html') {
+      window.location.href = 'login.html';
+    }
+  }
+})();
+`
+
+### Protected Pages List (18 pages, excluding login.html)
+Dari audit: semua HTML kecuali login.html memerlukan perlindungan
+
+List: anti-rust.html, customer.html, delivery.html, heat-treatment.html, incoming.html, index.html (dashboard), inspection-report.html, leader-qc.html, out_snapshot.html, part.html, planning-produksi.html, proses.html, produksi-akhir.html, produksi-masuk.html, qc.html, shotblast.html, supervisor-qc.html, tracking.html
+
+**Note:** inspection-report.html masih ada file-nya meski menu dihapus per AGENTS.md
+
+### Requirements
+- Validasi struktur session
+- Handle JSON.parse errors
+- Validasi username dan role ada
+- Handle session tidak valid
+- Konsisten redirect ke login.html
+- **CEGAH redirect loop** - cek nama file saat ini
+- Kompatibel semua halaman
+- **HANYA MITIGASI CLIENT-SIDE** - tidak menggantikan server auth
+
+
+## 2. R1.2 — ROLE STANDARDIZATION & ACCESS MATRIX
+
+### Roles (dari auth.js)
+1. Administrator
+2. Inspector QC
+3. Leader QC
+4. Supervisor QC
+5. Operator Shotblast
+6. Operator Anti Rust
+7. Operator Delivery
+
+### Access Matrix (Based on navigation observation)
+| Halaman | Administrator | Inspector QC | Leader QC | Supervisor QC | Operator Shotblast | Operator Anti Rust | Operator Delivery | Notes |
+|---|---|---|---|---|---|---|---|---|
+| index.html (Dashboard) | ✓ | ? | ? | ? | ? | ? | ? | Perlu verifikasi |
+| customer.html | ✓ | ? | ? | ? | ? | ? | ? | Master Data |
+| part.html | ✓ | ? | ? | ? | ? | ? | ? | Master Data |
+| incoming.html | ✓ | ? | ? | ? | ? | ? | ? | PPIC |
+| planning-produksi.html | ✓ | ? | ? | ? | ? | ? | ? | PPIC |
+| delivery.html | ✓ | ? | ? | ? | ? | ? | ? | PPIC/Delivery |
+| heat-treatment.html | ✓ | ? | ? | ? | ? | ? | ? | Production |
+| proses.html | ✓ | ? | ? | ? | ? | ? | ? | Production |
+| produksi-masuk.html | ✓ | ? | ? | ? | ? | ? | ? | Production |
+| produksi-akhir.html | ✓ | ? | ? | ? | ? | ? | ? | Production |
+| shotblast.html | ✓ | ? | ? | ? | ✓ (likely) | ? | ? | Operator specific |
+| anti-rust.html | ✓ | ? | ? | ? | ? | ✓ (likely) | ? | Operator specific |
+| qc.html | ✓ | ✓ (likely) | ? | ? | ? | ? | ? | QC |
+| leader-qc.html | ✓ | ? | ✓ (likely) | ? | ? | ? | ? | QC |
+| supervisor-qc.html | ✓ | ? | ? | ✓ (likely) | ? | ? | ? | QC |
+| inspection-report.html | ✓ | ? | ? | ? | ? | ? | ? | Menu removed per AGENTS.md |
+| tracking.html | ✓ | ? | ? | ? | ? | ? | ? | Tracking |
+
+**STATUS:** Matriks ini **BELUM TERVERIFIKASI PENUH** - perlu dicek implementasi role check di setiap halaman. Jangan mengubah hak akses berdasarkan asumsi.
+
+### Findings Needed:
+- [ ] Cari Auth.hasRole/requireRole usage per halaman
+- [ ] Identifikasi role checks yang sudah ada
+- [ ] Identifikasi yang belum konsisten
+- [ ] Cek konflik dengan navigasi
+- [ ] **JANGAN UBAH HAK AKSES** - hanya standardisasi cara pengecekan
+
+
+## 3. R1.3 — XSS FIXES (INVENTARISASI 39 INNERHTML)
+
+Lihat file udit/innerhtml_inventory.txt untuk detail lengkap.
+
+**Kategorisasi Awal (Perlu Verifikasi Per Kasus):**
+
+### File dengan innerHTML terbanyak
+- js/dashboard.js - banyak (perlu review)
+- js/planning-classification.js
+- js/report-center.js
+
+**Kriteria Kategorisasi:**
+- **AMAN**: Hanya HTML statis/hardcoded tanpa variabel user
+- **PERLU PEMERIKSAAN**: Campuran static + dynamic
+- **BERISIKO**: Memasukkan data dari LocalStorage/form/user yang bisa dimanipulasi
+
+**Pendekatan:**
+1. Baca setiap baris di inventory
+2. Lihat konteks kode sekitar
+3. Tentukan sumber data
+4. Kategorikan risiko
+5. Rekomendasikan perbaikan HANYA untuk yang berisiko
+6. **JANGAN** ganti semua otomatis
+7. Pertahankan tampilan dan struktur
+
+**Status:** Inventarisasi ada di udit/innerhtml_inventory.txt (39 entries). Perlu analisis lebih detail per kasus - **BELUM SELESAI** untuk kategorisasi lengkap.
+
+
+## 4. R1.4 — DEFAULT CREDENTIALS (DEFERRED)
+
+**STATUS: DEFERRED - TIDAK AKAN DIIMPLEMENTASIKAN DI R1**
+
+### Alasan Penundaan:
+- Sangat sensitif terhadap akses aplikasi
+- Bisa menyebabkan lock-out jika salah implementasi
+- Perlu desain solusi onboarding yang tepat
+- Butuh analisis dampak terhadap user yang sudah ada
+
+### Yang TIDAK Akan Dilakukan:
+- Menghapus akun default
+- Menghapus Auth.initDefaultUser()
+- Mengubah password
+- Menghapus akun yang sudah tersimpan di ht_users
+- Mengubah isi ht_users
+- Mengubah mekanisme login
+
+### Yang Akan Didokumentasikan:
+- Risiko kredensial bawaan (admin/admin123, dll) sebagai residual risk
+- Rekomendasi untuk merancang sistem onboarding akun di fase lanjutan
+- Perlu backend untuk manajemen user yang aman
+
+**Residual Risk:** B-004 tetap terbuka - kredensial default dan plaintext password di localStorage
+
+
+## 5. R1.5 — INPUT VALIDATION (INVENTARISASI FORM)
+
+Berdasarkan halaman yang ada, perlu inventarisasi form:
+
+| Halaman | Form Utama | Fields Kunci | Jenis | Wajib? | Validasi Diperlukan | Catatan Bisnis |
+|---|---|---|---|---|---|---|
+| customer.html | Customer Form | kode_customer, nama_customer, alamat, pic, phone, email | text/email | Perlu cek | Unik kode_customer? | Master Data |
+| part.html | Part Form | nomor_part, nama_part, customer_id, berat_part, process_type | text/number/select | Perlu cek | Relasi customer | Master Data |
+| incoming.html | Incoming Form | customer_id, part_id, nomor_surat_jalan, qty, tanggal_masuk | select/text/number/date | Perlu cek | **Incoming Part** - critical flow | PPIC |
+| planning-produksi.html | Planning Form | material selection, qty, process | various | Perlu cek | **Planning Production** | PPIC |
+| heat-treatment.html | Process Form | temperature, operator, machine, waktu | number/text | Perlu cek | **Heat Treatment** - suhu kritis | Production |
+| qc.html/leader-qc.html/supervisor-qc.html | QC Form | hardness, hasil, judgement | number/select | Perlu cek | **QC Hardness** - approval chain | QC |
+| shotblast.html | Shotblast Form | operator, waktu | text | Perlu cek | **Shotblast** | Production |
+| anti-rust.html | Anti Rust Form | operator, waktu | text | Perlu cek | **Anti Rust** | Production |
+| delivery.html | Delivery Form | customer, qty_kirim, tanggal_kirim | select/number/date | Perlu cek | **Delivery** | PPIC |
+| tracking.html | View only? | - | - | - | - | Tracking |
+
+**STATUS:** Inventarisasi awal. Perlu baca source code HTML/JS per halaman untuk detail field. **BELUM LENGKAP**.
+
+**Prinsip:** Jangan mengubah business logic, jangan menolak data historis yang masih valid.
+
+
+## 6. Revisi Dependensi Implementasi
+
+Urutan baru berdasarkan review:
+
+1. **R1.1** - Auth Guards (foundation) - **PRIORITAS TERTINGGI**
+2. **R1.2** - Role Standardization (bergantung pada pemahaman role, bisa setelah R1.1)
+3. **R1.3** - XSS Fixes (independen, bisa paralel setelah review inventarisasi lengkap)
+4. **R1.5** - Input Validation (independen, perlu hati-hati jangan break business flow)
+5. **R1.4** - **DEFERRED** ke fase lanjutan
+
+## 7. Daftar Risiko Regresi (Updated)
+
+| Item | Risiko | Severity | Mitigasi |
+|---|---|---|---|
+| R1.1 | Redirect loop | HIGH | Cek filename, test di semua halaman |
+| R1.1 | User terkunci keluar | HIGH | Pastikan login page tidak kena guard, test flow login/logout |
+| R1.1 | Session corrupt | MEDIUM | Handle JSON parse error dengan aman |
+| R1.2 | Role salah bisa hide fitur penting | HIGH | **JANGAN UBAH HAK AKSES** - hanya standardisasi cara cek |
+| R1.3 | UI broken | MEDIUM-HIGH | Test rendering, backup approach, ganti bertahap |
+| R1.5 | Validasi terlalu ketat block data valid | HIGH | Test dengan data existing, jangan block historical data |
+| R1.5 | Break business flow | HIGH | Fokus incoming/planning/HT/QC/delivery dengan sangat hati-hati |
+
+## 8. Skenario Pengujian Terukur
+
+### Pre-Implementation
+- [ ] Backup localStorage (manual - user bisa export)
+- [ ] Catat current state
+- [ ] Test semua halaman saat ini
+
+### Post R1.1
+- [ ] Incognito: akses index.html -> redirect login
+- [ ] Login valid -> akses semua halaman OK
+- [ ] Logout -> akses halaman redirect
+- [ ] Session dihapus manual -> redirect
+- [ ] Session corrupt (invalid JSON) -> redirect aman, no crash
+
+### Post R1.2
+- [ ] Test per role navigasi
+- [ ] Verifikasi role checks konsisten
+- [ ] Tidak ada perubahan hak akses
+
+### Post R1.3
+- [ ] Visual check semua halaman dengan innerHTML
+- [ ] Dashboard charts/tables render OK
+- [ ] No console errors
+- [ ] Tidak ada layout shift
+
+### Post R1.5
+- [ ] Test form valid/invalid
+- [ ] Data existing tetap bisa diproses
+- [ ] Tidak block alur bisnis kritis
+
+## 9. Residual Risks (Updated)
+
+| Risk ID | Risk | Status | Notes |
+|---|---|---|---|
+| RR-001 | Client auth bypass | RESIDUAL HIGH | Hanya mitigasi UI |
+| RR-002 | LocalStorage manipulation | RESIDUAL HIGH | Tidak bisa dicegah |
+| RR-003 | Role escalation | RESIDUAL HIGH | Via localStorage edit |
+| RR-004 | Plaintext passwords | RESIDUAL HIGH | Tetap ada |
+| RR-005 | No server validation | RESIDUAL HIGH | Semua bisa dimanipulasi |
+| RR-006 | Default credentials exposed | RESIDUAL HIGH | R1.4 deferred |
+| RR-007 | No trusted audit log | RESIDUAL HIGH | localStorage bisa dihapus/edit |
+
+## 10. Kesimpulan & Rekomendasi
+
+**Perubahan dari versi sebelumnya:**
+- R1.1 diperkuat dengan validasi session structure, JSON parse handling, prevent redirect loop
+- R1.2 ditambahkan matriks akses role (belum lengkap - perlu verifikasi)
+- R1.3 diperjelas: inventarisasi ada, kategorisasi perlu detail, jangan ganti semua
+- R1.4 **DEFERRED** sepenuhnya
+- R1.5 ditambahkan inventarisasi form awal
+- Fokus pada kompatibilitas data existing
+
+**Yang masih perlu diverifikasi:**
+- Matriks akses role per halaman (perlu baca JS files)
+- Kategorisasi lengkap 39 innerHTML
+- Detail form fields per halaman
+- Role checks yang sudah ada vs belum
+
+**Status:** Plan direvisi, menunggu persetujuan. Tidak ada implementasi dilakukan.
+

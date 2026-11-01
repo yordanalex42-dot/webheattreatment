@@ -1,0 +1,39 @@
+dashboard.js|84|this._el.kpiMonthSelect.innerHTML = monthHtml;
+dashboard.js|90|this._el.kpiYearSelect.innerHTML = yearHtml;
+dashboard.js|562|this._el.kpiTotalInputSummary.innerHTML = parts.length > 0
+dashboard.js|569|this._el.kpiTotalOutputSummary.innerHTML = totalOutput > 0
+dashboard.js|635|legendEl.innerHTML = '<div class="ht-donut-empty"><p>Belum ada data produksi yang selesai pada periode ini.</p></div>';
+dashboard.js|695|legendEl.innerHTML = legendHtml;
+dashboard.js|1118|this._el.pageNumbers.innerHTML = pagesHtml;
+dashboard.js|1179|this._el.tableBody.innerHTML = html || '<tr><td colspan="19" class="ht-table-empty"><img src="assets/icons/inbox.svg" alt="Kosong" class="icon"><p>Data monitoring tidak ditemukan.</p><small>Coba ubah kata kunci atau filter yang dipilih.</small></td></tr>';
+dashboard.js|1190|this._el.customerFilter.innerHTML = options;
+dashboard.js|1304|this._el.refreshBtn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Loading" class="icon mr-1 icon-spin"> Memuat...';
+dashboard.js|1310|this._el.refreshBtn.innerHTML = '<img src="assets/icons/refresh.svg" alt="Refresh" class="icon mr-1"> Refresh';
+inspection-report.js|103|scannerContainer.innerHTML = '<div style="width:100%;height:200px;background:#000;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:#888;font-size:13px;">Kamera tidak tersedia di browser ini. Gunakan pencarian manual.</div>';
+inspection-report.js|172|if (scannerContainer) scannerContainer.innerHTML = "";
+inspection-report.js|185|scannerContainer.innerHTML = "";
+inspection-report.js|295|grid.innerHTML = rows.join("");
+inspection-report.js|421|wrapper.innerHTML = html;
+inspection-report.js|484|grid.innerHTML = html;
+inspection-report.js|508|notifDetail.innerHTML = "";
+inspection-report.js|544|notifDetail.innerHTML = detailHtml;
+inspection-report.js|595|document.getElementById("qr-reader").innerHTML = "";
+planning-classification.js|88|tableContainer.innerHTML = '<div class="ht-table-empty">Gagal memuat data. Silakan muat ulang halaman.</div>';
+planning-classification.js|168|tableContainer.innerHTML = '<div class="ht-table-empty">' +
+planning-classification.js|443|container.innerHTML = html;
+planning-classification.js|484|container.innerHTML = html;
+planning-classification.js|486|container.innerHTML = html;
+planning-classification.js|566|container.innerHTML = html;
+planning-classification.js|687|container.innerHTML = html;
+planning-classification.js|801|select.innerHTML = "";
+report-center.js|93|scannerContainer.innerHTML = '<div style="width:100%;height:200px;background:#000;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:#888;font-size:13px;">Kamera tidak tersedia di browser ini. Gunakan pencarian manual.</div>';
+report-center.js|122|scannerContainer.innerHTML = '';
+report-center.js|198|document.getElementById("sHasil").innerHTML = '<span class="ht-badge ' + (qc.hasil === "OK" ? "ht-badge-ok" : qc.hasil === "NG" ? "ht-badge-ng" : "ht-badge-pending") + '">' + (qc.hasil || "-") + '</span>';
+report-center.js|292|issueList.innerHTML = '<p class="ht-ir-issue-text ht-ir-issue-ok"><img src="assets/icons/check.svg" alt="" class="icon mr-1" />Semua persetujuan lengkap. Siap diterbitkan.</p>';
+report-center.js|303|issueList.innerHTML = '<ul class="ht-ir-issue-list">' + issuesHtml + '</ul>';
+report-center.js|884|body.innerHTML = '<style>' + cssText + '</style>' + html;
+report-center.js|890|qrDiv.innerHTML = "";
+report-center.js|1099|'el.innerHTML = "";' +
+report-center.js|1105|'el.innerHTML = "<span style=\"font-size:5px;color:#DC3545\">QR Code unavailable</span>";' +
+ui.js|73|el.innerHTML =
+ui.js|184|svg.innerHTML =
