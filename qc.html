@@ -16,6 +16,30 @@
     <link rel="stylesheet" href="css/qc-inspection.css" />
   </head>
   <body>
+<script>
+  (function() {
+    try {
+      var sk = 'ht_session';
+      var cp = (window.location.pathname.split('/').pop() || 'index.html');
+      if (cp === 'login.html') return;
+      var raw = localStorage.getItem(sk);
+      if (!raw) { window.location.replace('login.html'); return; }
+      var s;
+      try { s = JSON.parse(raw); } catch(e) { try{localStorage.removeItem(sk);}catch(ex){} window.location.replace('login.html'); return; }
+      if (!s || typeof s !== 'object') { try{localStorage.removeItem(sk);}catch(ex){} window.location.replace('login.html'); return; }
+      if (!s.username || !s.role) { try{localStorage.removeItem(sk);}catch(ex){} window.location.replace('login.html'); return; }
+      var vr = [];
+      if (typeof Auth !== 'undefined' && Auth.ROLES) {
+        try {
+          var ro = Auth.ROLES;
+          for (var k in ro){ if (ro.hasOwnProperty(k)) vr.push(ro[k]); }
+        } catch(ex){}
+      }
+      if (vr.length === 0) { vr = ['Administrator','Inspector QC','Leader QC','Supervisor QC','Operator Shotblast','Operator Anti Rust','Operator Delivery']; }
+      if (vr.indexOf(s.role) === -1) { try{localStorage.removeItem(sk);}catch(ex){} window.location.replace('login.html'); return; }
+    } catch(e) { try{window.location.replace('login.html');}catch(ex){} }
+  })();
+</script>
     <div class="ht-app-shell">
       <aside class="ht-sidebar" id="sidebar">
         <div class="ht-sidebar-header">
