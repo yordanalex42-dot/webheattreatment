@@ -260,7 +260,7 @@
 }
 
 /* ============================================================
-   KARTU KPI — Minimal Industrial Bersih dengan Ikon
+   KARTU KPI — Redesign Modern dengan Visual Pemanis
    ============================================================ */
 
 .ht-kpi-card {
@@ -268,21 +268,25 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 12px;
+  padding: 15px;
   background: var(--surface);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xs);
   transition:
-    background-color var(--transition-sm),
-    border-color var(--transition-sm),
-    box-shadow var(--transition-sm);
-  min-height: 110px;
-  overflow: hidden;
+    transform var(--transition-sm),
+    box-shadow var(--transition-sm),
+    border-color var(--transition-sm);
+  min-height: auto;
+  overflow: visible;
   animation-name: kpiEntrance;
   animation-duration: 400ms;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   animation-fill-mode: both;
+}
+
+#targetCard {
+  padding: 10px;
 }
 
 @keyframes kpiEntrance {
@@ -297,9 +301,9 @@
 }
 
 .ht-kpi-card:hover {
-  background: var(--primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
   border-color: var(--primary);
-  box-shadow: var(--shadow-sm);
 }
 
 .ht-kpi-card:focus-within {
@@ -307,27 +311,80 @@
   border-color: var(--primary);
 }
 
-/* Kotak ikon: latar belakang biru muda, ikon biru */
+/* Visual pemanis di background kartu KPI */
+.ht-kpi-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.06;
+}
+
+/* Ornament lingkaran transparan di sudut kanan atas */
+.ht-kpi-card::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Kotak ikon: lingkaran dengan warna per KPI */
 .ht-kpi-icon-box {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-sm);
-  background: var(--primary-light);
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary);
   flex-shrink: 0;
-  z-index: 1;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
+/* Ikon di dalam kotak */
 .ht-kpi-icon-box .icon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   color: inherit;
+}
+
+/* Per-KPI warna ikon */
+#kpiCardTotalInput .ht-kpi-icon-box {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: rgba(37, 99, 235, 0.3);
+  color: var(--primary);
+}
+#kpiCardTotalOutput .ht-kpi-icon-box {
+  background: rgba(22, 163, 74, 0.15);
+  border-color: rgba(22, 163, 74, 0.3);
+  color: var(--success);
+}
+#kpiCardTotalBeratInput .ht-kpi-icon-box {
+  background: rgba(124, 58, 237, 0.15);
+  border-color: rgba(124, 58, 237, 0.3);
+  color: #7c3aed;
+}
+#kpiCardTotalBeratOutput .ht-kpi-icon-box {
+  background: rgba(220, 38, 38, 0.15);
+  border-color: rgba(220, 38, 38, 0.3);
+  color: var(--danger);
 }
 
 .ht-kpi-card .ht-kpi-container {
@@ -337,22 +394,24 @@
   gap: 0;
   width: 100%;
   height: 100%;
-  padding: 14px 30px 12px 14px;
+  padding: 8px 10px 6px 10px;
   box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 .ht-kpi-card .ht-kpi-label {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--text-secondary);
   line-height: 1.3;
-  margin: 0;
+  margin: 0 0 2px 0;
 }
 
 .ht-kpi-card .ht-kpi-value {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: var(--font-weight-bold);
   line-height: 1.1;
   color: var(--text-primary);
@@ -363,10 +422,10 @@
 
 .ht-kpi-card .ht-kpi-description {
   font-size: 10px;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-secondary);
   line-height: 1.3;
-  margin: 0;
+  margin: 2px 0 0 0;
 }
 
 /* Ringkasan status kartu KPI */
@@ -379,7 +438,7 @@
   font-weight: 500;
   color: var(--text-secondary);
   line-height: 1.4;
-  margin: 0;
+  margin: 2px 0 0 0;
 }
 
 .ht-kpi-summary-dot {
@@ -404,18 +463,18 @@
 /* Flex sizing — empat kartu KPI utama */
 .ht-kpi-main-row > .ht-kpi-card {
   flex: 1;
-  min-width: 180px;
+  min-width: 150px;
 }
 
 /* Flex sizing — baris sekunder */
 .ht-kpi-secondary-row .ht-kpi-card {
   flex: 1;
-  min-width: 160px;
+  min-width: 140px;
 }
 
 .ht-kpi-secondary-row #persentaseCard {
   flex: 2;
-  min-width: 240px;
+  min-width: 220px;
 }
 
 /* ============================================================
@@ -1414,16 +1473,20 @@
   }
 
   .ht-kpi-card {
-    padding: 12px 14px;
-    min-height: 110px;
+    padding: 15px;
+    min-height: auto;
+  }
+
+  #targetCard {
+    padding: 10px;
   }
 
   .ht-kpi-card .ht-kpi-container {
-    padding: 12px 28px 12px 14px;
+    padding: 6px 8px 4px 8px;
   }
 
   .ht-kpi-card .ht-kpi-value {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .ht-kpi-period-filter {
@@ -1431,8 +1494,8 @@
   }
 
   .ht-kpi-icon-box {
-    top: 12px;
-    right: 12px;
+    top: 8px;
+    right: 8px;
     width: 30px;
     height: 30px;
   }
@@ -1499,16 +1562,20 @@
   }
 
   .ht-kpi-card {
-    padding: 16px;
-    min-height: 110px;
+    padding: 15px;
+    min-height: auto;
+  }
+
+  #targetCard {
+    padding: 10px;
   }
 
    .ht-kpi-card .ht-kpi-container {
-    padding: 14px 36px 12px 16px;
+    padding: 8px 12px 6px 12px;
   }
 
   .ht-kpi-card .ht-kpi-value {
-    font-size: 28px;
+    font-size: 26px;
   }
 
   .ht-chart-grid {
@@ -1570,12 +1637,16 @@
   }
 
    .ht-kpi-card {
-    padding: 14px 12px;
-    min-height: 110px;
+    padding: 15px;
+    min-height: auto;
+  }
+
+  #targetCard {
+    padding: 10px;
   }
 
   .ht-kpi-card .ht-kpi-container {
-    padding: 12px 26px 12px 14px;
+    padding: 6px 8px 4px 8px;
   }
 
   .ht-kpi-card .ht-kpi-value {
@@ -1670,12 +1741,16 @@
   }
 
    .ht-kpi-card {
-    padding: 12px 10px;
-    min-height: 110px;
+    padding: 15px;
+    min-height: auto;
+  }
+
+  #targetCard {
+    padding: 10px;
   }
 
    .ht-kpi-card .ht-kpi-container {
-    padding: 12px 24px 10px 14px;
+    padding: 6px 8px 4px 8px;
   }
 
   .ht-kpi-card .ht-kpi-value {
@@ -1683,7 +1758,7 @@
   }
 
   .ht-kpi-card .ht-kpi-label {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .ht-kpi-target #targetDisplay {
@@ -1793,12 +1868,16 @@
   }
 
    .ht-kpi-card {
-    padding: 10px 8px;
-    min-height: 100px;
+    padding: 15px;
+    min-height: auto;
+  }
+
+  #targetCard {
+    padding: 10px;
   }
 
    .ht-kpi-card .ht-kpi-container {
-    padding: 10px 20px 8px 12px;
+    padding: 5px 6px 3px 6px;
   }
 
   .ht-kpi-card .ht-kpi-value {
@@ -1806,7 +1885,7 @@
   }
 
   .ht-kpi-card .ht-kpi-label {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .ht-kpi-target #targetDisplay {
