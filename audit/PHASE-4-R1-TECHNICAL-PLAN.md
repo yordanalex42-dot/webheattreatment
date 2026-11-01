@@ -646,3 +646,177 @@ File udit/innerhtml_inventory.txt berisi 39 entries. Kategorisasi perlu dilakuk
 
 **TUNGGU PERSETUJUAN** sebelum mulai implementasi R1.
 
+# R1.1 IMPLEMENTATION READINESS
+
+**Date:** 2026-11-01 14:15:54  
+**Status:** PLANNING ONLY - NO IMPLEMENTATION  
+**Scope:** ONLY R1.1 - Auth Guards for 17 protected pages
+
+---
+
+## Daftar 17 Halaman Target
+
+Berdasarkan final verification:
+
+1. anti-rust.html
+2. customer.html
+3. delivery.html
+4. heat-treatment.html
+5. incoming.html
+6. index.html
+7. inspection-report.html
+8. leader-qc.html
+9. part.html
+10. planning-produksi.html
+11. proses.html
+12. produksi-akhir.html
+13. produksi-masuk.html
+14. qc.html
+15. shotblast.html
+16. supervisor-qc.html
+17. tracking.html
+
+**Excluded:**
+- login.html - tidak diberi auth guard (halaman publik)
+- out_snapshot.html - tidak otomatis diberi auth guard (halaman print/snapshot, perlu evaluasi terpisah)
+
+---
+
+## Pola Auth Guard Final
+
+### Requirements
+- Menangani session kosong
+- Menangani JSON.parse error (try-catch)
+- Memeriksa struktur session (harus ada username dan role)
+- Memeriksa role terhadap daftar role resmi dari Auth.ROLES
+- Tidak menyebabkan redirect loop
+- Hanya menghapus session yang terbukti rusak/tidak valid
+- Tidak menghapus ht_users
+- Tidak mengganggu proses login/logout
+- Tidak mengubah data lain
+- Penempatan script harus sebelum aplikasi berjalan
+
+### Safe Implementation Pattern
+
+`javascript
+<script>
+  (function() {
+    try {
+      const sessionKey = 'ht_session';
+      const raw = localStorage.getItem(sessionKey);
+      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      
+      // Jangan guard halaman login
+      if (currentPage === 'login.html') return;
+      
+      if (!raw) {
+        window.location.replace('login.html');
+        return;
+      }
+      
+      let session;
+      try {
+        session = JSON.parse(raw);
+      } catch (e) {
+        // Session corrupt - hapus hanya session ini
+        localStorage.removeItem(sessionKey);
+        window.location.replace('login.html');
+        return;
+      }
+      
+      // Validasi struktur
+      if (!session || typeof session !== 'object') {
+        localStorage.removeItem(sessionKey);
+        window.location.replace('login.html');
+        return;
+      }
+      
+      if (!session.username || !session.role) {
+        localStorage.removeItem(sessionKey);
+        window.location.replace('login.html');
+        return;
+      }
+      
+      // Validasi role terhadap daftar resmi
+      const validRoles = [
+        'Administrator',
+        'Inspector QC',
+        'Leader QC',
+        'Supervisor QC',
+        'Operator Shotblast',
+        'Operator Anti Rust',
+        'Operator Delivery'
+      ];
+      
+      if (validRoles.indexOf(session.role) === -1) {
+        localStorage.removeItem(sessionKey);
+        window.location.replace('login.html');
+        return;
+      }
+      
+      // Session valid - lanjut
+    } catch (e) {
+      // Fallback aman - redirect ke login jika ada masalah
+      window.location.replace('login.html');
+    }
+  })();
+</script>
+`
+
+**Notes:**
+- Gunakan window.location.replace() untuk mencegah back button issue
+- Hanya hapus ht_session jika terbukti tidak valid
+- Jangan sentuh ht_users
+- Path relatif login.html cocok untuk GitHub Pages
+- Script inline di body atau head - harus eksekusi sebelum main content berproses
+
+---
+
+## File yang Akan Diubah
+Hanya 17 HTML files di atas. Tidak ada file JS, CSS, atau lainnya.
+
+---
+
+## Risiko Regresi
+| Risiko | Severity | Mitigasi |
+|---|---|---|
+| Redirect loop | HIGH | Cek currentPage !== 'login.html', test semua halaman |
+| Lock out user valid | HIGH | Validasi struktur benar, test dengan session normal |
+| Session corrupt handling | MEDIUM | Hanya hapus ht_session, jangan ht_users |
+| Ganggu login flow | HIGH | login.html tidak di-guard |
+| Script timing issue | MEDIUM | Pasang sebelum DOM ready heavy processing |
+| GitHub Pages path issue | LOW | Gunakan relative path 'login.html' |
+
+---
+
+## Skenario Pengujian
+### Pre-Implementation
+- [ ] Backup localStorage state (catat)
+- [ ] Test login/logout saat ini berfungsi
+- [ ] Test akses semua halaman dengan session ada
+
+### Post-Implementation
+- [ ] **Tanpa session:** Akses index.html -> redirect ke login.html
+- [ ] **Tanpa session:** Akses semua 17 halaman -> redirect ke login.html
+- [ ] **login.html tanpa session:** Tetap bisa diakses
+- [ ] **login.html dengan session valid:** Sudah ada logic redirect ke index.html (harus tetap berfungsi)
+- [ ] **Session valid:** Bisa akses semua 17 halaman normal
+- [ ] **Logout:** Tetap berfungsi, redirect ke login
+- [ ] **Session corrupt (invalid JSON):** Hapus ht_session, redirect ke login, ht_users tetap ada
+- [ ] **Session tanpa role/username:** Redirect ke login, ht_users tetap ada
+- [ ] **Session dengan role invalid:** Redirect ke login
+- [ ] **out_snapshot.html:** Bisa diakses tanpa guard (tidak dimasukkan)
+- [ ] **No redirect loop:** Test semua skenario
+- [ ] **Data existing:** Semua data LocalStorage lain tetap utuh
+
+### Rollback Plan
+Jika terjadi masalah:
+1. Hapus script auth guard yang baru ditambahkan dari halaman bermasalah
+2. Atau restore file HTML dari git (jika ada)
+3. Pastikan tidak ada perubahan lain
+4. Test login kembali
+
+---
+
+## Status
+**READY FOR APPROVAL** - Menunggu persetujuan untuk implementasi R1.1 saja.
